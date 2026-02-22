@@ -6,6 +6,7 @@ import { MobileMenu } from '@/components/layout/MobileMenu';
 import { Footer } from '@/components/layout/Footer';
 import { CartDrawer } from '@/components/ecommerce/CartDrawer';
 import { TrustBadges } from '@/components/ui/TrustBadges';
+import { submitWholesaleQuote } from '@/lib/actions/wholesale';
 import { Building2, Users, Package, TrendingUp, Phone, Mail } from 'lucide-react';
 
 export default function WholesalePage() {
@@ -21,11 +22,30 @@ export default function WholesalePage() {
     message: ''
   });
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const [status, setStatus] = useState<'idle' | 'sending' | 'success' | 'error'>('idle');
+  const [errorMessage, setErrorMessage] = useState('');
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // TODO: Handle form submission
-    console.log('Wholesale inquiry:', formData);
-    alert('Thank you for your interest! Our team will contact you within 24 hours.');
+    setStatus('sending');
+    setErrorMessage('');
+    const result = await submitWholesaleQuote(formData);
+    if (result.success) {
+      setStatus('success');
+      setFormData({
+        companyName: '',
+        contactPerson: '',
+        email: '',
+        phone: '',
+        gstNumber: '',
+        businessType: '',
+        estimatedMonthlyVolume: '',
+        message: '',
+      });
+    } else {
+      setStatus('error');
+      setErrorMessage(result.error);
+    }
   };
 
   const benefits = [
@@ -260,11 +280,19 @@ export default function WholesalePage() {
                 />
               </div>
 
+              {status === 'success' && (
+                <p className="text-green-600 font-medium">Thank you for your interest! Our team will contact you within 24 hours.</p>
+              )}
+              {status === 'error' && (
+                <p className="text-red-600 text-sm">{errorMessage}</p>
+              )}
+
               <button
                 type="submit"
-                className="w-full bg-[#D32F2F] text-white py-4 rounded-full font-bold text-lg hover:bg-[#B71C1C] transition shadow-lg"
+                disabled={status === 'sending'}
+                className="w-full bg-[#D32F2F] text-white py-4 rounded-full font-bold text-lg hover:bg-[#B71C1C] transition shadow-lg disabled:opacity-50"
               >
-                Submit Inquiry
+                {status === 'sending' ? 'Submitting...' : 'Submit Inquiry'}
               </button>
             </form>
           </div>

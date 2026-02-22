@@ -36,26 +36,52 @@ export const supabaseAdmin = createClient<Database>(
   }
 );
 
+// Track if we've already logged a connectivity warning (avoid console spam)
+let hasLoggedConnectivityWarning = false;
+
+/**
+ * Check if error is due to Supabase being unreachable (network/DNS).
+ * Logs a single user-friendly message and returns true if so.
+ */
+export function isSupabaseUnreachable(error: unknown): boolean {
+  const msg = String((error as { message?: string })?.message ?? '');
+  const details = String((error as { details?: string })?.details ?? '');
+  const isNetworkError =
+    msg.includes('fetch failed') ||
+    details.includes('ENOTFOUND') ||
+    details.includes('getaddrinfo');
+  if (isNetworkError && !hasLoggedConnectivityWarning) {
+    hasLoggedConnectivityWarning = true;
+    console.warn(
+      '[Supabase] Cannot reach Supabase (network/DNS). Check:\n' +
+        '  • Internet connection and VPN\n' +
+        '  • NEXT_PUBLIC_SUPABASE_URL in .env.local\n' +
+        '  • Supabase project is not paused (dashboard.supabase.com)'
+    );
+  }
+  return isNetworkError;
+}
+
 // Helper function to handle Supabase errors
 export function handleSupabaseError(error: { code?: string; message?: string }) {
   console.error('Supabase error:', error);
-  
+
   if (error.code === 'PGRST116') {
     return { error: 'Resource not found', status: 404 };
   }
-  
+
   if (error.code === '23505') {
     return { error: 'Resource already exists', status: 409 };
   }
-  
+
   if (error.code === '23503') {
     return { error: 'Invalid reference', status: 400 };
   }
-  
+
   return { error: 'Internal server error', status: 500 };
 }
 
-// Type-safe query builders
+// Type-safe query builders (use supabaseAdmin for server-side writes to bypass RLS)
 export const db = {
   products: supabaseAdmin.from('products'),
   users: supabaseAdmin.from('users'),

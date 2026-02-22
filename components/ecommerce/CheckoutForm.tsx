@@ -5,12 +5,13 @@ import { Address } from '@/lib/types/database';
 import { validatePinCode } from '@/lib/utils/database';
 
 interface CheckoutFormProps {
-  onSubmit: (shippingAddress: Address, billingAddress: Address, sameAsShipping: boolean) => void;
+  onSubmit: (shippingAddress: Address, billingAddress: Address, sameAsShipping: boolean, email: string) => void;
   onBack: () => void;
 }
 
 export const CheckoutForm = ({ onSubmit, onBack }: CheckoutFormProps) => {
   const [sameAsShipping, setSameAsShipping] = useState(true);
+  const [email, setEmail] = useState('');
   const [errors, setErrors] = useState<Record<string, string>>({});
 
   const [shippingAddress, setShippingAddress] = useState<Partial<Address>>({
@@ -42,6 +43,9 @@ export const CheckoutForm = ({ onSubmit, onBack }: CheckoutFormProps) => {
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
 
+    // Email validation
+    if (!email?.trim()) newErrors.email = 'Email is required';
+    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) newErrors.email = 'Enter a valid email address';
     // Shipping validation
     if (!shippingAddress.fullName?.trim()) newErrors.shipping_fullName = 'Full name is required';
     if (!shippingAddress.phone?.trim()) newErrors.shipping_phone = 'Phone number is required';
@@ -75,7 +79,8 @@ export const CheckoutForm = ({ onSubmit, onBack }: CheckoutFormProps) => {
       onSubmit(
         shippingAddress as Address,
         finalBillingAddress as Address,
-        sameAsShipping
+        sameAsShipping,
+        email.trim()
       );
     }
   };
@@ -91,10 +96,28 @@ export const CheckoutForm = ({ onSubmit, onBack }: CheckoutFormProps) => {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-8">
-      {/* Shipping Address */}
+      {/* Contact & Shipping */}
       <div>
-        <h2 className="text-2xl font-bold text-gray-900 mb-6">Shipping Address</h2>
+        <h2 className="text-2xl font-bold text-gray-900 mb-6">Contact & Shipping</h2>
         <div className="grid md:grid-cols-2 gap-4">
+          <div>
+            <label className="block text-sm font-semibold text-gray-700 mb-2">
+              Email <span className="text-red-600">*</span>
+            </label>
+            <input
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className={`w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#D32F2F] ${
+                errors.email ? 'border-red-500' : 'border-gray-300'
+              }`}
+              placeholder="your@email.com"
+            />
+            {errors.email && (
+              <p className="text-red-600 text-xs mt-1">{errors.email}</p>
+            )}
+          </div>
+
           <div>
             <label className="block text-sm font-semibold text-gray-700 mb-2">
               Full Name <span className="text-red-600">*</span>

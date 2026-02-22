@@ -6,11 +6,13 @@ import { ProductExtended } from '@/lib/types/database';
 import { formatCurrency, calculateDiscountPercentage, getStockStatus, calculateSavings, estimateDeliveryDate, formatDeliveryDate } from '@/lib/utils/database';
 import { useCart } from '@/lib/contexts/CartContext';
 import { CartItem } from '@/lib/types/database';
-import Image from 'next/image';
+import { ProductImage } from './ProductImage';
 
 interface ProductDetailProps {
   product: ProductExtended;
 }
+
+const PLACEHOLDER_IMAGE = '/products/placeholder.png';
 
 export const ProductDetail = ({ product }: ProductDetailProps) => {
   const [selectedVariantIndex, setSelectedVariantIndex] = useState(0);
@@ -19,13 +21,15 @@ export const ProductDetail = ({ product }: ProductDetailProps) => {
   const [activeTab, setActiveTab] = useState<'description' | 'ingredients' | 'usage' | 'nutrition'>('description');
   const { addToCart } = useCart();
 
+  const getDisplayImage = (index: number) => product.images[index] || PLACEHOLDER_IMAGE;
+
   // Safety check: ensure product has variants
   if (!product.variants || product.variants.length === 0) {
     return (
       <div className="container mx-auto px-6 py-12">
         <div className="bg-yellow-50 border-l-4 border-yellow-400 p-4">
           <p className="text-yellow-700">
-            This product doesn't have any variants configured. Please contact support.
+            This product doesn&apos;t have any variants configured. Please contact support.
           </p>
         </div>
       </div>
@@ -46,7 +50,7 @@ export const ProductDetail = ({ product }: ProductDetailProps) => {
       variantName: selectedVariant.name,
       price: selectedVariant.price,
       quantity,
-      image: product.images[0] || '/placeholder-product.jpg'
+      image: product.images[0] || PLACEHOLDER_IMAGE
     };
     addToCart(item);
   };
@@ -70,9 +74,9 @@ export const ProductDetail = ({ product }: ProductDetailProps) => {
         <div>
           {/* Main Image */}
           <div className="relative h-96 bg-gray-100 rounded-lg overflow-hidden mb-4">
-            {product.images[selectedImageIndex] ? (
-              <Image 
-                src={product.images[selectedImageIndex]} 
+          {(product.images.length > 0 || getDisplayImage(0) === PLACEHOLDER_IMAGE) ? (
+            <ProductImage
+                src={getDisplayImage(selectedImageIndex)}
                 alt={product.name}
                 fill
                 className="object-cover"
@@ -98,12 +102,13 @@ export const ProductDetail = ({ product }: ProductDetailProps) => {
                 <button
                   key={index}
                   onClick={() => setSelectedImageIndex(index)}
+                  type="button"
                   className={`relative h-20 bg-gray-100 rounded-md overflow-hidden border-2 transition ${
                     selectedImageIndex === index ? 'border-[#D32F2F]' : 'border-transparent'
                   }`}
                 >
-                  <Image 
-                    src={image} 
+                  <ProductImage
+                    src={getDisplayImage(index)}
                     alt={`${product.name} ${index + 1}`}
                     fill
                     className="object-cover"

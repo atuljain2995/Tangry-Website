@@ -4,7 +4,7 @@ import { useCart } from '@/lib/contexts/CartContext';
 import { formatCurrency } from '@/lib/utils/database';
 import { Tag, Trash2 } from 'lucide-react';
 import { useState } from 'react';
-import Image from 'next/image';
+import { ProductImage } from './ProductImage';
 
 interface OrderSummaryProps {
   showCouponField?: boolean;
@@ -41,8 +41,8 @@ export const OrderSummary = ({ showCouponField = true }: OrderSummaryProps) => {
           <div key={`${item.productId}-${item.variantId}`} className="flex space-x-3">
             <div className="w-16 h-16 bg-gray-200 rounded-md overflow-hidden flex-shrink-0 relative">
               {item.image ? (
-                <Image 
-                  src={item.image} 
+                <ProductImage
+                  src={item.image}
                   alt={item.productName}
                   fill
                   className="object-cover"

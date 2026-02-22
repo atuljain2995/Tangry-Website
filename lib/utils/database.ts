@@ -46,7 +46,7 @@ function calculateDiscount(subtotal: number, couponCode: string): number {
  * Calculate tax (GST in India)
  * Assuming 5% GST on spices
  */
-function calculateTax(amount: number): number {
+export function calculateTax(amount: number): number {
   return amount * 0.05; // 5% GST
 }
 

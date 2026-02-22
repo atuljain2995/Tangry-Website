@@ -2,67 +2,94 @@
 
 import Script from 'next/script';
 
+const PLACEHOLDERS = {
+  GA: 'G-XXXXXXXXXX',
+  FB_PIXEL: 'YOUR_PIXEL_ID',
+  HOTJAR: 'YOUR_HOTJAR_ID',
+};
+
+const isSet = (value: string | undefined, placeholder: string) =>
+  value != null && value.trim() !== '' && value !== placeholder;
+
 export const Analytics = () => {
-  const GA_TRACKING_ID = process.env.NEXT_PUBLIC_GA_ID || 'G-XXXXXXXXXX';
-  const FB_PIXEL_ID = process.env.NEXT_PUBLIC_FB_PIXEL_ID || 'YOUR_PIXEL_ID';
-  const HOTJAR_ID = process.env.NEXT_PUBLIC_HOTJAR_ID || 'YOUR_HOTJAR_ID';
+  const GA_TRACKING_ID = process.env.NEXT_PUBLIC_GA_ID ?? '';
+  const FB_PIXEL_ID = process.env.NEXT_PUBLIC_FB_PIXEL_ID ?? '';
+  const HOTJAR_ID = process.env.NEXT_PUBLIC_HOTJAR_ID ?? '';
+
+  const hasGA = isSet(GA_TRACKING_ID, PLACEHOLDERS.GA);
+  const hasFBPixel = isSet(FB_PIXEL_ID, PLACEHOLDERS.FB_PIXEL);
+  const hasHotjar = isSet(HOTJAR_ID, PLACEHOLDERS.HOTJAR);
 
   return (
     <>
-      {/* Google Analytics 4 */}
-      <Script
-        src={`https://www.googletagmanager.com/gtag/js?id=${GA_TRACKING_ID}`}
-        strategy="afterInteractive"
-      />
-      <Script id="google-analytics" strategy="afterInteractive">
-        {`
-          window.dataLayer = window.dataLayer || [];
-          function gtag(){dataLayer.push(arguments);}
-          gtag('js', new Date());
-          gtag('config', '${GA_TRACKING_ID}', {
-            page_path: window.location.pathname,
-          });
-        `}
-      </Script>
+      {/* Google Analytics 4 - only load when configured */}
+      {hasGA && (
+        <>
+          <Script
+            src={`https://www.googletagmanager.com/gtag/js?id=${GA_TRACKING_ID}`}
+            strategy="afterInteractive"
+          />
+          <Script id="google-analytics" strategy="afterInteractive">
+            {`
+              window.dataLayer = window.dataLayer || [];
+              function gtag(){dataLayer.push(arguments);}
+              gtag('js', new Date());
+              gtag('config', '${GA_TRACKING_ID}', {
+                page_path: window.location.pathname,
+              });
+            `}
+          </Script>
+        </>
+      )}
 
-      {/* Meta Pixel (Facebook) */}
-      <Script id="facebook-pixel" strategy="afterInteractive">
-        {`
-          !function(f,b,e,v,n,t,s)
-          {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
-          n.callMethod.apply(n,arguments):n.queue.push(arguments)};
-          if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
-          n.queue=[];t=b.createElement(e);t.async=!0;
-          t.src=v;s=b.getElementsByTagName(e)[0];
-          s.parentNode.insertBefore(t,s)}(window, document,'script',
-          'https://connect.facebook.net/en_US/fbevents.js');
-          fbq('init', '${FB_PIXEL_ID}');
-          fbq('track', 'PageView');
-        `}
-      </Script>
-      <noscript>
-        <img 
-          height="1" 
-          width="1" 
-          style={{ display: 'none' }}
-          src={`https://www.facebook.com/tr?id=${FB_PIXEL_ID}&ev=PageView&noscript=1`}
-          alt=""
-        />
-      </noscript>
+      {/* Meta Pixel (Facebook) - only load when configured */}
+      {hasFBPixel && (
+        <>
+          <Script id="facebook-pixel" strategy="afterInteractive">
+            {`
+              !function(f,b,e,v,n,t,s)
+              {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+              n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+              if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+              n.queue=[];t=b.createElement(e);t.async=!0;
+              t.src=v;s=b.getElementsByTagName(e)[0];
+              s.parentNode.insertBefore(t,s)}(window, document,'script',
+              'https://connect.facebook.net/en_US/fbevents.js');
+              fbq('init', '${FB_PIXEL_ID}');
+              fbq('track', 'PageView');
+            `}
+          </Script>
+          <noscript>
+            <img
+              height="1"
+              width="1"
+              style={{ display: 'none' }}
+              src={`https://www.facebook.com/tr?id=${FB_PIXEL_ID}&ev=PageView&noscript=1`}
+              alt=""
+            />
+          </noscript>
+        </>
+      )}
 
-      {/* Hotjar Tracking Code */}
-      <Script id="hotjar" strategy="afterInteractive">
-        {`
-          (function(h,o,t,j,a,r){
-            h.hj=h.hj||function(){(h.hj.q=h.hj.q||[]).push(arguments)};
-            h._hjSettings={hjid:${HOTJAR_ID},hjsv:6};
-            a=o.getElementsByTagName('head')[0];
-            r=o.createElement('script');r.async=1;
-            r.src=t+h._hjSettings.hjid+j+h._hjSettings.hjsv;
-            a.appendChild(r);
-          })(window,document,'https://static.hotjar.com/c/hotjar-','.js?sv=');
-        `}
-      </Script>
+      {/* Hotjar - only load when configured (ID injected as number to avoid ReferenceError) */}
+      {hasHotjar && (() => {
+        const numericId = parseInt(String(HOTJAR_ID).trim(), 10);
+        if (Number.isNaN(numericId)) return null;
+        return (
+          <Script id="hotjar" strategy="afterInteractive">
+            {`
+              (function(h,o,t,j,a,r){
+                h.hj=h.hj||function(){(h.hj.q=h.hj.q||[]).push(arguments)};
+                h._hjSettings={hjid:${numericId},hjsv:6};
+                a=o.getElementsByTagName('head')[0];
+                r=o.createElement('script');r.async=1;
+                r.src=t+h._hjSettings.hjid+j+h._hjSettings.hjsv;
+                a.appendChild(r);
+              })(window,document,'https://static.hotjar.com/c/hotjar-','.js?sv=');
+            `}
+          </Script>
+        );
+      })()}
 
       {/* Google Tag Manager (optional - if you prefer GTM over direct GA4) */}
       {/* Uncomment if using GTM

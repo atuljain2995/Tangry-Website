@@ -1,6 +1,8 @@
 // Server-side database queries for products
-import { supabase } from './supabase';
+import { supabase, supabaseAdmin, isSupabaseUnreachable } from './supabase';
 import { ProductExtended } from '../types/database';
+
+const PLACEHOLDER_IMAGE = '/products/placeholder.png';
 
 /**
  * Fetch all active products from database
@@ -13,6 +15,7 @@ export async function getAllProducts(): Promise<ProductExtended[]> {
     .order('created_at', { ascending: false });
 
   if (productsError) {
+    isSupabaseUnreachable(productsError);
     console.error('Error fetching products:', productsError);
     return [];
   }
@@ -57,7 +60,11 @@ export async function getProductBySlug(slug: string): Promise<ProductExtended | 
     .single();
 
   if (productError || !product) {
-    console.error('Error fetching product:', productError);
+    isSupabaseUnreachable(productError);
+    // PGRST116 = no rows (product not found); avoid logging as error
+    if (productError && productError.code !== 'PGRST116') {
+      console.error('Error fetching product:', productError);
+    }
     return null;
   }
 
@@ -98,6 +105,7 @@ export async function getProductsByCategory(category: string): Promise<ProductEx
     .order('created_at', { ascending: false});
 
   if (productsError || !products || products.length === 0) {
+    isSupabaseUnreachable(productsError);
     console.error('Error fetching products by category:', productsError);
     return [];
   }
@@ -135,6 +143,7 @@ export async function getFeaturedProducts(limit: number = 6): Promise<ProductExt
     .limit(limit);
 
   if (productsError || !products || products.length === 0) {
+    isSupabaseUnreachable(productsError);
     console.error('Error fetching featured products:', productsError);
     return [];
   }
@@ -177,6 +186,7 @@ export async function getRelatedProducts(
     .limit(limit);
 
   if (productsError || !products || products.length === 0) {
+    isSupabaseUnreachable(productsError);
     console.error('Error fetching related products:', productsError);
     return [];
   }
@@ -200,6 +210,101 @@ export async function getRelatedProducts(
   }));
 
   return transformProducts(enrichedProducts);
+}
+
+/** Coupon row from DB (snake_case) */
+interface DbCoupon {
+  id: string;
+  code: string;
+  discount_type: string;
+  discount_value: number;
+  min_order_value: number | null;
+  max_discount: number | null;
+  usage_limit: number | null;
+  usage_count: number;
+  valid_from: string;
+  valid_until: string;
+  is_active: boolean;
+}
+
+/**
+ * Fetch coupon by code (active only)
+ */
+export async function getCouponByCode(code: string): Promise<DbCoupon | null> {
+  const { data, error } = await supabase
+    .from('coupons')
+    .select('*')
+    .eq('code', code.toUpperCase().trim())
+    .eq('is_active', true)
+    .single();
+
+  if (error || !data) return null;
+  return data as unknown as DbCoupon;
+}
+
+/**
+ * Validate coupon and return discount amount for a given subtotal.
+ * Returns { discount, couponId } or { error }.
+ */
+export async function validateCouponAndGetDiscount(
+  code: string,
+  subtotal: number
+): Promise<{ discount: number; couponId: string } | { error: string }> {
+  const coupon = await getCouponByCode(code);
+  if (!coupon) return { error: 'Invalid or expired coupon' };
+
+  const now = new Date();
+  const validFrom = new Date(coupon.valid_from);
+  const validUntil = new Date(coupon.valid_until);
+  if (now < validFrom) return { error: 'Coupon not yet valid' };
+  if (now > validUntil) return { error: 'Coupon has expired' };
+
+  if (coupon.usage_limit != null && coupon.usage_count >= coupon.usage_limit) {
+    return { error: 'Coupon usage limit reached' };
+  }
+
+  const minOrder = coupon.min_order_value ?? 0;
+  if (subtotal < minOrder) {
+    return { error: `Minimum order value for this coupon is ₹${minOrder}` };
+  }
+
+  let discount: number;
+  if (coupon.discount_type === 'percentage') {
+    discount = (subtotal * Number(coupon.discount_value)) / 100;
+    if (coupon.max_discount != null && discount > coupon.max_discount) {
+      discount = coupon.max_discount;
+    }
+  } else {
+    discount = Number(coupon.discount_value);
+  }
+
+  if (discount <= 0) return { error: 'Invalid coupon' };
+  return { discount, couponId: coupon.id };
+}
+
+/**
+ * Increment coupon usage_count (call after order is placed).
+ */
+export async function incrementCouponUsage(couponId: string): Promise<void> {
+  const { data: row } = await supabaseAdmin.from('coupons').select('usage_count').eq('id', couponId).single();
+  const current = (row as { usage_count: number } | null)?.usage_count ?? 0;
+  await (supabaseAdmin as { from: (table: string) => ReturnType<typeof supabaseAdmin.from> })
+    .from('coupons').update({ usage_count: current + 1 } as Record<string, unknown>).eq('id', couponId);
+}
+
+/**
+ * Decrement variant stock (call after order is placed). Returns false if insufficient stock.
+ */
+export async function decrementVariantStock(variantId: string, quantity: number): Promise<boolean> {
+  const pv = (supabaseAdmin as { from: (table: string) => ReturnType<typeof supabaseAdmin.from> }).from('product_variants');
+  const { data: variant, error: fetchErr } = await pv.select('stock').eq('id', variantId).single();
+
+  if (fetchErr || !variant) return false;
+  const current = (variant as { stock: number }).stock;
+  if (current < quantity) return false;
+
+  const { error: updateErr } = await pv.update({ stock: current - quantity } as Record<string, unknown>).eq('id', variantId);
+  return !updateErr;
 }
 
 interface DbProduct {
@@ -263,7 +368,7 @@ function transformProduct(dbProduct: DbProduct): ProductExtended {
       weight: v.weight,
       isAvailable: v.is_available,
     })) || [],
-    images: dbProduct.images?.map((img) => img.url) || ['/products/placeholder.jpg'],
+    images: dbProduct.images?.map((img) => img.url) || [PLACEHOLDER_IMAGE],
     features: [],
     tags: dbProduct.tags || [],
     metaTitle: dbProduct.meta_title || `${dbProduct.name} | Tangry Spices`,
@@ -299,6 +404,7 @@ export async function searchProducts(query: string): Promise<ProductExtended[]> 
     .limit(20);
 
   if (productsError || !products || products.length === 0) {
+    isSupabaseUnreachable(productsError);
     console.error('Error searching products:', productsError);
     return [];
   }

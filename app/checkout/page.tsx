@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import Script from 'next/script';
 import { useRouter } from 'next/navigation';
 import { Header } from '@/components/layout/Header';
 import { MobileMenu } from '@/components/layout/MobileMenu';
@@ -11,7 +12,7 @@ import { PaymentOptions } from '@/components/ecommerce/PaymentOptions';
 import { OrderSummary } from '@/components/ecommerce/OrderSummary';
 import { useCart } from '@/lib/contexts/CartContext';
 import { Address, PaymentMethod } from '@/lib/types/database';
-import { generateOrderNumber } from '@/lib/utils/database';
+import { createOrder } from '@/lib/actions/orders';
 import { Check } from 'lucide-react';
 import Link from 'next/link';
 
@@ -24,6 +25,7 @@ export default function CheckoutPage() {
   const [currentStep, setCurrentStep] = useState<CheckoutStep>('shipping');
   const [shippingAddress, setShippingAddress] = useState<Address | null>(null);
   const [billingAddress, setBillingAddress] = useState<Address | null>(null);
+  const [customerEmail, setCustomerEmail] = useState<string>('');
   const [isProcessing, setIsProcessing] = useState(false);
   const [orderNumber, setOrderNumber] = useState<string>('');
 
@@ -51,28 +53,101 @@ export default function CheckoutPage() {
     );
   }
 
-  const handleShippingSubmit = (shipping: Address, billing: Address) => {
+  const handleShippingSubmit = (shipping: Address, billing: Address, _sameAsShipping: boolean, email: string) => {
     setShippingAddress(shipping);
     setBillingAddress(billing);
+    setCustomerEmail(email);
     setCurrentStep('payment');
   };
 
+  const createOrderPayload = () => ({
+    items: cart.items,
+    shippingAddress: shippingAddress!,
+    billingAddress: billingAddress!,
+    userEmail: customerEmail,
+    couponCode: cart.couponCode ?? undefined,
+  });
+
   const handlePaymentSubmit = async (paymentMethod: PaymentMethod) => {
+    if (!shippingAddress || !billingAddress) return;
     setIsProcessing(true);
 
     try {
-      // Simulate payment processing
-      // In production, this would call the payment gateway API
-      await new Promise(resolve => setTimeout(resolve, 2000));
+      if (paymentMethod === 'cod') {
+        const result = await createOrder({
+          ...createOrderPayload(),
+          paymentMethod: 'cod',
+        });
+        if (!result.success) {
+          alert(result.error || 'Failed to place order.');
+          return;
+        }
+        setOrderNumber(result.orderNumber);
+        clearCart();
+        setCurrentStep('confirmation');
+        return;
+      }
 
-      const newOrderNumber = generateOrderNumber();
-      setOrderNumber(newOrderNumber);
+      if (paymentMethod === 'razorpay') {
+        const amountInPaise = Math.round(cart.total * 100);
+        const createRes = await fetch('/api/razorpay/create-order', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ amountInPaise }),
+        });
+        const createData = await createRes.json();
+        if (!createRes.ok) {
+          alert(createData.error || 'Could not start payment.');
+          return;
+        }
+        const { orderId, keyId } = createData;
+        const Razorpay = (window as { Razorpay?: new (opts: object) => { open: () => void } }).Razorpay;
+        if (!Razorpay) {
+          alert('Payment script not loaded. Please refresh and try again.');
+          return;
+        }
+        const rzp = new Razorpay({
+          key: keyId,
+          order_id: orderId,
+          amount: amountInPaise,
+          currency: 'INR',
+          name: 'Tangry Spices',
+          handler: async (response: { razorpay_payment_id: string; razorpay_order_id: string; razorpay_signature: string }) => {
+            const verifyRes = await fetch('/api/razorpay/verify', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                razorpay_payment_id: response.razorpay_payment_id,
+                razorpay_order_id: response.razorpay_order_id,
+                razorpay_signature: response.razorpay_signature,
+                createOrderPayload: createOrderPayload(),
+              }),
+            });
+            const verifyData = await verifyRes.json();
+            if (!verifyRes.ok) {
+              alert(verifyData.error || 'Payment verification failed.');
+              return;
+            }
+            setOrderNumber(verifyData.orderNumber);
+            clearCart();
+            setCurrentStep('confirmation');
+          },
+          modal: { ondismiss: () => setIsProcessing(false) },
+        });
+        rzp.open();
+        return;
+      }
 
-      // TODO: Create order in database
-      // TODO: Send confirmation email
-      // TODO: Update inventory
-
-      // Clear cart and show confirmation
+      // Stripe / bank_transfer: create order with payment_status pending
+      const result = await createOrder({
+        ...createOrderPayload(),
+        paymentMethod,
+      });
+      if (!result.success) {
+        alert(result.error || 'Failed to place order.');
+        return;
+      }
+      setOrderNumber(result.orderNumber);
       clearCart();
       setCurrentStep('confirmation');
     } catch (error) {
@@ -91,6 +166,7 @@ export default function CheckoutPage() {
 
   return (
     <main className="text-gray-800 bg-[#FAFAFA] min-h-screen">
+      <Script src="https://checkout.razorpay.com/v1/checkout.js" strategy="lazyOnload" />
       <Header onMenuOpen={() => setIsMobileMenuOpen(true)} />
       <MobileMenu isOpen={isMobileMenuOpen} onClose={() => setIsMobileMenuOpen(false)} />
       <CartDrawer />

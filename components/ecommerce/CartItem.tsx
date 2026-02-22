@@ -4,7 +4,7 @@ import { Minus, Plus, Trash2 } from 'lucide-react';
 import { CartItem } from '@/lib/types/database';
 import { useCart } from '@/lib/contexts/CartContext';
 import { formatCurrency } from '@/lib/utils/database';
-import Image from 'next/image';
+import { ProductImage } from './ProductImage';
 
 interface CartItemProps {
   item: CartItem;
@@ -34,8 +34,8 @@ export const CartItemComponent = ({ item }: CartItemProps) => {
       {/* Product Image */}
       <div className="w-20 h-20 bg-gray-100 rounded-md overflow-hidden flex-shrink-0 relative">
         {item.image ? (
-          <Image 
-            src={item.image} 
+          <ProductImage
+            src={item.image}
             alt={item.productName}
             fill
             className="object-cover"

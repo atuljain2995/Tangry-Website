@@ -6,26 +6,29 @@ import { ProductExtended } from '@/lib/types/database';
 import { formatCurrency, calculateDiscountPercentage, getStockStatus } from '@/lib/utils/database';
 import { AddToCartButton } from './AddToCartButton';
 import Link from 'next/link';
-import Image from 'next/image';
+import { ProductImage } from './ProductImage';
 
 interface ProductCardProps {
   product: ProductExtended;
 }
+
+const PLACEHOLDER_IMAGE = '/products/placeholder.png';
 
 export const ProductCard = ({ product }: ProductCardProps) => {
   const [selectedVariantIndex, setSelectedVariantIndex] = useState(0);
   const selectedVariant = product.variants[selectedVariantIndex];
   const discountPercentage = calculateDiscountPercentage(selectedVariant.price, selectedVariant.compareAtPrice);
   const stockStatus = getStockStatus(selectedVariant.stock);
+  const imageSrc = product.images[0] || PLACEHOLDER_IMAGE;
 
   return (
     <div className="group bg-white rounded-3xl p-4 border border-gray-100 hover:border-gray-300 shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col">
       {/* Product Image */}
       <Link href={`/products/${product.slug}`}>
         <div className="relative h-64 bg-gradient-to-br from-orange-400 to-red-500 rounded-2xl overflow-hidden mb-6">
-          {product.images[0] ? (
-            <Image 
-              src={product.images[0]} 
+          {imageSrc ? (
+            <ProductImage
+              src={imageSrc}
               alt={product.name}
               fill
               className="object-cover group-hover:scale-110 group-hover:-rotate-3 transition-all duration-500"

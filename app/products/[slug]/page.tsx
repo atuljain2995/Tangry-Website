@@ -26,6 +26,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     };
   }
 
+  // Do not pass local image paths to OG (Next.js can validate and throw if file missing/invalid)
   return {
     title: product.metaTitle || `${product.name} | Tangry Spices`,
     description: product.metaDescription || product.description,
@@ -33,7 +34,6 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     openGraph: {
       title: product.name,
       description: product.description,
-      images: product.images.length > 0 ? [product.images[0]] : undefined,
     },
   };
 }

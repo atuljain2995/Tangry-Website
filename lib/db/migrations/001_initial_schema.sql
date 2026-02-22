@@ -15,8 +15,8 @@ CREATE TABLE IF NOT EXISTS users (
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
-CREATE INDEX idx_users_email ON users(email);
-CREATE INDEX idx_users_role ON users(role);
+CREATE INDEX IF NOT EXISTS idx_users_email ON users(email);
+CREATE INDEX IF NOT EXISTS idx_users_role ON users(role);
 
 -- Addresses table
 CREATE TABLE IF NOT EXISTS addresses (
@@ -36,7 +36,7 @@ CREATE TABLE IF NOT EXISTS addresses (
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
-CREATE INDEX idx_addresses_user_id ON addresses(user_id);
+CREATE INDEX IF NOT EXISTS idx_addresses_user_id ON addresses(user_id);
 
 -- Products table
 CREATE TABLE IF NOT EXISTS products (
@@ -65,10 +65,10 @@ CREATE TABLE IF NOT EXISTS products (
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
-CREATE INDEX idx_products_slug ON products(slug);
-CREATE INDEX idx_products_category ON products(category);
-CREATE INDEX idx_products_featured ON products(is_featured);
-CREATE INDEX idx_products_bestseller ON products(is_best_seller);
+CREATE INDEX IF NOT EXISTS idx_products_slug ON products(slug);
+CREATE INDEX IF NOT EXISTS idx_products_category ON products(category);
+CREATE INDEX IF NOT EXISTS idx_products_featured ON products(is_featured);
+CREATE INDEX IF NOT EXISTS idx_products_bestseller ON products(is_best_seller);
 
 -- Orders table
 CREATE TABLE IF NOT EXISTS orders (
@@ -95,10 +95,10 @@ CREATE TABLE IF NOT EXISTS orders (
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
-CREATE INDEX idx_orders_user_id ON orders(user_id);
-CREATE INDEX idx_orders_order_number ON orders(order_number);
-CREATE INDEX idx_orders_status ON orders(order_status);
-CREATE INDEX idx_orders_created_at ON orders(created_at DESC);
+CREATE INDEX IF NOT EXISTS idx_orders_user_id ON orders(user_id);
+CREATE INDEX IF NOT EXISTS idx_orders_order_number ON orders(order_number);
+CREATE INDEX IF NOT EXISTS idx_orders_status ON orders(order_status);
+CREATE INDEX IF NOT EXISTS idx_orders_created_at ON orders(created_at DESC);
 
 -- Reviews table
 CREATE TABLE IF NOT EXISTS reviews (
@@ -116,9 +116,9 @@ CREATE TABLE IF NOT EXISTS reviews (
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
-CREATE INDEX idx_reviews_product_id ON reviews(product_id);
-CREATE INDEX idx_reviews_user_id ON reviews(user_id);
-CREATE INDEX idx_reviews_rating ON reviews(rating);
+CREATE INDEX IF NOT EXISTS idx_reviews_product_id ON reviews(product_id);
+CREATE INDEX IF NOT EXISTS idx_reviews_user_id ON reviews(user_id);
+CREATE INDEX IF NOT EXISTS idx_reviews_rating ON reviews(rating);
 
 -- Coupons table
 CREATE TABLE IF NOT EXISTS coupons (
@@ -140,8 +140,8 @@ CREATE TABLE IF NOT EXISTS coupons (
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
-CREATE INDEX idx_coupons_code ON coupons(code);
-CREATE INDEX idx_coupons_active ON coupons(is_active);
+CREATE INDEX IF NOT EXISTS idx_coupons_code ON coupons(code);
+CREATE INDEX IF NOT EXISTS idx_coupons_active ON coupons(is_active);
 
 -- Email subscribers table
 CREATE TABLE IF NOT EXISTS email_subscribers (
@@ -154,8 +154,8 @@ CREATE TABLE IF NOT EXISTS email_subscribers (
     unsubscribed_at TIMESTAMP WITH TIME ZONE
 );
 
-CREATE INDEX idx_email_subscribers_email ON email_subscribers(email);
-CREATE INDEX idx_email_subscribers_active ON email_subscribers(is_active);
+CREATE INDEX IF NOT EXISTS idx_email_subscribers_email ON email_subscribers(email);
+CREATE INDEX IF NOT EXISTS idx_email_subscribers_active ON email_subscribers(is_active);
 
 -- B2B Quotes table
 CREATE TABLE IF NOT EXISTS b2b_quotes (
@@ -175,8 +175,8 @@ CREATE TABLE IF NOT EXISTS b2b_quotes (
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
-CREATE INDEX idx_b2b_quotes_status ON b2b_quotes(status);
-CREATE INDEX idx_b2b_quotes_created_at ON b2b_quotes(created_at DESC);
+CREATE INDEX IF NOT EXISTS idx_b2b_quotes_status ON b2b_quotes(status);
+CREATE INDEX IF NOT EXISTS idx_b2b_quotes_created_at ON b2b_quotes(created_at DESC);
 
 -- Wishlists table
 CREATE TABLE IF NOT EXISTS wishlists (
@@ -187,7 +187,7 @@ CREATE TABLE IF NOT EXISTS wishlists (
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
-CREATE INDEX idx_wishlists_user_id ON wishlists(user_id);
+CREATE INDEX IF NOT EXISTS idx_wishlists_user_id ON wishlists(user_id);
 
 -- Function to update updated_at timestamp
 CREATE OR REPLACE FUNCTION update_updated_at_column()
@@ -198,28 +198,36 @@ BEGIN
 END;
 $$ language 'plpgsql';
 
--- Create triggers for updated_at
+-- Create triggers for updated_at (drop first so re-run is safe)
+DROP TRIGGER IF EXISTS update_users_updated_at ON users;
 CREATE TRIGGER update_users_updated_at BEFORE UPDATE ON users
     FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 
+DROP TRIGGER IF EXISTS update_addresses_updated_at ON addresses;
 CREATE TRIGGER update_addresses_updated_at BEFORE UPDATE ON addresses
     FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 
+DROP TRIGGER IF EXISTS update_products_updated_at ON products;
 CREATE TRIGGER update_products_updated_at BEFORE UPDATE ON products
     FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 
+DROP TRIGGER IF EXISTS update_orders_updated_at ON orders;
 CREATE TRIGGER update_orders_updated_at BEFORE UPDATE ON orders
     FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 
+DROP TRIGGER IF EXISTS update_reviews_updated_at ON reviews;
 CREATE TRIGGER update_reviews_updated_at BEFORE UPDATE ON reviews
     FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 
+DROP TRIGGER IF EXISTS update_coupons_updated_at ON coupons;
 CREATE TRIGGER update_coupons_updated_at BEFORE UPDATE ON coupons
     FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 
+DROP TRIGGER IF EXISTS update_b2b_quotes_updated_at ON b2b_quotes;
 CREATE TRIGGER update_b2b_quotes_updated_at BEFORE UPDATE ON b2b_quotes
     FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 
+DROP TRIGGER IF EXISTS update_wishlists_updated_at ON wishlists;
 CREATE TRIGGER update_wishlists_updated_at BEFORE UPDATE ON wishlists
     FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 
@@ -231,52 +239,66 @@ ALTER TABLE orders ENABLE ROW LEVEL SECURITY;
 ALTER TABLE reviews ENABLE ROW LEVEL SECURITY;
 ALTER TABLE wishlists ENABLE ROW LEVEL SECURITY;
 
--- Users can view and update their own data
+-- Users can view and update their own data (drop first so re-run is safe)
+DROP POLICY IF EXISTS "Users can view own profile" ON users;
 CREATE POLICY "Users can view own profile" ON users
     FOR SELECT USING (auth.uid() = id);
 
+DROP POLICY IF EXISTS "Users can update own profile" ON users;
 CREATE POLICY "Users can update own profile" ON users
     FOR UPDATE USING (auth.uid() = id);
 
 -- Users can manage their own addresses
+DROP POLICY IF EXISTS "Users can view own addresses" ON addresses;
 CREATE POLICY "Users can view own addresses" ON addresses
     FOR SELECT USING (auth.uid() = user_id);
 
+DROP POLICY IF EXISTS "Users can insert own addresses" ON addresses;
 CREATE POLICY "Users can insert own addresses" ON addresses
     FOR INSERT WITH CHECK (auth.uid() = user_id);
 
+DROP POLICY IF EXISTS "Users can update own addresses" ON addresses;
 CREATE POLICY "Users can update own addresses" ON addresses
     FOR UPDATE USING (auth.uid() = user_id);
 
+DROP POLICY IF EXISTS "Users can delete own addresses" ON addresses;
 CREATE POLICY "Users can delete own addresses" ON addresses
     FOR DELETE USING (auth.uid() = user_id);
 
 -- Users can view their own orders
+DROP POLICY IF EXISTS "Users can view own orders" ON orders;
 CREATE POLICY "Users can view own orders" ON orders
     FOR SELECT USING (auth.uid() = user_id);
 
 -- Users can create reviews
+DROP POLICY IF EXISTS "Users can create reviews" ON reviews;
 CREATE POLICY "Users can create reviews" ON reviews
     FOR INSERT WITH CHECK (auth.uid() = user_id);
 
+DROP POLICY IF EXISTS "Users can view all reviews" ON reviews;
 CREATE POLICY "Users can view all reviews" ON reviews
     FOR SELECT USING (true);
 
 -- Users can manage their wishlist
+DROP POLICY IF EXISTS "Users can manage own wishlist" ON wishlists;
 CREATE POLICY "Users can manage own wishlist" ON wishlists
     USING (auth.uid() = user_id);
 
 -- Products and coupons are publicly readable
+DROP POLICY IF EXISTS "Products are publicly readable" ON products;
 CREATE POLICY "Products are publicly readable" ON products
     FOR SELECT USING (true);
 
+DROP POLICY IF EXISTS "Active coupons are publicly readable" ON coupons;
 CREATE POLICY "Active coupons are publicly readable" ON coupons
     FOR SELECT USING (is_active = true);
 
 -- Email subscribers can manage their subscription
+DROP POLICY IF EXISTS "Anyone can subscribe" ON email_subscribers;
 CREATE POLICY "Anyone can subscribe" ON email_subscribers
     FOR INSERT WITH CHECK (true);
 
+DROP POLICY IF EXISTS "Subscribers can update their data" ON email_subscribers;
 CREATE POLICY "Subscribers can update their data" ON email_subscribers
     FOR UPDATE USING (auth.jwt() ->> 'email' = email);
 

@@ -107,7 +107,8 @@ INSERT INTO products (
     ARRAY['biryani masala', 'hyderabadi biryani spice', 'buy biryani masala online'],
     true, false, true,
     4.8, 923, 1
-);
+)
+ON CONFLICT (slug) DO NOTHING;
 
 -- Create sample coupon
 INSERT INTO coupons (
@@ -132,5 +133,6 @@ INSERT INTO coupons (
     NOW(),
     NOW() + INTERVAL '30 days',
     true
-);
+)
+ON CONFLICT (code) DO NOTHING;
 

@@ -12,7 +12,8 @@ SELECT
     500,
     50,
     true
-FROM products WHERE slug = 'garam-masala';
+FROM products WHERE slug = 'garam-masala'
+ON CONFLICT (sku) DO NOTHING;
 
 INSERT INTO product_variants (product_id, name, sku, price, compare_at_price, stock, weight, is_available)
 SELECT 
@@ -24,7 +25,8 @@ SELECT
     450,
     100,
     true
-FROM products WHERE slug = 'garam-masala';
+FROM products WHERE slug = 'garam-masala'
+ON CONFLICT (sku) DO NOTHING;
 
 INSERT INTO product_variants (product_id, name, sku, price, compare_at_price, stock, weight, is_available)
 SELECT 
@@ -36,7 +38,8 @@ SELECT
     300,
     200,
     true
-FROM products WHERE slug = 'garam-masala';
+FROM products WHERE slug = 'garam-masala'
+ON CONFLICT (sku) DO NOTHING;
 
 -- Insert variants for Turmeric Powder
 INSERT INTO product_variants (product_id, name, sku, price, compare_at_price, stock, weight, is_available)
@@ -49,7 +52,8 @@ SELECT
     800,
     50,
     true
-FROM products WHERE slug = 'turmeric-powder';
+FROM products WHERE slug = 'turmeric-powder'
+ON CONFLICT (sku) DO NOTHING;
 
 INSERT INTO product_variants (product_id, name, sku, price, compare_at_price, stock, weight, is_available)
 SELECT 
@@ -61,7 +65,8 @@ SELECT
     750,
     100,
     true
-FROM products WHERE slug = 'turmeric-powder';
+FROM products WHERE slug = 'turmeric-powder'
+ON CONFLICT (sku) DO NOTHING;
 
 INSERT INTO product_variants (product_id, name, sku, price, compare_at_price, stock, weight, is_available)
 SELECT 
@@ -73,7 +78,8 @@ SELECT
     600,
     200,
     true
-FROM products WHERE slug = 'turmeric-powder';
+FROM products WHERE slug = 'turmeric-powder'
+ON CONFLICT (sku) DO NOTHING;
 
 INSERT INTO product_variants (product_id, name, sku, price, compare_at_price, stock, weight, is_available)
 SELECT 
@@ -85,7 +91,8 @@ SELECT
     200,
     500,
     true
-FROM products WHERE slug = 'turmeric-powder';
+FROM products WHERE slug = 'turmeric-powder'
+ON CONFLICT (sku) DO NOTHING;
 
 -- Insert variants for Eazy Chef - Paneer Tikka Masala
 INSERT INTO product_variants (product_id, name, sku, price, compare_at_price, stock, weight, is_available)
@@ -98,7 +105,8 @@ SELECT
     300,
     50,
     true
-FROM products WHERE slug = 'eazy-chef-paneer-tikka-masala';
+FROM products WHERE slug = 'eazy-chef-paneer-tikka-masala'
+ON CONFLICT (sku) DO NOTHING;
 
 INSERT INTO product_variants (product_id, name, sku, price, compare_at_price, stock, weight, is_available)
 SELECT 
@@ -110,7 +118,8 @@ SELECT
     250,
     100,
     true
-FROM products WHERE slug = 'eazy-chef-paneer-tikka-masala';
+FROM products WHERE slug = 'eazy-chef-paneer-tikka-masala'
+ON CONFLICT (sku) DO NOTHING;
 
 -- Insert variants for Red Chilli Powder
 INSERT INTO product_variants (product_id, name, sku, price, compare_at_price, stock, weight, is_available)
@@ -123,7 +132,8 @@ SELECT
     900,
     100,
     true
-FROM products WHERE slug = 'red-chilli-powder';
+FROM products WHERE slug = 'red-chilli-powder'
+ON CONFLICT (sku) DO NOTHING;
 
 INSERT INTO product_variants (product_id, name, sku, price, compare_at_price, stock, weight, is_available)
 SELECT 
@@ -135,7 +145,8 @@ SELECT
     700,
     200,
     true
-FROM products WHERE slug = 'red-chilli-powder';
+FROM products WHERE slug = 'red-chilli-powder'
+ON CONFLICT (sku) DO NOTHING;
 
 INSERT INTO product_variants (product_id, name, sku, price, compare_at_price, stock, weight, is_available)
 SELECT 
@@ -147,7 +158,8 @@ SELECT
     300,
     500,
     true
-FROM products WHERE slug = 'red-chilli-powder';
+FROM products WHERE slug = 'red-chilli-powder'
+ON CONFLICT (sku) DO NOTHING;
 
 -- Insert variants for Biryani Masala
 INSERT INTO product_variants (product_id, name, sku, price, compare_at_price, stock, weight, is_available)
@@ -160,7 +172,8 @@ SELECT
     400,
     50,
     true
-FROM products WHERE slug = 'biryani-masala';
+FROM products WHERE slug = 'biryani-masala'
+ON CONFLICT (sku) DO NOTHING;
 
 INSERT INTO product_variants (product_id, name, sku, price, compare_at_price, stock, weight, is_available)
 SELECT 
@@ -172,7 +185,8 @@ SELECT
     350,
     100,
     true
-FROM products WHERE slug = 'biryani-masala';
+FROM products WHERE slug = 'biryani-masala'
+ON CONFLICT (sku) DO NOTHING;
 
 INSERT INTO product_variants (product_id, name, sku, price, compare_at_price, stock, weight, is_available)
 SELECT 
@@ -184,7 +198,8 @@ SELECT
     250,
     200,
     true
-FROM products WHERE slug = 'biryani-masala';
+FROM products WHERE slug = 'biryani-masala'
+ON CONFLICT (sku) DO NOTHING;
 
 -- Verify the inserts
 SELECT 

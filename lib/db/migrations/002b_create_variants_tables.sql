@@ -17,9 +17,9 @@ CREATE TABLE IF NOT EXISTS product_variants (
 );
 
 -- Create indexes for product_variants
-CREATE INDEX idx_product_variants_product_id ON product_variants(product_id);
-CREATE INDEX idx_product_variants_sku ON product_variants(sku);
-CREATE INDEX idx_product_variants_available ON product_variants(is_available);
+CREATE INDEX IF NOT EXISTS idx_product_variants_product_id ON product_variants(product_id);
+CREATE INDEX IF NOT EXISTS idx_product_variants_sku ON product_variants(sku);
+CREATE INDEX IF NOT EXISTS idx_product_variants_available ON product_variants(is_available);
 
 -- Create product_images table
 CREATE TABLE IF NOT EXISTS product_images (
@@ -32,17 +32,18 @@ CREATE TABLE IF NOT EXISTS product_images (
 );
 
 -- Create index for product_images
-CREATE INDEX idx_product_images_product_id ON product_images(product_id);
-CREATE INDEX idx_product_images_order ON product_images(display_order);
+CREATE INDEX IF NOT EXISTS idx_product_images_product_id ON product_images(product_id);
+CREATE INDEX IF NOT EXISTS idx_product_images_order ON product_images(display_order);
 
--- Add some default images for existing products
+-- Add default images only for products that don't have any images yet (safe to re-run)
 INSERT INTO product_images (product_id, url, alt_text, display_order)
 SELECT 
-    id,
-    '/products/' || slug || '.jpg',
-    name || ' - Premium Indian Spice',
+    p.id,
+    '/products/' || p.slug || '.jpg',
+    p.name || ' - Premium Indian Spice',
     0
-FROM products;
+FROM products p
+WHERE NOT EXISTS (SELECT 1 FROM product_images pi WHERE pi.product_id = p.id);
 
 -- Verify tables created
 SELECT 
