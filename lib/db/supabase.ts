@@ -52,12 +52,22 @@ export function isSupabaseUnreachable(error: unknown): boolean {
     details.includes('getaddrinfo');
   if (isNetworkError && !hasLoggedConnectivityWarning) {
     hasLoggedConnectivityWarning = true;
-    console.warn(
-      '[Supabase] Cannot reach Supabase (network/DNS). Check:\n' +
-        '  • Internet connection and VPN\n' +
-        '  • NEXT_PUBLIC_SUPABASE_URL in .env.local\n' +
-        '  • Supabase project is not paused (dashboard.supabase.com)'
-    );
+    if (!isSupabaseConfigured) {
+      console.warn(
+        '[Supabase] Not configured. Add to .env.local:\n' +
+          '  NEXT_PUBLIC_SUPABASE_URL=https://YOUR_PROJECT_REF.supabase.co\n' +
+          '  NEXT_PUBLIC_SUPABASE_ANON_KEY=your_anon_key\n' +
+          'Get these from Supabase Dashboard → Project Settings → API.'
+      );
+    } else {
+      console.warn(
+        '[Supabase] Cannot reach Supabase (network/DNS). Check:\n' +
+          '  • Internet connection and VPN\n' +
+          '  • NEXT_PUBLIC_SUPABASE_URL is correct (https://YOUR_REF.supabase.co)\n' +
+          '  • Project not paused: dashboard.supabase.com → your project\n' +
+          '  • Run "npm run test-db" from this repo to verify connection'
+      );
+    }
   }
   return isNetworkError;
 }
