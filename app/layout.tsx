@@ -3,6 +3,7 @@ import "./globals.css";
 import { CartProvider } from "@/lib/contexts/CartContext";
 import { Analytics } from "@/components/analytics/Analytics";
 import { WhatsAppButton } from "@/components/ui/WhatsAppButton";
+import { SpeedInsights } from "@vercel/speed-insights/next"
 
 const poppins = Poppins({
   subsets: ["latin"],
@@ -85,6 +86,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="en">
       <head>
         <Analytics />
+        <SpeedInsights />
       </head>
       <body className={`${poppins.variable} ${playfair.variable} font-sans`}>
         <CartProvider>
