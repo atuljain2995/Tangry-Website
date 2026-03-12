@@ -313,6 +313,7 @@ interface DbProduct {
   name: string;
   description: string;
   category: string;
+  subcategory?: string | null;
   tags?: string[];
   meta_title?: string;
   meta_description?: string;
@@ -346,6 +347,54 @@ interface DbImage {
   id: string;
   product_id: string;
   url: string;
+  alt_text?: string | null;
+  display_order?: number | null;
+}
+
+/** Product + images (with ids) + variants for admin edit */
+export interface ProductForAdmin {
+  product: DbProduct;
+  images: DbImage[];
+  variants: DbVariant[];
+}
+
+/**
+ * Fetch a single product by id for admin edit (includes image ids)
+ */
+export async function getProductByIdForAdmin(productId: string): Promise<ProductForAdmin | null> {
+  const { data: product, error: productError } = await supabaseAdmin
+    .from('products')
+    .select('*')
+    .eq('id', productId)
+    .single();
+
+  if (productError || !product) {
+    isSupabaseUnreachable(productError);
+    if (productError && productError.code !== 'PGRST116') {
+      console.error('Error fetching product for admin:', productError);
+    }
+    return null;
+  }
+
+  const typedProduct = product as unknown as DbProduct;
+
+  const { data: variants } = await supabaseAdmin
+    .from('product_variants')
+    .select('*')
+    .eq('product_id', productId)
+    .order('weight', { ascending: true });
+
+  const { data: images } = await supabaseAdmin
+    .from('product_images')
+    .select('*')
+    .eq('product_id', productId)
+    .order('display_order', { ascending: true });
+
+  return {
+    product: typedProduct,
+    images: (images as unknown as DbImage[]) || [],
+    variants: (variants as unknown as DbVariant[]) || [],
+  };
 }
 
 /**

@@ -1,0 +1,56 @@
+'use client';
+
+import React from 'react';
+import Link from 'next/link';
+import { Package, Pencil } from 'lucide-react';
+import type { ProductExtended } from '@/lib/types/database';
+
+function ProductRowImage({ src, alt }: { src: string; alt: string }) {
+  const [url, setUrl] = React.useState(src);
+  return (
+    <img
+      src={url}
+      alt={alt}
+      className="w-12 h-12 object-cover rounded"
+      onError={() => setUrl('/products/placeholder.png')}
+    />
+  );
+}
+
+export function AdminProductList({ products }: { products: ProductExtended[] }) {
+  return (
+    <ul className="space-y-3">
+      {products.length === 0 ? (
+        <li className="text-gray-500">No products found. Run migrations and seed.</li>
+      ) : (
+        products.map((p) => (
+          <li
+            key={p.id}
+            className="flex items-center justify-between bg-white rounded-lg border border-gray-200 p-4 shadow-sm"
+          >
+            <div className="flex items-center gap-4">
+              {p.images?.[0] ? (
+                <ProductRowImage src={p.images[0]} alt={p.name} />
+              ) : (
+                <div className="w-12 h-12 bg-gray-200 rounded flex items-center justify-center">
+                  <Package className="w-6 h-6 text-gray-400" />
+                </div>
+              )}
+              <div>
+                <span className="font-medium text-gray-900">{p.name}</span>
+                <span className="text-gray-500 text-sm block">{p.category}</span>
+              </div>
+            </div>
+            <Link
+              href={`/admin/products/${p.id}`}
+              className="inline-flex items-center gap-1 text-sm font-medium text-orange-600 hover:text-orange-700"
+            >
+              <Pencil className="w-4 h-4" />
+              Edit
+            </Link>
+          </li>
+        ))
+      )}
+    </ul>
+  );
+}

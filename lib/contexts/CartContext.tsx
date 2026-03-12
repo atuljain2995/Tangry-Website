@@ -1,6 +1,6 @@
 'use client';
 
-import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import React, { createContext, useContext, useState, useEffect, useRef, ReactNode } from 'react';
 import { Cart, CartItem } from '../types/database';
 import { calculateCartTotals, calculateShipping } from '../utils/database';
 
@@ -22,11 +22,13 @@ const CartContext = createContext<CartContextType | undefined>(undefined);
 
 const CART_STORAGE_KEY = 'tangry_cart';
 
-function getInitialCart(): Cart {
-  if (typeof window === 'undefined') {
-    return createEmptyCart();
-  }
+/** SSR-safe: same value on server and client to avoid hydration mismatch (fixes hard-refresh break). */
+function getSSRSafeInitialCart(): Cart {
+  return createEmptyCart();
+}
 
+function loadCartFromStorage(): Cart | null {
+  if (typeof window === 'undefined') return null;
   try {
     const stored = localStorage.getItem(CART_STORAGE_KEY);
     if (stored) {
@@ -40,8 +42,7 @@ function getInitialCart(): Cart {
   } catch (error) {
     console.error('Error loading cart from storage:', error);
   }
-
-  return createEmptyCart();
+  return null;
 }
 
 function createEmptyCart(): Cart {
@@ -63,14 +64,21 @@ function generateCartId(): string {
 }
 
 export function CartProvider({ children }: { children: ReactNode }) {
-  const [cart, setCart] = useState<Cart>(getInitialCart);
+  const [cart, setCart] = useState<Cart>(getSSRSafeInitialCart);
   const [isCartOpen, setIsCartOpen] = useState(false);
+  const hasHydrated = useRef(false);
 
-  // Save cart to localStorage whenever it changes
+  // After mount, load cart from localStorage (avoids hydration mismatch on hard refresh)
   useEffect(() => {
-    if (typeof window !== 'undefined') {
-      localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(cart));
-    }
+    const stored = loadCartFromStorage();
+    if (stored) setCart(stored);
+    hasHydrated.current = true;
+  }, []);
+
+  // Save cart to localStorage when it changes (only after we've run hydration so we don't overwrite with empty)
+  useEffect(() => {
+    if (!hasHydrated.current || typeof window === 'undefined') return;
+    localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(cart));
   }, [cart]);
 
   const updateCart = (updater: (cart: Cart) => Cart) => {

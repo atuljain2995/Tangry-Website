@@ -1,6 +1,7 @@
 import { Poppins, Playfair_Display } from "next/font/google";
 import "./globals.css";
 import { CartProvider } from "@/lib/contexts/CartContext";
+import { AuthProvider } from "@/lib/contexts/AuthContext";
 import { Analytics } from "@/components/analytics/Analytics";
 import { WhatsAppButton } from "@/components/ui/WhatsAppButton";
 import { SpeedInsights } from "@vercel/speed-insights/next"
@@ -90,8 +91,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       </head>
       <body className={`${poppins.variable} ${playfair.variable} font-sans`}>
         <CartProvider>
-          {children}
-          <WhatsAppButton />
+          <AuthProvider>
+            {children}
+            <WhatsAppButton />
+          </AuthProvider>
         </CartProvider>
       </body>
     </html>
