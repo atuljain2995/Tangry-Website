@@ -43,9 +43,9 @@ export function AdminProductList({ products }: { products: ProductExtended[] }) 
             </div>
             <Link
               href={`/admin/products/${p.id}`}
-              className="inline-flex items-center gap-1 text-sm font-medium text-orange-600 hover:text-orange-700"
+              className="inline-flex min-h-[44px] min-w-[44px] items-center justify-center gap-1 rounded-lg px-3 text-sm font-medium text-orange-600 hover:bg-orange-50 hover:text-orange-700 touch-manipulation"
             >
-              <Pencil className="w-4 h-4" />
+              <Pencil className="h-4 w-4" />
               Edit
             </Link>
           </li>

@@ -7,6 +7,9 @@ interface PageProps {
   params: Promise<{ slug: string }>;
 }
 
+// Always fetch fresh data so product image updates from admin show immediately
+export const dynamic = 'force-dynamic';
+
 // Generate static params for all products
 export async function generateStaticParams() {
   const products = await getAllProducts();

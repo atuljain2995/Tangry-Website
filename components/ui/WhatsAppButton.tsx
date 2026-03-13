@@ -6,8 +6,7 @@ import { useState } from 'react';
 export const WhatsAppButton = () => {
   const [isHovered, setIsHovered] = useState(false);
   
-  // Replace with actual WhatsApp number
-  const whatsappNumber = '919876543210'; // Format: Country code + number without +
+  const whatsappNumber = '917733009952'; // +91 7733009952
   const message = encodeURIComponent('Hi! I have a question about Tangry Spices.');
   const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${message}`;
 

@@ -1,5 +1,6 @@
 'use server';
 
+import { revalidatePath } from 'next/cache';
 import { supabaseAdmin } from '@/lib/db/supabase';
 import {
   validateCouponAndGetDiscount,
@@ -108,4 +109,49 @@ export async function createOrder(payload: CreateOrderPayload): Promise<CreateOr
   }
 
   return { success: true, orderNumber };
+}
+
+const VALID_ORDER_STATUSES = ['pending', 'confirmed', 'processing', 'shipped', 'delivered', 'cancelled', 'refunded'] as const;
+
+export async function updateOrderStatus(
+  orderId: string,
+  orderStatus: string
+): Promise<{ success: true } | { success: false; error: string }> {
+  if (!VALID_ORDER_STATUSES.includes(orderStatus as (typeof VALID_ORDER_STATUSES)[number])) {
+    return { success: false, error: 'Invalid status' };
+  }
+  const { error } = await (supabaseAdmin as any)
+    .from('orders')
+    .update({ order_status: orderStatus, updated_at: new Date().toISOString() })
+    .eq('id', orderId);
+  if (error) {
+    console.error('updateOrderStatus error:', error);
+    return { success: false, error: (error as { message?: string })?.message ?? 'Update failed' };
+  }
+  revalidatePath('/admin');
+  revalidatePath('/admin/orders');
+  revalidatePath(`/admin/orders/${orderId}`);
+  return { success: true };
+}
+
+export async function setOrderTrackingNumber(
+  orderId: string,
+  trackingNumber: string | null
+): Promise<{ success: true } | { success: false; error: string }> {
+  const { error } = await (supabaseAdmin as any)
+    .from('orders')
+    .update({
+      tracking_number: trackingNumber?.trim() || null,
+      updated_at: new Date().toISOString(),
+      ...(trackingNumber?.trim() ? { order_status: 'shipped' } : {}),
+    })
+    .eq('id', orderId);
+  if (error) {
+    console.error('setOrderTrackingNumber error:', error);
+    return { success: false, error: (error as { message?: string })?.message ?? 'Update failed' };
+  }
+  revalidatePath('/admin');
+  revalidatePath('/admin/orders');
+  revalidatePath(`/admin/orders/${orderId}`);
+  return { success: true };
 }

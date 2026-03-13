@@ -32,11 +32,12 @@ export async function getAllProducts(): Promise<ProductExtended[]> {
     .select('*')
     .in('product_id', productIds);
 
-  // Fetch all images for these products
+  // Fetch all images for these products (ordered by display_order)
   const { data: images } = await supabase
     .from('product_images')
     .select('*')
-    .in('product_id', productIds);
+    .in('product_id', productIds)
+    .order('display_order', { ascending: true });
 
   // Combine the data
   const enrichedProducts: DbProduct[] = typedProducts.map(product => ({
@@ -77,13 +78,14 @@ export async function getProductBySlug(slug: string): Promise<ProductExtended | 
     .select('*')
     .eq('product_id', typedProduct.id);
 
-  // Fetch images
+  // Fetch images (ordered by display_order so first image is correct)
   const { data: images } = await supabase
     .from('product_images')
     .select('*')
-    .eq('product_id', typedProduct.id);
+    .eq('product_id', typedProduct.id)
+    .order('display_order', { ascending: true });
 
-  // Combine the data
+  // Use product_images only; ignore products.images column so admin uploads are reflected
   const enrichedProduct: DbProduct = {
     ...typedProduct,
     variants: (variants as unknown as DbVariant[]) || [],
@@ -417,7 +419,10 @@ function transformProduct(dbProduct: DbProduct): ProductExtended {
       weight: v.weight,
       isAvailable: v.is_available,
     })) || [],
-    images: dbProduct.images?.map((img) => img.url) || [PLACEHOLDER_IMAGE],
+    images: (dbProduct.images || [])
+      .sort((a, b) => (a.display_order ?? 0) - (b.display_order ?? 0))
+      .map((img) => img.url)
+      .filter(Boolean) || [PLACEHOLDER_IMAGE],
     features: [],
     tags: dbProduct.tags || [],
     metaTitle: dbProduct.meta_title || `${dbProduct.name} | Tangry Spices`,
@@ -477,5 +482,180 @@ export async function searchProducts(query: string): Promise<ProductExtended[]> 
   }));
 
   return transformProducts(enrichedProducts);
+}
+
+// ——— Admin dashboard ———
+
+export type AdminOrderRow = {
+  id: string;
+  order_number: string;
+  user_email: string;
+  total: number;
+  order_status: string;
+  payment_status: string;
+  created_at: string;
+};
+
+/**
+ * Fetch recent orders for admin dashboard (and orders list)
+ */
+export async function getOrdersForAdmin(limit = 10): Promise<AdminOrderRow[]> {
+  const { data, error } = await supabaseAdmin
+    .from('orders')
+    .select('id, order_number, user_email, total, order_status, payment_status, created_at')
+    .order('created_at', { ascending: false })
+    .limit(limit);
+
+  if (error) {
+    isSupabaseUnreachable(error);
+    console.error('Error fetching orders for admin:', error);
+    return [];
+  }
+  return (data as AdminOrderRow[]) ?? [];
+}
+
+/**
+ * Count products for admin dashboard
+ */
+export async function getProductsCount(): Promise<number> {
+  const { count, error } = await supabaseAdmin
+    .from('products')
+    .select('*', { count: 'exact', head: true });
+
+  if (error) {
+    isSupabaseUnreachable(error);
+    return 0;
+  }
+  return count ?? 0;
+}
+
+/**
+ * Count product variants with stock below threshold (default 10)
+ */
+export async function getLowStockVariantsCount(threshold = 10): Promise<number> {
+  const { data, error } = await supabaseAdmin
+    .from('product_variants')
+    .select('id')
+    .lt('stock', threshold)
+    .eq('is_available', true);
+
+  if (error) {
+    isSupabaseUnreachable(error);
+    return 0;
+  }
+  return data?.length ?? 0;
+}
+
+/**
+ * Sum of order totals for today (for dashboard) — excludes cancelled/refunded.
+ * Uses UTC midnight so the range is consistent regardless of server timezone and
+ * matches how created_at is stored (timestamp with time zone in UTC).
+ */
+export async function getOrdersTotalToday(): Promise<number> {
+  const startOfDay = new Date();
+  startOfDay.setUTCHours(0, 0, 0, 0);
+  const iso = startOfDay.toISOString();
+
+  const { data, error } = await supabaseAdmin
+    .from('orders')
+    .select('total, order_status')
+    .gte('created_at', iso);
+
+  if (error) {
+    isSupabaseUnreachable(error);
+    return 0;
+  }
+  const rows = (data as { total: number; order_status: string }[]) ?? [];
+  const total = rows
+    .filter((o) => o.order_status !== 'cancelled' && o.order_status !== 'refunded')
+    .reduce((sum, o) => sum + Number(o.total), 0);
+  return total;
+}
+
+export type AdminUserRow = {
+  id: string;
+  email: string;
+  name: string | null;
+  role: string;
+  created_at: string;
+};
+
+export async function getUsersForAdmin(): Promise<AdminUserRow[]> {
+  const { data, error } = await supabaseAdmin
+    .from('users')
+    .select('id, email, name, role, created_at')
+    .order('created_at', { ascending: false });
+
+  if (error) {
+    isSupabaseUnreachable(error);
+    console.error('Error fetching users for admin:', error);
+    return [];
+  }
+  return (data as AdminUserRow[]) ?? [];
+}
+
+export type AdminCouponRow = {
+  id: string;
+  code: string;
+  description: string;
+  discount_type: string;
+  discount_value: number;
+  min_order_value: number | null;
+  max_discount: number | null;
+  usage_limit: number | null;
+  usage_count: number;
+  valid_from: string;
+  valid_until: string;
+  is_active: boolean;
+  created_at: string;
+};
+
+export async function getCouponsForAdmin(): Promise<AdminCouponRow[]> {
+  const { data, error } = await supabaseAdmin
+    .from('coupons')
+    .select('id, code, description, discount_type, discount_value, min_order_value, max_discount, usage_limit, usage_count, valid_from, valid_until, is_active, created_at')
+    .order('created_at', { ascending: false });
+
+  if (error) {
+    isSupabaseUnreachable(error);
+    console.error('Error fetching coupons for admin:', error);
+    return [];
+  }
+  return (data as AdminCouponRow[]) ?? [];
+}
+
+export async function getCouponByIdForAdmin(id: string): Promise<AdminCouponRow | null> {
+  const { data, error } = await supabaseAdmin
+    .from('coupons')
+    .select('id, code, description, discount_type, discount_value, min_order_value, max_discount, usage_limit, usage_count, valid_from, valid_until, is_active, created_at')
+    .eq('id', id)
+    .single();
+
+  if (error || !data) return null;
+  return data as unknown as AdminCouponRow;
+}
+
+export type AdminInquiryRow = {
+  id: string;
+  name: string;
+  email: string;
+  phone: string | null;
+  subject: string | null;
+  message: string;
+  created_at: string;
+};
+
+export async function getContactInquiriesForAdmin(): Promise<AdminInquiryRow[]> {
+  const { data, error } = await (supabaseAdmin as unknown as { from: (t: string) => ReturnType<typeof supabaseAdmin.from> })
+    .from('contact_inquiries')
+    .select('id, name, email, phone, subject, message, created_at')
+    .order('created_at', { ascending: false });
+
+  if (error) {
+    isSupabaseUnreachable(error as { message?: string });
+    console.error('Error fetching contact inquiries:', error);
+    return [];
+  }
+  return (data as AdminInquiryRow[]) ?? [];
 }
 
