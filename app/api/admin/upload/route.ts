@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { writeFile, mkdir } from 'fs/promises';
 import path from 'path';
 import { requireAdmin } from '@/lib/auth/user';
+import { uploadProductImage } from '@/lib/storage';
 
 const UPLOAD_DIR = 'public/products';
 const MAX_SIZE_BYTES = 5 * 1024 * 1024; // 5MB
@@ -23,7 +24,8 @@ function getExtension(mime: string, filename: string): string {
 /**
  * POST /api/admin/upload
  * FormData field: "file" (image file)
- * Returns { url: "/products/xxx.jpg" } on success. Admin only.
+ * Returns { url: "https://... or /products/xxx.jpg" } on success. Admin only.
+ * Uses R2 (if configured) or Supabase Storage; otherwise falls back to public/products (local dev only).
  */
 export async function POST(request: NextRequest) {
   const profile = await requireAdmin();
@@ -50,12 +52,18 @@ export async function POST(request: NextRequest) {
     const baseName = `${Date.now()}-${Math.random().toString(36).slice(2, 10)}`;
     const fileName = `${baseName}${ext}`;
 
+    const bytes = await file.arrayBuffer();
+    const buffer = Buffer.from(bytes);
+
+    const storageUrl = await uploadProductImage(buffer, fileName, file.type);
+    if (storageUrl) {
+      return NextResponse.json({ url: storageUrl });
+    }
+
+    // Fallback: local filesystem (local dev only; not persisted on Vercel)
     const dir = path.join(process.cwd(), UPLOAD_DIR);
     await mkdir(dir, { recursive: true });
     const filePath = path.join(dir, fileName);
-
-    const bytes = await file.arrayBuffer();
-    const buffer = Buffer.from(bytes);
     await writeFile(filePath, buffer);
 
     const url = `/products/${fileName}`;
