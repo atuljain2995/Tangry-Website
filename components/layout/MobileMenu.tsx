@@ -2,6 +2,7 @@
 
 import { X } from 'lucide-react';
 import { NavLink } from '../ui/NavLink';
+import { showBlogInNav, showRecipesInNav } from '@/lib/data/nav-flags';
 
 interface MobileMenuProps {
   isOpen: boolean;
@@ -23,8 +24,12 @@ export const MobileMenu = ({ isOpen, onClose }: MobileMenuProps) => {
       </div>
       <NavLink href="/#our-story" isMobile onClick={onClose}>Our Story</NavLink>
       <NavLink href="/products" isMobile onClick={onClose}>Products</NavLink>
-      <NavLink href="/recipes" isMobile onClick={onClose}>Recipes</NavLink>
-      <NavLink href="/blog" isMobile onClick={onClose}>Blog</NavLink>
+      {showRecipesInNav() && (
+        <NavLink href="/recipes" isMobile onClick={onClose}>Recipes</NavLink>
+      )}
+      {showBlogInNav() && (
+        <NavLink href="/blog" isMobile onClick={onClose}>Blog</NavLink>
+      )}
       <NavLink href="/wholesale" isMobile onClick={onClose}>Wholesale</NavLink>
       <NavLink href="/#contact" isMobile onClick={onClose}>Contact</NavLink>
     </div>

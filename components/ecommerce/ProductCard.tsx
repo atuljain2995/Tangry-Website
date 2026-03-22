@@ -7,6 +7,7 @@ import { formatCurrency, calculateDiscountPercentage, getStockStatus } from '@/l
 import { AddToCartButton } from './AddToCartButton';
 import Link from 'next/link';
 import { ProductImage } from './ProductImage';
+import { productImageAlt } from '@/lib/utils/product-image-alt';
 
 interface ProductCardProps {
   product: ProductExtended;
@@ -29,7 +30,7 @@ export const ProductCard = ({ product }: ProductCardProps) => {
           {imageSrc ? (
             <ProductImage
               src={imageSrc}
-              alt={product.name}
+              alt={productImageAlt(product.name, selectedVariant.name)}
               fill
               className="object-cover group-hover:scale-110 group-hover:-rotate-3 transition-all duration-500"
               sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"

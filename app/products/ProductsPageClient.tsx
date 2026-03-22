@@ -53,7 +53,7 @@ export function ProductsPageClient({ products }: ProductsPageClientProps) {
           </div>
           <h1 className="text-5xl md:text-7xl font-black text-gray-900 mb-4 tracking-tight uppercase italic">Shop Tangry</h1>
           <p className="text-xl text-gray-600 font-medium max-w-2xl mx-auto">
-            Masalas, ready powders, and essentials from Maya Enterprises, Jaipur. FSSAI licensed · ISO 22000.
+            Masalas, ready powders, and essentials from Tangry, Jaipur. FSSAI licensed · ISO 22000.
           </p>
         </div>
       </section>
@@ -65,6 +65,7 @@ export function ProductsPageClient({ products }: ProductsPageClientProps) {
           <div className="flex-1">
             <div className="flex bg-gray-100 p-1.5 rounded-xl flex-wrap gap-2">
               <button
+                type="button"
                 onClick={() => setSelectedCategory('all')}
                 className={`px-6 py-2 rounded-lg text-sm font-bold transition capitalize ${
                   selectedCategory === 'all'
@@ -76,6 +77,7 @@ export function ProductsPageClient({ products }: ProductsPageClientProps) {
               </button>
               {PRODUCT_CATEGORIES.map(category => (
                 <button
+                  type="button"
                   key={category.id}
                   onClick={() => setSelectedCategory(category.title)}
                   className={`px-6 py-2 rounded-lg text-sm font-bold transition capitalize ${
@@ -84,7 +86,7 @@ export function ProductsPageClient({ products }: ProductsPageClientProps) {
                       : 'text-gray-500 hover:text-black'
                   }`}
                 >
-                  {category.title}
+                  {category.chipLabel ?? category.title}
                 </button>
               ))}
             </div>

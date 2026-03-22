@@ -88,7 +88,29 @@ NEXT_PUBLIC_HOTJAR_ID=your_hotjar_id
 ## WhatsApp Business
 
 ```env
-NEXT_PUBLIC_WHATSAPP_NUMBER=919876543210
+NEXT_PUBLIC_WHATSAPP_NUMBER=917733009952
+```
+
+---
+
+## Marketplace “Buy online” links (homepage)
+
+Until you have official brand storefront URLs, the site uses search links for “tangry”. Override with your listing URLs:
+
+```env
+NEXT_PUBLIC_TANGRY_AMAZON_URL=https://www.amazon.in/stores/page/...
+NEXT_PUBLIC_TANGRY_BIGBASKET_URL=https://www.bigbasket.com/pd/...
+NEXT_PUBLIC_TANGRY_BLINKIT_URL=https://blinkit.com/prn/...
+```
+
+---
+
+## Navigation (hide Recipes / Blog if content not ready)
+
+```env
+# Set to false to hide the link from header + mobile menu (pages still exist if visited directly)
+NEXT_PUBLIC_SHOW_RECIPES_NAV=false
+NEXT_PUBLIC_SHOW_BLOG_NAV=false
 ```
 
 ---
@@ -97,7 +119,7 @@ NEXT_PUBLIC_WHATSAPP_NUMBER=919876543210
 
 ```env
 NEXT_PUBLIC_SITE_URL=http://localhost:3000
-NEXT_PUBLIC_DOMAIN=everestspices.com
+NEXT_PUBLIC_DOMAIN=tangryspices.com
 ```
 
 ---

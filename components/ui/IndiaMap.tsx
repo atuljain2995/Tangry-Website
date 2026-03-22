@@ -369,7 +369,7 @@ export const IndiaMap = () => {
       {/* Floating label — home base */}
       <div
         className="absolute pointer-events-none"
-        style={{ top: "38%", left: "22%", zIndex: 30 }}
+        style={{ top: "38%", left: "32%", zIndex: 30 }}
       >
         <div className="bg-white/10 backdrop-blur-md text-white text-xs font-bold px-3 py-1.5 rounded-full shadow-lg border border-orange-500/30">
           Jaipur HQ

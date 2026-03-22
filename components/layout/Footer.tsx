@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { Facebook, Instagram, Twitter } from 'lucide-react';
-import { COMPANY_INFO } from '@/lib/data/constants';
+import { COMPANY_INFO, SOCIAL_LINKS } from '@/lib/data/constants';
 
 export const Footer = () => {
   return (
@@ -20,15 +20,33 @@ export const Footer = () => {
               {COMPANY_INFO.certifications.join(' · ')}
             </p>
             <div className="flex gap-4">
-              <div className="w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center hover:bg-orange-600 hover:text-white transition cursor-pointer">
+              <a
+                href={SOCIAL_LINKS.instagram}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center hover:bg-orange-600 hover:text-white transition"
+                aria-label="Tangry on Instagram"
+              >
                 <Instagram size={20} />
-              </div>
-              <div className="w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center hover:bg-orange-600 hover:text-white transition cursor-pointer">
+              </a>
+              <a
+                href={SOCIAL_LINKS.twitter}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center hover:bg-orange-600 hover:text-white transition"
+                aria-label="Tangry on X (Twitter)"
+              >
                 <Twitter size={20} />
-              </div>
-              <div className="w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center hover:bg-orange-600 hover:text-white transition cursor-pointer">
+              </a>
+              <a
+                href={SOCIAL_LINKS.facebook}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center hover:bg-orange-600 hover:text-white transition"
+                aria-label="Tangry on Facebook"
+              >
                 <Facebook size={20} />
-              </div>
+              </a>
             </div>
           </div>
 
@@ -46,7 +64,7 @@ export const Footer = () => {
                 <Link href="/wholesale">Corporate Orders</Link>
               </li>
               <li className="hover:text-orange-600 cursor-pointer transition">
-                <Link href="/blog">Recipes</Link>
+                <Link href="/recipes">Recipes</Link>
               </li>
             </ul>
           </div>

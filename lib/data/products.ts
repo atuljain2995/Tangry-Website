@@ -1,6 +1,8 @@
 export interface ProductCategory {
   id: string;
   title: string;
+  /** Shorter label for filter chips; full `title` still used for product matching */
+  chipLabel?: string;
   description: string;
   bgColor: string;
   products: string[];
@@ -25,11 +27,12 @@ export interface Recipe {
   tag: string;
 }
 
-/** Tangry catalog — aligned with Maya Enterprises (Jaipur) product lines */
+/** Tangry catalog — Jaipur product lines */
 export const PRODUCT_CATEGORIES: ProductCategory[] = [
   {
     id: 'spices-masalas',
     title: 'Spices & Masalas',
+    chipLabel: 'Masalas & spices',
     description:
       'Regional blends from our Jaipur kitchen—dabeli, pav bhaji, sambhar, chole, rajma, pani puri, and more. Hand-mixed in small batches for consistent taste.',
     bgColor: 'bg-orange-50',
@@ -37,7 +40,7 @@ export const PRODUCT_CATEGORIES: ProductCategory[] = [
   },
   {
     id: 'ready-powders',
-    title: 'Ready to Eat Powders',
+    title: 'Ready to Eat',
     description:
       'Gun powder (podi), chaat masala, vada pav chutney, bhuna jeera, and everyday finishing spices—ready to sprinkle or stir in.',
     bgColor: 'bg-yellow-50',

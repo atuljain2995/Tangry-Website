@@ -83,10 +83,11 @@ export default function WholesalePage() {
         <div className="container mx-auto px-6">
           <div className="max-w-3xl">
             <h1 className="text-5xl md:text-6xl font-bold mb-6">
-              Partner with India's Leading Spice Brand
+              Wholesale &amp; B2B — Tangry from Jaipur
             </h1>
             <p className="text-xl mb-8 opacity-90">
-              Join thousands of businesses who trust Tangry for quality spices and masalas
+              Bulk masalas, ready powders, and pickles from Tangry (FSSAI &amp; ISO 22000). Tell us your business
+              type and volumes — we&apos;ll send a quote.
             </p>
             <div className="flex flex-col sm:flex-row gap-4">
               <a 
@@ -95,11 +96,11 @@ export default function WholesalePage() {
               >
                 Request a Quote
               </a>
-              <a 
-                href="tel:+919876543210" 
+              <a
+                href={`tel:${COMPANY_INFO.phoneTel}`}
                 className="border-2 border-white text-white px-8 py-4 rounded-full font-bold hover:bg-white hover:text-[#D32F2F] transition text-center"
               >
-                Call Us Now
+                Call {COMPANY_INFO.phone}
               </a>
             </div>
           </div>

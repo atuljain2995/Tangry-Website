@@ -1,6 +1,7 @@
 'use client';
 
 import { Mail } from 'lucide-react';
+import { COMPANY_INFO } from '@/lib/data/constants';
 
 export const Newsletter = () => {
   return (
@@ -15,27 +16,36 @@ export const Newsletter = () => {
               Join The Spice Squad
             </h2>
             <p className="text-gray-600 font-medium">
-              Get the latest recipes, offers, and spice tips delivered to your inbox!
+              Get offers and spice tips by email. Follow{' '}
+              <a
+                href="https://www.instagram.com/tangryspices"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-orange-600 font-semibold hover:underline"
+              >
+                @tangryspices
+              </a>{' '}
+              for recipes and behind-the-scenes from Jaipur.
             </p>
           </div>
           
-          <form className="flex flex-col md:flex-row gap-4 max-w-xl mx-auto">
-            <input 
-              type="email" 
-              placeholder="Enter your email address" 
-              className="flex-1 px-6 py-4 rounded-xl border-2 border-gray-200 focus:border-orange-500 focus:outline-none text-gray-700 font-medium"
-              required
-            />
-            <button 
-              type="submit"
-              className="bg-gray-900 text-white px-8 py-4 rounded-xl font-bold hover:bg-orange-600 transition shadow-lg whitespace-nowrap"
+          <div className="flex flex-col md:flex-row gap-4 max-w-xl mx-auto">
+            <a
+              href={`mailto:${COMPANY_INFO.email}?subject=${encodeURIComponent('Subscribe me to Tangry updates')}&body=${encodeURIComponent('Please add my email to your newsletter list.\n\nMy email: ')}`}
+              className="flex-1 inline-flex items-center justify-center bg-gray-900 text-white px-8 py-4 rounded-xl font-bold hover:bg-orange-600 transition shadow-lg whitespace-nowrap text-center"
             >
-              Subscribe Now
-            </button>
-          </form>
+              Subscribe via email
+            </a>
+            <a
+              href="/contact"
+              className="inline-flex items-center justify-center px-8 py-4 rounded-xl font-bold border-2 border-gray-900 text-gray-900 hover:bg-gray-50 transition whitespace-nowrap text-center"
+            >
+              Contact form
+            </a>
+          </div>
           
           <p className="text-center text-sm text-gray-500 mt-6 font-medium">
-            Join <span className="font-bold text-gray-900">50K+</span> spice lovers who trust Tangry
+            We respect your inbox — no spam, only Tangry updates you can use.
           </p>
         </div>
       </div>

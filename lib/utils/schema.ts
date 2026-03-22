@@ -21,10 +21,10 @@ export function getOrganizationSchema() {
     '@context': 'https://schema.org',
     '@type': 'Organization',
     name: 'Tangry',
-    alternateName: ['Tangry Spices', COMPANY_INFO.legalName],
+    alternateName: ['Tangry Spices'],
     url: 'https://tangryspices.com',
     logo: 'https://tangryspices.com/logo.png',
-    description: `${COMPANY_INFO.brandName} — ${COMPANY_INFO.tagline}. Authentic spices and masalas from ${COMPANY_INFO.legalName}, Jaipur.`,
+    description: `${COMPANY_INFO.brandName} — ${COMPANY_INFO.tagline}. Authentic spices and masalas from Jaipur, Rajasthan.`,
     address: orgPostalAddress,
     contactPoint: {
       '@type': 'ContactPoint',

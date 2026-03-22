@@ -11,17 +11,17 @@ export default function AdminSettingsPage() {
       </div>
       <div className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm space-y-4">
         <h2 className="text-lg font-semibold text-gray-900">Store contact (read-only)</h2>
-        <p className="text-sm text-gray-600">These values are defined in <code className="rounded bg-gray-100 px-1">lib/data/constants.ts</code>.</p>
+        <p className="text-sm text-gray-600">
+          These values are defined in <code className="rounded bg-gray-100 px-1">lib/data/constants.ts</code>.
+          The registered legal name (<code className="rounded bg-gray-100 px-1">legalName</code>) appears on the
+          storefront footer only.
+        </p>
         <dl className="grid gap-2 text-sm">
           <div>
             <dt className="font-medium text-gray-500">Brand</dt>
             <dd className="text-gray-900">
               {COMPANY_INFO.brandName} — {COMPANY_INFO.tagline}
             </dd>
-          </div>
-          <div>
-            <dt className="font-medium text-gray-500">Legal name</dt>
-            <dd className="text-gray-900">{COMPANY_INFO.legalName}</dd>
           </div>
           <div>
             <dt className="font-medium text-gray-500">Phone</dt>

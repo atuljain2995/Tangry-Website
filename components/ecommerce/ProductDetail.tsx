@@ -7,6 +7,7 @@ import { formatCurrency, calculateDiscountPercentage, getStockStatus, calculateS
 import { useCart } from '@/lib/contexts/CartContext';
 import { CartItem } from '@/lib/types/database';
 import { ProductImage } from './ProductImage';
+import { productImageAlt } from '@/lib/utils/product-image-alt';
 
 interface ProductDetailProps {
   product: ProductExtended;
@@ -77,7 +78,7 @@ export const ProductDetail = ({ product }: ProductDetailProps) => {
           {(product.images.length > 0 || getDisplayImage(0) === PLACEHOLDER_IMAGE) ? (
             <ProductImage
                 src={getDisplayImage(selectedImageIndex)}
-                alt={product.name}
+                alt={productImageAlt(product.name, selectedVariant.name)}
                 fill
                 className="object-cover"
                 sizes="(max-width: 768px) 100vw, 50vw"
@@ -109,7 +110,7 @@ export const ProductDetail = ({ product }: ProductDetailProps) => {
                 >
                   <ProductImage
                     src={getDisplayImage(index)}
-                    alt={`${product.name} ${index + 1}`}
+                    alt={`${productImageAlt(product.name, selectedVariant.name)} — photo ${index + 1}`}
                     fill
                     className="object-cover"
                     sizes="100px"

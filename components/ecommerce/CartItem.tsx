@@ -5,6 +5,7 @@ import { CartItem } from '@/lib/types/database';
 import { useCart } from '@/lib/contexts/CartContext';
 import { formatCurrency } from '@/lib/utils/database';
 import { ProductImage } from './ProductImage';
+import { productImageAlt } from '@/lib/utils/product-image-alt';
 
 interface CartItemProps {
   item: CartItem;
@@ -36,7 +37,7 @@ export const CartItemComponent = ({ item }: CartItemProps) => {
         {item.image ? (
           <ProductImage
             src={item.image}
-            alt={item.productName}
+            alt={productImageAlt(item.productName, item.variantName)}
             fill
             className="object-cover"
             sizes="80px"

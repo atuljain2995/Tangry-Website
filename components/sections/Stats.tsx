@@ -13,7 +13,7 @@ export const Stats = () => {
           <span className="text-orange-400">·</span>
           <span>ISO 22000 Certified</span>
         </div>
-        <p className="mt-2 text-xs text-gray-500">Maya Enterprises · Tangry · Jaipur, Rajasthan</p>
+        <p className="mt-2 text-xs text-gray-500">Tangry · Jhotwara, Jaipur, Rajasthan</p>
       </div>
       <div className="grid grid-cols-2 md:grid-cols-4 gap-6 text-center px-2 pb-4">
         <div className="rounded-xl bg-gray-50/80 p-4">

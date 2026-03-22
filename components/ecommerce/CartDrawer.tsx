@@ -1,13 +1,15 @@
 'use client';
 
-import { X, ShoppingBag, ArrowRight } from 'lucide-react';
+import { X, ShoppingBag, ArrowRight, MessageCircle } from 'lucide-react';
 import { useCart } from '@/lib/contexts/CartContext';
 import { CartItemComponent } from './CartItem';
 import { formatCurrency } from '@/lib/utils/database';
+import { buildWhatsAppOrderUrl } from '@/lib/utils/whatsapp-order';
 import Link from 'next/link';
 
 export const CartDrawer = () => {
   const { cart, isCartOpen, closeCart, cartItemCount } = useCart();
+  const whatsappOrderUrl = buildWhatsAppOrderUrl(cart);
 
   return (
     <>
@@ -118,14 +120,27 @@ export const CartDrawer = () => {
 
             {/* Checkout Button */}
             <Link href="/checkout">
-              <button 
+              <button
                 onClick={closeCart}
                 className="w-full bg-[#D32F2F] text-white py-3 rounded-full font-bold hover:bg-[#B71C1C] transition flex items-center justify-center space-x-2 shadow-lg"
               >
-                <span>Proceed to Checkout</span>
+                <span>Proceed to checkout</span>
                 <ArrowRight size={20} />
               </button>
             </Link>
+
+            {whatsappOrderUrl && (
+              <a
+                href={whatsappOrderUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={closeCart}
+                className="mt-3 w-full border-2 border-[#25D366] text-[#128C7E] py-3 rounded-full font-bold hover:bg-[#25D366]/10 transition flex items-center justify-center gap-2"
+              >
+                <MessageCircle size={20} className="shrink-0" />
+                <span>Order on WhatsApp</span>
+              </a>
+            )}
 
             {/* Continue Shopping */}
             <button 

@@ -1,6 +1,6 @@
 import { ProductExtended } from '../types/database';
 
-/** Fallback catalog when DB is empty — matches Tangry / Maya Enterprises (Jaipur) lines */
+/** Fallback catalog when DB is empty — Tangry Jaipur product lines */
 export const PRODUCTS_EXTENDED: ProductExtended[] = [
   {
     id: '1',
@@ -100,7 +100,7 @@ export const PRODUCTS_EXTENDED: ProductExtended[] = [
     name: 'Gun Powder (Podi Masala)',
     description:
       'South Indian–style podi with lentils, chillies, and curry leaves—sprinkle on idli, dosa, or rice. Made fresh in small runs for bold flavour.',
-    category: 'Ready to Eat Powders',
+    category: 'Ready to Eat',
     variants: [
       {
         id: 'gp-100g',
@@ -120,7 +120,7 @@ export const PRODUCTS_EXTENDED: ProductExtended[] = [
     tags: ['podi', 'gun powder', 'featured'],
     metaTitle: 'Gun Powder Podi Masala | Tangry Ready Powders',
     metaDescription:
-      'Tangry Gun Powder (podi)—sprinkle on idli, dosa, or rice. Order online from Jaipur-based Maya Enterprises.',
+      'Tangry Gun Powder (podi)—sprinkle on idli, dosa, or rice. Order online from Tangry, Jaipur.',
     keywords: ['gun powder masala', 'podi', 'idli podi', 'tangry'],
     isFeatured: true,
     isNew: true,
@@ -138,7 +138,7 @@ export const PRODUCTS_EXTENDED: ProductExtended[] = [
     name: 'Vada Pav Chutney',
     description:
       'Dry garlic-coconut chutney style mix for Mumbai-style vada pav—tangy, garlicky, and addictive. A Tangry favourite from our ready-to-eat powder line.',
-    category: 'Ready to Eat Powders',
+    category: 'Ready to Eat',
     variants: [
       {
         id: 'vpc-200g',

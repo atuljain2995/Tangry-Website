@@ -15,9 +15,9 @@ export const About = () => {
               <span className="text-gray-500">BUILT FOR EVERY KITCHEN.</span>
             </h2>
             <p className="text-gray-400 text-lg mb-8 leading-relaxed max-w-lg">
-              Tangry is crafted by <strong>Maya Enterprises</strong> in Jhotwara, Jaipur. We blend masalas and
-              ready-to-eat powders in small batches, source ingredients from trusted partners across India, and
-              pack under FSSAI supervision—so what reaches your shelf matches what we serve at home.
+              Tangry is crafted in <strong>Jhotwara, Jaipur</strong>. We blend masalas and ready-to-eat powders in
+              small batches, source ingredients from trusted partners across India, and pack under FSSAI
+              supervision—so what reaches your shelf matches what we serve at home.
             </p>
             <div className="grid grid-cols-2 gap-6">
               <div className="bg-gray-800 p-6 rounded-2xl border border-gray-700">

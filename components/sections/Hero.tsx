@@ -29,7 +29,7 @@ export const Hero = () => {
           <div className="inline-flex items-center space-x-2 bg-orange-100 backdrop-blur-sm px-6 py-3 rounded-full mb-8 animate-pulse">
             <Zap className="w-5 h-5 text-orange-600 fill-current" />
             <span className="text-orange-700 font-bold text-sm uppercase tracking-wider">
-              Taste of Home · Jaipur, Rajasthan
+              Taste of Home . No Preservatives . Natural
             </span>
           </div>
 
@@ -45,8 +45,8 @@ export const Hero = () => {
 
           {/* Description */}
           <p className="text-lg md:text-xl text-gray-600 mb-10 max-w-2xl leading-relaxed font-medium">
-            Masalas, ready-to-eat powders, and pickles from Maya Enterprises—small-batch blends rooted in
-            Jhotwara, Jaipur. FSSAI licensed, ISO 22000 certified, no unnecessary fillers.
+            Masalas, ready-to-eat powders, and pickles from Tangry Spices—small-batch blends rooted in
+            Jaipur. FSSAI licensed, ISO 22000 certified, no unnecessary fillers.
           </p>
 
           {/* CTA Buttons */}
@@ -68,7 +68,7 @@ export const Hero = () => {
           </div>
 
           {/* Stats */}
-          <div className="grid grid-cols-3 gap-8 max-w-2xl">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 sm:gap-8 max-w-2xl">
             <div>
               <div className="text-4xl font-black text-gray-900 mb-2">25+</div>
               <div className="text-gray-600 font-medium">Masalas & pickles</div>
@@ -77,9 +77,11 @@ export const Hero = () => {
               <div className="text-4xl font-black text-gray-900 mb-2">Jaipur</div>
               <div className="text-gray-600 font-medium">Blended & packed</div>
             </div>
-            <div>
-              <div className="text-4xl font-black text-gray-900 mb-2">FSSAI</div>
-              <div className="text-gray-600 font-medium">+ ISO 22000</div>
+            <div className="min-w-0">
+              <div className="text-2xl sm:text-3xl md:text-4xl font-black text-gray-900 mb-2 whitespace-nowrap tracking-tight">
+                FSSAI & ISO 22000
+              </div>
+              <div className="text-gray-600 font-medium text-sm sm:text-base">Licensed & certified</div>
             </div>
           </div>
         </div>

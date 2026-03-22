@@ -26,7 +26,7 @@ export const metadata = {
     template: "%s | Tangry Spices",
   },
   description:
-    "Tangry — Taste of Home. Masalas, ready powders, and pickles from Maya Enterprises, Jhotwara Jaipur. FSSAI licensed, ISO 22000. Shop dabeli masala, pav bhaji, gun powder, turmeric & more.",
+    "Tangry — Taste of Home. Masalas, ready powders, and pickles from Jhotwara, Jaipur. FSSAI licensed, ISO 22000. Shop dabeli masala, pav bhaji, gun powder, turmeric & more.",
   keywords: [
     "tangry spices jaipur",
     "rajasthani masala online",
@@ -35,7 +35,7 @@ export const metadata = {
     "pickles jaipur",
     "turmeric powder india",
     "gun powder podi",
-    "maya enterprises spices",
+    "tangry masala",
   ],
   authors: [{ name: "Tangry Spices" }],
   creator: "Tangry Spices",
@@ -47,7 +47,7 @@ export const metadata = {
   openGraph: {
     title: "Tangry Spices | Masalas & Pickles from Jaipur",
     description:
-      "Authentic Rajasthani masalas and pickles from Maya Enterprises, Jaipur. FSSAI & ISO 22000 certified.",
+      "Authentic Rajasthani masalas and pickles from Tangry, Jaipur. FSSAI & ISO 22000 certified.",
     url: 'https://tangryspices.com',
     siteName: 'Tangry Spices',
     images: [
@@ -65,7 +65,7 @@ export const metadata = {
     card: 'summary_large_image',
     title: "Tangry Spices | Jaipur Masalas & Pickles",
     description:
-      "Shop Tangry — Taste of Home. FSSAI licensed blends from Maya Enterprises, Jaipur.",
+      "Shop Tangry — Taste of Home. FSSAI licensed blends from Jaipur.",
     images: ['/twitter-image.jpg'],
     creator: '@tangryspices',
   },

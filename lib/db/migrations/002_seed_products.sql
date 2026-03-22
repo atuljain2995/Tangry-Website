@@ -1,4 +1,4 @@
--- Seed Tangry catalog (Jaipur / Maya Enterprises aligned)
+-- Seed Tangry catalog (Jaipur)
 -- Run after 001_initial_schema.sql
 
 INSERT INTO products (
@@ -44,7 +44,7 @@ INSERT INTO products (
     'gun-powder-podi',
     'Gun Powder (Podi Masala)',
     'South Indian–style podi with lentils, chillies, and curry leaves—sprinkle on idli, dosa, or rice.',
-    'Ready to Eat Powders',
+    'Ready to Eat',
     NULL,
     ARRAY['/products/gun-powder-podi.jpg'],
     '[]'::jsonb,
@@ -61,7 +61,7 @@ INSERT INTO products (
     'vada-pav-chutney',
     'Vada Pav Chutney',
     'Dry garlic-coconut chutney style mix for Mumbai-style vada pav—tangy, garlicky, and addictive.',
-    'Ready to Eat Powders',
+    'Ready to Eat',
     NULL,
     ARRAY['/products/vada-pav-chutney.jpg'],
     '[]'::jsonb,

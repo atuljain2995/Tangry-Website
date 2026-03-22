@@ -49,7 +49,7 @@ export default function ContactPage() {
           Have a question or feedback? We&apos;d love to hear from you.
         </p>
 
-        <div className="grid lg:grid-cols-3 gap-12 max-w-5xl mx-auto">
+        <div className="grid lg:grid-cols-3 gap-12 max-w-5xl mx-auto mb-12">
           <div className="lg:col-span-1 space-y-6">
             <div>
               <h2 className="font-bold text-gray-900 mb-4">Get in Touch</h2>
@@ -147,6 +147,31 @@ export default function ContactPage() {
               </button>
             </form>
           </div>
+        </div>
+
+        <div className="max-w-5xl mx-auto px-0 sm:px-2">
+          <h2 className="text-lg font-bold text-gray-900 mb-3 text-center sm:text-left">Find us</h2>
+          <div className="rounded-xl overflow-hidden border border-gray-200 shadow-sm h-64 sm:h-80 bg-gray-100">
+            <iframe
+              title="Tangry — Jhotwara, Jaipur"
+              src={`https://maps.google.com/maps?q=${encodeURIComponent(COMPANY_INFO.address)}&t=&z=15&ie=UTF8&iwloc=&output=embed`}
+              width="100%"
+              height="100%"
+              style={{ border: 0 }}
+              loading="lazy"
+              referrerPolicy="no-referrer-when-downgrade"
+            />
+          </div>
+          <p className="text-center sm:text-left mt-3 text-sm text-gray-600">
+            <a
+              href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(COMPANY_INFO.address)}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-orange-600 font-semibold hover:underline"
+            >
+              Open in Google Maps
+            </a>
+          </p>
         </div>
       </div>
 

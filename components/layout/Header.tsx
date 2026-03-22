@@ -5,6 +5,7 @@ import { Search, User, Menu } from 'lucide-react';
 import { NavLink } from '../ui/NavLink';
 import { CartIcon } from '../ecommerce/CartIcon';
 import { UserMenu } from '../ui/UserMenu';
+import { showBlogInNav, showRecipesInNav } from '@/lib/data/nav-flags';
 
 interface HeaderProps {
   onMenuOpen: () => void;
@@ -29,8 +30,8 @@ export const Header = ({ onMenuOpen }: HeaderProps) => {
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center space-x-8 font-bold text-sm uppercase tracking-wide text-gray-600">
             <NavLink href="/products">Products</NavLink>
-            <NavLink href="/recipes">Recipes</NavLink>
-            <NavLink href="/blog">Blog</NavLink>
+            {showRecipesInNav() && <NavLink href="/recipes">Recipes</NavLink>}
+            {showBlogInNav() && <NavLink href="/blog">Blog</NavLink>}
             <NavLink href="/wholesale">Wholesale</NavLink>
             <NavLink href="/#our-story">Our Story</NavLink>
           </div>

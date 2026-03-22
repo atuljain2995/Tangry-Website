@@ -11,17 +11,20 @@ import { FeaturedProducts } from '@/components/sections/FeaturedProducts';
 import { About } from '@/components/sections/About';
 import { BuyOnline } from '@/components/sections/BuyOnline';
 import { Recipes } from '@/components/sections/Recipes';
+import { Testimonials } from '@/components/sections/Testimonials';
 import { Newsletter } from '@/components/sections/Newsletter';
 import { CartDrawer } from '@/components/ecommerce/CartDrawer';
 import { StructuredData } from '@/components/seo/StructuredData';
 import { getOrganizationSchema, getWebSiteSchema } from '@/lib/utils/schema';
 import { ProductExtended } from '@/lib/types/database';
+import type { MarketplaceLinks } from '@/lib/data/marketplaces';
 
 interface HomeClientProps {
   products: ProductExtended[];
+  marketplaceLinks: MarketplaceLinks;
 }
 
-export function HomeClient({ products }: HomeClientProps) {
+export function HomeClient({ products, marketplaceLinks }: HomeClientProps) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   // Filter featured products
@@ -36,10 +39,11 @@ export function HomeClient({ products }: HomeClientProps) {
         <CartDrawer />
         <Hero />
         <Stats />
+        <Testimonials />
         <ProductCategories />
         <FeaturedProducts products={featuredProducts} />
         <About />
-        <BuyOnline />
+        <BuyOnline links={marketplaceLinks} />
         <Recipes />
         <Newsletter />
         
