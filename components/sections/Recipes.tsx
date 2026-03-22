@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import { ArrowRight, Clock, Utensils } from 'lucide-react';
 import { RECIPES } from '@/lib/data/products';
 
@@ -10,9 +11,12 @@ export const Recipes = () => {
             <span className="text-[#D32F2F] font-bold uppercase tracking-wider text-sm">Culinary Corner</span>
             <h2 className="text-3xl md:text-4xl font-serif font-bold text-gray-900 mt-2">Cook with Tangry</h2>
           </div>
-          <a href="#" className="hidden md:flex items-center text-gray-600 hover:text-[#D32F2F] font-medium mt-4 md:mt-0">
-            View All Recipes <ArrowRight size={16} className="ml-1" />
-          </a>
+          <Link
+            href="/recipes"
+            className="hidden md:flex items-center text-gray-600 hover:text-[#D32F2F] font-medium mt-4 md:mt-0"
+          >
+            View all recipes <ArrowRight size={16} className="ml-1" />
+          </Link>
         </div>
 
         <div className="grid md:grid-cols-3 gap-8">
@@ -36,9 +40,9 @@ export const Recipes = () => {
         </div>
 
         <div className="text-center mt-8 md:hidden">
-          <a href="#" className="inline-flex items-center text-gray-600 hover:text-[#D32F2F] font-medium">
-            View All Recipes <ArrowRight size={16} className="ml-1" />
-          </a>
+          <Link href="/recipes" className="inline-flex items-center text-gray-600 hover:text-[#D32F2F] font-medium">
+            View all recipes <ArrowRight size={16} className="ml-1" />
+          </Link>
         </div>
       </div>
     </section>

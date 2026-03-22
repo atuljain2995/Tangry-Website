@@ -21,20 +21,21 @@ const playfair = Playfair_Display({
 
 export const metadata = {
   title: {
-    default: "Tangry Spices - India's No.1 Spice Brand | Authentic Indian Spices",
-    template: "%s | Tangry Spices"
+    default:
+      "Tangry Spices | Authentic Rajasthani Masalas & Pickles from Jaipur",
+    template: "%s | Tangry Spices",
   },
   description:
-    "Tangry — Taste of Home. Buy authentic Indian spices, masalas, and pickles from Maya Enterprises, Jaipur. Premium quality with FSSAI & ISO 22000. Free shipping on orders above ₹499.",
+    "Tangry — Taste of Home. Masalas, ready powders, and pickles from Maya Enterprises, Jhotwara Jaipur. FSSAI licensed, ISO 22000. Shop dabeli masala, pav bhaji, gun powder, turmeric & more.",
   keywords: [
-    "spices online india",
-    "buy spices online",
-    "indian spices",
-    "tangry spices",
-    "garam masala",
-    "turmeric powder",
-    "authentic spices",
-    "masala online"
+    "tangry spices jaipur",
+    "rajasthani masala online",
+    "dabeli masala",
+    "pav bhaji masala",
+    "pickles jaipur",
+    "turmeric powder india",
+    "gun powder podi",
+    "maya enterprises spices",
   ],
   authors: [{ name: "Tangry Spices" }],
   creator: "Tangry Spices",
@@ -44,8 +45,9 @@ export const metadata = {
     canonical: '/',
   },
   openGraph: {
-    title: "Tangry Spices - India's No.1 Spice Brand",
-    description: "Buy authentic Indian spices online. Premium quality blended & pure spices with free shipping.",
+    title: "Tangry Spices | Masalas & Pickles from Jaipur",
+    description:
+      "Authentic Rajasthani masalas and pickles from Maya Enterprises, Jaipur. FSSAI & ISO 22000 certified.",
     url: 'https://tangryspices.com',
     siteName: 'Tangry Spices',
     images: [
@@ -61,8 +63,9 @@ export const metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: "Tangry Spices - India's No.1 Spice Brand",
-    description: "Buy authentic Indian spices online. Premium quality spices with free shipping.",
+    title: "Tangry Spices | Jaipur Masalas & Pickles",
+    description:
+      "Shop Tangry — Taste of Home. FSSAI licensed blends from Maya Enterprises, Jaipur.",
     images: ['/twitter-image.jpg'],
     creator: '@tangryspices',
   },

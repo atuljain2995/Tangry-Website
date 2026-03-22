@@ -337,15 +337,6 @@ export const IndiaMap = () => {
           <div className="w-3 h-3 bg-orange-500 rounded-full absolute top-0 left-0"></div>
         </div>
 
-        {/* Meghalaya (Lakadong) - Northeast ⭐ */}
-        <div className="absolute" style={{ top: "42%", right: "28%" }}>
-          <div
-            className="w-4 h-4 bg-orange-500 rounded-full animate-ping"
-            style={{ animationDelay: "0.3s" }}
-          ></div>
-          <div className="w-4 h-4 bg-orange-500 rounded-full absolute top-0 left-0"></div>
-        </div>
-
         {/* Madhya Pradesh - Central */}
         <div className="absolute" style={{ top: "45%", left: "40%" }}>
           <div
@@ -364,15 +355,6 @@ export const IndiaMap = () => {
           <div className="w-2.5 h-2.5 bg-orange-500 rounded-full absolute top-0 left-0"></div>
         </div>
 
-        {/* Andhra Pradesh (Guntur) - East Coast ⭐ */}
-        <div className="absolute" style={{ top: "60%", left: "45%" }}>
-          <div
-            className="w-3.5 h-3.5 bg-orange-500 rounded-full animate-ping"
-            style={{ animationDelay: "0.7s" }}
-          ></div>
-          <div className="w-3.5 h-3.5 bg-orange-500 rounded-full absolute top-0 left-0"></div>
-        </div>
-
         {/* Tamil Nadu - Southeast */}
         <div className="absolute" style={{ bottom: "26%", left: "40%" }}>
           <div
@@ -382,48 +364,22 @@ export const IndiaMap = () => {
           <div className="w-3 h-3 bg-orange-500 rounded-full absolute top-0 left-0"></div>
         </div>
 
-        {/* Kerala (Idukki) - Southwest ⭐ */}
-        <div className="absolute" style={{ bottom: "24%", left: "32%" }}>
-          <div
-            className="w-3.5 h-3.5 bg-orange-500 rounded-full animate-ping"
-            style={{ animationDelay: "1.5s" }}
-          ></div>
-          <div className="w-3.5 h-3.5 bg-orange-500 rounded-full absolute top-0 left-0"></div>
-        </div>
       </div>
 
-      {/* Floating Labels for Key Regions */}
+      {/* Floating label — home base */}
       <div
         className="absolute pointer-events-none"
-        style={{ top: "42%", right: "8%", zIndex: 30 }}
-      >
-        <div className="bg-white/10 backdrop-blur-md text-white text-xs font-bold px-3 py-1.5 rounded-full shadow-lg border border-orange-500/30 animate-pulse">
-          Lakadong
-        </div>
-      </div>
-
-      <div
-        className="absolute pointer-events-none"
-        style={{ top: "60%", left: "50%", zIndex: 30 }}
+        style={{ top: "38%", left: "22%", zIndex: 30 }}
       >
         <div className="bg-white/10 backdrop-blur-md text-white text-xs font-bold px-3 py-1.5 rounded-full shadow-lg border border-orange-500/30">
-          Guntur
-        </div>
-      </div>
-
-      <div
-        className="absolute pointer-events-none"
-        style={{ bottom: "20%", left: "18%", zIndex: 30 }}
-      >
-        <div className="bg-white/10 backdrop-blur-md text-white text-xs font-bold px-3 py-1.5 rounded-full shadow-lg border border-orange-500/30">
-          Kerala
+          Jaipur HQ
         </div>
       </div>
 
       {/* Bottom Title */}
       <div className="absolute bottom-6 left-0 right-0 text-center z-30 pointer-events-none">
         <p className="text-xs text-gray-400 font-bold uppercase tracking-wider">
-          🇮🇳 SOURCING FROM 9+ REGIONS ACROSS INDIA
+          🇮🇳 JAIPUR BLENDS · TRUSTED INGREDIENT PARTNERS ACROSS INDIA
         </p>
       </div>
     </div>

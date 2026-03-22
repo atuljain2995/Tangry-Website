@@ -32,7 +32,7 @@ export const Header = ({ onMenuOpen }: HeaderProps) => {
             <NavLink href="/recipes">Recipes</NavLink>
             <NavLink href="/blog">Blog</NavLink>
             <NavLink href="/wholesale">Wholesale</NavLink>
-            <NavLink href="#about">Our Village</NavLink>
+            <NavLink href="/#our-story">Our Story</NavLink>
           </div>
 
           {/* Right Side Actions - overflow-visible so dropdown isn't clipped */}

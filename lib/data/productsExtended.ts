@@ -1,375 +1,232 @@
 import { ProductExtended } from '../types/database';
 
-// Extended product data with pricing and variants for ecommerce
+/** Fallback catalog when DB is empty — matches Tangry / Maya Enterprises (Jaipur) lines */
 export const PRODUCTS_EXTENDED: ProductExtended[] = [
   {
     id: '1',
-    slug: 'garam-masala',
-    name: 'Garam Masala',
-    description: 'A royal blend of 13 authentic spices perfect for rich curries and special occasions. Our signature Garam Masala brings the authentic taste of India to your kitchen.',
-    category: 'Blended Spices',
-    subcategory: 'Premium Blends',
+    slug: 'dabeli-masala',
+    name: 'Dabeli Masala',
+    description:
+      'Authentic dabeli masala blended in Jaipur. Warm, tangy, and balanced for stuffed buns and potato filling—just like street stalls across Gujarat and Rajasthan.',
+    category: 'Spices & Masalas',
+    subcategory: 'Regional blends',
     variants: [
       {
-        id: 'gm-50g',
-        name: '50g',
-        sku: 'EVR-GM-50',
-        price: 45,
-        compareAtPrice: 55,
-        stock: 500,
-        weight: 50,
-        isAvailable: true
-      },
-      {
-        id: 'gm-100g',
-        name: '100g',
-        sku: 'EVR-GM-100',
-        price: 85,
-        compareAtPrice: 100,
-        stock: 300,
-        weight: 100,
-        isAvailable: true
-      },
-      {
-        id: 'gm-200g',
+        id: 'dm-200g',
         name: '200g',
-        sku: 'EVR-GM-200',
-        price: 160,
-        compareAtPrice: 190,
-        stock: 200,
+        sku: 'TGR-DBL-200',
+        price: 89,
+        compareAtPrice: 105,
+        stock: 280,
         weight: 200,
-        isAvailable: true
-      }
+        isAvailable: true,
+      },
     ],
-    images: [
-      '/products/garam-masala-1.jpg',
-      '/products/garam-masala-2.jpg'
-    ],
+    images: ['/products/dabeli-masala.jpg'],
     features: [
-      'Blend of 13 premium spices',
-      'No artificial colors or preservatives',
-      'Triple-washed and sun-dried',
-      'Perfect for curries and gravies'
+      'Small-batch blended in Jaipur',
+      'No artificial colours',
+      'FSSAI licensed facility',
+      'Sealed for freshness',
     ],
-    ingredients: [
-      'Coriander',
-      'Cumin',
-      'Black Pepper',
-      'Cardamom',
-      'Cinnamon',
-      'Cloves',
-      'Bay Leaf',
-      'Nutmeg',
-      'Mace'
-    ],
-    nutritionalInfo: {
-      'Energy': '320 kcal',
-      'Protein': '12g',
-      'Carbohydrates': '45g',
-      'Fat': '8g'
-    },
-    usageInstructions: 'Add 1-2 teaspoons to your curry during final stages of cooking for best aroma and flavor.',
-    shelfLife: '12 months from date of packaging',
-    certifications: ['FSSAI', 'ISO 22000', 'Organic'],
-    tags: ['best-seller', 'premium', 'authentic'],
-    metaTitle: 'Buy Garam Masala Online - Authentic Indian Spice Blend | Tangry',
-    metaDescription: 'Premium Garam Masala made from 13 authentic spices. Perfect for curries, gravies & traditional dishes. Free shipping on orders above ₹499.',
-    keywords: ['garam masala', 'buy garam masala online', 'indian spice blend', 'authentic garam masala'],
+    ingredients: ['Coriander', 'Cumin', 'Dry mango', 'Red chilli', 'Cloves', 'Cinnamon', 'Salt', 'Spices'],
+    certifications: ['FSSAI', 'ISO 22000'],
+    tags: ['featured', 'masala', 'jaipur'],
+    metaTitle: 'Dabeli Masala | Authentic blend from Jaipur | Tangry',
+    metaDescription:
+      'Buy Tangry Dabeli Masala online—Jaipur-made blend for street-style dabeli. FSSAI licensed. Fast delivery across India.',
+    keywords: ['dabeli masala', 'buy dabeli masala', 'jaipur masala', 'tangry'],
     isFeatured: true,
     isNew: false,
     isBestSeller: true,
     rating: 4.8,
-    reviewCount: 1247,
+    reviewCount: 186,
     minOrderQuantity: 1,
-    maxOrderQuantity: 50,
+    maxOrderQuantity: 40,
     createdAt: new Date('2024-01-01'),
-    updatedAt: new Date()
+    updatedAt: new Date(),
   },
   {
     id: '2',
     slug: 'turmeric-powder',
     name: 'Turmeric Powder',
-    description: 'Pure, organic turmeric powder with high curcumin content. Sourced from the best farms in India for authentic color and health benefits.',
-    category: 'Pure Spices',
+    description:
+      'Bright, aromatic turmeric (haldi)—essential for everyday cooking. Packed in Jaipur under FSSAI supervision for purity you can trust.',
+    category: 'Essentials',
     variants: [
       {
         id: 'tp-100g',
         name: '100g',
-        sku: 'EVR-TP-100',
-        price: 50,
-        compareAtPrice: 60,
-        stock: 1000,
+        sku: 'TGR-TUR-100',
+        price: 52,
+        compareAtPrice: 62,
+        stock: 800,
         weight: 100,
-        isAvailable: true
+        isAvailable: true,
       },
       {
         id: 'tp-200g',
         name: '200g',
-        sku: 'EVR-TP-200',
-        price: 95,
-        compareAtPrice: 115,
-        stock: 800,
+        sku: 'TGR-TUR-200',
+        price: 98,
+        compareAtPrice: 118,
+        stock: 550,
         weight: 200,
-        isAvailable: true
+        isAvailable: true,
       },
-      {
-        id: 'tp-500g',
-        name: '500g',
-        sku: 'EVR-TP-500',
-        price: 220,
-        compareAtPrice: 270,
-        stock: 400,
-        weight: 500,
-        isAvailable: true
-      }
     ],
-    images: [
-      '/products/turmeric-1.jpg',
-      '/products/turmeric-2.jpg'
-    ],
-    features: [
-      'High curcumin content (5%+)',
-      'Organically grown',
-      'Vibrant golden color',
-      'Anti-inflammatory properties'
-    ],
-    ingredients: ['100% Pure Turmeric'],
-    nutritionalInfo: {
-      'Energy': '312 kcal',
-      'Protein': '9.7g',
-      'Carbohydrates': '67.1g',
-      'Curcumin': '5.2g'
-    },
-    usageInstructions: 'Use 1/2 teaspoon per serving in curries, dal, or golden milk.',
-    shelfLife: '18 months from date of packaging',
-    certifications: ['FSSAI', 'Organic India', 'ISO 22000'],
-    tags: ['organic', 'health', 'best-seller'],
-    metaTitle: 'Buy Organic Turmeric Powder Online - High Curcumin | Tangry',
-    metaDescription: 'Premium organic turmeric powder with high curcumin content. Perfect for cooking and health. Order now with free shipping!',
-    keywords: ['turmeric powder', 'organic turmeric', 'haldi powder', 'buy turmeric online'],
+    images: ['/products/turmeric-powder.jpg'],
+    features: ['Lab-checked batches', 'Vibrant colour', 'Finely ground', 'Sealed pack'],
+    ingredients: ['100% Turmeric'],
+    certifications: ['FSSAI', 'ISO 22000'],
+    tags: ['essential', 'haldi', 'jaipur'],
+    metaTitle: 'Turmeric Powder (Haldi) | Tangry Essentials | Jaipur',
+    metaDescription:
+      'Pure turmeric powder from Tangry, packed in Jaipur. Shop 100g and 200g packs with pan-India delivery.',
+    keywords: ['turmeric powder', 'haldi', 'buy turmeric online', 'tangry'],
     isFeatured: true,
     isNew: false,
     isBestSeller: true,
     rating: 4.9,
-    reviewCount: 2341,
+    reviewCount: 412,
     minOrderQuantity: 1,
-    maxOrderQuantity: 100,
+    maxOrderQuantity: 80,
     createdAt: new Date('2024-01-01'),
-    updatedAt: new Date()
+    updatedAt: new Date(),
   },
   {
     id: '3',
-    slug: 'paneer-tikka-masala-mix',
-    name: 'Paneer Tikka Masala Mix',
-    description: 'Complete spice mix for restaurant-style Paneer Tikka Masala. Just add paneer and follow simple instructions.',
-    category: 'Ready to Cook',
+    slug: 'gun-powder-podi',
+    name: 'Gun Powder (Podi Masala)',
+    description:
+      'South Indian–style podi with lentils, chillies, and curry leaves—sprinkle on idli, dosa, or rice. Made fresh in small runs for bold flavour.',
+    category: 'Ready to Eat Powders',
     variants: [
       {
-        id: 'ptm-50g',
-        name: '50g Pack',
-        sku: 'EVR-PTM-50',
-        price: 65,
-        stock: 300,
-        weight: 50,
-        isAvailable: true
-      },
-      {
-        id: 'ptm-100g',
-        name: '100g Pack',
-        sku: 'EVR-PTM-100',
-        price: 120,
-        stock: 250,
+        id: 'gp-100g',
+        name: '100g',
+        sku: 'TGR-GUN-100',
+        price: 78,
+        compareAtPrice: 92,
+        stock: 220,
         weight: 100,
-        isAvailable: true
-      }
+        isAvailable: true,
+      },
     ],
-    images: ['/products/paneer-tikka-masala-mix.jpg'],
-    features: [
-      'Ready in 15 minutes',
-      'Restaurant-style taste',
-      'No chopping or grinding',
-      'Serves 4 people'
-    ],
-    ingredients: [
-      'Coriander',
-      'Cumin',
-      'Red Chilli',
-      'Kasuri Methi',
-      'Garam Masala',
-      'Ginger',
-      'Garlic',
-      'Tomato Powder'
-    ],
-    usageInstructions: 'Mix with yogurt, marinate paneer, cook with gravy base. Detailed recipe inside.',
-    shelfLife: '12 months from date of packaging',
+    images: ['/products/gun-powder-podi.jpg'],
+    features: ['Crunchy lentil base', 'Adjustable heat', 'No preservatives claimed', 'Resealable pack'],
+    ingredients: ['Urad dal', 'Chana dal', 'Red chilli', 'Curry leaves', 'Salt', 'Spices'],
     certifications: ['FSSAI', 'ISO 22000'],
-    tags: ['new', 'quick-cook', 'easy'],
-    metaTitle: 'Paneer Tikka Masala Mix - Ready in 15 Minutes | Tangry',
-    metaDescription: 'Restaurant-style Paneer Tikka Masala in just 15 minutes. Complete spice mix with easy instructions. Order now!',
-    keywords: ['paneer tikka masala', 'ready to cook', 'instant masala mix', 'tangry'],
+    tags: ['podi', 'gun powder', 'featured'],
+    metaTitle: 'Gun Powder Podi Masala | Tangry Ready Powders',
+    metaDescription:
+      'Tangry Gun Powder (podi)—sprinkle on idli, dosa, or rice. Order online from Jaipur-based Maya Enterprises.',
+    keywords: ['gun powder masala', 'podi', 'idli podi', 'tangry'],
     isFeatured: true,
     isNew: true,
     isBestSeller: false,
     rating: 4.7,
-    reviewCount: 456,
+    reviewCount: 96,
     minOrderQuantity: 1,
     maxOrderQuantity: 30,
     createdAt: new Date('2024-11-01'),
-    updatedAt: new Date()
+    updatedAt: new Date(),
   },
   {
     id: '4',
-    slug: 'red-chilli-powder',
-    name: 'Red Chilli Powder',
-    description: 'Premium red chilli powder with perfect balance of heat and color. Made from carefully selected chillies for authentic Indian taste.',
-    category: 'Pure Spices',
+    slug: 'vada-pav-chutney',
+    name: 'Vada Pav Chutney',
+    description:
+      'Dry garlic-coconut chutney style mix for Mumbai-style vada pav—tangy, garlicky, and addictive. A Tangry favourite from our ready-to-eat powder line.',
+    category: 'Ready to Eat Powders',
     variants: [
       {
-        id: 'rcp-100g',
-        name: '100g',
-        sku: 'EVR-RCP-100',
-        price: 55,
-        compareAtPrice: 65,
-        stock: 900,
-        weight: 100,
-        isAvailable: true
-      },
-      {
-        id: 'rcp-200g',
+        id: 'vpc-200g',
         name: '200g',
-        sku: 'EVR-RCP-200',
-        price: 105,
-        compareAtPrice: 125,
-        stock: 700,
+        sku: 'TGR-VPC-200',
+        price: 115,
+        compareAtPrice: 135,
+        stock: 180,
         weight: 200,
-        isAvailable: true
+        isAvailable: true,
       },
-      {
-        id: 'rcp-500g',
-        name: '500g',
-        sku: 'EVR-RCP-500',
-        price: 245,
-        compareAtPrice: 295,
-        stock: 300,
-        weight: 500,
-        isAvailable: true
-      }
     ],
-    images: [
-      '/products/red-chilli-powder-1.jpg'
-    ],
-    features: [
-      'Perfect heat level',
-      'Rich red color',
-      'No artificial colors',
-      'Triple-washed and sun-dried'
-    ],
-    usageInstructions: 'Use according to taste preference. Start with 1/2 teaspoon and adjust.',
-    shelfLife: '12 months from date of packaging',
+    images: ['/products/vada-pav-chutney.jpg'],
+    features: ['Garlic-forward', 'Pairs with batata vada', 'Dry sprinkle format', 'Consistent grind'],
+    ingredients: ['Garlic', 'Coconut', 'Peanuts', 'Red chilli', 'Salt', 'Spices'],
     certifications: ['FSSAI', 'ISO 22000'],
-    tags: ['essential', 'pure'],
-    metaTitle: 'Buy Red Chilli Powder Online - Premium Quality | Tangry',
-    metaDescription: 'Premium red chilli powder with perfect heat and color. No artificial colors. Free shipping on orders above ₹499.',
-    keywords: ['red chilli powder', 'lal mirch powder', 'buy chilli powder', 'indian spices'],
+    tags: ['chutney', 'street food', 'new'],
+    metaTitle: 'Vada Pav Chutney Powder | Tangry',
+    metaDescription:
+      'Dry vada pav chutney mix from Tangry—perfect with batata vada and pav. Shipped from Jaipur.',
+    keywords: ['vada pav chutney', 'dry garlic chutney', 'tangry'],
     isFeatured: false,
-    isNew: false,
+    isNew: true,
     isBestSeller: true,
-    rating: 4.6,
-    reviewCount: 1876,
+    rating: 4.8,
+    reviewCount: 74,
     minOrderQuantity: 1,
-    maxOrderQuantity: 100,
-    createdAt: new Date('2024-01-01'),
-    updatedAt: new Date()
+    maxOrderQuantity: 25,
+    createdAt: new Date('2024-12-01'),
+    updatedAt: new Date(),
   },
   {
     id: '5',
-    slug: 'biryani-masala',
-    name: 'Biryani Masala',
-    description: 'Aromatic blend of spices specially crafted for authentic biryani. Perfect for both vegetable and meat biryani.',
-    category: 'Blended Spices',
-    subcategory: 'Rice Specialties',
+    slug: 'pav-bhaji-masala',
+    name: 'Pav Bhaji Masala',
+    description:
+      'Rich, red pav bhaji masala for bhaji that tastes like your favourite corner stall—balanced for home cooks and busy weeknights.',
+    category: 'Spices & Masalas',
+    subcategory: 'Street-style blends',
     variants: [
       {
-        id: 'bm-50g',
-        name: '50g',
-        sku: 'EVR-BM-50',
-        price: 50,
-        stock: 400,
-        weight: 50,
-        isAvailable: true
-      },
-      {
-        id: 'bm-100g',
-        name: '100g',
-        sku: 'EVR-BM-100',
+        id: 'pbm-200g',
+        name: '200g',
+        sku: 'TGR-PBV-200',
         price: 95,
-        stock: 250,
-        weight: 100,
-        isAvailable: true
-      }
+        compareAtPrice: 112,
+        stock: 310,
+        weight: 200,
+        isAvailable: true,
+      },
     ],
-    images: [
-      '/products/biryani-masala-1.jpg'
-    ],
-    features: [
-      'Authentic Hyderabadi blend',
-      'Rich aroma',
-      'Perfect for layering',
-      'Works with all rice varieties'
-    ],
-    ingredients: [
-      'Coriander',
-      'Cumin',
-      'Black Pepper',
-      'Cardamom',
-      'Cinnamon',
-      'Cloves',
-      'Bay Leaf',
-      'Star Anise',
-      'Mace',
-      'Nutmeg'
-    ],
-    usageInstructions: 'Add 2 teaspoons per kg of rice/meat while cooking biryani.',
-    shelfLife: '12 months from date of packaging',
+    images: ['/products/pav-bhaji-masala.jpg'],
+    features: ['Bold colour & aroma', 'Works with mixed vegetables', 'Small-batch Jaipur blend', 'Trusted by home cooks'],
+    ingredients: ['Coriander', 'Cumin', 'Fennel', 'Black pepper', 'Dry mango', 'Kashmiri chilli', 'Salt', 'Spices'],
     certifications: ['FSSAI', 'ISO 22000'],
-    tags: ['premium', 'aromatic'],
-    metaTitle: 'Buy Biryani Masala Online - Authentic Hyderabadi Blend | Tangry',
-    metaDescription: 'Premium Biryani Masala for authentic taste. Perfect blend of aromatic spices. Order now with free shipping!',
-    keywords: ['biryani masala', 'hyderabadi biryani spice', 'buy biryani masala online'],
+    tags: ['pav bhaji', 'masala', 'bestseller'],
+    metaTitle: 'Pav Bhaji Masala | Jaipur blend | Tangry',
+    metaDescription:
+      'Shop Tangry Pav Bhaji Masala—200g pack, blended in Jaipur. Authentic taste for homemade bhaji.',
+    keywords: ['pav bhaji masala', 'buy pav bhaji masala online', 'tangry'],
     isFeatured: true,
     isNew: false,
     isBestSeller: true,
     rating: 4.8,
-    reviewCount: 923,
+    reviewCount: 268,
     minOrderQuantity: 1,
     maxOrderQuantity: 40,
     createdAt: new Date('2024-01-01'),
-    updatedAt: new Date()
-  }
+    updatedAt: new Date(),
+  },
 ];
 
-// Helper function to get product by slug
 export function getProductBySlug(slug: string): ProductExtended | undefined {
-  return PRODUCTS_EXTENDED.find(p => p.slug === slug);
+  return PRODUCTS_EXTENDED.find((p) => p.slug === slug);
 }
 
-// Helper function to get products by category
 export function getProductsByCategory(category: string): ProductExtended[] {
-  return PRODUCTS_EXTENDED.filter(p => p.category === category);
+  return PRODUCTS_EXTENDED.filter((p) => p.category === category);
 }
 
-// Helper function to get featured products
 export function getFeaturedProducts(): ProductExtended[] {
-  return PRODUCTS_EXTENDED.filter(p => p.isFeatured);
+  return PRODUCTS_EXTENDED.filter((p) => p.isFeatured);
 }
 
-// Helper function to get best sellers
 export function getBestSellers(): ProductExtended[] {
-  return PRODUCTS_EXTENDED.filter(p => p.isBestSeller);
+  return PRODUCTS_EXTENDED.filter((p) => p.isBestSeller);
 }
 
-// Helper function to get new products
 export function getNewProducts(): ProductExtended[] {
-  return PRODUCTS_EXTENDED.filter(p => p.isNew);
+  return PRODUCTS_EXTENDED.filter((p) => p.isNew);
 }
-

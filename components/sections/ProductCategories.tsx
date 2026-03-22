@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import { ArrowRight } from 'lucide-react';
 import { PRODUCT_CATEGORIES } from '@/lib/data/products';
 
@@ -29,9 +30,12 @@ export const ProductCategories = () => {
                   </span>
                 ))}
               </div>
-              <a href="#products" className="text-[#D32F2F] font-semibold text-sm hover:text-[#B71C1C] flex items-center">
-                View More <ArrowRight size={14} className="ml-1" />
-              </a>
+              <Link
+                href="/products"
+                className="text-[#D32F2F] font-semibold text-sm hover:text-[#B71C1C] flex items-center"
+              >
+                View products <ArrowRight size={14} className="ml-1" />
+              </Link>
             </div>
           ))}
         </div>

@@ -51,9 +51,9 @@ export function ProductsPageClient({ products }: ProductsPageClientProps) {
           <div className="inline-flex items-center gap-2 bg-orange-100 text-orange-700 px-4 py-1.5 rounded-full font-bold text-xs uppercase tracking-wider mb-6 animate-pulse">
             <Zap className="w-3 h-3 fill-current" /> Premium Collection
           </div>
-          <h1 className="text-5xl md:text-7xl font-black text-gray-900 mb-4 tracking-tight uppercase italic">The Stash</h1>
+          <h1 className="text-5xl md:text-7xl font-black text-gray-900 mb-4 tracking-tight uppercase italic">Shop Tangry</h1>
           <p className="text-xl text-gray-600 font-medium max-w-2xl mx-auto">
-            Upgrade your pantry game with legitimate flavors. No fillers, no preservatives—just pure spice.
+            Masalas, ready powders, and essentials from Maya Enterprises, Jaipur. FSSAI licensed · ISO 22000.
           </p>
         </div>
       </section>

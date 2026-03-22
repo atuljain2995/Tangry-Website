@@ -27,7 +27,7 @@ export const SOCIAL_LINKS = {
 
 export const NAVIGATION_ITEMS = [
   { label: "Home", href: "#home" },
-  { label: "About Us", href: "#about" },
+  { label: "Our Story", href: "/#our-story" },
   { label: "Recipes", href: "#recipes" },
   { label: "Contact", href: "#contact" },
 ];

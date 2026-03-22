@@ -1,212 +1,42 @@
--- Migration: Add product variants for existing products
--- Run this after running 002_seed_products.sql
+-- Product variants for Tangry catalog (run after 002_seed_products.sql and 002b_create_variants_tables.sql)
 
--- Insert variants for Garam Masala
+-- Dabeli Masala 200g
 INSERT INTO product_variants (product_id, name, sku, price, compare_at_price, stock, weight, is_available)
-SELECT 
-    id,
-    '50g',
-    'EVR-GM-50',
-    45.00,
-    55.00,
-    500,
-    50,
-    true
-FROM products WHERE slug = 'garam-masala'
+SELECT id, '200g', 'TGR-DBL-200', 89.00, 105.00, 280, 200, true
+FROM products WHERE slug = 'dabeli-masala'
 ON CONFLICT (sku) DO NOTHING;
 
+-- Turmeric 100g / 200g
 INSERT INTO product_variants (product_id, name, sku, price, compare_at_price, stock, weight, is_available)
-SELECT 
-    id,
-    '100g',
-    'EVR-GM-100',
-    85.00,
-    105.00,
-    450,
-    100,
-    true
-FROM products WHERE slug = 'garam-masala'
-ON CONFLICT (sku) DO NOTHING;
-
-INSERT INTO product_variants (product_id, name, sku, price, compare_at_price, stock, weight, is_available)
-SELECT 
-    id,
-    '200g',
-    'EVR-GM-200',
-    165.00,
-    195.00,
-    300,
-    200,
-    true
-FROM products WHERE slug = 'garam-masala'
-ON CONFLICT (sku) DO NOTHING;
-
--- Insert variants for Turmeric Powder
-INSERT INTO product_variants (product_id, name, sku, price, compare_at_price, stock, weight, is_available)
-SELECT 
-    id,
-    '50g',
-    'EVR-TUR-50',
-    30.00,
-    40.00,
-    800,
-    50,
-    true
+SELECT id, '100g', 'TGR-TUR-100', 52.00, 62.00, 800, 100, true
 FROM products WHERE slug = 'turmeric-powder'
 ON CONFLICT (sku) DO NOTHING;
 
 INSERT INTO product_variants (product_id, name, sku, price, compare_at_price, stock, weight, is_available)
-SELECT 
-    id,
-    '100g',
-    'EVR-TUR-100',
-    55.00,
-    70.00,
-    750,
-    100,
-    true
+SELECT id, '200g', 'TGR-TUR-200', 98.00, 118.00, 550, 200, true
 FROM products WHERE slug = 'turmeric-powder'
 ON CONFLICT (sku) DO NOTHING;
 
+-- Gun Powder 100g
 INSERT INTO product_variants (product_id, name, sku, price, compare_at_price, stock, weight, is_available)
-SELECT 
-    id,
-    '200g',
-    'EVR-TUR-200',
-    105.00,
-    135.00,
-    600,
-    200,
-    true
-FROM products WHERE slug = 'turmeric-powder'
+SELECT id, '100g', 'TGR-GUN-100', 78.00, 92.00, 220, 100, true
+FROM products WHERE slug = 'gun-powder-podi'
 ON CONFLICT (sku) DO NOTHING;
 
+-- Vada Pav Chutney 200g
 INSERT INTO product_variants (product_id, name, sku, price, compare_at_price, stock, weight, is_available)
-SELECT 
-    id,
-    '500g',
-    'EVR-TUR-500',
-    245.00,
-    295.00,
-    200,
-    500,
-    true
-FROM products WHERE slug = 'turmeric-powder'
+SELECT id, '200g', 'TGR-VPC-200', 115.00, 135.00, 180, 200, true
+FROM products WHERE slug = 'vada-pav-chutney'
 ON CONFLICT (sku) DO NOTHING;
 
--- Insert variants for Paneer Tikka Masala Mix
+-- Pav Bhaji Masala 200g
 INSERT INTO product_variants (product_id, name, sku, price, compare_at_price, stock, weight, is_available)
-SELECT 
-    id,
-    '50g',
-    'EVR-PTM-50',
-    65.00,
-    NULL,
-    300,
-    50,
-    true
-FROM products WHERE slug = 'paneer-tikka-masala-mix'
+SELECT id, '200g', 'TGR-PBV-200', 95.00, 112.00, 310, 200, true
+FROM products WHERE slug = 'pav-bhaji-masala'
 ON CONFLICT (sku) DO NOTHING;
 
-INSERT INTO product_variants (product_id, name, sku, price, compare_at_price, stock, weight, is_available)
-SELECT 
-    id,
-    '100g',
-    'EVR-PTM-100',
-    120.00,
-    NULL,
-    250,
-    100,
-    true
-FROM products WHERE slug = 'paneer-tikka-masala-mix'
-ON CONFLICT (sku) DO NOTHING;
-
--- Insert variants for Red Chilli Powder
-INSERT INTO product_variants (product_id, name, sku, price, compare_at_price, stock, weight, is_available)
-SELECT 
-    id,
-    '100g',
-    'EVR-RCP-100',
-    55.00,
-    65.00,
-    900,
-    100,
-    true
-FROM products WHERE slug = 'red-chilli-powder'
-ON CONFLICT (sku) DO NOTHING;
-
-INSERT INTO product_variants (product_id, name, sku, price, compare_at_price, stock, weight, is_available)
-SELECT 
-    id,
-    '200g',
-    'EVR-RCP-200',
-    105.00,
-    125.00,
-    700,
-    200,
-    true
-FROM products WHERE slug = 'red-chilli-powder'
-ON CONFLICT (sku) DO NOTHING;
-
-INSERT INTO product_variants (product_id, name, sku, price, compare_at_price, stock, weight, is_available)
-SELECT 
-    id,
-    '500g',
-    'EVR-RCP-500',
-    245.00,
-    295.00,
-    300,
-    500,
-    true
-FROM products WHERE slug = 'red-chilli-powder'
-ON CONFLICT (sku) DO NOTHING;
-
--- Insert variants for Biryani Masala
-INSERT INTO product_variants (product_id, name, sku, price, compare_at_price, stock, weight, is_available)
-SELECT 
-    id,
-    '50g',
-    'EVR-BM-50',
-    50.00,
-    60.00,
-    400,
-    50,
-    true
-FROM products WHERE slug = 'biryani-masala'
-ON CONFLICT (sku) DO NOTHING;
-
-INSERT INTO product_variants (product_id, name, sku, price, compare_at_price, stock, weight, is_available)
-SELECT 
-    id,
-    '100g',
-    'EVR-BM-100',
-    95.00,
-    115.00,
-    350,
-    100,
-    true
-FROM products WHERE slug = 'biryani-masala'
-ON CONFLICT (sku) DO NOTHING;
-
-INSERT INTO product_variants (product_id, name, sku, price, compare_at_price, stock, weight, is_available)
-SELECT 
-    id,
-    '200g',
-    'EVR-BM-200',
-    185.00,
-    220.00,
-    250,
-    200,
-    true
-FROM products WHERE slug = 'biryani-masala'
-ON CONFLICT (sku) DO NOTHING;
-
--- Verify the inserts
-SELECT 
-    p.name,
-    COUNT(pv.id) as variant_count
+SELECT p.name, COUNT(pv.id) AS variant_count
 FROM products p
 LEFT JOIN product_variants pv ON p.id = pv.product_id
 GROUP BY p.id, p.name
 ORDER BY p.name;
-

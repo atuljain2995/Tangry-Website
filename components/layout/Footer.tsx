@@ -70,8 +70,9 @@ export const Footer = () => {
         <div className="border-t border-gray-100 mt-12 pt-8 text-center text-gray-400 text-sm font-medium">
           &copy; {new Date().getFullYear()} {COMPANY_INFO.legalName} ({COMPANY_INFO.brandName}). Made with spice in India.
           <div className="mt-2 space-x-6">
-            <a href="#" className="hover:text-gray-900 transition">Privacy Policy</a>
-            <a href="#" className="hover:text-gray-900 transition">Terms of Use</a>
+            <Link href="/contact" className="hover:text-gray-900 transition">
+              Contact & policies
+            </Link>
           </div>
         </div>
       </div>

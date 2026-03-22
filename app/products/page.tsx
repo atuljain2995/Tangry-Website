@@ -3,8 +3,9 @@ import { ProductsPageClient } from './ProductsPageClient';
 import { getAllProducts } from '@/lib/db/queries';
 
 export const metadata: Metadata = {
-  title: 'All Products | Tangry Spices',
-  description: 'Explore our complete range of authentic Indian spices, blended masalas, and ready-to-cook products.',
+  title: 'Shop Masalas, Powders & Pickles',
+  description:
+    'Browse Tangry’s Jaipur-made masalas (dabeli, pav bhaji), ready-to-eat powders (gun powder, vada pav chutney), essentials, and pickles — FSSAI & ISO 22000.',
 };
 
 export const revalidate = 3600; // Revalidate every hour

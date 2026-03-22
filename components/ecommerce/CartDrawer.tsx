@@ -48,12 +48,13 @@ export const CartDrawer = () => {
               <ShoppingBag size={64} className="text-gray-300 mb-4" />
               <h3 className="text-lg font-semibold text-gray-600 mb-2">Your cart is empty</h3>
               <p className="text-sm text-gray-500 mb-6">Add some delicious spices to get started!</p>
-              <button 
+              <Link
+                href="/products"
                 onClick={closeCart}
-                className="bg-[#D32F2F] text-white px-6 py-2 rounded-full font-semibold hover:bg-[#B71C1C] transition"
+                className="inline-block bg-[#D32F2F] text-white px-6 py-2 rounded-full font-semibold hover:bg-[#B71C1C] transition text-center"
               >
-                Continue Shopping
-              </button>
+                Continue shopping
+              </Link>
             </div>
           ) : (
             <div className="space-y-4">

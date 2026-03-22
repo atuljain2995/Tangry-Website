@@ -28,7 +28,7 @@ export const FeaturedProducts = ({ products }: FeaturedProductsProps) => {
             The Stash
           </h2>
           <p className="text-gray-500 font-medium text-lg">
-            Upgrade your pantry game with legitimate flavors.
+            Jaipur-made masalas, ready powders, and essentials — the same lines we sell every day.
           </p>
         </div>
         
@@ -61,7 +61,7 @@ export const FeaturedProducts = ({ products }: FeaturedProductsProps) => {
       </div>
 
       {/* Product Grid */}
-      <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8">
         {filteredProducts.map(product => (
           <ProductCard key={product.id} product={product} />
         ))}
