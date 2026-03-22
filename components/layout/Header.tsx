@@ -28,7 +28,6 @@ export const Header = ({ onMenuOpen }: HeaderProps) => {
 
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center space-x-8 font-bold text-sm uppercase tracking-wide text-gray-600">
-            <NavLink href="/">Shop</NavLink>
             <NavLink href="/products">Products</NavLink>
             <NavLink href="/recipes">Recipes</NavLink>
             <NavLink href="/blog">Blog</NavLink>

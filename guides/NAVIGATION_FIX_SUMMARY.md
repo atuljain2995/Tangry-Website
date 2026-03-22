@@ -126,16 +126,15 @@ Logo (/) → Always goes home
 ### Mobile Menu
 ```
 Menu Icon
-├── Home (/) → Homepage
 ├── About Us (/#about) → Homepage about section
 ├── Products (/products) → Full catalog
-├── Eazy Chef (/#eazy-chef) → Homepage section
-├── Tasteeto (/#tasteeto) → Homepage section
 ├── Recipes (/recipes) → Recipes page
 ├── Blog (/blog) → Blog page
 ├── Wholesale (/wholesale) → B2B page
 └── Contact (/#contact) → Homepage footer
 ```
+
+(Home is available via the header logo.)
 
 ### Footer Links
 ```

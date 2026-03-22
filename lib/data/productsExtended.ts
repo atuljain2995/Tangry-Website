@@ -159,24 +159,31 @@ export const PRODUCTS_EXTENDED: ProductExtended[] = [
   },
   {
     id: '3',
-    slug: 'eazy-chef-paneer-tikka-masala',
-    name: 'Eazy Chef - Paneer Tikka Masala',
-    description: 'Complete spice mix for restaurant-style Paneer Tikka Masala. Be a chef in minutes! Just add paneer and follow simple instructions.',
-    category: 'Eazy Chef',
+    slug: 'paneer-tikka-masala-mix',
+    name: 'Paneer Tikka Masala Mix',
+    description: 'Complete spice mix for restaurant-style Paneer Tikka Masala. Just add paneer and follow simple instructions.',
+    category: 'Ready to Cook',
     variants: [
       {
-        id: 'ec-ptm-50g',
+        id: 'ptm-50g',
         name: '50g Pack',
-        sku: 'EVR-EC-PTM-50',
-        price: 40,
-        stock: 600,
+        sku: 'EVR-PTM-50',
+        price: 65,
+        stock: 300,
         weight: 50,
+        isAvailable: true
+      },
+      {
+        id: 'ptm-100g',
+        name: '100g Pack',
+        sku: 'EVR-PTM-100',
+        price: 120,
+        stock: 250,
+        weight: 100,
         isAvailable: true
       }
     ],
-    images: [
-      '/products/eazy-chef-paneer-tikka.jpg'
-    ],
+    images: ['/products/paneer-tikka-masala-mix.jpg'],
     features: [
       'Ready in 15 minutes',
       'Restaurant-style taste',
@@ -197,9 +204,9 @@ export const PRODUCTS_EXTENDED: ProductExtended[] = [
     shelfLife: '12 months from date of packaging',
     certifications: ['FSSAI', 'ISO 22000'],
     tags: ['new', 'quick-cook', 'easy'],
-    metaTitle: 'Eazy Chef Paneer Tikka Masala Mix - Ready in 15 Minutes | Tangry',
+    metaTitle: 'Paneer Tikka Masala Mix - Ready in 15 Minutes | Tangry',
     metaDescription: 'Restaurant-style Paneer Tikka Masala in just 15 minutes. Complete spice mix with easy instructions. Order now!',
-    keywords: ['paneer tikka masala', 'ready to cook', 'instant masala mix', 'eazy chef'],
+    keywords: ['paneer tikka masala', 'ready to cook', 'instant masala mix', 'tangry'],
     isFeatured: true,
     isNew: true,
     isBestSeller: false,

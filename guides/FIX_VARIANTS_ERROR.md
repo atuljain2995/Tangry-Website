@@ -42,7 +42,7 @@ This confirms the tables are created!
 6. You should see output like:
 ```
 Biryani Masala          3
-Eazy Chef - PTM         2
+Paneer Tikka Masala Mix 2
 Garam Masala            3
 Red Chilli Powder       3
 Turmeric Powder         4
@@ -94,7 +94,7 @@ After running both migrations, test these URLs:
 - ✅ http://localhost:3000/products/garam-masala
 - ✅ http://localhost:3000/products/turmeric-powder
 - ✅ http://localhost:3000/products/red-chilli-powder
-- ✅ http://localhost:3000/products/eazy-chef-paneer-tikka-masala
+- ✅ http://localhost:3000/products/paneer-tikka-masala-mix
 - ✅ http://localhost:3000/products/biryani-masala
 
 All should load without errors!

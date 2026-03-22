@@ -5,6 +5,11 @@ import {
   getLowStockVariantsCount,
   getOrdersTotalToday,
 } from '@/lib/db/queries';
+import { AdminStatusBadge } from '@/components/admin/AdminStatusBadge';
+import { AdminEmptyState } from '@/components/admin/AdminEmptyState';
+import { AdminSectionCard } from '@/components/admin/AdminSectionCard';
+import { AdminSummaryCard } from '@/components/admin/AdminSummaryCard';
+import { AdminTableScroll } from '@/components/admin/AdminTableScroll';
 
 export const dynamic = 'force-dynamic';
 
@@ -26,24 +31,6 @@ function formatDate(iso: string) {
   });
 }
 
-function StatusBadge({ status }: { status: string }) {
-  const styles: Record<string, string> = {
-    pending: 'bg-amber-100 text-amber-800',
-    confirmed: 'bg-blue-100 text-blue-800',
-    processing: 'bg-indigo-100 text-indigo-800',
-    shipped: 'bg-purple-100 text-purple-800',
-    delivered: 'bg-green-100 text-green-800',
-    cancelled: 'bg-red-100 text-red-800',
-    refunded: 'bg-gray-100 text-gray-800',
-  };
-  const cls = styles[status] ?? 'bg-gray-100 text-gray-800';
-  return (
-    <span className={`inline-flex rounded-full px-2 py-0.5 text-xs font-medium ${cls}`}>
-      {status}
-    </span>
-  );
-}
-
 export default async function AdminDashboardPage() {
   const [recentOrders, productsCount, lowStockCount, ordersTotalToday] = await Promise.all([
     getOrdersForAdmin(10),
@@ -59,53 +46,46 @@ export default async function AdminDashboardPage() {
         <p className="mt-1 text-sm text-gray-500">Overview of your store</p>
       </div>
 
-      {/* Summary cards */}
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <div className="rounded-lg border border-gray-200 bg-white p-5 shadow-sm">
-          <p className="text-sm font-medium text-gray-500">Orders today</p>
-          <p className="mt-1 text-2xl font-semibold text-gray-900">{formatCurrency(ordersTotalToday)}</p>
-        </div>
-        <div className="rounded-lg border border-gray-200 bg-white p-5 shadow-sm">
-          <p className="text-sm font-medium text-gray-500">Total products</p>
-          <p className="mt-1 text-2xl font-semibold text-gray-900">{productsCount}</p>
-        </div>
-        <div className="rounded-lg border border-gray-200 bg-white p-5 shadow-sm">
-          <p className="text-sm font-medium text-gray-500">Low stock variants</p>
-          <p className="mt-1 text-2xl font-semibold text-gray-900">{lowStockCount}</p>
-          {lowStockCount > 0 && (
+        <AdminSummaryCard label="Orders today" value={formatCurrency(ordersTotalToday)} />
+        <AdminSummaryCard label="Total products" value={productsCount} />
+        <AdminSummaryCard
+          label="Low stock variants"
+          value={lowStockCount}
+          footer={
+            lowStockCount > 0 ? (
+              <Link
+                href="/admin/inventory"
+                className="mt-2 inline-block text-sm font-medium text-orange-600 hover:text-orange-700"
+              >
+                View inventory →
+              </Link>
+            ) : null
+          }
+        />
+        <AdminSummaryCard
+          label="Recent orders"
+          value={recentOrders.length}
+          footer={
             <Link
-              href="/admin/products"
+              href="/admin/orders"
               className="mt-2 inline-block text-sm font-medium text-orange-600 hover:text-orange-700"
             >
-              View products →
+              View all orders →
             </Link>
-          )}
-        </div>
-        <div className="rounded-lg border border-gray-200 bg-white p-5 shadow-sm">
-          <p className="text-sm font-medium text-gray-500">Recent orders</p>
-          <p className="mt-1 text-2xl font-semibold text-gray-900">{recentOrders.length}</p>
-          <Link
-            href="/admin/orders"
-            className="mt-2 inline-block text-sm font-medium text-orange-600 hover:text-orange-700"
-          >
-            View all orders →
-          </Link>
-        </div>
+          }
+        />
       </div>
 
-      {/* Recent orders table */}
-      <div className="rounded-lg border border-gray-200 bg-white shadow-sm">
-        <div className="border-b border-gray-200 px-4 py-3 sm:px-6">
-          <h2 className="text-lg font-semibold text-gray-900">Recent orders</h2>
-          <p className="mt-1 text-sm text-gray-500">Latest orders from your store</p>
-        </div>
-        <div className="overflow-x-auto">
+      <AdminSectionCard title="Recent orders" description="Latest orders from your store">
+        <AdminTableScroll>
           {recentOrders.length === 0 ? (
-            <div className="px-4 py-12 text-center text-gray-500">
-              No orders yet. Orders will appear here once customers place them.
-            </div>
+            <AdminEmptyState
+              title="No orders yet"
+              description="Orders will appear here once customers place them."
+            />
           ) : (
-            <table className="min-w-full divide-y divide-gray-200" style={{ minWidth: '640px' }}>
+            <table className="min-w-full divide-y divide-gray-200">
               <thead className="bg-gray-50">
                 <tr>
                   <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 sm:px-6">
@@ -141,7 +121,7 @@ export default async function AdminDashboardPage() {
                       {formatCurrency(order.total)}
                     </td>
                     <td className="whitespace-nowrap px-4 py-3 sm:px-6">
-                      <StatusBadge status={order.order_status} />
+                      <AdminStatusBadge status={order.order_status} />
                     </td>
                     <td className="whitespace-nowrap px-4 py-3 text-sm text-gray-500 sm:px-6">
                       {formatDate(order.created_at)}
@@ -159,8 +139,8 @@ export default async function AdminDashboardPage() {
               </tbody>
             </table>
           )}
-        </div>
-      </div>
+        </AdminTableScroll>
+      </AdminSectionCard>
     </div>
   );
 }

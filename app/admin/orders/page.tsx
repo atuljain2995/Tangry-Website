@@ -1,5 +1,9 @@
 import Link from 'next/link';
 import { getOrdersForAdmin } from '@/lib/db/queries';
+import { AdminStatusBadge } from '@/components/admin/AdminStatusBadge';
+import { AdminEmptyState } from '@/components/admin/AdminEmptyState';
+import { AdminSectionCard } from '@/components/admin/AdminSectionCard';
+import { AdminTableScroll } from '@/components/admin/AdminTableScroll';
 
 export const dynamic = 'force-dynamic';
 
@@ -21,24 +25,6 @@ function formatDate(iso: string) {
   });
 }
 
-function StatusBadge({ status }: { status: string }) {
-  const styles: Record<string, string> = {
-    pending: 'bg-amber-100 text-amber-800',
-    confirmed: 'bg-blue-100 text-blue-800',
-    processing: 'bg-indigo-100 text-indigo-800',
-    shipped: 'bg-purple-100 text-purple-800',
-    delivered: 'bg-green-100 text-green-800',
-    cancelled: 'bg-red-100 text-red-800',
-    refunded: 'bg-gray-100 text-gray-800',
-  };
-  const cls = styles[status] ?? 'bg-gray-100 text-gray-800';
-  return (
-    <span className={`inline-flex rounded-full px-2 py-0.5 text-xs font-medium ${cls}`}>
-      {status}
-    </span>
-  );
-}
-
 export default async function AdminOrdersPage() {
   const orders = await getOrdersForAdmin(100);
 
@@ -49,14 +35,15 @@ export default async function AdminOrdersPage() {
         <p className="mt-1 text-sm text-gray-500">View and manage orders</p>
       </div>
 
-      <div className="rounded-lg border border-gray-200 bg-white shadow-sm">
-        <div className="overflow-x-auto">
+      <AdminSectionCard title="All orders" description="Latest 100 orders">
+        <AdminTableScroll>
           {orders.length === 0 ? (
-            <div className="px-4 py-12 text-center text-gray-500">
-              No orders yet. Orders will appear here once customers place them.
-            </div>
+            <AdminEmptyState
+              title="No orders yet"
+              description="Orders will appear here once customers place them."
+            />
           ) : (
-            <table className="min-w-full divide-y divide-gray-200" style={{ minWidth: '640px' }}>
+            <table className="min-w-full divide-y divide-gray-200">
               <thead className="bg-gray-50">
                 <tr>
                   <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 sm:px-6">
@@ -92,7 +79,7 @@ export default async function AdminOrdersPage() {
                       {formatCurrency(order.total)}
                     </td>
                     <td className="whitespace-nowrap px-4 py-3 sm:px-6">
-                      <StatusBadge status={order.order_status} />
+                      <AdminStatusBadge status={order.order_status} />
                     </td>
                     <td className="whitespace-nowrap px-4 py-3 text-sm text-gray-500 sm:px-6">
                       {formatDate(order.created_at)}
@@ -110,8 +97,8 @@ export default async function AdminOrdersPage() {
               </tbody>
             </table>
           )}
-        </div>
-      </div>
+        </AdminTableScroll>
+      </AdminSectionCard>
     </div>
   );
 }

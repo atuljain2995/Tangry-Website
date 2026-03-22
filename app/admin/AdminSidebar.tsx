@@ -11,11 +11,15 @@ import {
   Mail,
   Settings,
   Store,
+  BarChart3,
+  Warehouse,
 } from 'lucide-react';
 
 const navItems = [
   { href: '/admin', label: 'Dashboard', icon: LayoutDashboard },
   { href: '/admin/orders', label: 'Orders', icon: ShoppingCart },
+  { href: '/admin/reports', label: 'Reports', icon: BarChart3 },
+  { href: '/admin/inventory', label: 'Inventory', icon: Warehouse },
   { href: '/admin/products', label: 'Products', icon: Package },
   { href: '/admin/customers', label: 'Customers', icon: Users },
   { href: '/admin/discounts', label: 'Discounts', icon: Tag },

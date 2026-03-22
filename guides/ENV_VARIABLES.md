@@ -57,7 +57,11 @@ GOOGLE_CLIENT_SECRET=your_google_client_secret
 ### Resend (Recommended)
 ```env
 RESEND_API_KEY=re_xxxxxx
+# Optional: verified domain sender (defaults to Resend onboarding address)
+ORDER_CONFIRMATION_FROM=Tangry Spices <orders@yourdomain.com>
 ```
+
+When `RESEND_API_KEY` is set, the app sends an **order confirmation** email to the customer after a successful **COD** or **verified Razorpay** checkout. Without `ORDER_CONFIRMATION_FROM`, a default Resend sender is used (may only deliver to your account email until you verify a domain).
 
 ### SendGrid (Alternative)
 ```env

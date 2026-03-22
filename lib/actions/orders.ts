@@ -8,6 +8,7 @@ import {
   decrementVariantStock,
 } from '@/lib/db/queries';
 import { calculateShipping, calculateTax, generateOrderNumber } from '@/lib/utils/database';
+import { sendOrderConfirmationEmail } from '@/lib/email/order-confirmation';
 import type { Address, CartItem, PaymentMethod } from '@/lib/types/database';
 
 export type CreateOrderPayload = {
@@ -106,6 +107,23 @@ export async function createOrder(payload: CreateOrderPayload): Promise<CreateOr
 
   if (couponId) {
     await incrementCouponUsage(couponId);
+  }
+
+  const paymentCompleted =
+    paymentMethod === 'cod' || (paymentMethod === 'razorpay' && paymentId);
+  if (paymentCompleted) {
+    void sendOrderConfirmationEmail({
+      to: userEmail.trim(),
+      orderNumber,
+      total,
+      currency: 'INR',
+      items: items.map((i) => ({
+        productName: i.productName,
+        variantName: i.variantName,
+        quantity: i.quantity,
+        price: i.price,
+      })),
+    }).catch((err) => console.error('Order confirmation email:', err));
   }
 
   return { success: true, orderNumber };

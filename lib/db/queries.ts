@@ -659,3 +659,167 @@ export async function getContactInquiriesForAdmin(): Promise<AdminInquiryRow[]> 
   return (data as AdminInquiryRow[]) ?? [];
 }
 
+// ——— Admin reports & inventory ———
+
+type OrderItemJson = {
+  productName?: string;
+  variantName?: string;
+  quantity?: number;
+  price?: number;
+  subtotal?: number;
+};
+
+type OrderReportRow = {
+  total: number | string;
+  order_status: string;
+  created_at: string;
+  items: OrderItemJson[] | null;
+};
+
+function isOrderCountableForReports(status: string): boolean {
+  return status !== 'cancelled' && status !== 'refunded';
+}
+
+export type AdminReportsSummary = {
+  revenue7: number;
+  orderCount7: number;
+  revenue30: number;
+  orderCount30: number;
+  topProducts: { label: string; quantitySold: number; revenue: number }[];
+};
+
+/**
+ * Sales totals for last 7 / 30 days (excludes cancelled & refunded) and top 5 products by quantity in that 30-day window.
+ */
+export async function getAdminReportsSummary(): Promise<AdminReportsSummary> {
+  const since = new Date();
+  since.setUTCDate(since.getUTCDate() - 30);
+  const sinceIso = since.toISOString();
+
+  const { data, error } = await supabaseAdmin
+    .from('orders')
+    .select('total, order_status, created_at, items')
+    .gte('created_at', sinceIso);
+
+  if (error) {
+    isSupabaseUnreachable(error);
+    console.error('Error fetching orders for reports:', error);
+    return {
+      revenue7: 0,
+      orderCount7: 0,
+      revenue30: 0,
+      orderCount30: 0,
+      topProducts: [],
+    };
+  }
+
+  const rows = (data as OrderReportRow[]) ?? [];
+  const sevenMs = 7 * 24 * 60 * 60 * 1000;
+  const now = Date.now();
+
+  let revenue7 = 0;
+  let orderCount7 = 0;
+  let revenue30 = 0;
+  let orderCount30 = 0;
+  const productAgg = new Map<string, { quantitySold: number; revenue: number }>();
+
+  for (const row of rows) {
+    if (!isOrderCountableForReports(row.order_status)) continue;
+
+    const created = new Date(row.created_at).getTime();
+    const total = Number(row.total);
+
+    revenue30 += total;
+    orderCount30 += 1;
+
+    if (now - created <= sevenMs) {
+      revenue7 += total;
+      orderCount7 += 1;
+    }
+
+    const items = Array.isArray(row.items) ? row.items : [];
+    for (const line of items) {
+      const name = line.productName?.trim() || 'Product';
+      const variant = line.variantName?.trim();
+      const label = variant ? `${name} (${variant})` : name;
+      const qty = Math.max(0, Number(line.quantity) || 0);
+      const rev = Number(line.subtotal ?? (line.price ?? 0) * qty) || 0;
+      const prev = productAgg.get(label) ?? { quantitySold: 0, revenue: 0 };
+      productAgg.set(label, {
+        quantitySold: prev.quantitySold + qty,
+        revenue: prev.revenue + rev,
+      });
+    }
+  }
+
+  const topProducts = [...productAgg.entries()]
+    .map(([label, v]) => ({ label, quantitySold: v.quantitySold, revenue: v.revenue }))
+    .filter((r) => r.quantitySold > 0)
+    .sort((a, b) => b.quantitySold - a.quantitySold)
+    .slice(0, 5);
+
+  return {
+    revenue7,
+    orderCount7,
+    revenue30,
+    orderCount30,
+    topProducts,
+  };
+}
+
+export type AdminLowStockVariantRow = {
+  id: string;
+  product_id: string;
+  product_name: string;
+  variant_name: string;
+  sku: string | null;
+  stock: number;
+};
+
+/**
+ * Variants with stock below threshold (default 10), available only, for admin inventory view.
+ */
+export async function getLowStockVariantsForAdmin(
+  threshold = 10,
+  limit = 200
+): Promise<AdminLowStockVariantRow[]> {
+  const { data: variants, error: vErr } = await supabaseAdmin
+    .from('product_variants')
+    .select('id, product_id, name, sku, stock')
+    .lt('stock', threshold)
+    .eq('is_available', true)
+    .order('stock', { ascending: true })
+    .limit(limit);
+
+  if (vErr) {
+    isSupabaseUnreachable(vErr);
+    console.error('Error fetching low-stock variants:', vErr);
+    return [];
+  }
+
+  const vrows = (variants as { id: string; product_id: string; name: string; sku: string | null; stock: number }[]) ?? [];
+  if (vrows.length === 0) return [];
+
+  const productIds = [...new Set(vrows.map((v) => v.product_id))];
+  const { data: products, error: pErr } = await supabaseAdmin
+    .from('products')
+    .select('id, name')
+    .in('id', productIds);
+
+  if (pErr) {
+    isSupabaseUnreachable(pErr);
+    return [];
+  }
+
+  const nameById = new Map((products as { id: string; name: string }[]).map((p) => [p.id, p.name]));
+
+  return vrows.map((v) => ({
+    id: v.id,
+    product_id: v.product_id,
+    product_name: nameById.get(v.product_id) ?? 'Unknown product',
+    variant_name: v.name,
+    sku: v.sku,
+    stock: Number(v.stock),
+  }));
+}
+

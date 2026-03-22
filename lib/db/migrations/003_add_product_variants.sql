@@ -94,31 +94,31 @@ SELECT
 FROM products WHERE slug = 'turmeric-powder'
 ON CONFLICT (sku) DO NOTHING;
 
--- Insert variants for Eazy Chef - Paneer Tikka Masala
+-- Insert variants for Paneer Tikka Masala Mix
 INSERT INTO product_variants (product_id, name, sku, price, compare_at_price, stock, weight, is_available)
 SELECT 
     id,
     '50g',
-    'EVR-EC-PTM-50',
+    'EVR-PTM-50',
     65.00,
     NULL,
     300,
     50,
     true
-FROM products WHERE slug = 'eazy-chef-paneer-tikka-masala'
+FROM products WHERE slug = 'paneer-tikka-masala-mix'
 ON CONFLICT (sku) DO NOTHING;
 
 INSERT INTO product_variants (product_id, name, sku, price, compare_at_price, stock, weight, is_available)
 SELECT 
     id,
     '100g',
-    'EVR-EC-PTM-100',
+    'EVR-PTM-100',
     120.00,
     NULL,
     250,
     100,
     true
-FROM products WHERE slug = 'eazy-chef-paneer-tikka-masala'
+FROM products WHERE slug = 'paneer-tikka-masala-mix'
 ON CONFLICT (sku) DO NOTHING;
 
 -- Insert variants for Red Chilli Powder

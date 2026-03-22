@@ -41,16 +41,18 @@ export const PRODUCT_CATEGORIES: ProductCategory[] = [
     products: ['Turmeric Powder', 'Red Chilli Powder', 'Coriander Powder', 'Cumin Powder']
   },
   {
-    id: 'tasteeto',
-    title: 'Tasteeto',
-    description: "Introducing Tasteeto, a range of herbs and seasonings to infuse your meals with lip-smacking flavour and #ChefJaisa taste!",
+    id: 'herbs-seasonings',
+    title: 'Herbs & Seasonings',
+    description:
+      'Herbs and seasoning blends to add bold flavour to everyday meals—Italian mixes, pizza & pasta, Mexican, Chinese-style notes, and more.',
     bgColor: 'bg-green-50',
     products: ['Italian Seasoning', 'Pizza & Pasta', 'Mexican', 'Chinese']
   },
   {
-    id: 'eazychef',
-    title: 'Eazy Chef',
-    description: "Ready-to-use spice mix range that helps you cook authentic Indian dishes quickly and effortlessly, without compromising on taste.",
+    id: 'ready-to-cook',
+    title: 'Ready to Cook',
+    description:
+      'Ready-to-use spice mixes for authentic Indian dishes—quick weeknight cooking without compromising on taste.',
     bgColor: 'bg-blue-50',
     products: ['Paneer Butter Masala', 'Dal Tadka', 'Rajma Masala', 'Chole Masala']
   },

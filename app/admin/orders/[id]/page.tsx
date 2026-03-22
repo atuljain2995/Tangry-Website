@@ -1,6 +1,7 @@
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import { supabaseAdmin } from '@/lib/db/supabase';
+import { AdminStatusBadge } from '@/components/admin/AdminStatusBadge';
 import { AdminOrderActions } from './AdminOrderActions';
 
 export const dynamic = 'force-dynamic';
@@ -15,24 +16,6 @@ function formatCurrency(amount: number) {
 
 function formatDate(iso: string) {
   return new Date(iso).toLocaleString('en-IN');
-}
-
-function StatusBadge({ status }: { status: string }) {
-  const styles: Record<string, string> = {
-    pending: 'bg-amber-100 text-amber-800',
-    confirmed: 'bg-blue-100 text-blue-800',
-    processing: 'bg-indigo-100 text-indigo-800',
-    shipped: 'bg-purple-100 text-purple-800',
-    delivered: 'bg-green-100 text-green-800',
-    cancelled: 'bg-red-100 text-red-800',
-    refunded: 'bg-gray-100 text-gray-800',
-  };
-  const cls = styles[status] ?? 'bg-gray-100 text-gray-800';
-  return (
-    <span className={`inline-flex rounded-full px-2 py-0.5 text-xs font-medium ${cls}`}>
-      {status}
-    </span>
-  );
 }
 
 type OrderRow = {
@@ -89,11 +72,10 @@ export default async function AdminOrderDetailPage({
           <h1 className="mt-1 text-2xl font-bold text-gray-900">Order {o.order_number}</h1>
           <p className="mt-1 text-sm text-gray-500">{formatDate(o.created_at)}</p>
         </div>
-        <div className="flex gap-2">
-          <StatusBadge status={o.order_status} />
-          <span className="rounded-full bg-gray-100 px-2 py-0.5 text-xs font-medium text-gray-700">
-            Payment: {o.payment_status}
-          </span>
+        <div className="flex flex-wrap items-center gap-2">
+          <AdminStatusBadge status={o.order_status} />
+          <span className="text-xs text-gray-500">Payment</span>
+          <AdminStatusBadge status={o.payment_status} />
         </div>
       </div>
 

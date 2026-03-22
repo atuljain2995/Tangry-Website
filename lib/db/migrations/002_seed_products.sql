@@ -49,21 +49,22 @@ INSERT INTO products (
     4.9, 2341, 1
 ),
 (
-    'eazy-chef-paneer-tikka-masala',
-    'Eazy Chef - Paneer Tikka Masala',
-    'Complete spice mix for restaurant-style Paneer Tikka Masala. Be a chef in minutes! Just add paneer and follow simple instructions.',
-    'Eazy Chef',
+    'paneer-tikka-masala-mix',
+    'Paneer Tikka Masala Mix',
+    'Complete spice mix for restaurant-style Paneer Tikka Masala. Just add paneer and follow simple instructions.',
+    'Ready to Cook',
     NULL,
-    ARRAY['/products/eazy-chef-paneer-tikka.jpg'],
+    ARRAY['/products/paneer-tikka-masala-mix.jpg'],
     '[
-        {"id": "ec-ptm-50g", "name": "50g Pack", "sku": "EVR-EC-PTM-50", "price": 40, "stock": 600, "weight": 50, "isAvailable": true}
+        {"id": "ptm-50g", "name": "50g Pack", "sku": "EVR-PTM-50", "price": 65, "stock": 300, "weight": 50, "isAvailable": true},
+        {"id": "ptm-100g", "name": "100g Pack", "sku": "EVR-PTM-100", "price": 120, "stock": 250, "weight": 100, "isAvailable": true}
     ]'::jsonb,
     ARRAY['Ready in 15 minutes', 'Restaurant-style taste', 'No chopping or grinding', 'Serves 4 people'],
     ARRAY['Coriander', 'Cumin', 'Red Chilli', 'Kasuri Methi', 'Garam Masala', 'Ginger', 'Garlic', 'Tomato Powder'],
     ARRAY['new', 'quick-cook', 'easy'],
-    'Eazy Chef Paneer Tikka Masala Mix - Ready in 15 Minutes | Tangry',
+    'Paneer Tikka Masala Mix - Ready in 15 Minutes | Tangry',
     'Restaurant-style Paneer Tikka Masala in just 15 minutes. Complete spice mix with easy instructions. Order now!',
-    ARRAY['paneer tikka masala', 'ready to cook', 'instant masala mix', 'eazy chef'],
+    ARRAY['paneer tikka masala', 'ready to cook', 'instant masala mix', 'tangry'],
     true, true, false,
     4.7, 456, 1
 ),
