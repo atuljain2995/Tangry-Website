@@ -14,6 +14,16 @@ export default function AdminSettingsPage() {
         <p className="text-sm text-gray-600">These values are defined in <code className="rounded bg-gray-100 px-1">lib/data/constants.ts</code>.</p>
         <dl className="grid gap-2 text-sm">
           <div>
+            <dt className="font-medium text-gray-500">Brand</dt>
+            <dd className="text-gray-900">
+              {COMPANY_INFO.brandName} — {COMPANY_INFO.tagline}
+            </dd>
+          </div>
+          <div>
+            <dt className="font-medium text-gray-500">Legal name</dt>
+            <dd className="text-gray-900">{COMPANY_INFO.legalName}</dd>
+          </div>
+          <div>
             <dt className="font-medium text-gray-500">Phone</dt>
             <dd className="text-gray-900">{COMPANY_INFO.phone}</dd>
           </div>
@@ -22,8 +32,16 @@ export default function AdminSettingsPage() {
             <dd className="text-gray-900">{COMPANY_INFO.email}</dd>
           </div>
           <div>
+            <dt className="font-medium text-gray-500">Wholesale email</dt>
+            <dd className="text-gray-900">{COMPANY_INFO.wholesaleEmail}</dd>
+          </div>
+          <div>
             <dt className="font-medium text-gray-500">Address</dt>
             <dd className="text-gray-900">{COMPANY_INFO.address}</dd>
+          </div>
+          <div>
+            <dt className="font-medium text-gray-500">Certifications</dt>
+            <dd className="text-gray-900">{COMPANY_INFO.certifications.join(' · ')}</dd>
           </div>
         </dl>
         <p className="pt-2 text-sm text-gray-500">

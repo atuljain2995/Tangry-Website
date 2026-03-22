@@ -23,7 +23,8 @@ export const metadata = {
     default: "Tangry Spices - India's No.1 Spice Brand | Authentic Indian Spices",
     template: "%s | Tangry Spices"
   },
-  description: "Buy authentic Indian spices online from Tangry - India's most trusted spice brand. Premium quality blended & pure spices, masalas, and ready-to-cook mixes. Free shipping on orders above ₹499.",
+  description:
+    "Tangry — Taste of Home. Buy authentic Indian spices, masalas, and pickles from Maya Enterprises, Jaipur. Premium quality with FSSAI & ISO 22000. Free shipping on orders above ₹499.",
   keywords: [
     "spices online india",
     "buy spices online",

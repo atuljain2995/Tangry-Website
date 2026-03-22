@@ -6,6 +6,7 @@ import { MobileMenu } from '@/components/layout/MobileMenu';
 import { Footer } from '@/components/layout/Footer';
 import { CartDrawer } from '@/components/ecommerce/CartDrawer';
 import { submitContact } from '@/lib/actions/contact';
+import { COMPANY_INFO } from '@/lib/data/constants';
 import { Mail, Phone, MapPin } from 'lucide-react';
 
 export default function ContactPage() {
@@ -52,18 +53,25 @@ export default function ContactPage() {
           <div className="lg:col-span-1 space-y-6">
             <div>
               <h2 className="font-bold text-gray-900 mb-4">Get in Touch</h2>
-              <a href="mailto:info@tangry.com" className="flex items-center gap-3 text-gray-700 hover:text-[#D32F2F]">
+              <a
+                href={`mailto:${COMPANY_INFO.email}`}
+                className="flex items-center gap-3 text-gray-700 hover:text-[#D32F2F]"
+              >
                 <Mail size={20} />
-                <span>info@tangry.com</span>
+                <span>{COMPANY_INFO.email}</span>
               </a>
-              <a href="tel:+911234567890" className="flex items-center gap-3 text-gray-700 hover:text-[#D32F2F] mt-3">
+              <a
+                href={`tel:${COMPANY_INFO.phoneTel}`}
+                className="flex items-center gap-3 text-gray-700 hover:text-[#D32F2F] mt-3"
+              >
                 <Phone size={20} />
-                <span>+91 123 456 7890</span>
+                <span>{COMPANY_INFO.phone}</span>
               </a>
               <p className="flex items-start gap-3 text-gray-700 mt-3">
                 <MapPin size={20} className="flex-shrink-0 mt-0.5" />
-                <span>Making spices cool again</span>
+                <span>{COMPANY_INFO.address}</span>
               </p>
+              <p className="text-sm text-gray-600 mt-3">{COMPANY_INFO.certifications.join(' · ')}</p>
             </div>
           </div>
 

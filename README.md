@@ -2,10 +2,10 @@
 
 ![Tangry Spices](https://img.shields.io/badge/Next.js-16.0-black?style=for-the-badge&logo=next.js)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5.0-blue?style=for-the-badge&logo=typescript)
-![Tailwind CSS](https://img.shields.io/badge/Tailwind-3.0-38B2AC?style=for-the-badge&logo=tailwind-css)
+![Tailwind CSS](https://img.shields.io/badge/Tailwind-4.0-38B2AC?style=for-the-badge&logo=tailwind-css)
 ![Supabase](https://img.shields.io/badge/Supabase-Database-3ECF8E?style=for-the-badge&logo=supabase)
 
-A modern, high-performance e-commerce platform for authentic Indian spices. Built with Next.js 14+, TypeScript, Tailwind CSS, and Supabase.
+A modern, high-performance e-commerce platform for authentic Indian spices. Built with Next.js 16 (App Router), TypeScript, Tailwind CSS 4, and PostgreSQL (Supabase).
 
 ## ✨ Features
 
@@ -13,11 +13,14 @@ A modern, high-performance e-commerce platform for authentic Indian spices. Buil
 - 🎨 **Modern UI** - Bold, energetic design with smooth animations
 - 📱 **Fully Responsive** - Works perfectly on all devices
 - 🔍 **SEO Optimized** - Structured data, sitemaps, meta tags
-- 💳 **Payment Ready** - Razorpay & Stripe integration ready
-- 📊 **Analytics** - Google Analytics 4, conversion tracking
+- 💳 **Payments** - **Razorpay** and **COD** implemented end-to-end; Stripe appears in checkout UI but full Stripe Checkout is not wired (orders can be created as payment pending for other methods)
+- 🔐 **Auth** - In-house session auth with roles (`customer`, `retailer`, `admin`); customer `/login` and `/signup`; admin routes protected via `requireAdmin()`
+- 🛠️ **Admin portal** - Dashboard, orders, products (create/edit + variants), customers, discounts, inquiries, settings, sales reports, low-stock inventory
+- 📊 **Analytics** - Google Analytics 4, Meta Pixel, Hotjar (loaded when real IDs are set in env)
 - 🌐 **B2B Features** - Wholesale inquiries and bulk orders
 - 📝 **Content Marketing** - Blog and recipe sections
 - 🚀 **Performance** - Server-side rendering, optimized images
+- 📧 **Order email (optional)** - Set `RESEND_API_KEY` (+ from address) to send order confirmation emails when payment completes
 
 ## 🚀 Quick Start
 
@@ -38,11 +41,12 @@ cd everest-clone
 npm install
 
 # Set up environment variables
-cp .env.example .env.local
-# Edit .env.local with your Supabase credentials
+# Create .env.local — see guides/ENV_VARIABLES.md for all keys
 
 # Run database migrations
 # See guides/RUN_MIGRATIONS_NOW.md
+
+# (Optional) Create an admin user — see scripts/create-admin.ts
 
 # Start development server
 npm run dev
@@ -81,13 +85,13 @@ All detailed documentation is in the **[`/guides`](./guides)** folder:
 
 ## 🛠️ Tech Stack
 
-- **Framework:** Next.js 14+ (App Router)
+- **Framework:** Next.js 16 (App Router)
 - **Language:** TypeScript
-- **Styling:** Tailwind CSS
+- **Styling:** Tailwind CSS 4
 - **Database:** PostgreSQL (via Supabase)
-- **Authentication:** Supabase Auth (ready to implement)
-- **Payments:** Razorpay + Stripe (ready to implement)
-- **Analytics:** Google Analytics 4
+- **Authentication:** In-house session auth (see `lib/auth/`)
+- **Payments:** Razorpay (live/test keys) + COD; Stripe placeholder in UI
+- **Analytics:** Google Analytics 4 (optional env IDs)
 - **Hosting:** Vercel (recommended)
 
 ## 📦 Project Structure
@@ -95,6 +99,7 @@ All detailed documentation is in the **[`/guides`](./guides)** folder:
 ```
 everest-clone/
 ├── app/                    # Next.js App Router pages
+│   ├── admin/             # Admin dashboard (role-protected)
 │   ├── products/          # Product pages
 │   ├── blog/              # Blog pages
 │   ├── recipes/           # Recipe pages
@@ -107,6 +112,7 @@ everest-clone/
 │   └── ui/               # Reusable UI components
 ├── lib/                  # Utilities and data
 │   ├── db/              # Database queries and types
+│   ├── auth/            # Session and roles
 │   ├── contexts/        # React Context (Cart)
 │   └── utils/           # Helper functions
 ├── guides/              # 📚 All documentation
@@ -145,7 +151,7 @@ vercel
 vercel --prod
 ```
 
-See **[FREE_HOSTING_GUIDE.md](./guides/FREE_HOSTING_GUIDE.md)** for complete deployment options.
+For production uploads, configure **Supabase Storage** or **Cloudflare R2** (see [UPDATE_PRODUCTS_AND_IMAGES.md](./guides/UPDATE_PRODUCTS_AND_IMAGES.md)). See **[FREE_HOSTING_GUIDE.md](./guides/FREE_HOSTING_GUIDE.md)** for complete deployment options.
 
 ## 🌟 Key Features
 
@@ -153,8 +159,8 @@ See **[FREE_HOSTING_GUIDE.md](./guides/FREE_HOSTING_GUIDE.md)** for complete dep
 - ✅ Product catalog with variants
 - ✅ Shopping cart with local storage
 - ✅ Multi-step checkout
-- ✅ Order management (ready)
-- 🔄 Payment integration (ready to connect)
+- ✅ Order management (store + admin)
+- ✅ Razorpay + COD; Stripe UI without full gateway flow
 
 ### Marketing
 - ✅ SEO optimization (meta tags, structured data)
@@ -170,10 +176,9 @@ See **[FREE_HOSTING_GUIDE.md](./guides/FREE_HOSTING_GUIDE.md)** for complete dep
 - ✅ Corporate contact forms
 
 ### Analytics
-- ✅ Google Analytics 4 integration
+- ✅ Google Analytics 4 integration (when `NEXT_PUBLIC_GA_ID` is set)
 - ✅ Conversion tracking setup
-- ✅ Meta Pixel ready
-- ✅ Hotjar ready
+- ✅ Meta Pixel / Hotjar (when env IDs are set)
 
 ## 📈 Marketing Strategy
 
@@ -202,6 +207,7 @@ npm run build        # Build for production
 npm run start        # Start production server
 npm run lint         # Run ESLint
 npm run test-db      # Test database connection
+npm run create-admin # Create an admin user (see script for env)
 ```
 
 ## 📄 License
@@ -216,8 +222,8 @@ This project is licensed under the MIT License.
 
 ## 📞 Support
 
-- 📧 Email: info@tangry.com
-- 📱 WhatsApp: +91 123 456 7890
+- 📧 Email: tangryspices@gmail.com
+- 📱 Phone / WhatsApp: +91 77330 09952
 - 📚 Documentation: [/guides](./guides)
 
 ---

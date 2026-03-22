@@ -6,23 +6,29 @@ import { COMPANY_INFO } from '../data/constants';
 /**
  * Generate Organization schema
  */
+const orgPostalAddress = {
+  '@type': 'PostalAddress' as const,
+  streetAddress:
+    'A7, Marg No A5, Khatipura Road, Kumawat Colony, Jhotwara',
+  addressLocality: 'Jaipur',
+  postalCode: '302012',
+  addressRegion: 'Rajasthan',
+  addressCountry: 'IN',
+};
+
 export function getOrganizationSchema() {
   return {
     '@context': 'https://schema.org',
     '@type': 'Organization',
-    name: 'Tangry Spices',
+    name: 'Tangry',
+    alternateName: ['Tangry Spices', COMPANY_INFO.legalName],
     url: 'https://tangryspices.com',
     logo: 'https://tangryspices.com/logo.png',
-    description: 'India\'s leading spice brand offering authentic, premium quality spices since 1967',
-    address: {
-      '@type': 'PostalAddress',
-      addressCountry: 'IN',
-      addressLocality: 'Mumbai',
-      addressRegion: 'Maharashtra',
-    },
+    description: `${COMPANY_INFO.brandName} — ${COMPANY_INFO.tagline}. Authentic spices and masalas from ${COMPANY_INFO.legalName}, Jaipur.`,
+    address: orgPostalAddress,
     contactPoint: {
       '@type': 'ContactPoint',
-      telephone: COMPANY_INFO.phone,
+      telephone: COMPANY_INFO.phoneTel,
       contactType: 'Customer Service',
       email: COMPANY_INFO.email,
       availableLanguage: ['English', 'Hindi'],
@@ -163,20 +169,15 @@ export function getLocalBusinessSchema() {
     '@context': 'https://schema.org',
     '@type': 'LocalBusiness',
     '@id': 'https://tangryspices.com',
-    name: 'Tangry Spices',
+    name: 'Tangry',
     image: 'https://tangryspices.com/logo.png',
-    telephone: COMPANY_INFO.phone,
+    telephone: COMPANY_INFO.phoneTel,
     email: COMPANY_INFO.email,
-    address: {
-      '@type': 'PostalAddress',
-      addressCountry: 'IN',
-      addressLocality: 'Mumbai',
-      addressRegion: 'Maharashtra',
-    },
+    address: orgPostalAddress,
     geo: {
       '@type': 'GeoCoordinates',
-      latitude: '19.0760',
-      longitude: '72.8777',
+      latitude: '26.9124',
+      longitude: '75.7873',
     },
     url: 'https://tangryspices.com',
     priceRange: '₹₹',

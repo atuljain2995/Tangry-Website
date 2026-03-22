@@ -31,8 +31,8 @@ export const TrustBadges = ({ variant = 'horizontal', className = '' }: TrustBad
     },
     {
       icon: Award,
-      title: 'ISO Certified',
-      description: 'Quality Standards'
+      title: 'FSSAI & ISO 22000',
+      description: 'Licensed & certified (12225026001713)'
     },
     {
       icon: Leaf,

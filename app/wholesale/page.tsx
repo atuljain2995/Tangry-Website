@@ -7,6 +7,7 @@ import { Footer } from '@/components/layout/Footer';
 import { CartDrawer } from '@/components/ecommerce/CartDrawer';
 import { TrustBadges } from '@/components/ui/TrustBadges';
 import { submitWholesaleQuote } from '@/lib/actions/wholesale';
+import { COMPANY_INFO } from '@/lib/data/constants';
 import { Building2, Users, Package, TrendingUp, Phone, Mail } from 'lucide-react';
 
 export default function WholesalePage() {
@@ -304,13 +305,16 @@ export default function WholesalePage() {
         <div className="container mx-auto px-6 text-center">
           <h2 className="text-3xl font-bold mb-8">Get in Touch</h2>
           <div className="flex flex-col md:flex-row justify-center gap-8">
-            <a href="tel:+919876543210" className="flex items-center justify-center space-x-3">
+            <a href={`tel:${COMPANY_INFO.phoneTel}`} className="flex items-center justify-center space-x-3">
               <Phone size={24} />
-              <span className="text-lg">+91 98765 43210</span>
+              <span className="text-lg">{COMPANY_INFO.phone}</span>
             </a>
-            <a href="mailto:wholesale@tangryspices.com" className="flex items-center justify-center space-x-3">
+            <a
+              href={`mailto:${COMPANY_INFO.wholesaleEmail}`}
+              className="flex items-center justify-center space-x-3"
+            >
               <Mail size={24} />
-              <span className="text-lg">wholesale@tangryspices.com</span>
+              <span className="text-lg">{COMPANY_INFO.wholesaleEmail}</span>
             </a>
           </div>
         </div>
