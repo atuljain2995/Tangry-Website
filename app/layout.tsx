@@ -4,7 +4,8 @@ import { CartProvider } from "@/lib/contexts/CartContext";
 import { AuthProvider } from "@/lib/contexts/AuthContext";
 import { Analytics } from "@/components/analytics/Analytics";
 import { WhatsAppButton } from "@/components/ui/WhatsAppButton";
-import { SpeedInsights } from "@vercel/speed-insights/next"
+import { Analytics as VercelAnalytics } from "@vercel/analytics/next";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 
 const poppins = Poppins({
   subsets: ["latin"],
@@ -95,6 +96,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <AuthProvider>
             {children}
             <WhatsAppButton />
+            <VercelAnalytics />
           </AuthProvider>
         </CartProvider>
       </body>
