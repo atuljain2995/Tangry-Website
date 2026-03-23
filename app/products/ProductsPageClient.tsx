@@ -1,28 +1,34 @@
 'use client';
 
 import { useState } from 'react';
-import { Package, Zap } from 'lucide-react';
+import { ChevronDown, Package, Zap } from 'lucide-react';
 import { Header } from '@/components/layout/Header';
 import { MobileMenu } from '@/components/layout/MobileMenu';
 import { Footer } from '@/components/layout/Footer';
 import { CartDrawer } from '@/components/ecommerce/CartDrawer';
 import { ProductCard } from '@/components/ecommerce/ProductCard';
+import type { DbProductCategory } from '@/lib/db/queries';
 import { ProductExtended } from '@/lib/types/database';
-import { PRODUCT_CATEGORIES } from '@/lib/data/products';
 
 interface ProductsPageClientProps {
   products: ProductExtended[];
+  categories: DbProductCategory[];
 }
 
-export function ProductsPageClient({ products }: ProductsPageClientProps) {
+export function ProductsPageClient({ products, categories }: ProductsPageClientProps) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [selectedCategory, setSelectedCategory] = useState<string>('all');
+  const [selectedCategoryId, setSelectedCategoryId] = useState<'all' | string>('all');
   const [sortBy, setSortBy] = useState<'newest' | 'price-low' | 'price-high' | 'popular'>('popular');
 
-  // Filter products by category
-  let filteredProducts = selectedCategory === 'all' 
-    ? products 
-    : products.filter(p => p.category === selectedCategory);
+  // Filter by DB category id, with title fallback for legacy rows without category_id
+  let filteredProducts =
+    selectedCategoryId === 'all'
+      ? products
+      : products.filter((p) => {
+          if (p.categoryId === selectedCategoryId) return true;
+          const meta = categories.find((c) => c.id === selectedCategoryId);
+          return meta ? p.category === meta.title : false;
+        });
 
   // Sort products
   filteredProducts = [...filteredProducts].sort((a, b) => {
@@ -66,44 +72,48 @@ export function ProductsPageClient({ products }: ProductsPageClientProps) {
             <div className="flex bg-gray-100 p-1.5 rounded-xl flex-wrap gap-2">
               <button
                 type="button"
-                onClick={() => setSelectedCategory('all')}
-                className={`px-6 py-2 rounded-lg text-sm font-bold transition capitalize ${
-                  selectedCategory === 'all'
+                onClick={() => setSelectedCategoryId('all')}
+                className={`px-4 py-2 rounded-lg text-sm font-bold transition capitalize ${
+                  selectedCategoryId === 'all'
                     ? 'bg-white shadow-md text-black'
                     : 'text-gray-500 hover:text-black'
                 }`}
               >
                 All
               </button>
-              {PRODUCT_CATEGORIES.map(category => (
+              {categories.map((category) => (
                 <button
                   type="button"
                   key={category.id}
-                  onClick={() => setSelectedCategory(category.title)}
-                  className={`px-6 py-2 rounded-lg text-sm font-bold transition capitalize ${
-                    selectedCategory === category.title
+                  onClick={() => setSelectedCategoryId(category.id)}
+                  className={`px-4 py-2 rounded-lg text-sm font-bold transition capitalize ${
+                    selectedCategoryId === category.id
                       ? 'bg-white shadow-md text-black'
                       : 'text-gray-500 hover:text-black'
                   }`}
                 >
-                  {category.chipLabel ?? category.title}
+                  {category.chip_label || category.title}
                 </button>
               ))}
             </div>
           </div>
 
-          {/* Sort */}
-          <div>
+          {/* Sort — custom chevron so spacing is consistent (native arrow ignores padding) */}
+          <div className="relative shrink-0">
             <select
               value={sortBy}
               onChange={(e) => setSortBy(e.target.value as typeof sortBy)}
-              className="px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-500 font-bold text-sm bg-white"
+              className="w-full min-w-[11.5rem] cursor-pointer appearance-none border-2 border-gray-200 bg-white py-3 pl-4 pr-11 text-sm font-bold text-gray-900 rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-500"
             >
               <option value="popular">Most Popular</option>
               <option value="newest">Newest First</option>
               <option value="price-low">Price: Low to High</option>
               <option value="price-high">Price: High to Low</option>
             </select>
+            <ChevronDown
+              className="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-500"
+              aria-hidden
+            />
           </div>
         </div>
 

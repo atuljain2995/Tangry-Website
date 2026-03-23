@@ -1,6 +1,7 @@
 import { Metadata } from 'next';
 import { ProductsPageClient } from './ProductsPageClient';
-import { getAllProducts } from '@/lib/db/queries';
+import { PRODUCT_CATEGORIES } from '@/lib/data/products';
+import { getAllProducts, getProductCategories, type DbProductCategory } from '@/lib/db/queries';
 
 export const metadata: Metadata = {
   title: 'Shop Masalas, Powders & Pickles',
@@ -10,8 +11,19 @@ export const metadata: Metadata = {
 
 export const revalidate = 3600; // Revalidate every hour
 
-export default async function ProductsPage() {
-  const products = await getAllProducts();
+function fallbackCategories(): DbProductCategory[] {
+  return PRODUCT_CATEGORIES.map((c, i) => ({
+    id: c.id,
+    slug: c.id,
+    title: c.title,
+    chip_label: c.chipLabel ?? null,
+    sort_order: i,
+  }));
+}
 
-  return <ProductsPageClient products={products} />;
+export default async function ProductsPage() {
+  const [products, fromDb] = await Promise.all([getAllProducts(), getProductCategories()]);
+  const categories = fromDb.length > 0 ? fromDb : fallbackCategories();
+
+  return <ProductsPageClient products={products} categories={categories} />;
 }

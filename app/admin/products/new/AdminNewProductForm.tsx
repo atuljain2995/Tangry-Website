@@ -2,15 +2,16 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { ProductCategorySelect } from '@/components/admin/ProductCategorySelect';
 import { createProduct } from '@/lib/actions/admin-products';
+import type { DbProductCategory } from '@/lib/db/queries';
 
-export function AdminNewProductForm() {
+export function AdminNewProductForm({ categories }: { categories: DbProductCategory[] }) {
   const router = useRouter();
   const [name, setName] = useState('');
   const [slug, setSlug] = useState('');
   const [description, setDescription] = useState('');
-  const [category, setCategory] = useState('');
-  const [subcategory, setSubcategory] = useState('');
+  const [categoryId, setCategoryId] = useState('');
   const [metaTitle, setMetaTitle] = useState('');
   const [metaDescription, setMetaDescription] = useState('');
   const [isFeatured, setIsFeatured] = useState(false);
@@ -34,8 +35,7 @@ export function AdminNewProductForm() {
       name: name.trim(),
       slug: slug.trim() || undefined,
       description: description.trim() || undefined,
-      category: category.trim() || undefined,
-      subcategory: subcategory.trim() || undefined,
+      category_id: categoryId.trim() || undefined,
       meta_title: metaTitle.trim() || undefined,
       meta_description: metaDescription.trim() || undefined,
       is_featured: isFeatured,
@@ -102,25 +102,17 @@ export function AdminNewProductForm() {
               className="w-full rounded border border-gray-300 px-3 py-2"
             />
           </div>
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Category</label>
-              <input
-                type="text"
-                value={category}
-                onChange={(e) => setCategory(e.target.value)}
-                className="w-full rounded border border-gray-300 px-3 py-2"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Subcategory</label>
-              <input
-                type="text"
-                value={subcategory}
-                onChange={(e) => setSubcategory(e.target.value)}
-                className="w-full rounded border border-gray-300 px-3 py-2"
-              />
-            </div>
+          <div>
+            <label htmlFor="new-product-category" className="block text-sm font-medium text-gray-700 mb-1">
+              Category
+            </label>
+            <ProductCategorySelect
+              id="new-product-category"
+              categories={categories}
+              value={categoryId}
+              onChange={setCategoryId}
+              disabled={saving}
+            />
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">Meta title</label>

@@ -1,11 +1,15 @@
 'use client';
 
 import { MessageCircle } from 'lucide-react';
+import { usePathname } from 'next/navigation';
 import { useState } from 'react';
 
 export const WhatsAppButton = () => {
+  const pathname = usePathname();
   const [isHovered, setIsHovered] = useState(false);
-  
+
+  if (pathname?.startsWith('/admin')) return null;
+
   const whatsappNumber = '917733009952'; // +91 7733009952
   const message = encodeURIComponent('Hi! I have a question about Tangry Spices.');
   const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${message}`;

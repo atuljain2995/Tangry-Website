@@ -15,8 +15,7 @@ function slugify(name: string): string {
 type ProductUpdate = {
   name?: string;
   description?: string | null;
-  category?: string | null;
-  subcategory?: string | null;
+  category_id?: string | null;
   meta_title?: string;
   meta_description?: string;
   keywords?: string[];
@@ -38,9 +37,17 @@ export async function updateProduct(
 ): Promise<{ success: true } | { success: false; error: string }> {
   try {
     const payload: Database['public']['Tables']['products']['Update'] = {
-      ...data,
       updated_at: new Date().toISOString(),
     };
+    if (data.name !== undefined) payload.name = data.name;
+    if (data.description !== undefined) payload.description = data.description;
+    if (data.category_id !== undefined) payload.category_id = data.category_id;
+    if (data.meta_title !== undefined) payload.meta_title = data.meta_title;
+    if (data.meta_description !== undefined) payload.meta_description = data.meta_description;
+    if (data.keywords !== undefined) payload.keywords = data.keywords;
+    if (data.is_featured !== undefined) payload.is_featured = data.is_featured;
+    if (data.is_new !== undefined) payload.is_new = data.is_new;
+    if (data.is_best_seller !== undefined) payload.is_best_seller = data.is_best_seller;
     const { error } = await supabaseAdmin
       .from('products')
       .update(payload as never)
@@ -127,8 +134,7 @@ export type CreateProductInput = {
   name: string;
   slug?: string | null;
   description?: string | null;
-  category?: string | null;
-  subcategory?: string | null;
+  category_id?: string | null;
   meta_title?: string | null;
   meta_description?: string | null;
   is_featured?: boolean;
@@ -164,8 +170,7 @@ export async function createProduct(
       slug,
       name: input.name.trim(),
       description: input.description?.trim() || null,
-      category: input.category?.trim() || null,
-      subcategory: input.subcategory?.trim() || null,
+      category_id: input.category_id?.trim() || null,
       images: [],
       variants: {},
       features: [],

@@ -2,7 +2,7 @@
 -- Run after 001_initial_schema.sql
 
 INSERT INTO products (
-    slug, name, description, category, subcategory, images, variants, features, ingredients,
+    slug, name, description, category, images, variants, features, ingredients,
     tags, meta_title, meta_description, keywords, is_featured, is_new, is_best_seller,
     rating, review_count, min_order_quantity
 ) VALUES
@@ -11,7 +11,6 @@ INSERT INTO products (
     'Dabeli Masala',
     'Authentic dabeli masala blended in Jaipur. Warm, tangy, and balanced for stuffed buns and potato filling.',
     'Spices & Masalas',
-    'Regional blends',
     ARRAY['/products/dabeli-masala.jpg'],
     '[]'::jsonb,
     ARRAY['Small-batch blended in Jaipur', 'No artificial colours', 'FSSAI licensed facility', 'Sealed for freshness'],
@@ -28,7 +27,6 @@ INSERT INTO products (
     'Turmeric Powder',
     'Bright, aromatic turmeric (haldi)—essential for everyday cooking. Packed in Jaipur under FSSAI supervision.',
     'Essentials',
-    NULL,
     ARRAY['/products/turmeric-powder.jpg'],
     '[]'::jsonb,
     ARRAY['Lab-checked batches', 'Vibrant colour', 'Finely ground', 'Sealed pack'],
@@ -45,7 +43,6 @@ INSERT INTO products (
     'Gun Powder (Podi Masala)',
     'South Indian–style podi with lentils, chillies, and curry leaves—sprinkle on idli, dosa, or rice.',
     'Ready to Eat',
-    NULL,
     ARRAY['/products/gun-powder-podi.jpg'],
     '[]'::jsonb,
     ARRAY['Crunchy lentil base', 'Adjustable heat', 'Resealable pack'],
@@ -62,7 +59,6 @@ INSERT INTO products (
     'Vada Pav Chutney',
     'Dry garlic-coconut chutney style mix for Mumbai-style vada pav—tangy, garlicky, and addictive.',
     'Ready to Eat',
-    NULL,
     ARRAY['/products/vada-pav-chutney.jpg'],
     '[]'::jsonb,
     ARRAY['Garlic-forward', 'Pairs with batata vada', 'Dry sprinkle format', 'Consistent grind'],
@@ -79,7 +75,6 @@ INSERT INTO products (
     'Pav Bhaji Masala',
     'Rich, red pav bhaji masala for bhaji that tastes like your favourite corner stall.',
     'Spices & Masalas',
-    'Street-style blends',
     ARRAY['/products/pav-bhaji-masala.jpg'],
     '[]'::jsonb,
     ARRAY['Bold colour & aroma', 'Works with mixed vegetables', 'Small-batch Jaipur blend'],

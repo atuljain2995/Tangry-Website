@@ -39,6 +39,38 @@ export interface Database {
           updated_at?: string
         }
       }
+      product_categories: {
+        Row: {
+          id: string
+          slug: string
+          title: string
+          chip_label: string | null
+          description: string | null
+          sort_order: number
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          slug: string
+          title: string
+          chip_label?: string | null
+          description?: string | null
+          sort_order?: number
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          slug?: string
+          title?: string
+          chip_label?: string | null
+          description?: string | null
+          sort_order?: number
+          created_at?: string
+          updated_at?: string
+        }
+      }
       products: {
         Row: {
           id: string
@@ -46,7 +78,7 @@ export interface Database {
           name: string
           description: string | null
           category: string | null
-          subcategory: string | null
+          category_id: string | null
           images: string[]
           variants: Json
           features: string[]
@@ -71,7 +103,7 @@ export interface Database {
           name: string
           description?: string | null
           category?: string | null
-          subcategory?: string | null
+          category_id?: string | null
           images: string[]
           variants: Json
           features?: string[]
@@ -96,7 +128,7 @@ export interface Database {
           name?: string
           description?: string | null
           category?: string | null
-          subcategory?: string | null
+          category_id?: string | null
           images?: string[]
           variants?: Json
           features?: string[]

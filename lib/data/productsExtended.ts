@@ -9,7 +9,6 @@ export const PRODUCTS_EXTENDED: ProductExtended[] = [
     description:
       'Authentic dabeli masala blended in Jaipur. Warm, tangy, and balanced for stuffed buns and potato filling—just like street stalls across Gujarat and Rajasthan.',
     category: 'Spices & Masalas',
-    subcategory: 'Regional blends',
     variants: [
       {
         id: 'dm-200g',
@@ -177,7 +176,6 @@ export const PRODUCTS_EXTENDED: ProductExtended[] = [
     description:
       'Rich, red pav bhaji masala for bhaji that tastes like your favourite corner stall—balanced for home cooks and busy weeknights.',
     category: 'Spices & Masalas',
-    subcategory: 'Street-style blends',
     variants: [
       {
         id: 'pbm-200g',

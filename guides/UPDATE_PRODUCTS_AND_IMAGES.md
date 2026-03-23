@@ -67,7 +67,7 @@ Create the bucket in Cloudflare Dashboard → R2 → Create bucket, then create 
 ### Updating product data
 
 1. Go to [Supabase Dashboard](https://supabase.com/dashboard) → your project → **Table Editor**.
-2. **`products`** table: edit `name`, `description`, `category`, `subcategory`, `meta_title`, `meta_description`, `keywords`, `is_featured`, `is_new`, `is_best_seller`, etc.
+2. **`products`** table: edit `name`, `description`, `category`, `category_id`, `meta_title`, `meta_description`, `keywords`, `is_featured`, `is_new`, `is_best_seller`, etc.
 3. **`product_variants`** table: edit `price`, `compare_at_price`, `stock`, `weight`, `is_available` for each size (e.g. 50g, 100g). (You can also do this in **Admin → Edit product → Variants**.)
 4. **`product_images`** table: edit `url`, `alt_text`, `display_order`. The site uses these URLs for product images. Add new rows for more images (same `product_id`).
 

@@ -1,19 +1,25 @@
 'use client';
 
-import { useCallback, useState } from 'react';
-import { Upload, Trash2, ImagePlus } from 'lucide-react';
+import { useCallback, useRef, useState } from 'react';
+import { ArrowLeft, ExternalLink, ImagePlus, Trash2, Upload } from 'lucide-react';
 import Link from 'next/link';
+import { ProductCategorySelect } from '@/components/admin/ProductCategorySelect';
 import { updateProduct, updateProductImages, upsertProductVariants, type VariantInput } from '@/lib/actions/admin-products';
-import type { ProductForAdmin } from '@/lib/db/queries';
+import type { DbProductCategory, ProductForAdmin } from '@/lib/db/queries';
 
 type VariantRow = VariantInput & { _key?: string };
 
-export function AdminProductEditForm({ data }: { data: ProductForAdmin }) {
+export function AdminProductEditForm({
+  data,
+  categories,
+}: {
+  data: ProductForAdmin;
+  categories: DbProductCategory[];
+}) {
   const { product, images: initialImages, variants: initialVariants } = data;
   const [name, setName] = useState(product.name);
   const [description, setDescription] = useState(product.description ?? '');
-  const [category, setCategory] = useState(product.category ?? '');
-  const [subcategory, setSubcategory] = useState(product.subcategory ?? '');
+  const [categoryId, setCategoryId] = useState(product.category_id ?? '');
   const [metaTitle, setMetaTitle] = useState(product.meta_title ?? '');
   const [metaDescription, setMetaDescription] = useState(product.meta_description ?? '');
   const [isFeatured, setIsFeatured] = useState(product.is_featured ?? false);
@@ -39,6 +45,7 @@ export function AdminProductEditForm({ data }: { data: ProductForAdmin }) {
       : [{ id: undefined as string | undefined, url: '', alt_text: '', previewKey: undefined as number | undefined }]
   );
   const [saving, setSaving] = useState(false);
+  const saveInFlightRef = useRef(false);
   const [message, setMessage] = useState<{ type: 'ok' | 'error'; text: string } | null>(null);
   const [uploadingRow, setUploadingRow] = useState<number | null>(null);
 
@@ -117,69 +124,69 @@ export function AdminProductEditForm({ data }: { data: ProductForAdmin }) {
   const handleSubmit = useCallback(
     async (e: React.FormEvent) => {
       e.preventDefault();
+      if (saveInFlightRef.current) return;
+      saveInFlightRef.current = true;
       setSaving(true);
       setMessage(null);
-      const productResult = await updateProduct(product.id, {
-        name,
-        description: description || null,
-        category: category || null,
-        subcategory: subcategory || null,
-        meta_title: metaTitle || product.name,
-        meta_description: metaDescription || description || '',
-        is_featured: isFeatured,
-        is_new: isNew,
-        is_best_seller: isBestSeller,
-      });
-      if (!productResult.success) {
-        setMessage({ type: 'error', text: productResult.error });
-        setSaving(false);
-        return;
-      }
-      const imagesPayload = imageRows
-        .filter((row) => row.url.trim() !== '')
-        .map((row) => ({
-          id: row.id,
-          url: row.url.trim(),
-          alt_text: row.alt_text || null,
-        }));
-      const imageResult = await updateProductImages(
-        product.id,
-        imagesPayload.length > 0 ? imagesPayload : [{ url: '/products/placeholder.png', alt_text: 'Placeholder' }]
-      );
-      if (!imageResult.success) {
-        setMessage({ type: 'error', text: imageResult.error });
-        setSaving(false);
-        return;
-      }
-      const variantsPayload: VariantInput[] = variantRows.map((v) => ({
-        id: v.id,
-        name: v.name,
-        sku: v.sku,
-        price: Number(v.price) || 0,
-        compare_at_price: v.compare_at_price ?? null,
-        stock: Number(v.stock) ?? 0,
-        weight: Number(v.weight) ?? 100,
-        is_available: !!v.is_available,
-      }));
-      if (variantsPayload.length > 0) {
-        const variantResult = await upsertProductVariants(product.id, variantsPayload);
-        if (!variantResult.success) {
-          setMessage({ type: 'error', text: variantResult.error });
-          setSaving(false);
+      try {
+        const productResult = await updateProduct(product.id, {
+          name,
+          description: description || null,
+          category_id: categoryId.trim() || null,
+          meta_title: metaTitle || product.name,
+          meta_description: metaDescription || description || '',
+          is_featured: isFeatured,
+          is_new: isNew,
+          is_best_seller: isBestSeller,
+        });
+        if (!productResult.success) {
+          setMessage({ type: 'error', text: productResult.error });
           return;
         }
+        const imagesPayload = imageRows
+          .filter((row) => row.url.trim() !== '')
+          .map((row) => ({
+            id: row.id,
+            url: row.url.trim(),
+            alt_text: row.alt_text || null,
+          }));
+        const imageResult = await updateProductImages(
+          product.id,
+          imagesPayload.length > 0 ? imagesPayload : [{ url: '/products/placeholder.png', alt_text: 'Placeholder' }]
+        );
+        if (!imageResult.success) {
+          setMessage({ type: 'error', text: imageResult.error });
+          return;
+        }
+        const variantsPayload: VariantInput[] = variantRows.map((v) => ({
+          id: v.id,
+          name: v.name,
+          sku: v.sku,
+          price: Number(v.price) || 0,
+          compare_at_price: v.compare_at_price ?? null,
+          stock: Number(v.stock) ?? 0,
+          weight: Number(v.weight) ?? 100,
+          is_available: !!v.is_available,
+        }));
+        if (variantsPayload.length > 0) {
+          const variantResult = await upsertProductVariants(product.id, variantsPayload);
+          if (!variantResult.success) {
+            setMessage({ type: 'error', text: variantResult.error });
+            return;
+          }
+        }
+        setMessage({ type: 'ok', text: 'Saved.' });
+      } finally {
+        saveInFlightRef.current = false;
+        setSaving(false);
       }
-      setMessage({ type: 'ok', text: 'Saved.' });
-      setSaving(false);
     },
     [
       product.id,
       product.name,
-      product.slug,
       name,
       description,
-      category,
-      subcategory,
+      categoryId,
       metaTitle,
       metaDescription,
       isFeatured,
@@ -192,9 +199,17 @@ export function AdminProductEditForm({ data }: { data: ProductForAdmin }) {
 
   return (
     <div>
-      <div className="mb-6 flex items-center gap-4">
-        <Link href="/admin/products" className="text-sm text-gray-600 hover:text-orange-600">
-          ← Products
+      <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-4">
+        <Link
+          href="/admin/products"
+          aria-disabled={saving}
+          onClick={(e) => {
+            if (saving) e.preventDefault();
+          }}
+          className={`inline-flex w-fit min-h-9 shrink-0 items-center gap-2 rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm font-semibold text-gray-700 shadow-sm transition-colors hover:border-gray-400 hover:bg-gray-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-400 focus-visible:ring-offset-2 ${saving ? 'pointer-events-none opacity-50' : ''}`}
+        >
+          <ArrowLeft className="h-4 w-4 shrink-0" aria-hidden />
+          Back
         </Link>
         <h1 className="text-2xl font-bold text-gray-900">Edit: {product.name}</h1>
       </div>
@@ -209,7 +224,15 @@ export function AdminProductEditForm({ data }: { data: ProductForAdmin }) {
         </div>
       )}
 
-      <form onSubmit={handleSubmit} className="space-y-8 max-w-2xl">
+      <form
+        onSubmit={handleSubmit}
+        className="space-y-8 max-w-2xl"
+        aria-busy={saving}
+      >
+        <fieldset
+          disabled={saving}
+          className="min-w-0 space-y-8 border-0 p-0 m-0 disabled:cursor-wait disabled:opacity-65"
+        >
         <section className="bg-white rounded-lg border border-gray-200 p-6 shadow-sm">
           <h2 className="text-lg font-semibold text-gray-900 mb-4">Product details</h2>
           <div className="space-y-4">
@@ -232,26 +255,20 @@ export function AdminProductEditForm({ data }: { data: ProductForAdmin }) {
                 className="w-full rounded border border-gray-300 px-3 py-2"
               />
             </div>
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Category</label>
-                <input
-                  type="text"
-                  value={category}
-                  onChange={(e) => setCategory(e.target.value)}
-                  className="w-full rounded border border-gray-300 px-3 py-2"
-                  placeholder="e.g. Blended Spices"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Subcategory</label>
-                <input
-                  type="text"
-                  value={subcategory}
-                  onChange={(e) => setSubcategory(e.target.value)}
-                  className="w-full rounded border border-gray-300 px-3 py-2"
-                />
-              </div>
+            <div>
+              <label htmlFor="product-category" className="block text-sm font-medium text-gray-700 mb-1">
+                Category
+              </label>
+              <ProductCategorySelect
+                id="product-category"
+                categories={categories}
+                value={categoryId}
+                onChange={setCategoryId}
+                disabled={saving}
+                legacyCategoryTitle={
+                  !product.category_id && product.category ? product.category : null
+                }
+              />
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Meta title</label>
@@ -502,21 +519,41 @@ export function AdminProductEditForm({ data }: { data: ProductForAdmin }) {
             </button>
           </div>
         </section>
+        </fieldset>
 
-        <div className="flex gap-3">
+        <div className="flex flex-col gap-3 border-t border-gray-200 pt-6 sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex w-full flex-col gap-2 sm:w-auto sm:flex-row sm:flex-wrap sm:items-stretch">
+            <Link
+              href="/admin/products"
+              aria-disabled={saving}
+              onClick={(e) => {
+                if (saving) e.preventDefault();
+              }}
+              className={`inline-flex min-h-11 w-full items-center justify-center rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-sm font-semibold text-gray-700 shadow-sm transition-colors hover:border-gray-400 hover:bg-gray-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-400 focus-visible:ring-offset-2 sm:w-auto sm:min-w-[7.5rem] ${saving ? 'pointer-events-none opacity-50' : ''}`}
+            >
+              Cancel
+            </Link>
+            <Link
+              href={`/products/${product.slug}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-disabled={saving}
+              onClick={(e) => {
+                if (saving) e.preventDefault();
+              }}
+              className={`inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-lg border border-orange-200 bg-orange-50/60 px-4 py-2.5 text-sm font-semibold text-orange-900 shadow-sm transition-colors hover:border-orange-300 hover:bg-orange-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:ring-offset-2 sm:w-auto ${saving ? 'pointer-events-none opacity-50' : ''}`}
+            >
+              View on store
+              <ExternalLink className="h-4 w-4 shrink-0 text-orange-700" aria-hidden />
+            </Link>
+          </div>
           <button
             type="submit"
             disabled={saving}
-            className="rounded bg-orange-600 px-4 py-2 text-white font-medium hover:bg-orange-700 disabled:opacity-50"
+            className="inline-flex min-h-11 w-full items-center justify-center rounded-lg bg-orange-600 px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-orange-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto sm:min-w-[9.5rem]"
           >
             {saving ? 'Saving…' : 'Save product'}
           </button>
-          <Link
-            href={`/products/${product.slug}`}
-            className="rounded border border-gray-300 px-4 py-2 text-gray-700 font-medium hover:bg-gray-50"
-          >
-            View on store
-          </Link>
         </div>
       </form>
     </div>

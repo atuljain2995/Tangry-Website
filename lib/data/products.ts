@@ -64,6 +64,12 @@ export const PRODUCT_CATEGORIES: ProductCategory[] = [
   },
 ];
 
+/**
+ * Title strings aligned with `product_categories.title` in the DB.
+ * Used for static fallbacks; canonical list lives in `product_categories` (see migration 009).
+ */
+export const PRODUCT_CATEGORY_TITLES: readonly string[] = PRODUCT_CATEGORIES.map((c) => c.title);
+
 export const RECIPES: Recipe[] = [
   {
     id: 1,

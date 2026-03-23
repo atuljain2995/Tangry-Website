@@ -36,7 +36,7 @@ export const FeaturedProducts = ({ products }: FeaturedProductsProps) => {
         <div className="flex bg-gray-100 p-1.5 rounded-xl mt-6 md:mt-0 flex-wrap gap-2">
           <button 
             onClick={() => setActiveCategory('all')}
-            className={`px-6 py-2 rounded-lg text-sm font-bold transition capitalize ${
+            className={`px-4 py-2 rounded-lg text-sm font-bold transition capitalize ${
               activeCategory === 'all' 
                 ? 'bg-white shadow-md text-black' 
                 : 'text-gray-500 hover:text-black'
@@ -48,7 +48,7 @@ export const FeaturedProducts = ({ products }: FeaturedProductsProps) => {
             <button 
               key={category}
               onClick={() => setActiveCategory(category)}
-              className={`px-6 py-2 rounded-lg text-sm font-bold transition capitalize ${
+              className={`px-4 py-2 rounded-lg text-sm font-bold transition capitalize ${
                 activeCategory === category 
                   ? 'bg-white shadow-md text-black' 
                   : 'text-gray-500 hover:text-black'

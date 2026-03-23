@@ -43,8 +43,10 @@ export interface ProductExtended {
   slug: string;
   name: string;
   description: string;
+  /** FK to product_categories.id when set */
+  categoryId?: string | null;
+  /** Denormalized category title (synced from DB) */
   category: string;
-  subcategory?: string;
   variants: ProductVariant[];
   images: string[];
   features: string[];

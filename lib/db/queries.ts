@@ -4,6 +4,33 @@ import { ProductExtended } from '../types/database';
 
 const PLACEHOLDER_IMAGE = '/products/placeholder.png';
 
+/** Row from `product_categories` (public read) */
+export type DbProductCategory = {
+  id: string;
+  slug: string;
+  title: string;
+  chip_label: string | null;
+  sort_order: number;
+};
+
+/**
+ * Canonical product categories for filters, admin selects, sitemap.
+ */
+export async function getProductCategories(): Promise<DbProductCategory[]> {
+  const { data, error } = await supabase
+    .from('product_categories')
+    .select('id, slug, title, chip_label, sort_order')
+    .order('sort_order', { ascending: true })
+    .order('title', { ascending: true });
+
+  if (error) {
+    isSupabaseUnreachable(error);
+    console.error('Error fetching product categories:', error);
+    return [];
+  }
+  return (data as DbProductCategory[]) ?? [];
+}
+
 /**
  * Fetch all active products from database
  */
@@ -315,7 +342,7 @@ interface DbProduct {
   name: string;
   description: string;
   category: string;
-  subcategory?: string | null;
+  category_id?: string | null;
   tags?: string[];
   meta_title?: string;
   meta_description?: string;
@@ -355,6 +382,7 @@ interface DbImage {
 
 /** Product + images (with ids) + variants for admin edit */
 export interface ProductForAdmin {
+  /** Raw row; includes `category_id` when migration 009 is applied */
   product: DbProduct;
   images: DbImage[];
   variants: DbVariant[];
@@ -408,7 +436,8 @@ function transformProduct(dbProduct: DbProduct): ProductExtended {
     slug: dbProduct.slug,
     name: dbProduct.name,
     description: dbProduct.description,
-    category: dbProduct.category,
+    categoryId: dbProduct.category_id ?? null,
+    category: dbProduct.category || '',
     variants: dbProduct.variants?.map((v) => ({
       id: v.id,
       name: v.name,

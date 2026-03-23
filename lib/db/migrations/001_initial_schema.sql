@@ -45,7 +45,6 @@ CREATE TABLE IF NOT EXISTS products (
     name VARCHAR(255) NOT NULL,
     description TEXT,
     category VARCHAR(100),
-    subcategory VARCHAR(100),
     images TEXT[] DEFAULT '{}',
     variants JSONB NOT NULL,
     features TEXT[] DEFAULT '{}',
