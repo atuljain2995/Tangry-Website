@@ -2,16 +2,14 @@
 
 import { revalidatePath } from 'next/cache';
 import { supabaseAdmin } from '@/lib/db/supabase';
-import {
-  validateCouponAndGetDiscount,
-  incrementCouponUsage,
-  decrementVariantStock,
-} from '@/lib/db/queries';
-import { calculateShipping, calculateTax, generateOrderNumber } from '@/lib/utils/database';
+import { incrementCouponUsage, decrementVariantStock } from '@/lib/db/queries';
+import { computeTrustedOrderDraft, orderLinesFromCartItems } from '@/lib/orders/compute-trusted-order';
+import { generateOrderNumber } from '@/lib/utils/database';
 import { sendOrderConfirmationEmail } from '@/lib/email/order-confirmation';
 import type { Address, CartItem, PaymentMethod } from '@/lib/types/database';
 
 export type CreateOrderPayload = {
+  /** Client may send display fields; only productId, variantId, quantity are trusted. */
   items: CartItem[];
   shippingAddress: Address;
   billingAddress: Address;
@@ -35,28 +33,19 @@ export async function createOrder(payload: CreateOrderPayload): Promise<CreateOr
     return { success: false, error: 'Email is required' };
   }
 
-  // Compute subtotal from items
-  const subtotal = items.reduce((sum, i) => sum + i.price * i.quantity, 0);
-
-  // Validate coupon and get server-side discount
-  let discount = 0;
-  let couponId: string | undefined;
-  if (couponCode?.trim()) {
-    const result = await validateCouponAndGetDiscount(couponCode.trim(), subtotal);
-    if ('error' in result) {
-      return { success: false, error: result.error };
-    }
-    discount = result.discount;
-    couponId = result.couponId;
+  const lines = orderLinesFromCartItems(items);
+  const trusted = await computeTrustedOrderDraft({
+    lines,
+    couponCode,
+    country: shippingAddress.country || 'IN',
+  });
+  if (!trusted.ok) {
+    return { success: false, error: trusted.error };
   }
 
-  const afterDiscount = subtotal - discount;
-  const tax = calculateTax(afterDiscount);
-  const shipping = calculateShipping(afterDiscount, shippingAddress.country || 'IN');
-  const total = afterDiscount + tax + shipping;
+  const { items: trustedItems, subtotal, discount, couponId, tax, shipping, total } = trusted.draft;
 
-  // Build order items for JSONB
-  const orderItems = items.map((i) => ({
+  const orderItems = trustedItems.map((i) => ({
     productId: i.productId,
     variantId: i.variantId,
     productName: i.productName,
@@ -69,7 +58,6 @@ export async function createOrder(payload: CreateOrderPayload): Promise<CreateOr
 
   const orderNumber = generateOrderNumber();
 
-  // Insert order (use service role to bypass RLS). user_id null for guest.
   const { error: orderError } = await (supabaseAdmin as any)
     .from('orders')
     .insert({
@@ -96,12 +84,10 @@ export async function createOrder(payload: CreateOrderPayload): Promise<CreateOr
     return { success: false, error: 'Failed to create order. Please try again.' };
   }
 
-  // Decrement stock for each line item
-  for (const item of items) {
+  for (const item of trustedItems) {
     const ok = await decrementVariantStock(item.variantId, item.quantity);
     if (!ok) {
       console.error(`Failed to decrement stock for variant ${item.variantId}`);
-      // Order already placed; log and continue (admin can fix stock)
     }
   }
 
@@ -117,7 +103,7 @@ export async function createOrder(payload: CreateOrderPayload): Promise<CreateOr
       orderNumber,
       total,
       currency: 'INR',
-      items: items.map((i) => ({
+      items: trustedItems.map((i) => ({
         productName: i.productName,
         variantName: i.variantName,
         quantity: i.quantity,

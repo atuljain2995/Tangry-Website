@@ -1,5 +1,6 @@
 // Server-side database queries for products
 import { supabase, supabaseAdmin, isSupabaseUnreachable } from './supabase';
+import type { CartItem } from '../types/database';
 import { ProductExtended } from '../types/database';
 
 const PLACEHOLDER_IMAGE = '/products/placeholder.png';
@@ -334,6 +335,124 @@ export async function decrementVariantStock(variantId: string, quantity: number)
 
   const { error: updateErr } = await pv.update({ stock: current - quantity } as Record<string, unknown>).eq('id', variantId);
   return !updateErr;
+}
+
+/** Cart lines from the client — only ids/qty are trusted; prices come from DB. */
+export type OrderLineInput = {
+  productId: string;
+  variantId: string;
+  quantity: number;
+};
+
+const MAX_LINE_QTY = 500;
+
+function mergeOrderLines(lines: OrderLineInput[]): OrderLineInput[] | { error: string } {
+  const map = new Map<string, OrderLineInput>();
+  for (const line of lines) {
+    if (!line.variantId || !line.productId) return { error: 'Invalid cart line' };
+    const q = Math.floor(Number(line.quantity));
+    if (!Number.isFinite(q) || q < 1) return { error: 'Invalid quantity' };
+    if (q > MAX_LINE_QTY) return { error: 'Quantity too large' };
+    const key = line.variantId;
+    const existing = map.get(key);
+    if (existing) {
+      if (existing.productId !== line.productId) return { error: 'Invalid cart' };
+      existing.quantity += q;
+      if (existing.quantity > MAX_LINE_QTY) return { error: 'Quantity too large' };
+    } else {
+      map.set(key, { productId: line.productId, variantId: line.variantId, quantity: q });
+    }
+  }
+  return Array.from(map.values());
+}
+
+/**
+ * Resolve cart lines using live DB prices, stock, and product names. Rejects tampered prices.
+ */
+export async function resolveOrderLineItems(
+  lines: OrderLineInput[]
+): Promise<{ ok: true; items: CartItem[] } | { ok: false; error: string }> {
+  if (!lines?.length) return { ok: false, error: 'Cart is empty' };
+
+  const merged = mergeOrderLines(lines);
+  if ('error' in merged) return { ok: false, error: merged.error };
+  const mergedLines = merged;
+
+  const variantIds = [...new Set(mergedLines.map((l) => l.variantId))];
+  const { data: variants, error: vErr } = await supabaseAdmin
+    .from('product_variants')
+    .select('id, product_id, name, price, stock, is_available')
+    .in('id', variantIds);
+
+  if (vErr || !variants?.length) {
+    isSupabaseUnreachable(vErr);
+    return { ok: false, error: 'One or more products are unavailable' };
+  }
+
+  if (variants.length !== variantIds.length) {
+    return { ok: false, error: 'One or more products are unavailable' };
+  }
+
+  const productIds = [...new Set(variants.map((v: { product_id: string }) => v.product_id))];
+  const { data: products, error: pErr } = await supabaseAdmin.from('products').select('id, name').in('id', productIds);
+  if (pErr || !products?.length) {
+    return { ok: false, error: 'One or more products are unavailable' };
+  }
+
+  const { data: images } = await supabaseAdmin
+    .from('product_images')
+    .select('product_id, url, display_order')
+    .in('product_id', productIds)
+    .order('display_order', { ascending: true });
+
+  const nameByProduct = new Map((products as { id: string; name: string }[]).map((p) => [p.id, p.name]));
+  const imageByProduct = new Map<string, string>();
+  for (const img of (images as { product_id: string; url: string }[]) ?? []) {
+    if (!imageByProduct.has(img.product_id)) {
+      imageByProduct.set(img.product_id, img.url || PLACEHOLDER_IMAGE);
+    }
+  }
+
+  type VRow = {
+    id: string;
+    product_id: string;
+    name: string;
+    price: number | string;
+    stock: number;
+    is_available: boolean;
+  };
+  const variantById = new Map((variants as VRow[]).map((v) => [v.id, v]));
+
+  const items: CartItem[] = [];
+  for (const line of mergedLines) {
+    const v = variantById.get(line.variantId);
+    if (!v) return { ok: false, error: 'One or more products are unavailable' };
+    if (v.product_id !== line.productId) {
+      return { ok: false, error: 'Invalid product selection' };
+    }
+    if (!v.is_available) {
+      return { ok: false, error: 'One or more items are not available for sale' };
+    }
+    if (v.stock < line.quantity) {
+      return { ok: false, error: 'Insufficient stock for one or more items' };
+    }
+    const price = Number(v.price);
+    if (!Number.isFinite(price) || price < 0) {
+      return { ok: false, error: 'Invalid product price' };
+    }
+
+    items.push({
+      productId: v.product_id,
+      variantId: v.id,
+      productName: nameByProduct.get(v.product_id) ?? 'Product',
+      variantName: v.name,
+      quantity: line.quantity,
+      price,
+      image: imageByProduct.get(v.product_id) || PLACEHOLDER_IMAGE,
+    });
+  }
+
+  return { ok: true, items };
 }
 
 interface DbProduct {

@@ -89,18 +89,33 @@ export default function CheckoutPage() {
       }
 
       if (paymentMethod === 'razorpay') {
-        const amountInPaise = Math.round(cart.total * 100);
         const createRes = await fetch('/api/razorpay/create-order', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ amountInPaise }),
+          body: JSON.stringify({
+            items: cart.items.map((i) => ({
+              productId: i.productId,
+              variantId: i.variantId,
+              quantity: i.quantity,
+            })),
+            couponCode: cart.couponCode ?? null,
+            country: shippingAddress.country || 'IN',
+          }),
         });
         const createData = await createRes.json();
         if (!createRes.ok) {
           alert(createData.error || 'Could not start payment.');
           return;
         }
-        const { orderId, keyId } = createData;
+        const { orderId, keyId, amountPaise } = createData as {
+          orderId: string;
+          keyId: string;
+          amountPaise: number;
+        };
+        if (!orderId || !keyId || typeof amountPaise !== 'number') {
+          alert('Invalid payment response. Please try again.');
+          return;
+        }
         const Razorpay = (window as { Razorpay?: new (opts: object) => { open: () => void } }).Razorpay;
         if (!Razorpay) {
           alert('Payment script not loaded. Please refresh and try again.');
@@ -109,7 +124,7 @@ export default function CheckoutPage() {
         const rzp = new Razorpay({
           key: keyId,
           order_id: orderId,
-          amount: amountInPaise,
+          amount: amountPaise,
           currency: 'INR',
           name: 'Tangry Spices',
           handler: async (response: { razorpay_payment_id: string; razorpay_order_id: string; razorpay_signature: string }) => {
