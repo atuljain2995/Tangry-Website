@@ -1,4 +1,4 @@
-import Link from 'next/link';
+import { AdminLink } from '@/components/admin/AdminLink';
 import { Plus } from 'lucide-react';
 import { getCouponsForAdmin } from '@/lib/db/queries';
 
@@ -18,13 +18,13 @@ export default async function AdminDiscountsPage() {
           <h1 className="text-2xl font-bold text-gray-900">Discounts</h1>
           <p className="mt-1 text-sm text-gray-500">Coupon codes for your store</p>
         </div>
-        <Link
+        <AdminLink
           href="/admin/discounts/new"
           className="inline-flex items-center gap-2 rounded-lg bg-orange-600 px-4 py-2 text-sm font-medium text-white hover:bg-orange-700"
         >
           <Plus className="h-4 w-4" />
           Add discount
-        </Link>
+        </AdminLink>
       </div>
 
       <div className="rounded-lg border border-gray-200 bg-white shadow-sm">
@@ -64,9 +64,9 @@ export default async function AdminDiscountsPage() {
                       </span>
                     </td>
                     <td className="whitespace-nowrap px-4 py-3 text-right text-sm sm:px-6">
-                      <Link href={`/admin/discounts/${c.id}`} className="font-medium text-orange-600 hover:text-orange-700">
+                      <AdminLink href={`/admin/discounts/${c.id}`} className="font-medium text-orange-600 hover:text-orange-700">
                         Edit
-                      </Link>
+                      </AdminLink>
                     </td>
                   </tr>
                 ))}

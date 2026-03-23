@@ -1,4 +1,4 @@
-import Link from 'next/link';
+import { AdminLink } from '@/components/admin/AdminLink';
 import { getLowStockVariantsForAdmin } from '@/lib/db/queries';
 import { AdminEmptyState } from '@/components/admin/AdminEmptyState';
 import { AdminSectionCard } from '@/components/admin/AdminSectionCard';
@@ -60,12 +60,12 @@ export default async function AdminInventoryPage() {
                       {row.stock}
                     </td>
                     <td className="whitespace-nowrap px-4 py-3 text-right text-sm sm:px-6">
-                      <Link
+                      <AdminLink
                         href={`/admin/products/${row.product_id}`}
                         className="font-medium text-orange-600 hover:text-orange-700"
                       >
                         Edit product
-                      </Link>
+                      </AdminLink>
                     </td>
                   </tr>
                 ))}

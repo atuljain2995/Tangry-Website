@@ -1,5 +1,5 @@
 import { notFound } from 'next/navigation';
-import Link from 'next/link';
+import { AdminLink } from '@/components/admin/AdminLink';
 import { getCouponByIdForAdmin } from '@/lib/db/queries';
 import { AdminCouponForm } from '../AdminCouponForm';
 
@@ -15,9 +15,9 @@ export default async function AdminEditDiscountPage({ params }: Props) {
   return (
     <div className="space-y-6">
       <div>
-        <Link href="/admin/discounts" className="text-sm text-gray-600 hover:text-orange-600">
+        <AdminLink href="/admin/discounts" className="text-sm text-gray-600 hover:text-orange-600">
           ← Discounts
-        </Link>
+        </AdminLink>
         <h1 className="mt-1 text-2xl font-bold text-gray-900">Edit: {coupon.code}</h1>
       </div>
       <AdminCouponForm mode="edit" coupon={coupon} />

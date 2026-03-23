@@ -1,6 +1,6 @@
 'use client';
 
-import Link from 'next/link';
+import { AdminLink } from '@/components/admin/AdminLink';
 import { usePathname } from 'next/navigation';
 import {
   LayoutDashboard,
@@ -50,7 +50,7 @@ export function AdminSidebar({ open = false, onClose }: AdminSidebarProps) {
     >
       <nav className="flex h-full flex-col gap-0.5 overflow-y-auto p-3">
         {navItems.map(({ href, label, icon: Icon }) => (
-          <Link
+          <AdminLink
             key={href}
             href={href}
             onClick={onClose}
@@ -58,17 +58,17 @@ export function AdminSidebar({ open = false, onClose }: AdminSidebarProps) {
           >
             <Icon className="h-5 w-5 flex-shrink-0" />
             {label}
-          </Link>
+          </AdminLink>
         ))}
         <div className="my-2 border-t border-gray-100" />
-        <Link
+        <AdminLink
           href="/"
           onClick={onClose}
           className="flex min-h-[44px] items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-gray-600 hover:bg-gray-100 hover:text-gray-900 touch-manipulation"
         >
           <Store className="h-5 w-5 flex-shrink-0" />
           Back to store
-        </Link>
+        </AdminLink>
       </nav>
     </aside>
   );

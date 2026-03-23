@@ -1,8 +1,9 @@
 'use client';
 
 import { useCallback, useRef, useState } from 'react';
-import { ArrowLeft, ExternalLink, ImagePlus, Trash2, Upload } from 'lucide-react';
+import { ArrowLeft, ExternalLink, ImagePlus, Loader2, Trash2, Upload } from 'lucide-react';
 import Link from 'next/link';
+import { AdminLink } from '@/components/admin/AdminLink';
 import { ProductCategorySelect } from '@/components/admin/ProductCategorySelect';
 import { updateProduct, updateProductImages, upsertProductVariants, type VariantInput } from '@/lib/actions/admin-products';
 import type { DbProductCategory, ProductForAdmin } from '@/lib/db/queries';
@@ -200,7 +201,7 @@ export function AdminProductEditForm({
   return (
     <div>
       <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-4">
-        <Link
+        <AdminLink
           href="/admin/products"
           aria-disabled={saving}
           onClick={(e) => {
@@ -210,7 +211,7 @@ export function AdminProductEditForm({
         >
           <ArrowLeft className="h-4 w-4 shrink-0" aria-hidden />
           Back
-        </Link>
+        </AdminLink>
         <h1 className="text-2xl font-bold text-gray-900">Edit: {product.name}</h1>
       </div>
 
@@ -523,7 +524,7 @@ export function AdminProductEditForm({
 
         <div className="flex flex-col gap-3 border-t border-gray-200 pt-6 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex w-full flex-col gap-2 sm:w-auto sm:flex-row sm:flex-wrap sm:items-stretch">
-            <Link
+            <AdminLink
               href="/admin/products"
               aria-disabled={saving}
               onClick={(e) => {
@@ -532,7 +533,7 @@ export function AdminProductEditForm({
               className={`inline-flex min-h-11 w-full items-center justify-center rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-sm font-semibold text-gray-700 shadow-sm transition-colors hover:border-gray-400 hover:bg-gray-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-400 focus-visible:ring-offset-2 sm:w-auto sm:min-w-[7.5rem] ${saving ? 'pointer-events-none opacity-50' : ''}`}
             >
               Cancel
-            </Link>
+            </AdminLink>
             <Link
               href={`/products/${product.slug}`}
               target="_blank"
@@ -550,8 +551,9 @@ export function AdminProductEditForm({
           <button
             type="submit"
             disabled={saving}
-            className="inline-flex min-h-11 w-full items-center justify-center rounded-lg bg-orange-600 px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-orange-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto sm:min-w-[9.5rem]"
+            className="inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-lg bg-orange-600 px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-orange-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto sm:min-w-[9.5rem]"
           >
+            {saving ? <Loader2 className="h-4 w-4 shrink-0 animate-spin" aria-hidden /> : null}
             {saving ? 'Saving…' : 'Save product'}
           </button>
         </div>

@@ -1,4 +1,4 @@
-import Link from 'next/link';
+import { AdminLink } from '@/components/admin/AdminLink';
 import {
   getOrdersForAdmin,
   getProductsCount,
@@ -54,12 +54,12 @@ export default async function AdminDashboardPage() {
           value={lowStockCount}
           footer={
             lowStockCount > 0 ? (
-              <Link
+              <AdminLink
                 href="/admin/inventory"
                 className="mt-2 inline-block text-sm font-medium text-orange-600 hover:text-orange-700"
               >
                 View inventory →
-              </Link>
+              </AdminLink>
             ) : null
           }
         />
@@ -67,12 +67,12 @@ export default async function AdminDashboardPage() {
           label="Recent orders"
           value={recentOrders.length}
           footer={
-            <Link
+            <AdminLink
               href="/admin/orders"
               className="mt-2 inline-block text-sm font-medium text-orange-600 hover:text-orange-700"
             >
               View all orders →
-            </Link>
+            </AdminLink>
           }
         />
       </div>
@@ -127,12 +127,12 @@ export default async function AdminDashboardPage() {
                       {formatDate(order.created_at)}
                     </td>
                     <td className="whitespace-nowrap px-4 py-3 text-right text-sm sm:px-6">
-                      <Link
+                      <AdminLink
                         href={`/admin/orders/${order.id}`}
                         className="font-medium text-orange-600 hover:text-orange-700"
                       >
                         View
-                      </Link>
+                      </AdminLink>
                     </td>
                   </tr>
                 ))}

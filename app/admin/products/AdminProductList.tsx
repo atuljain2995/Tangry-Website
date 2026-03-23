@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import Link from 'next/link';
+import { AdminLink } from '@/components/admin/AdminLink';
 import { Package, Pencil } from 'lucide-react';
 import type { ProductExtended } from '@/lib/types/database';
 
@@ -41,13 +41,13 @@ export function AdminProductList({ products }: { products: ProductExtended[] }) 
                 <span className="text-gray-500 text-sm block">{p.category}</span>
               </div>
             </div>
-            <Link
+            <AdminLink
               href={`/admin/products/${p.id}`}
               className="inline-flex min-h-[44px] min-w-[44px] items-center justify-center gap-1 rounded-lg px-3 text-sm font-medium text-orange-600 hover:bg-orange-50 hover:text-orange-700 touch-manipulation"
             >
               <Pencil className="h-4 w-4" />
               Edit
-            </Link>
+            </AdminLink>
           </li>
         ))
       )}

@@ -1,4 +1,4 @@
-import Link from 'next/link';
+import { AdminLink } from '@/components/admin/AdminLink';
 import { getAdminReportsSummary } from '@/lib/db/queries';
 import { AdminEmptyState } from '@/components/admin/AdminEmptyState';
 import { AdminSectionCard } from '@/components/admin/AdminSectionCard';
@@ -38,12 +38,12 @@ export default async function AdminReportsPage() {
         title="Top products"
         description="By units sold in the last 30 days"
         action={
-          <Link
+          <AdminLink
             href="/admin/orders"
             className="text-sm font-medium text-orange-600 hover:text-orange-700"
           >
             View orders →
-          </Link>
+          </AdminLink>
         }
       >
         <AdminTableScroll>

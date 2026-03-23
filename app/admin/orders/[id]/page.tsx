@@ -1,5 +1,5 @@
 import { notFound } from 'next/navigation';
-import Link from 'next/link';
+import { AdminLink } from '@/components/admin/AdminLink';
 import { supabaseAdmin } from '@/lib/db/supabase';
 import { AdminStatusBadge } from '@/components/admin/AdminStatusBadge';
 import { AdminOrderActions } from './AdminOrderActions';
@@ -66,9 +66,9 @@ export default async function AdminOrderDetailPage({
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <Link href="/admin/orders" className="text-sm text-gray-600 hover:text-orange-600">
+          <AdminLink href="/admin/orders" className="text-sm text-gray-600 hover:text-orange-600">
             ← Orders
-          </Link>
+          </AdminLink>
           <h1 className="mt-1 text-2xl font-bold text-gray-900">Order {o.order_number}</h1>
           <p className="mt-1 text-sm text-gray-500">{formatDate(o.created_at)}</p>
         </div>

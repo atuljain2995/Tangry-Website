@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import Link from 'next/link';
+import { AdminLink } from '@/components/admin/AdminLink';
 import { Menu, X } from 'lucide-react';
 import { AdminSidebar } from './AdminSidebar';
 
@@ -26,23 +26,23 @@ export function AdminShell({ children, profileEmail }: AdminShellProps) {
           >
             {sidebarOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
           </button>
-          <Link
+          <AdminLink
             href="/admin"
             className="truncate text-lg font-semibold text-gray-800 hover:text-orange-600"
           >
             Tangry Admin
-          </Link>
+          </AdminLink>
         </div>
         <div className="flex shrink-0 items-center gap-2 sm:gap-3">
           <span className="hidden max-w-[120px] truncate text-sm text-gray-500 sm:max-w-[180px] sm:inline">
             {profileEmail}
           </span>
-          <Link
+          <AdminLink
             href="/"
             className="inline-flex h-10 items-center rounded-lg px-3 text-sm font-medium text-gray-600 hover:bg-gray-100 hover:text-orange-600"
           >
             ← Store
-          </Link>
+          </AdminLink>
         </div>
       </header>
 

@@ -1,4 +1,4 @@
-import Link from 'next/link';
+import { AdminLink } from '@/components/admin/AdminLink';
 import { getOrdersForAdmin } from '@/lib/db/queries';
 import { AdminStatusBadge } from '@/components/admin/AdminStatusBadge';
 import { AdminEmptyState } from '@/components/admin/AdminEmptyState';
@@ -85,12 +85,12 @@ export default async function AdminOrdersPage() {
                       {formatDate(order.created_at)}
                     </td>
                     <td className="whitespace-nowrap px-4 py-3 text-right text-sm sm:px-6">
-                      <Link
+                      <AdminLink
                         href={`/admin/orders/${order.id}`}
                         className="font-medium text-orange-600 hover:text-orange-700"
                       >
                         View
-                      </Link>
+                      </AdminLink>
                     </td>
                   </tr>
                 ))}

@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { Loader2 } from 'lucide-react';
 import { updateOrderStatus, setOrderTrackingNumber } from '@/lib/actions/orders';
 
 const STATUSES = ['pending', 'confirmed', 'processing', 'shipped', 'delivered', 'cancelled', 'refunded'] as const;
@@ -62,18 +63,23 @@ export function AdminOrderActions({ orderId, currentStatus, currentTracking }: P
       )}
       <div>
         <label className="block text-sm font-medium text-gray-700">Order status</label>
-        <select
-          value={status}
-          onChange={(e) => handleStatusChange(e.target.value)}
-          disabled={savingStatus}
-          className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-orange-500 focus:ring-orange-500"
-        >
-          {STATUSES.map((s) => (
-            <option key={s} value={s}>
-              {s}
-            </option>
-          ))}
-        </select>
+        <div className="mt-1 flex items-center gap-2">
+          <select
+            value={status}
+            onChange={(e) => handleStatusChange(e.target.value)}
+            disabled={savingStatus}
+            className="block min-w-0 flex-1 rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-orange-500 focus:ring-orange-500"
+          >
+            {STATUSES.map((s) => (
+              <option key={s} value={s}>
+                {s}
+              </option>
+            ))}
+          </select>
+          {savingStatus ? (
+            <Loader2 className="h-5 w-5 shrink-0 animate-spin text-orange-600" aria-label="Updating status" />
+          ) : null}
+        </div>
       </div>
       <form onSubmit={handleTrackingSubmit} className="space-y-2">
         <label className="block text-sm font-medium text-gray-700">Tracking number</label>
@@ -88,8 +94,9 @@ export function AdminOrderActions({ orderId, currentStatus, currentTracking }: P
           <button
             type="submit"
             disabled={savingTracking}
-            className="rounded-md bg-orange-600 px-4 py-2 text-sm font-medium text-white hover:bg-orange-700 disabled:opacity-50"
+            className="inline-flex items-center justify-center gap-2 rounded-md bg-orange-600 px-4 py-2 text-sm font-medium text-white hover:bg-orange-700 disabled:opacity-50"
           >
+            {savingTracking ? <Loader2 className="h-4 w-4 shrink-0 animate-spin" aria-hidden /> : null}
             {savingTracking ? 'Saving…' : 'Save'}
           </button>
         </div>

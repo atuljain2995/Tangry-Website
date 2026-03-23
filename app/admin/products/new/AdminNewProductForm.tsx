@@ -1,13 +1,16 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useTransition } from 'react';
 import { useRouter } from 'next/navigation';
+import { Loader2 } from 'lucide-react';
+import { AdminLink } from '@/components/admin/AdminLink';
 import { ProductCategorySelect } from '@/components/admin/ProductCategorySelect';
 import { createProduct } from '@/lib/actions/admin-products';
 import type { DbProductCategory } from '@/lib/db/queries';
 
 export function AdminNewProductForm({ categories }: { categories: DbProductCategory[] }) {
   const router = useRouter();
+  const [isNavPending, startTransition] = useTransition();
   const [name, setName] = useState('');
   const [slug, setSlug] = useState('');
   const [description, setDescription] = useState('');
@@ -51,8 +54,10 @@ export function AdminNewProductForm({ categories }: { categories: DbProductCateg
     });
     setSaving(false);
     if (result.success) {
-      router.push(`/admin/products/${result.productId}`);
-      router.refresh();
+      startTransition(() => {
+        router.push(`/admin/products/${result.productId}`);
+        router.refresh();
+      });
     } else {
       setMessage({ type: 'error', text: result.error });
     }
@@ -240,17 +245,21 @@ export function AdminNewProductForm({ categories }: { categories: DbProductCateg
       <div className="flex gap-3">
         <button
           type="submit"
-          disabled={saving}
-          className="rounded bg-orange-600 px-4 py-2 text-white font-medium hover:bg-orange-700 disabled:opacity-50"
+          disabled={saving || isNavPending}
+          className="inline-flex items-center justify-center gap-2 rounded bg-orange-600 px-4 py-2 text-white font-medium hover:bg-orange-700 disabled:opacity-50"
         >
-          {saving ? 'Creating…' : 'Create product'}
+          {(saving || isNavPending) && <Loader2 className="h-4 w-4 shrink-0 animate-spin" aria-hidden />}
+          {saving ? 'Creating…' : isNavPending ? 'Opening editor…' : 'Create product'}
         </button>
-        <a
+        <AdminLink
           href="/admin/products"
-          className="rounded border border-gray-300 px-4 py-2 text-gray-700 font-medium hover:bg-gray-50"
+          className={`rounded border border-gray-300 px-4 py-2 text-gray-700 font-medium hover:bg-gray-50 ${saving || isNavPending ? 'pointer-events-none opacity-50' : ''}`}
+          onClick={(e) => {
+            if (saving || isNavPending) e.preventDefault();
+          }}
         >
           Cancel
-        </a>
+        </AdminLink>
       </div>
     </form>
   );

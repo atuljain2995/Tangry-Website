@@ -1,8 +1,9 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useTransition } from 'react';
 import { useRouter } from 'next/navigation';
-import Link from 'next/link';
+import { Loader2 } from 'lucide-react';
+import { AdminLink } from '@/components/admin/AdminLink';
 import { createCoupon, updateCoupon, type CouponInput } from '@/lib/actions/admin-coupons';
 import type { AdminCouponRow } from '@/lib/db/queries';
 
@@ -12,6 +13,7 @@ type Props =
 
 export function AdminCouponForm(props: Props) {
   const router = useRouter();
+  const [isNavPending, startTransition] = useTransition();
   const isEdit = props.mode === 'edit';
   const coupon = isEdit ? props.coupon : null;
 
@@ -72,8 +74,10 @@ export function AdminCouponForm(props: Props) {
       const result = await createCoupon(input);
       setSaving(false);
       if (result.success) {
-        router.push(`/admin/discounts/${result.id}`);
-        router.refresh();
+        startTransition(() => {
+          router.push(`/admin/discounts/${result.id}`);
+          router.refresh();
+        });
       } else {
         setMessage({ type: 'error', text: result.error });
       }
@@ -207,14 +211,21 @@ export function AdminCouponForm(props: Props) {
       <div className="flex gap-3">
         <button
           type="submit"
-          disabled={saving}
-          className="rounded bg-orange-600 px-4 py-2 text-white font-medium hover:bg-orange-700 disabled:opacity-50"
+          disabled={saving || isNavPending}
+          className="inline-flex items-center justify-center gap-2 rounded bg-orange-600 px-4 py-2 text-white font-medium hover:bg-orange-700 disabled:opacity-50"
         >
-          {saving ? 'Saving…' : isEdit ? 'Save' : 'Create coupon'}
+          {(saving || isNavPending) && <Loader2 className="h-4 w-4 shrink-0 animate-spin" aria-hidden />}
+          {saving ? 'Saving…' : isNavPending ? 'Opening…' : isEdit ? 'Save' : 'Create coupon'}
         </button>
-        <Link href="/admin/discounts" className="rounded border border-gray-300 px-4 py-2 text-gray-700 font-medium hover:bg-gray-50">
+        <AdminLink
+          href="/admin/discounts"
+          className={`rounded border border-gray-300 px-4 py-2 text-gray-700 font-medium hover:bg-gray-50 ${saving || isNavPending ? 'pointer-events-none opacity-50' : ''}`}
+          onClick={(e) => {
+            if (saving || isNavPending) e.preventDefault();
+          }}
+        >
           Cancel
-        </Link>
+        </AdminLink>
       </div>
     </form>
   );
