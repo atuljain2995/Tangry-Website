@@ -852,3 +852,37 @@ export async function getLowStockVariantsForAdmin(
   }));
 }
 
+/** Saved addresses for account / checkout (snake_case from DB) */
+export type AccountAddressRow = {
+  id: string;
+  user_id: string;
+  type: 'shipping' | 'billing';
+  full_name: string;
+  phone: string;
+  address_line1: string;
+  address_line2: string | null;
+  city: string;
+  state: string;
+  postal_code: string;
+  country: string;
+  is_default: boolean;
+};
+
+export async function getAddressesForUser(userId: string): Promise<AccountAddressRow[]> {
+  const { data, error } = await supabaseAdmin
+    .from('addresses')
+    .select(
+      'id, user_id, type, full_name, phone, address_line1, address_line2, city, state, postal_code, country, is_default'
+    )
+    .eq('user_id', userId)
+    .order('is_default', { ascending: false })
+    .order('created_at', { ascending: false });
+
+  if (error) {
+    isSupabaseUnreachable(error);
+    console.error('getAddressesForUser:', error);
+    return [];
+  }
+  return (data as AccountAddressRow[]) ?? [];
+}
+

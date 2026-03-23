@@ -7,6 +7,7 @@ import { formatCurrency, calculateDiscountPercentage, getStockStatus, calculateS
 import { useCart } from '@/lib/contexts/CartContext';
 import { CartItem } from '@/lib/types/database';
 import { ProductImage } from './ProductImage';
+import { PincodeDeliveryCheck } from './PincodeDeliveryCheck';
 import { productImageAlt } from '@/lib/utils/product-image-alt';
 
 interface ProductDetailProps {
@@ -276,11 +277,18 @@ export const ProductDetail = ({ product }: ProductDetailProps) => {
             </div>
           </div>
 
-          {/* Delivery Info */}
+          <div className="mb-6">
+            <PincodeDeliveryCheck />
+          </div>
+
+          {/* Delivery Info (default nationwide band) */}
           <div className="p-4 bg-green-50 rounded-lg border border-green-200">
-            <p className="text-sm font-semibold text-gray-700 mb-1">Expected Delivery:</p>
+            <p className="text-sm font-semibold text-gray-700 mb-1">Typical delivery (India):</p>
             <p className="text-sm text-gray-600">
               {formatDeliveryDate(deliveryEstimate.min, deliveryEstimate.max)}
+            </p>
+            <p className="mt-2 text-xs text-gray-500">
+              Use the PIN checker above for a more specific estimate to your area.
             </p>
           </div>
         </div>

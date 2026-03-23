@@ -82,17 +82,28 @@ export async function getSessionUser(): Promise<UserProfile | null> {
 
   const { data: userRow } = await supabaseAdmin
     .from('users')
-    .select('id, email, name, role')
+    .select('id, email, name, phone, avatar_url, role')
     .eq('id', userId)
     .single();
 
   if (!userRow) return null;
 
+  const row = userRow as {
+    id: string;
+    email: string;
+    name: string | null;
+    phone: string | null;
+    avatar_url: string | null;
+    role: string;
+  };
+
   return {
-    id: (userRow as { id: string }).id,
-    email: (userRow as { email: string }).email,
-    name: (userRow as { name: string | null }).name,
-    role: (userRow as { role: string }).role as 'customer' | 'retailer' | 'admin',
+    id: row.id,
+    email: row.email,
+    name: row.name,
+    phone: row.phone ?? null,
+    avatarUrl: row.avatar_url ?? null,
+    role: row.role as 'customer' | 'retailer' | 'admin',
   };
 }
 

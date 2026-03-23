@@ -97,8 +97,15 @@ export function UserMenu() {
         aria-haspopup="true"
         aria-label="Account menu"
       >
-        <div className="w-8 h-8 rounded-full bg-orange-100 flex items-center justify-center">
-          <User className="w-4 h-4 text-orange-600" />
+        <div className="relative h-8 w-8 shrink-0 overflow-hidden rounded-full bg-orange-100 ring-2 ring-white">
+          {profile?.avatarUrl ? (
+            // eslint-disable-next-line @next/next/no-img-element -- user-uploaded dynamic URL
+            <img src={profile.avatarUrl} alt="" className="h-full w-full object-cover" />
+          ) : (
+            <span className="flex h-full w-full items-center justify-center text-sm font-semibold text-orange-700">
+              {(displayName || 'U').slice(0, 1).toUpperCase()}
+            </span>
+          )}
         </div>
         <span className="hidden sm:block text-sm font-medium max-w-[120px] truncate">
           {displayName}
@@ -107,9 +114,21 @@ export function UserMenu() {
       </button>
       {open && (
         <div className="absolute right-0 top-full pt-1 w-56 rounded-lg border border-gray-200 bg-white shadow-lg py-1 z-[100]">
-          <div className="px-4 py-2 border-b border-gray-100">
-            <p className="text-sm font-medium text-gray-900 truncate">{displayName}</p>
-            <p className="text-xs text-gray-500 truncate">{user.email}</p>
+          <div className="flex items-center gap-3 px-4 py-2 border-b border-gray-100">
+            <div className="relative h-10 w-10 shrink-0 overflow-hidden rounded-full bg-orange-100">
+              {profile?.avatarUrl ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img src={profile.avatarUrl} alt="" className="h-full w-full object-cover" />
+              ) : (
+                <span className="flex h-full w-full items-center justify-center text-base font-semibold text-orange-700">
+                  {(displayName || 'U').slice(0, 1).toUpperCase()}
+                </span>
+              )}
+            </div>
+            <div className="min-w-0 flex-1">
+              <p className="text-sm font-medium text-gray-900 truncate">{displayName}</p>
+              <p className="text-xs text-gray-500 truncate">{user.email}</p>
+            </div>
           </div>
           <Link
             href="/account"

@@ -10,6 +10,8 @@ export async function GET() {
     id: profile.id,
     email: profile.email,
     name: profile.name,
+    phone: profile.phone,
+    avatarUrl: profile.avatarUrl,
     role: profile.role,
   });
 }
