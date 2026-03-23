@@ -1,20 +1,14 @@
 export type MarketplaceLinks = {
-  amazon: string;
-  bigbasket: string;
-  blinkit: string;
+  flipkart: string;
 };
 
-/** Default search URLs until brand storefront links are set in env. */
-const DEFAULTS: MarketplaceLinks = {
-  amazon: 'https://www.amazon.in/s?k=tangry+spices',
-  bigbasket: 'https://www.bigbasket.com/ps/?q=tangry',
-  blinkit: 'https://blinkit.com/s/?q=tangry',
-};
+/** Default Flipkart search until you set your seller store or product URL in env. */
+const DEFAULT_FLIPKART =
+  'https://www.flipkart.com/search?q=tangry+spices';
 
 export function resolveMarketplaceLinks(): MarketplaceLinks {
   return {
-    amazon: process.env.NEXT_PUBLIC_TANGRY_AMAZON_URL?.trim() || DEFAULTS.amazon,
-    bigbasket: process.env.NEXT_PUBLIC_TANGRY_BIGBASKET_URL?.trim() || DEFAULTS.bigbasket,
-    blinkit: process.env.NEXT_PUBLIC_TANGRY_BLINKIT_URL?.trim() || DEFAULTS.blinkit,
+    flipkart:
+      process.env.NEXT_PUBLIC_TANGRY_FLIPKART_URL?.trim() || DEFAULT_FLIPKART,
   };
 }
