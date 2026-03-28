@@ -27,8 +27,7 @@ export const BuyOnline = ({ links }: BuyOnlineProps) => {
         <div className="container mx-auto px-6 text-center">
           <h2 className="text-3xl md:text-4xl font-serif font-bold mb-4">Buy online</h2>
           <p className="text-red-100 mb-2 text-lg max-w-2xl mx-auto">
-            Find Tangry on marketplaces — or shop the full range on this site. Set your brand store URLs in
-            environment variables when listings go live.
+            Shop the full range here with secure checkout, or find us on Flipkart. Store links open in a new tab.
           </p>
 
           <div className="flex flex-wrap justify-center gap-6 items-center">

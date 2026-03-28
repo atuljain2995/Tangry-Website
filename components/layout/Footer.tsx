@@ -73,10 +73,14 @@ export const Footer = () => {
           <div>
             <h4 className="font-bold text-gray-900 mb-4 uppercase text-sm tracking-wider">Help</h4>
             <ul className="space-y-3 text-gray-500 font-medium">
-              <li className="hover:text-orange-600 cursor-pointer transition">Track Order</li>
-              <li className="hover:text-orange-600 cursor-pointer transition">Shipping Policy</li>
-              <li className="hover:text-orange-600 cursor-pointer transition">
-                <a href={`tel:${COMPANY_INFO.phoneTel}`}>Contact Us</a>
+              <li className="hover:text-orange-600 transition">
+                <Link href="/track-order">Track Order</Link>
+              </li>
+              <li className="hover:text-orange-600 transition">
+                <Link href="/shipping-policy">Shipping Policy</Link>
+              </li>
+              <li className="hover:text-orange-600 transition">
+                <Link href="/contact">Contact Us</Link>
               </li>
               <li className="hover:text-orange-600 cursor-pointer transition">
                 <a href={`mailto:${COMPANY_INFO.email}`}>Email Support</a>

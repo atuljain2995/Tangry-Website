@@ -1,7 +1,7 @@
 // Structured data (JSON-LD) generators for SEO
 
 import { ProductExtended } from '../types/database';
-import { COMPANY_INFO } from '../data/constants';
+import { COMPANY_INFO, SOCIAL_LINKS } from '../data/constants';
 
 /**
  * Generate Organization schema
@@ -34,10 +34,10 @@ export function getOrganizationSchema() {
       availableLanguage: ['English', 'Hindi'],
     },
     sameAs: [
-      'https://www.facebook.com/tangryspices',
-      'https://www.instagram.com/tangryspices',
-      'https://www.youtube.com/tangryspices',
-      'https://twitter.com/tangryspices',
+      SOCIAL_LINKS.facebook,
+      SOCIAL_LINKS.instagram,
+      SOCIAL_LINKS.youtube,
+      SOCIAL_LINKS.twitter,
     ],
   };
 }

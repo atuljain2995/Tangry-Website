@@ -22,10 +22,15 @@ export const COMPANY_INFO = {
   ],
 } as const;
 
-/** @tangryspices — update if handles change */
+/**
+ * Social URLs. Set `NEXT_PUBLIC_INSTAGRAM_URL` (etc.) in production if handles change
+ * so you can point to the live brand profile without a code deploy.
+ */
+const DEFAULT_INSTAGRAM = 'https://www.instagram.com/tangryspices';
+
 export const SOCIAL_LINKS = {
   facebook: 'https://www.facebook.com/tangryspices',
-  instagram: 'https://www.instagram.com/tangryspices',
+  instagram: (process.env.NEXT_PUBLIC_INSTAGRAM_URL?.trim() || DEFAULT_INSTAGRAM) as string,
   youtube: 'https://www.youtube.com/tangryspices',
   twitter: 'https://twitter.com/tangryspices',
 } as const;
