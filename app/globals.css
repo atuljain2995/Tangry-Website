@@ -1,5 +1,18 @@
 @import "tailwindcss";
 
+/* Class-based dark mode (next-themes sets .dark on <html>) */
+@custom-variant dark (&:where(.dark, .dark *));
+
+@layer components {
+  .page-shell {
+    @apply min-h-screen text-neutral-900 dark:text-neutral-100 bg-[#fafafa] dark:bg-neutral-950 transition-colors duration-200;
+  }
+
+  .page-shell-white {
+    @apply min-h-screen text-neutral-900 dark:text-neutral-100 bg-white dark:bg-neutral-950 transition-colors duration-200;
+  }
+}
+
 @keyframes scroll {
   0% {
     transform: translateX(0);

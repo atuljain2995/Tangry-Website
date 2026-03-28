@@ -4,19 +4,22 @@ import { COMPANY_INFO, SOCIAL_LINKS } from '@/lib/data/constants';
 
 export const Footer = () => {
   return (
-    <footer id="contact" className="bg-white border-t border-gray-100 py-16">
+    <footer
+      id="contact"
+      className="border-t border-gray-100 bg-white py-16 dark:border-neutral-800 dark:bg-neutral-950"
+    >
       <div className="container mx-auto px-4">
         <div className="grid md:grid-cols-4 gap-12 mb-12">
           {/* Brand */}
           <div className="md:col-span-2">
-            <h2 className="text-3xl font-black text-gray-900 mb-1 tracking-tighter">
+            <h2 className="mb-1 text-3xl font-black tracking-tighter text-gray-900 dark:text-neutral-100">
               {COMPANY_INFO.brandName.toUpperCase()}
             </h2>
             <p className="text-sm font-semibold text-orange-600 mb-3">{COMPANY_INFO.tagline}</p>
-            <p className="text-gray-500 max-w-sm mb-2 font-medium text-sm">
+            <p className="mb-2 max-w-sm text-sm font-medium text-gray-500 dark:text-neutral-400">
               {COMPANY_INFO.legalName} · Jhotwara, Jaipur, Rajasthan
             </p>
-            <p className="text-gray-500 max-w-sm mb-4 font-medium text-sm">
+            <p className="mb-4 max-w-sm text-sm font-medium text-gray-500 dark:text-neutral-400">
               {COMPANY_INFO.certifications.join(' · ')}
             </p>
             <div className="flex gap-4">
@@ -24,7 +27,7 @@ export const Footer = () => {
                 href={SOCIAL_LINKS.instagram}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center hover:bg-orange-600 hover:text-white transition"
+                className="flex h-10 w-10 items-center justify-center rounded-full bg-gray-100 transition hover:bg-orange-600 hover:text-white dark:bg-neutral-800 dark:text-neutral-200 dark:hover:bg-orange-600 dark:hover:text-white"
                 aria-label="Tangry on Instagram"
               >
                 <Instagram size={20} />
@@ -33,7 +36,7 @@ export const Footer = () => {
                 href={SOCIAL_LINKS.twitter}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center hover:bg-orange-600 hover:text-white transition"
+                className="flex h-10 w-10 items-center justify-center rounded-full bg-gray-100 transition hover:bg-orange-600 hover:text-white dark:bg-neutral-800 dark:text-neutral-200 dark:hover:bg-orange-600 dark:hover:text-white"
                 aria-label="Tangry on X (Twitter)"
               >
                 <Twitter size={20} />
@@ -42,7 +45,7 @@ export const Footer = () => {
                 href={SOCIAL_LINKS.facebook}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center hover:bg-orange-600 hover:text-white transition"
+                className="flex h-10 w-10 items-center justify-center rounded-full bg-gray-100 transition hover:bg-orange-600 hover:text-white dark:bg-neutral-800 dark:text-neutral-200 dark:hover:bg-orange-600 dark:hover:text-white"
                 aria-label="Tangry on Facebook"
               >
                 <Facebook size={20} />
@@ -52,8 +55,10 @@ export const Footer = () => {
 
           {/* Shop */}
           <div>
-            <h4 className="font-bold text-gray-900 mb-4 uppercase text-sm tracking-wider">Shop</h4>
-            <ul className="space-y-3 text-gray-500 font-medium">
+            <h4 className="mb-4 text-sm font-bold uppercase tracking-wider text-gray-900 dark:text-neutral-100">
+              Shop
+            </h4>
+            <ul className="space-y-3 font-medium text-gray-500 dark:text-neutral-400">
               <li className="hover:text-orange-600 cursor-pointer transition">
                 <Link href="/products">All Spices</Link>
               </li>
@@ -71,8 +76,10 @@ export const Footer = () => {
 
           {/* Help */}
           <div>
-            <h4 className="font-bold text-gray-900 mb-4 uppercase text-sm tracking-wider">Help</h4>
-            <ul className="space-y-3 text-gray-500 font-medium">
+            <h4 className="mb-4 text-sm font-bold uppercase tracking-wider text-gray-900 dark:text-neutral-100">
+              Help
+            </h4>
+            <ul className="space-y-3 font-medium text-gray-500 dark:text-neutral-400">
               <li className="hover:text-orange-600 transition">
                 <Link href="/track-order">Track Order</Link>
               </li>
@@ -89,10 +96,10 @@ export const Footer = () => {
           </div>
         </div>
 
-        <div className="border-t border-gray-100 mt-12 pt-8 text-center text-gray-400 text-sm font-medium">
-          &copy; {new Date().getFullYear()} {COMPANY_INFO.legalName} ({COMPANY_INFO.brandName}). Made with spice in India.
+        <div className="mt-12 border-t border-gray-100 pt-8 text-center text-sm font-medium text-gray-400 dark:border-neutral-800 dark:text-neutral-500">
+          &copy; {new Date().getFullYear()} {COMPANY_INFO.legalName} ({COMPANY_INFO.brandName}). Made with 🌶️ in India.
           <div className="mt-2 space-x-6">
-            <Link href="/contact" className="hover:text-gray-900 transition">
+            <Link href="/contact" className="transition hover:text-gray-900 dark:hover:text-neutral-100">
               Contact & policies
             </Link>
           </div>

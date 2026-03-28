@@ -32,7 +32,7 @@ export default function CheckoutPage() {
   // Redirect if cart is empty
   if (cart.items.length === 0 && currentStep !== 'confirmation') {
     return (
-      <main className="text-gray-800 bg-[#FAFAFA] min-h-screen">
+      <main className="page-shell">
         <Header onMenuOpen={() => setIsMobileMenuOpen(true)} />
         <MobileMenu isOpen={isMobileMenuOpen} onClose={() => setIsMobileMenuOpen(false)} />
         <CartDrawer />
@@ -180,7 +180,7 @@ export default function CheckoutPage() {
   ];
 
   return (
-    <main className="text-gray-800 bg-[#FAFAFA] min-h-screen">
+    <main className="page-shell">
       <Script src="https://checkout.razorpay.com/v1/checkout.js" strategy="lazyOnload" />
       <Header onMenuOpen={() => setIsMobileMenuOpen(true)} />
       <MobileMenu isOpen={isMobileMenuOpen} onClose={() => setIsMobileMenuOpen(false)} />

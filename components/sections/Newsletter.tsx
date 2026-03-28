@@ -43,17 +43,17 @@ export const Newsletter = () => {
   }
 
   return (
-    <section className="py-16 bg-orange-50">
+    <section className="bg-orange-50 py-16 dark:bg-neutral-900/80">
       <div className="container mx-auto px-4">
-        <div className="max-w-3xl mx-auto bg-white rounded-3xl shadow-xl p-8 md:p-12 border-4 border-orange-100">
-          <div className="text-center mb-8">
-            <div className="inline-flex items-center gap-2 bg-orange-100 text-orange-700 px-4 py-1.5 rounded-full font-bold text-xs uppercase tracking-wider mb-4">
+        <div className="mx-auto max-w-3xl rounded-3xl border-4 border-orange-100 bg-white p-8 shadow-xl md:p-12 dark:border-orange-900/40 dark:bg-neutral-900 dark:shadow-black/20">
+          <div className="mb-8 text-center">
+            <div className="mb-4 inline-flex items-center gap-2 rounded-full bg-orange-100 px-4 py-1.5 text-xs font-bold tracking-wider text-orange-700 uppercase dark:bg-orange-950/60 dark:text-orange-300">
               <Mail size={14} /> Stay Updated
             </div>
-            <h2 className="text-3xl md:text-5xl font-black text-gray-900 mb-3 tracking-tight">
+            <h2 className="mb-3 text-3xl font-black tracking-tight text-gray-900 md:text-5xl dark:text-neutral-100">
               Join The Spice Squad
             </h2>
-            <p className="text-gray-600 font-medium">
+            <p className="font-medium text-gray-600 dark:text-neutral-300">
               Get offers and spice tips by email. Follow{' '}
               <a
                 href={SOCIAL_LINKS.instagram}
@@ -90,13 +90,13 @@ export const Newsletter = () => {
                 }
               }}
               placeholder="you@example.com"
-              className="flex-1 min-w-0 rounded-xl border-2 border-gray-200 px-4 py-3.5 text-gray-900 placeholder:text-gray-400 focus:border-orange-500 focus:outline-none focus:ring-2 focus:ring-orange-200"
+              className="min-w-0 flex-1 rounded-xl border-2 border-gray-200 bg-white px-4 py-3.5 text-gray-900 placeholder:text-gray-400 focus:border-orange-500 focus:outline-none focus:ring-2 focus:ring-orange-200 dark:border-neutral-600 dark:bg-neutral-800 dark:text-neutral-100 dark:placeholder:text-neutral-500 dark:focus:ring-orange-900/50"
               disabled={status === 'loading'}
             />
             <button
               type="submit"
               disabled={status === 'loading'}
-              className="inline-flex items-center justify-center bg-gray-900 text-white px-8 py-3.5 rounded-xl font-bold hover:bg-orange-600 transition shadow-lg disabled:opacity-60 whitespace-nowrap"
+              className="inline-flex items-center justify-center whitespace-nowrap rounded-xl bg-gray-900 px-8 py-3.5 font-bold text-white shadow-lg transition hover:bg-orange-600 disabled:opacity-60 dark:bg-orange-700 dark:hover:bg-orange-600"
             >
               {status === 'loading' ? 'Subscribing…' : 'Subscribe'}
             </button>
@@ -105,7 +105,7 @@ export const Newsletter = () => {
           <div className="text-center mt-4">
             <Link
               href="/contact"
-              className="text-sm font-semibold text-gray-600 hover:text-orange-600 underline-offset-2 hover:underline"
+              className="text-sm font-semibold text-gray-600 underline-offset-2 hover:text-orange-600 hover:underline dark:text-neutral-400 dark:hover:text-orange-400"
             >
               Prefer the contact form?
             </Link>
@@ -114,7 +114,9 @@ export const Newsletter = () => {
           {message && (
             <p
               className={`text-center text-sm mt-4 font-medium ${
-                status === 'error' ? 'text-red-600' : 'text-green-700'
+                status === 'error'
+                  ? 'text-red-600 dark:text-red-400'
+                  : 'text-green-700 dark:text-green-400'
               }`}
               role="status"
             >
@@ -122,7 +124,7 @@ export const Newsletter = () => {
             </p>
           )}
 
-          <p className="text-center text-sm text-gray-500 mt-6 font-medium">
+          <p className="mt-6 text-center text-sm font-medium text-gray-500 dark:text-neutral-400">
             We respect your inbox — no spam, only Tangry updates you can use.
           </p>
         </div>

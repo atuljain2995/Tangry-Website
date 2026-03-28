@@ -13,7 +13,7 @@ export default function TrackOrderPage() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   return (
-    <main className="text-gray-800 bg-[#FAFAFA] min-h-screen">
+    <main className="page-shell">
       <Header onMenuOpen={() => setIsMobileMenuOpen(true)} />
       <MobileMenu isOpen={isMobileMenuOpen} onClose={() => setIsMobileMenuOpen(false)} />
       <CartDrawer />

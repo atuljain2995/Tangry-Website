@@ -15,7 +15,7 @@ export const Hero = () => {
   }, []);
 
   return (
-    <section className="relative min-h-[min(100dvh,920px)] md:min-h-screen bg-[#FFF8F3] overflow-hidden pb-14 pt-16 sm:pb-16 md:pb-20 md:pt-20">
+    <section className="relative min-h-[min(100dvh,920px)] overflow-hidden bg-[#FFF8F3] pb-14 pt-16 sm:pb-16 md:min-h-screen md:pb-20 md:pt-20 dark:bg-neutral-900">
       {/* Decorative Elements */}
       <div className="absolute inset-0 opacity-20">
         <div className="absolute top-20 left-10 w-72 h-72 bg-orange-400 rounded-full filter blur-3xl animate-pulse"></div>
@@ -34,7 +34,7 @@ export const Hero = () => {
           </div>
 
           {/* Main Heading */}
-          <h1 className="mb-5 text-[2.125rem] font-black leading-[1.12] tracking-tight text-gray-900 sm:mb-6 sm:text-5xl sm:leading-[1.05] md:text-7xl md:leading-[0.95] lg:text-8xl">
+          <h1 className="mb-5 text-[2.125rem] font-black leading-[1.12] tracking-tight text-gray-900 sm:mb-6 sm:text-5xl sm:leading-[1.05] md:text-7xl md:leading-[0.95] lg:text-8xl dark:text-neutral-50">
             <span className="block sm:inline">
               AUTHENTIC{' '}
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-500 to-red-600">
@@ -46,7 +46,7 @@ export const Hero = () => {
           </h1>
 
           {/* Description */}
-          <p className="text-[0.9375rem] sm:text-lg md:text-xl text-gray-600 mb-7 sm:mb-10 max-w-2xl leading-[1.65] sm:leading-relaxed font-medium text-pretty">
+          <p className="mb-7 max-w-2xl text-pretty text-[0.9375rem] leading-[1.65] font-medium text-gray-600 sm:mb-10 sm:text-lg sm:leading-relaxed md:text-xl dark:text-neutral-300">
             Masalas, ready-to-eat powders, and pickles from Tangry Spices—small-batch blends rooted in
             Jaipur. FSSAI licensed, ISO 22000 certified, no unnecessary fillers.
           </p>

@@ -596,22 +596,49 @@ function transformProducts(dbProducts: DbProduct[]): ProductExtended[] {
 }
 
 /**
- * Search products by name or description
+ * Search products by name or description (case-insensitive).
+ * Uses separate ilike filters and merges — avoids PostgREST `.or()` parsing issues with `%` in patterns.
  */
 export async function searchProducts(query: string): Promise<ProductExtended[]> {
-  const { data: products, error: productsError } = await supabase
-    .from('products')
-    .select('*')
-    .or(`name.ilike.%${query}%,description.ilike.%${query}%`)
-    .limit(20);
+  const raw = query.trim().slice(0, 120);
+  if (!raw) return [];
 
-  if (productsError || !products || products.length === 0) {
-    isSupabaseUnreachable(productsError);
-    console.error('Error searching products:', productsError);
-    return [];
+  // Strip ILIKE wildcards from user input so the pattern stays predictable and safe
+  const literal = raw.replace(/[%_\\]/g, '').trim();
+  if (!literal) return [];
+
+  const pattern = `%${literal}%`;
+
+  const [nameRes, descRes] = await Promise.all([
+    supabase.from('products').select('*').ilike('name', pattern).limit(20),
+    supabase.from('products').select('*').ilike('description', pattern).limit(20),
+  ]);
+
+  if (nameRes.error) {
+    isSupabaseUnreachable(nameRes.error);
+    console.error('Error searching products (name):', nameRes.error);
+  }
+  if (descRes.error) {
+    isSupabaseUnreachable(descRes.error);
+    console.error('Error searching products (description):', descRes.error);
   }
 
-  const typedProducts = products as unknown as DbProduct[];
+  if (nameRes.error && descRes.error) return [];
+
+  const byId = new Map<string, DbProduct>();
+  if (!nameRes.error) {
+    for (const row of nameRes.data || []) {
+      byId.set((row as unknown as DbProduct).id, row as unknown as DbProduct);
+    }
+  }
+  if (!descRes.error) {
+    for (const row of descRes.data || []) {
+      byId.set((row as unknown as DbProduct).id, row as unknown as DbProduct);
+    }
+  }
+
+  const typedProducts = [...byId.values()].slice(0, 20);
+  if (typedProducts.length === 0) return [];
   const productIds = typedProducts.map(p => p.id);
   const { data: variants } = await supabase
     .from('product_variants')

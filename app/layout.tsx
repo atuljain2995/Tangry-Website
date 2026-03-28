@@ -1,5 +1,6 @@
 import { Poppins, Playfair_Display } from "next/font/google";
 import "./globals.css";
+import { ThemeProvider } from "@/components/theme/ThemeProvider";
 import { CartProvider } from "@/lib/contexts/CartContext";
 import { AuthProvider } from "@/lib/contexts/AuthContext";
 import { Analytics } from "@/components/analytics/Analytics";
@@ -89,19 +90,23 @@ export const metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <head>
         <Analytics />
         <SpeedInsights />
       </head>
-      <body className={`${poppins.variable} ${playfair.variable} font-sans`}>
-        <CartProvider>
-          <AuthProvider>
-            {children}
-            <WhatsAppButton />
-            <VercelAnalytics />
-          </AuthProvider>
-        </CartProvider>
+      <body
+        className={`${poppins.variable} ${playfair.variable} font-sans antialiased bg-neutral-50 text-neutral-900 transition-colors duration-200 dark:bg-neutral-950 dark:text-neutral-100`}
+      >
+        <ThemeProvider>
+          <CartProvider>
+            <AuthProvider>
+              {children}
+              <WhatsAppButton />
+              <VercelAnalytics />
+            </AuthProvider>
+          </CartProvider>
+        </ThemeProvider>
       </body>
     </html>
   );

@@ -9,7 +9,7 @@ export const CartIcon = () => {
   return (
     <button
       onClick={openCart}
-      className="relative p-2 text-gray-700 hover:text-[#D32F2F] transition"
+      className="relative p-2 text-gray-700 transition hover:text-[#D32F2F] dark:text-neutral-200 dark:hover:text-orange-400"
       aria-label="Open shopping cart"
     >
       <ShoppingBag size={24} />

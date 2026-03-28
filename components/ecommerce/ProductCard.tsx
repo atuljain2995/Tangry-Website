@@ -23,7 +23,7 @@ export const ProductCard = ({ product }: ProductCardProps) => {
   const imageSrc = product.images[0] || PLACEHOLDER_IMAGE;
 
   return (
-    <div className="group bg-white rounded-3xl p-4 border border-gray-100 hover:border-gray-300 shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col">
+    <div className="group flex flex-col rounded-3xl border border-gray-100 bg-white p-4 shadow-sm transition-all duration-300 hover:border-gray-300 hover:shadow-xl dark:border-neutral-800 dark:bg-neutral-900 dark:hover:border-neutral-600">
       {/* Product Image */}
       <Link href={`/products/${product.slug}`}>
         <div className="relative h-64 bg-gradient-to-br from-orange-400 to-red-500 rounded-2xl overflow-hidden mb-6">
@@ -65,7 +65,7 @@ export const ProductCard = ({ product }: ProductCardProps) => {
 
         {/* Product Name */}
         <Link href={`/products/${product.slug}`}>
-          <h3 className="text-2xl font-black text-gray-900 leading-none mb-3 tracking-tight group-hover:text-orange-600 transition-colors line-clamp-2">
+          <h3 className="mb-3 line-clamp-2 text-2xl leading-none font-black tracking-tight text-gray-900 transition-colors group-hover:text-orange-600 dark:text-neutral-100 dark:group-hover:text-orange-400">
             {product.name}
           </h3>
         </Link>
@@ -81,7 +81,7 @@ export const ProductCard = ({ product }: ProductCardProps) => {
               />
             ))}
           </div>
-          <span className="text-xs text-gray-600 ml-2 font-medium">
+          <span className="ml-2 text-xs font-medium text-gray-600 dark:text-neutral-400">
             {product.rating} ({product.reviewCount})
           </span>
         </div>
@@ -89,7 +89,7 @@ export const ProductCard = ({ product }: ProductCardProps) => {
         {/* Variant Selector */}
         {product.variants.length > 1 && (
           <div className="mb-4">
-            <p className="text-xs text-gray-600 mb-2 font-bold">Size:</p>
+            <p className="mb-2 text-xs font-bold text-gray-600 dark:text-neutral-400">Size:</p>
             <div className="flex flex-wrap gap-2">
               {product.variants.map((variant, index) => (
                 <button
@@ -98,7 +98,7 @@ export const ProductCard = ({ product }: ProductCardProps) => {
                   className={`px-3 py-1 text-xs font-bold rounded-lg border-2 transition ${
                     selectedVariantIndex === index
                       ? 'border-orange-600 bg-orange-600 text-white'
-                      : 'border-gray-200 text-gray-700 hover:border-orange-600'
+                      : 'border-gray-200 text-gray-700 hover:border-orange-600 dark:border-neutral-600 dark:text-neutral-300 dark:hover:border-orange-500'
                   }`}
                 >
                   {variant.name}
@@ -112,12 +112,12 @@ export const ProductCard = ({ product }: ProductCardProps) => {
         <div className="mt-auto flex items-center justify-between">
           <div className="flex flex-col">
             <div className="flex items-baseline space-x-2">
-              <span className="text-2xl font-black text-gray-900">
+              <span className="text-2xl font-black text-gray-900 dark:text-neutral-100">
                 {formatCurrency(selectedVariant.price)}
               </span>
             </div>
             {selectedVariant.compareAtPrice && selectedVariant.compareAtPrice > selectedVariant.price && (
-              <span className="text-xs text-gray-500 line-through font-medium">
+              <span className="text-xs font-medium text-gray-500 line-through dark:text-neutral-500">
                 {formatCurrency(selectedVariant.compareAtPrice)}
               </span>
             )}

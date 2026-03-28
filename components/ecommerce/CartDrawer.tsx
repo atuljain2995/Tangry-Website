@@ -1,5 +1,6 @@
 'use client';
 
+import { useEffect } from 'react';
 import { X, ShoppingBag, ArrowRight, MessageCircle } from 'lucide-react';
 import { useCart } from '@/lib/contexts/CartContext';
 import { CartItemComponent } from './CartItem';
@@ -11,33 +12,51 @@ export const CartDrawer = () => {
   const { cart, isCartOpen, closeCart, cartItemCount } = useCart();
   const whatsappOrderUrl = buildWhatsAppOrderUrl(cart);
 
+  useEffect(() => {
+    if (!isCartOpen) return;
+
+    const html = document.documentElement;
+    const body = document.body;
+    const prevHtmlOverflow = html.style.overflow;
+    const prevBodyOverflow = body.style.overflow;
+    html.style.overflow = 'hidden';
+    body.style.overflow = 'hidden';
+
+    return () => {
+      html.style.overflow = prevHtmlOverflow;
+      body.style.overflow = prevBodyOverflow;
+    };
+  }, [isCartOpen]);
+
   return (
     <>
-      {/* Overlay */}
+      {/* Light scrim: page stays visible; click-through closes cart */}
       {isCartOpen && (
-        <div 
-          className="fixed inset-0 bg-black bg-opacity-50 z-50 transition-opacity"
+        <div
+          className="fixed inset-0 z-40 bg-gray-900/10 backdrop-blur-[2px] transition-opacity motion-reduce:backdrop-blur-none dark:bg-black/30"
+          aria-hidden
           onClick={closeCart}
         />
       )}
 
       {/* Drawer */}
-      <div 
-        className={`fixed right-0 top-0 h-full w-full md:w-96 bg-white shadow-2xl z-50 transform transition-transform duration-300 ease-in-out flex flex-col ${
+      <div
+        className={`fixed right-0 top-0 z-50 flex h-full w-full transform flex-col bg-white shadow-2xl transition-transform duration-300 ease-in-out dark:bg-neutral-900 dark:shadow-black/50 md:w-96 ${
           isCartOpen ? 'translate-x-0' : 'translate-x-full'
         }`}
       >
         {/* Header */}
-        <div className="flex items-center justify-between p-4 border-b border-gray-200">
+        <div className="flex items-center justify-between border-b border-gray-200 p-4 dark:border-neutral-700">
           <div className="flex items-center space-x-2">
             <ShoppingBag className="text-[#D32F2F]" size={24} />
-            <h2 className="text-xl font-bold text-gray-900">
+            <h2 className="text-xl font-bold text-gray-900 dark:text-neutral-100">
               Shopping Cart ({cartItemCount})
             </h2>
           </div>
-          <button 
+          <button
+            type="button"
             onClick={closeCart}
-            className="text-gray-500 hover:text-gray-700 transition"
+            className="text-gray-500 transition hover:text-gray-700 dark:text-neutral-400 dark:hover:text-neutral-200"
           >
             <X size={24} />
           </button>
@@ -47,9 +66,9 @@ export const CartDrawer = () => {
         <div className="flex-1 overflow-y-auto p-4">
           {cart.items.length === 0 ? (
             <div className="flex flex-col items-center justify-center h-full text-center">
-              <ShoppingBag size={64} className="text-gray-300 mb-4" />
-              <h3 className="text-lg font-semibold text-gray-600 mb-2">Your cart is empty</h3>
-              <p className="text-sm text-gray-500 mb-6">Add some delicious spices to get started!</p>
+              <ShoppingBag size={64} className="mb-4 text-gray-300 dark:text-neutral-600" />
+              <h3 className="mb-2 text-lg font-semibold text-gray-600 dark:text-neutral-300">Your cart is empty</h3>
+              <p className="mb-6 text-sm text-gray-500 dark:text-neutral-400">Add some delicious spices to get started!</p>
               <Link
                 href="/products"
                 onClick={closeCart}
@@ -72,11 +91,11 @@ export const CartDrawer = () => {
 
         {/* Footer - Cart Summary */}
         {cart.items.length > 0 && (
-          <div className="border-t border-gray-200 p-4 bg-gray-50">
+          <div className="border-t border-gray-200 bg-gray-50 p-4 dark:border-neutral-700 dark:bg-neutral-900/80">
             {/* Subtotal */}
-            <div className="flex justify-between mb-2 text-sm">
-              <span className="text-gray-600">Subtotal</span>
-              <span className="font-medium">{formatCurrency(cart.subtotal)}</span>
+            <div className="mb-2 flex justify-between text-sm">
+              <span className="text-gray-600 dark:text-neutral-400">Subtotal</span>
+              <span className="font-medium text-gray-900 dark:text-neutral-100">{formatCurrency(cart.subtotal)}</span>
             </div>
 
             {/* Discount */}
@@ -88,9 +107,9 @@ export const CartDrawer = () => {
             )}
 
             {/* Shipping */}
-            <div className="flex justify-between mb-2 text-sm">
-              <span className="text-gray-600">Shipping</span>
-              <span className="font-medium">
+            <div className="mb-2 flex justify-between text-sm">
+              <span className="text-gray-600 dark:text-neutral-400">Shipping</span>
+              <span className="font-medium text-gray-900 dark:text-neutral-100">
                 {cart.shipping === 0 ? (
                   <span className="text-green-600">FREE</span>
                 ) : (
@@ -101,20 +120,20 @@ export const CartDrawer = () => {
 
             {/* Free shipping message */}
             {cart.subtotal < 499 && cart.subtotal > 0 && (
-              <div className="mb-3 p-2 bg-yellow-50 border border-yellow-200 rounded text-xs text-yellow-800">
+              <div className="mb-3 rounded border border-yellow-200 bg-yellow-50 p-2 text-xs text-yellow-800 dark:border-yellow-900/50 dark:bg-yellow-950/40 dark:text-yellow-200">
                 Add {formatCurrency(499 - cart.subtotal)} more for FREE shipping!
               </div>
             )}
 
             {/* Tax */}
-            <div className="flex justify-between mb-3 text-sm">
-              <span className="text-gray-600">Tax (GST 5%)</span>
-              <span className="font-medium">{formatCurrency(cart.tax)}</span>
+            <div className="mb-3 flex justify-between text-sm">
+              <span className="text-gray-600 dark:text-neutral-400">Tax (GST 5%)</span>
+              <span className="font-medium text-gray-900 dark:text-neutral-100">{formatCurrency(cart.tax)}</span>
             </div>
 
             {/* Total */}
-            <div className="flex justify-between mb-4 pt-3 border-t border-gray-300">
-              <span className="text-lg font-bold text-gray-900">Total</span>
+            <div className="mb-4 flex justify-between border-t border-gray-300 pt-3 dark:border-neutral-600">
+              <span className="text-lg font-bold text-gray-900 dark:text-neutral-100">Total</span>
               <span className="text-lg font-bold text-[#D32F2F]">{formatCurrency(cart.total)}</span>
             </div>
 
@@ -143,9 +162,10 @@ export const CartDrawer = () => {
             )}
 
             {/* Continue Shopping */}
-            <button 
+            <button
+              type="button"
               onClick={closeCart}
-              className="w-full mt-2 text-center text-sm text-gray-600 hover:text-[#D32F2F] transition py-2"
+              className="mt-2 w-full py-2 text-center text-sm text-gray-600 transition hover:text-[#D32F2F] dark:text-neutral-400 dark:hover:text-orange-400"
             >
               Continue Shopping
             </button>

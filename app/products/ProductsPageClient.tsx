@@ -46,19 +46,21 @@ export function ProductsPageClient({ products, categories }: ProductsPageClientP
   });
 
   return (
-    <main className="text-gray-800 bg-white min-h-screen">
+    <main className="page-shell-white">
       <Header onMenuOpen={() => setIsMobileMenuOpen(true)} />
       <MobileMenu isOpen={isMobileMenuOpen} onClose={() => setIsMobileMenuOpen(false)} />
       <CartDrawer />
 
       {/* Hero Banner */}
-      <section className="bg-[#FFF8F3] pt-32 pb-12">
+      <section className="bg-[#FFF8F3] pt-32 pb-12 dark:bg-neutral-900">
         <div className="container mx-auto px-4 text-center">
           <div className="inline-flex items-center gap-2 bg-orange-100 text-orange-700 px-4 py-1.5 rounded-full font-bold text-xs uppercase tracking-wider mb-6 animate-pulse">
             <Zap className="w-3 h-3 fill-current" /> Premium Collection
           </div>
-          <h1 className="text-5xl md:text-7xl font-black text-gray-900 mb-4 tracking-tight uppercase italic">Shop Tangry</h1>
-          <p className="text-xl text-gray-600 font-medium max-w-2xl mx-auto">
+          <h1 className="mb-4 text-5xl font-black tracking-tight text-gray-900 uppercase italic md:text-7xl dark:text-neutral-100">
+            Shop Tangry
+          </h1>
+          <p className="mx-auto max-w-2xl text-xl font-medium text-gray-600 dark:text-neutral-300">
             Masalas, ready powders, and essentials from Tangry, Jaipur. FSSAI licensed · ISO 22000.
           </p>
         </div>

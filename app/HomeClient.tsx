@@ -33,7 +33,7 @@ export function HomeClient({ products, marketplaceLinks }: HomeClientProps) {
   return (
     <>
       <StructuredData data={[getOrganizationSchema(), getWebSiteSchema()]} />
-      <main className="text-gray-800 bg-[#FAFAFA] min-h-screen">
+      <main className="page-shell">
         <Header onMenuOpen={() => setIsMobileMenuOpen(true)} />
         <MobileMenu isOpen={isMobileMenuOpen} onClose={() => setIsMobileMenuOpen(false)} />
         <CartDrawer />

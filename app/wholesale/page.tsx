@@ -73,7 +73,7 @@ export default function WholesalePage() {
   ];
 
   return (
-    <main className="text-gray-800 bg-[#FAFAFA] min-h-screen">
+    <main className="page-shell">
       <Header onMenuOpen={() => setIsMobileMenuOpen(true)} />
       <MobileMenu isOpen={isMobileMenuOpen} onClose={() => setIsMobileMenuOpen(false)} />
       <CartDrawer />
