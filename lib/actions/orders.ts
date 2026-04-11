@@ -56,7 +56,37 @@ export async function createOrder(payload: CreateOrderPayload): Promise<CreateOr
     image: i.image,
   }));
 
+  // Validate stock availability BEFORE creating the order to prevent overselling
+  for (const item of trustedItems) {
+    const { data: variant } = await (supabaseAdmin as any)
+      .from('product_variants')
+      .select('stock, sku')
+      .eq('id', item.variantId)
+      .single();
+
+    if (!variant) {
+      return { success: false, error: `Product "${item.productName}" is no longer available.` };
+    }
+    if (variant.stock < item.quantity) {
+      return {
+        success: false,
+        error: variant.stock === 0
+          ? `"${item.productName} – ${item.variantName}" is out of stock.`
+          : `Only ${variant.stock} units of "${item.productName} – ${item.variantName}" are available.`,
+      };
+    }
+  }
+
   const orderNumber = generateOrderNumber();
+
+  // Decrement stock first (before inserting order) to minimise oversell window
+  for (const item of trustedItems) {
+    const ok = await decrementVariantStock(item.variantId, item.quantity);
+    if (!ok) {
+      // Stock changed between check and decrement — abort
+      return { success: false, error: `"${item.productName} – ${item.variantName}" just went out of stock. Please try again.` };
+    }
+  }
 
   const { error: orderError } = await (supabaseAdmin as any)
     .from('orders')
@@ -82,13 +112,6 @@ export async function createOrder(payload: CreateOrderPayload): Promise<CreateOr
   if (orderError) {
     console.error('Order insert error:', orderError);
     return { success: false, error: 'Failed to create order. Please try again.' };
-  }
-
-  for (const item of trustedItems) {
-    const ok = await decrementVariantStock(item.variantId, item.quantity);
-    if (!ok) {
-      console.error(`Failed to decrement stock for variant ${item.variantId}`);
-    }
   }
 
   if (couponId) {

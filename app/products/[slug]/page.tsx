@@ -7,8 +7,8 @@ interface PageProps {
   params: Promise<{ slug: string }>;
 }
 
-// Always fetch fresh data so product image updates from admin show immediately
-export const dynamic = 'force-dynamic';
+// Use ISR: revalidate every 60s so admin changes show quickly without sacrificing performance
+export const revalidate = 60;
 
 // Generate static params for all products
 export async function generateStaticParams() {
