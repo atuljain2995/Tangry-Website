@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Loader2 } from 'lucide-react';
+import { Loader2, Mail } from 'lucide-react';
 import { updateOrderStatus, setOrderTrackingNumber } from '@/lib/actions/orders';
 
 const STATUSES = ['pending', 'confirmed', 'processing', 'shipped', 'delivered', 'cancelled', 'refunded'] as const;
@@ -11,14 +11,16 @@ type Props = {
   orderId: string;
   currentStatus: string;
   currentTracking: string | null;
+  customerEmail: string | null;
 };
 
-export function AdminOrderActions({ orderId, currentStatus, currentTracking }: Props) {
+export function AdminOrderActions({ orderId, currentStatus, currentTracking, customerEmail }: Props) {
   const router = useRouter();
   const [status, setStatus] = useState(currentStatus);
   const [tracking, setTracking] = useState(currentTracking ?? '');
   const [savingStatus, setSavingStatus] = useState(false);
   const [savingTracking, setSavingTracking] = useState(false);
+  const [sendingEmail, setSendingEmail] = useState(false);
   const [message, setMessage] = useState<{ type: 'ok' | 'error'; text: string } | null>(null);
 
   async function handleStatusChange(newStatus: string) {
@@ -102,6 +104,40 @@ export function AdminOrderActions({ orderId, currentStatus, currentTracking }: P
         </div>
         <p className="text-xs text-gray-500">Saving a tracking number will set status to &quot;shipped&quot;.</p>
       </form>
+
+      {/* Resend confirmation email */}
+      <div className="border-t border-gray-100 pt-4">
+        <button
+          onClick={async () => {
+            setSendingEmail(true);
+            setMessage(null);
+            try {
+              const res = await fetch('/api/admin/orders/resend-email', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ orderId }),
+              });
+              const data = await res.json();
+              if (res.ok) {
+                setMessage({ type: 'ok', text: `Confirmation email sent to ${customerEmail}` });
+              } else {
+                setMessage({ type: 'error', text: data.error || 'Failed to send email' });
+              }
+            } catch {
+              setMessage({ type: 'error', text: 'Network error sending email' });
+            }
+            setSendingEmail(false);
+          }}
+          disabled={sendingEmail || !customerEmail}
+          className="inline-flex items-center gap-2 rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50"
+        >
+          {sendingEmail ? <Loader2 className="h-4 w-4 animate-spin" /> : <Mail className="h-4 w-4" />}
+          {sendingEmail ? 'Sending…' : 'Resend Confirmation Email'}
+        </button>
+        {customerEmail && (
+          <p className="mt-1 text-xs text-gray-500">Will send to {customerEmail}</p>
+        )}
+      </div>
     </div>
   );
 }

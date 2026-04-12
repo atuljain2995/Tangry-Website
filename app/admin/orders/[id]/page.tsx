@@ -161,6 +161,7 @@ export default async function AdminOrderDetailPage({
             orderId={o.id}
             currentStatus={o.order_status}
             currentTracking={o.tracking_number}
+            customerEmail={o.user_email}
           />
         </div>
       </div>
