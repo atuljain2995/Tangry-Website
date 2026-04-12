@@ -9,3 +9,7 @@ export function showRecipesInNav(): boolean {
 export function showBlogInNav(): boolean {
   return process.env.NEXT_PUBLIC_SHOW_BLOG_NAV !== 'false';
 }
+
+export function showThemeToggle(): boolean {
+  return process.env.NEXT_PUBLIC_SHOW_THEME_TOGGLE === 'true';
+}

@@ -2,11 +2,11 @@
 
 import Link from 'next/link';
 import Image from 'next/image';
-import { Search, User, Menu } from 'lucide-react';
+import { Menu } from 'lucide-react';
 import { NavLink } from '../ui/NavLink';
 import { CartIcon } from '../ecommerce/CartIcon';
 import { UserMenu } from '../ui/UserMenu';
-import { showBlogInNav, showRecipesInNav } from '@/lib/data/nav-flags';
+import { showBlogInNav, showRecipesInNav, showThemeToggle } from '@/lib/data/nav-flags';
 import { ThemeToggle } from '@/components/theme/ThemeToggle';
 
 interface HeaderProps {
@@ -52,7 +52,7 @@ export const Header = ({ onMenuOpen }: HeaderProps) => {
 
           {/* Right Side Actions - overflow-visible so dropdown isn't clipped */}
           <div className="ml-auto flex items-center space-x-2 overflow-visible sm:space-x-3 md:space-x-4">
-            <ThemeToggle showLabel className="hidden sm:flex" />
+            {showThemeToggle() && <ThemeToggle showLabel className="hidden sm:flex" />}
             <CartIcon />
             <UserMenu />
             <button
