@@ -5,7 +5,7 @@ import { Sparkles, ArrowRight, Play, Zap } from 'lucide-react';
 import Link from 'next/link';
 
 export const Hero = () => {
-  const [currentSlide, setCurrentSlide] = useState(0);
+  const [, setCurrentSlide] = useState(0);
 
   useEffect(() => {
     const interval = setInterval(() => {

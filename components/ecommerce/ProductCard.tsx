@@ -4,7 +4,6 @@ import { useState } from 'react';
 import { Star, ArrowRight } from 'lucide-react';
 import { ProductExtended } from '@/lib/types/database';
 import { formatCurrency, calculateDiscountPercentage, getStockStatus } from '@/lib/utils/database';
-import { AddToCartButton } from './AddToCartButton';
 import Link from 'next/link';
 import { ProductImage } from './ProductImage';
 import { productImageAlt } from '@/lib/utils/product-image-alt';

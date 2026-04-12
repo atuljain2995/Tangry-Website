@@ -5,9 +5,8 @@ import { Header } from '@/components/layout/Header';
 import { MobileMenu } from '@/components/layout/MobileMenu';
 import { Footer } from '@/components/layout/Footer';
 import { CartDrawer } from '@/components/ecommerce/CartDrawer';
-import { Clock, User, Tag } from 'lucide-react';
+import { Clock, User } from 'lucide-react';
 import Link from 'next/link';
-import Image from 'next/image';
 
 // Sample blog posts - Replace with CMS or database
 const blogPosts = [

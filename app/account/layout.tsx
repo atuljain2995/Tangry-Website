@@ -1,8 +1,6 @@
 import { redirect } from 'next/navigation';
 import { getCurrentUserProfile } from '@/lib/auth/user';
 import { AccountSidebar } from '@/components/account/AccountSidebar';
-import { Header } from '@/components/layout/Header';
-import { Footer } from '@/components/layout/Footer';
 
 export default async function AccountLayout({ children }: { children: React.ReactNode }) {
   const profile = await getCurrentUserProfile();

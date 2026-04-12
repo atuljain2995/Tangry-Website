@@ -1,6 +1,6 @@
 'use client';
 
-import React, { createContext, useContext, useState, useEffect, useRef, ReactNode } from 'react';
+import { createContext, useContext, useState, useEffect, useRef, ReactNode } from 'react';
 import { Cart, CartItem } from '../types/database';
 import { calculateCartTotals, calculateShipping } from '../utils/database';
 
