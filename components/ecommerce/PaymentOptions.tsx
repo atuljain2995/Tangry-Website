@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { CreditCard, Smartphone, Banknote, Building } from 'lucide-react';
+import { CreditCard, Banknote, Building } from 'lucide-react';
 import { PaymentMethod } from '@/lib/types/database';
 
 interface PaymentOptionsProps {
