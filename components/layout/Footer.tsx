@@ -80,9 +80,11 @@ export const Footer = () => {
               <li className="hover:text-orange-600 cursor-pointer transition">
                 <Link href="/wholesale">Corporate Orders</Link>
               </li>
-              <li className="hover:text-orange-600 cursor-pointer transition">
-                <Link href="/recipes">Recipes</Link>
-              </li>
+              {process.env.NEXT_PUBLIC_SHOW_RECIPES_NAV === 'true' && (
+                <li className="hover:text-orange-600 cursor-pointer transition">
+                  <Link href="/recipes">Recipes</Link>
+                </li>
+              )}
             </ul>
           </div>
 
