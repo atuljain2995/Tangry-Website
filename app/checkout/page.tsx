@@ -11,6 +11,7 @@ import { CheckoutForm } from '@/components/ecommerce/CheckoutForm';
 import { PaymentOptions } from '@/components/ecommerce/PaymentOptions';
 import { OrderSummary } from '@/components/ecommerce/OrderSummary';
 import { useCart } from '@/lib/contexts/CartContext';
+import { useAuth } from '@/lib/contexts/AuthContext';
 import { Address, PaymentMethod } from '@/lib/types/database';
 import { createOrder } from '@/lib/actions/orders';
 import { Check } from 'lucide-react';
@@ -21,6 +22,7 @@ type CheckoutStep = 'shipping' | 'payment' | 'confirmation';
 export default function CheckoutPage() {
   const router = useRouter();
   const { cart, clearCart } = useCart();
+  const { user } = useAuth();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [currentStep, setCurrentStep] = useState<CheckoutStep>('shipping');
   const [shippingAddress, setShippingAddress] = useState<Address | null>(null);
@@ -264,6 +266,21 @@ export default function CheckoutPage() {
                   </ul>
                 </div>
 
+                {!user && (
+                  <div className="bg-orange-50 border border-orange-200 rounded-lg p-5 mb-8 max-w-md mx-auto text-left">
+                    <h3 className="font-bold text-gray-900 mb-1">Create an account</h3>
+                    <p className="text-sm text-gray-600 mb-3">
+                      Sign up to track your orders, save addresses, and checkout faster next time.
+                    </p>
+                    <Link
+                      href="/signup"
+                      className="inline-block px-6 py-2 bg-[#D32F2F] text-white text-sm rounded-full font-semibold hover:bg-[#B71C1C] transition"
+                    >
+                      Create Account
+                    </Link>
+                  </div>
+                )}
+
                 <div className="flex flex-col sm:flex-row justify-center space-y-4 sm:space-y-0 sm:space-x-4">
                   <Link
                     href="/products"
@@ -272,7 +289,7 @@ export default function CheckoutPage() {
                     Continue Shopping
                   </Link>
                   <Link
-                    href="/account/orders"
+                    href={user ? '/account/orders' : '/track-order'}
                     className="px-8 py-3 bg-[#D32F2F] text-white rounded-full font-bold hover:bg-[#B71C1C] transition shadow-lg"
                   >
                     Track Order
