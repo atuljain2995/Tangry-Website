@@ -42,7 +42,7 @@ export const Header = ({ onMenuOpen }: HeaderProps) => {
           </Link>
 
           {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center space-x-8 font-bold text-sm uppercase tracking-wide text-gray-600 dark:text-neutral-300">
+          <div className="hidden md:flex items-center space-x-8 font-bold text-sm uppercase tracking-wide text-gray-600 dark:text-neutral-300 ml-8">
             <NavLink href="/products">Products</NavLink>
             {showRecipesInNav() && <NavLink href="/recipes">Recipes</NavLink>}
             {showBlogInNav() && <NavLink href="/blog">Blog</NavLink>}
@@ -51,17 +51,10 @@ export const Header = ({ onMenuOpen }: HeaderProps) => {
           </div>
 
           {/* Right Side Actions - overflow-visible so dropdown isn't clipped */}
-          <div className="flex items-center space-x-2 overflow-visible sm:space-x-3 md:space-x-4">
+          <div className="ml-auto flex items-center space-x-2 overflow-visible sm:space-x-3 md:space-x-4">
             <ThemeToggle showLabel className="hidden sm:flex" />
-            <Link
-              href="/search"
-              className="hidden md:block text-gray-600 transition-colors hover:text-orange-600 dark:text-neutral-300 dark:hover:text-orange-400"
-              aria-label="Search products"
-            >
-              <Search className="w-5 h-5" />
-            </Link>
-            <UserMenu />
             <CartIcon />
+            <UserMenu />
             <button
               className="text-gray-900 transition-colors hover:text-orange-600 dark:text-neutral-100 md:hidden"
               onClick={onMenuOpen}

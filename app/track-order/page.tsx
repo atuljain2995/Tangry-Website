@@ -8,9 +8,11 @@ import { Footer } from '@/components/layout/Footer';
 import { CartDrawer } from '@/components/ecommerce/CartDrawer';
 import { COMPANY_INFO } from '@/lib/data/constants';
 import { Package, Mail } from 'lucide-react';
+import { useAuth } from '@/lib/contexts/AuthContext';
 
 export default function TrackOrderPage() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const { user } = useAuth();
 
   return (
     <main className="page-shell">
@@ -41,17 +43,19 @@ export default function TrackOrderPage() {
                 >
                   Go to my orders →
                 </Link>
-                <p className="text-sm text-gray-500 mt-3">
-                  No account yet?{' '}
-                  <Link href="/signup?redirect=/account/orders" className="text-orange-600 font-medium hover:underline">
-                    Create one
-                  </Link>{' '}
-                  or{' '}
-                  <Link href="/login?redirect=/account/orders" className="text-orange-600 font-medium hover:underline">
-                    Sign in
-                  </Link>
-                  .
-                </p>
+                {!user && (
+                  <p className="text-sm text-gray-500 mt-3">
+                    No account yet?{' '}
+                    <Link href="/signup?redirect=/account/orders" className="text-orange-600 font-medium hover:underline">
+                      Create one
+                    </Link>{' '}
+                    or{' '}
+                    <Link href="/login?redirect=/account/orders" className="text-orange-600 font-medium hover:underline">
+                      Sign in
+                    </Link>
+                    .
+                  </p>
+                )}
               </div>
             </div>
           </div>

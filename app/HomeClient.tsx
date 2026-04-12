@@ -44,7 +44,7 @@ export function HomeClient({ products, marketplaceLinks }: HomeClientProps) {
         <FeaturedProducts products={featuredProducts} />
         <About />
         <BuyOnline links={marketplaceLinks} />
-        <Recipes />
+        {process.env.NEXT_PUBLIC_SHOW_RECIPES_NAV === 'true' && <Recipes />}
         <Newsletter />
         
         <Footer />
