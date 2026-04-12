@@ -36,7 +36,7 @@ export const Header = ({ onMenuOpen }: HeaderProps) => {
               alt="Tangry Spices"
               width={60}
               height={60}
-              className="md:hidden h-11 w-11 object-contain"
+              className="md:hidden h-[4rem] w-[4rem] object-contain"
               priority
             />
           </Link>
