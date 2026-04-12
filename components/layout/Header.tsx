@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { Search, User, Menu } from 'lucide-react';
 import { NavLink } from '../ui/NavLink';
 import { CartIcon } from '../ecommerce/CartIcon';
@@ -20,9 +21,14 @@ export const Header = ({ onMenuOpen }: HeaderProps) => {
         <div className="flex items-center justify-between overflow-visible">
           {/* Logo */}
           <Link href="/" className="flex items-center space-x-2 group">
-            <div className="w-8 h-8 bg-orange-600 rounded-lg flex items-center justify-center transform -rotate-6 shadow-sm">
-              <span className="text-white font-black text-xl">T</span>
-            </div>
+            <Image
+              src="/images/logo.png"
+              alt="Tangry Spices"
+              width={40}
+              height={40}
+              className="h-10 w-10 object-contain"
+              priority
+            />
             <span className="text-2xl font-black tracking-tighter text-gray-900 transition-colors group-hover:text-orange-600 dark:text-neutral-100">
               TANGRY
             </span>

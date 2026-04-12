@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import Image from 'next/image';
 import { Facebook, Instagram, Twitter } from 'lucide-react';
 import { COMPANY_INFO, SOCIAL_LINKS } from '@/lib/data/constants';
 
@@ -12,10 +13,21 @@ export const Footer = () => {
         <div className="grid md:grid-cols-4 gap-12 mb-12">
           {/* Brand */}
           <div className="md:col-span-2">
-            <h2 className="mb-1 text-3xl font-black tracking-tighter text-gray-900 dark:text-neutral-100">
-              {COMPANY_INFO.brandName.toUpperCase()}
-            </h2>
-            <p className="text-sm font-semibold text-orange-600 mb-3">{COMPANY_INFO.tagline}</p>
+            <div className="flex items-center gap-3 mb-3">
+              <Image
+                src="/images/logo.png"
+                alt="Tangry Spices"
+                width={48}
+                height={48}
+                className="h-12 w-12 object-contain"
+              />
+              <div>
+                <h2 className="text-3xl font-black tracking-tighter text-gray-900 dark:text-neutral-100">
+                  {COMPANY_INFO.brandName.toUpperCase()}
+                </h2>
+                <p className="text-sm font-semibold text-orange-600">{COMPANY_INFO.tagline}</p>
+              </div>
+            </div>
             <p className="mb-2 max-w-sm text-sm font-medium text-gray-500 dark:text-neutral-400">
               {COMPANY_INFO.legalName} · Jhotwara, Jaipur, Rajasthan
             </p>

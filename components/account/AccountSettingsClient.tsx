@@ -1,7 +1,6 @@
 'use client';
 
 import { useEffect, useState, useTransition } from 'react';
-import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/lib/contexts/AuthContext';
 import type { UserProfile } from '@/lib/auth/user';
@@ -500,17 +499,6 @@ export function AccountSettingsClient({ profile, addresses }: Props) {
           ))}
         </ul>
       </section>
-
-      <p>
-        <Link href="/account/orders" className="font-medium text-orange-600 hover:underline">
-          View orders →
-        </Link>
-      </p>
-      <p>
-        <Link href="/" className="text-sm text-gray-600 hover:underline">
-          ← Back to store
-        </Link>
-      </p>
     </div>
   );
 }
