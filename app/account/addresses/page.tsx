@@ -1,9 +1,9 @@
 import { redirect } from 'next/navigation';
 import { getCurrentUserProfile } from '@/lib/auth/user';
 import { getAddressesForUser } from '@/lib/db/queries';
-import { AccountSettingsClient } from '@/components/account/AccountSettingsClient';
+import { AddressesClient } from './AddressesClient';
 
-export default async function AccountPage() {
+export default async function AddressesPage() {
   const profile = await getCurrentUserProfile();
   if (!profile) redirect('/login');
 
@@ -11,7 +11,8 @@ export default async function AccountPage() {
 
   return (
     <div>
-      <AccountSettingsClient profile={profile} addresses={addresses} />
+      <h1 className="mb-6 text-2xl font-bold text-gray-900 dark:text-neutral-100">Saved Addresses</h1>
+      <AddressesClient addresses={addresses} />
     </div>
   );
 }
