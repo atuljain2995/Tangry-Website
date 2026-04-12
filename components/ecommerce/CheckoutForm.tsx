@@ -1,8 +1,23 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Address } from '@/lib/types/database';
 import { validatePinCode } from '@/lib/utils/database';
+import { useAuth } from '@/lib/contexts/AuthContext';
+
+interface SavedAddress {
+  id: string;
+  type: 'shipping' | 'billing';
+  full_name: string;
+  phone: string;
+  address_line1: string;
+  address_line2: string | null;
+  city: string;
+  state: string;
+  postal_code: string;
+  country: string;
+  is_default: boolean;
+}
 
 interface CheckoutFormProps {
   onSubmit: (shippingAddress: Address, billingAddress: Address, sameAsShipping: boolean, email: string) => void;
@@ -10,9 +25,46 @@ interface CheckoutFormProps {
 }
 
 export const CheckoutForm = ({ onSubmit, onBack }: CheckoutFormProps) => {
+  const { user } = useAuth();
   const [sameAsShipping, setSameAsShipping] = useState(true);
   const [email, setEmail] = useState('');
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [savedAddresses, setSavedAddresses] = useState<SavedAddress[]>([]);
+  const [loadingAddresses, setLoadingAddresses] = useState(false);
+
+  // Fetch saved addresses for logged-in user
+  useEffect(() => {
+    if (!user) return;
+    setEmail(user.email || '');
+    setLoadingAddresses(true);
+    fetch('/api/account/addresses', { credentials: 'include' })
+      .then((res) => (res.ok ? res.json() : Promise.reject()))
+      .then((data: SavedAddress[]) => {
+        setSavedAddresses(data);
+        // Auto-select default shipping address
+        const defaultShipping = data.find((a) => a.type === 'shipping' && a.is_default);
+        if (defaultShipping) applyAddress(defaultShipping, 'shipping');
+      })
+      .catch(() => {})
+      .finally(() => setLoadingAddresses(false));
+  }, [user]);
+
+  const applyAddress = (addr: SavedAddress, target: 'shipping' | 'billing') => {
+    const mapped: Partial<Address> = {
+      fullName: addr.full_name,
+      phone: addr.phone,
+      addressLine1: addr.address_line1,
+      addressLine2: addr.address_line2 || '',
+      city: addr.city,
+      state: addr.state,
+      postalCode: addr.postal_code,
+      country: addr.country || 'IN',
+      type: target,
+      isDefault: addr.is_default,
+    };
+    if (target === 'shipping') setShippingAddress(mapped);
+    else setBillingAddress(mapped);
+  };
 
   const [shippingAddress, setShippingAddress] = useState<Partial<Address>>({
     fullName: '',
@@ -96,6 +148,54 @@ export const CheckoutForm = ({ onSubmit, onBack }: CheckoutFormProps) => {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-8">
+      {/* Saved Addresses */}
+      {user && savedAddresses.length > 0 && (
+        <div>
+          <h2 className="text-lg font-bold text-gray-900 mb-3">Saved Addresses</h2>
+          <div className="grid gap-3 sm:grid-cols-2">
+            {savedAddresses
+              .filter((a) => a.type === 'shipping')
+              .map((addr) => {
+                const isSelected =
+                  shippingAddress.fullName === addr.full_name &&
+                  shippingAddress.addressLine1 === addr.address_line1 &&
+                  shippingAddress.postalCode === addr.postal_code;
+                return (
+                  <button
+                    key={addr.id}
+                    type="button"
+                    onClick={() => applyAddress(addr, 'shipping')}
+                    className={`text-left p-4 rounded-lg border-2 transition ${
+                      isSelected
+                        ? 'border-[#D32F2F] bg-red-50'
+                        : 'border-gray-200 hover:border-gray-400'
+                    }`}
+                  >
+                    <p className="font-semibold text-gray-900 text-sm">{addr.full_name}</p>
+                    <p className="text-xs text-gray-600 mt-1">
+                      {addr.address_line1}
+                      {addr.address_line2 ? `, ${addr.address_line2}` : ''}
+                    </p>
+                    <p className="text-xs text-gray-600">
+                      {addr.city}, {addr.state} – {addr.postal_code}
+                    </p>
+                    <p className="text-xs text-gray-500 mt-1">{addr.phone}</p>
+                    {addr.is_default && (
+                      <span className="inline-block mt-2 text-[10px] font-semibold text-[#D32F2F] bg-red-100 px-2 py-0.5 rounded-full">
+                        Default
+                      </span>
+                    )}
+                  </button>
+                );
+              })}
+          </div>
+          <p className="text-xs text-gray-500 mt-2">Select an address above or enter a new one below.</p>
+        </div>
+      )}
+      {loadingAddresses && (
+        <p className="text-sm text-gray-500 animate-pulse">Loading saved addresses…</p>
+      )}
+
       {/* Contact & Shipping */}
       <div>
         <h2 className="text-2xl font-bold text-gray-900 mb-6">Contact & Shipping</h2>
