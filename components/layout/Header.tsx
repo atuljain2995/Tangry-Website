@@ -32,11 +32,11 @@ export const Header = ({ onMenuOpen }: HeaderProps) => {
             />
             {/* Mobile/Tablet: icon only */}
             <Image
-              src="/images/logo-mobile.jpg"
+              src="/images/logo-full.jpg"
               alt="Tangry Spices"
-              width={60}
+              width={160}
               height={60}
-              className="md:hidden h-11 w-11 object-contain"
+              className="md:hidden h-[2rem] w-[8rem] object-contain"
               priority
             />
           </Link>
@@ -55,7 +55,7 @@ export const Header = ({ onMenuOpen }: HeaderProps) => {
             <ThemeToggle showLabel className="hidden sm:flex" />
             <Link
               href="/search"
-              className="text-gray-600 transition-colors hover:text-orange-600 dark:text-neutral-300 dark:hover:text-orange-400"
+              className="hidden md:block text-gray-600 transition-colors hover:text-orange-600 dark:text-neutral-300 dark:hover:text-orange-400"
               aria-label="Search products"
             >
               <Search className="w-5 h-5" />
