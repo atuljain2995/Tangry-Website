@@ -45,7 +45,8 @@ export async function getAllProducts(): Promise<ProductExtended[]> {
   if (productsError) {
     isSupabaseUnreachable(productsError);
     console.error('Error fetching products:', productsError);
-    return [];
+    // Throw so generateStaticParams / ISR keeps stale cache instead of wiping pages
+    throw new Error(`Failed to fetch products: ${productsError.message}`);
   }
 
   if (!products || products.length === 0) return [];
@@ -90,11 +91,13 @@ export async function getProductBySlug(slug: string): Promise<ProductExtended | 
 
   if (productError || !product) {
     isSupabaseUnreachable(productError);
-    // PGRST116 = no rows (product not found); avoid logging as error
-    if (productError && productError.code !== 'PGRST116') {
-      console.error('Error fetching product:', productError);
+    // PGRST116 = no rows (product genuinely not found)
+    if (!productError || productError.code === 'PGRST116') {
+      return null;
     }
-    return null;
+    // Transient DB error — throw so ISR keeps the stale cached page
+    console.error('Error fetching product:', productError);
+    throw new Error(`Failed to fetch product: ${productError.message}`);
   }
 
   // Type assertion for product
