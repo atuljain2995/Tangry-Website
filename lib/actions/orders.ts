@@ -6,6 +6,7 @@ import { incrementCouponUsage, decrementVariantStock } from '@/lib/db/queries';
 import { computeTrustedOrderDraft, orderLinesFromCartItems } from '@/lib/orders/compute-trusted-order';
 import { generateOrderNumber } from '@/lib/utils/database';
 import { sendOrderConfirmationEmail } from '@/lib/email/order-confirmation';
+import { getSessionUser } from '@/lib/auth/session';
 import type { Address, CartItem, PaymentMethod } from '@/lib/types/database';
 
 export type CreateOrderPayload = {
@@ -88,11 +89,14 @@ export async function createOrder(payload: CreateOrderPayload): Promise<CreateOr
     }
   }
 
+  // Link order to logged-in user if available
+  const sessionUser = await getSessionUser().catch(() => null);
+
   const { error: orderError } = await (supabaseAdmin as any)
     .from('orders')
     .insert({
       order_number: orderNumber,
-      user_id: null,
+      user_id: sessionUser?.id ?? null,
       user_email: userEmail.trim(),
       items: orderItems,
       subtotal,
