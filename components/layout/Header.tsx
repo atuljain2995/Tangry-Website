@@ -20,18 +20,25 @@ export const Header = ({ onMenuOpen }: HeaderProps) => {
       <nav className="container mx-auto px-4 py-3 overflow-visible">
         <div className="flex items-center justify-between overflow-visible">
           {/* Logo */}
-          <Link href="/" className="flex items-center space-x-2 group">
+          <Link href="/" className="flex items-center group">
+            {/* Desktop: full banner logo */}
             <Image
-              src="/images/logo.png"
-              alt="Tangry Spices"
-              width={40}
-              height={40}
-              className="h-10 w-10 object-contain"
+              src="/images/logo-full.jpg"
+              alt="Tangry - Taste of Home"
+              width={200}
+              height={56}
+              className="hidden md:block h-14 w-auto object-contain"
               priority
             />
-            <span className="text-2xl font-black tracking-tighter text-gray-900 transition-colors group-hover:text-orange-600 dark:text-neutral-100">
-              TANGRY
-            </span>
+            {/* Mobile/Tablet: icon only */}
+            <Image
+              src="/images/logo-mobile.jpg"
+              alt="Tangry Spices"
+              width={60}
+              height={60}
+              className="md:hidden h-11 w-11 object-contain"
+              priority
+            />
           </Link>
 
           {/* Desktop Navigation */}
