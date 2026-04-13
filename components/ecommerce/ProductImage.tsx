@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import Image from 'next/image';
 
 const PLACEHOLDER = '/products/placeholder.png';
 
@@ -13,32 +14,27 @@ interface ProductImageProps {
   priority?: boolean;
 }
 
-/** Append cache-buster so updated product images (new uploads) are not served from browser cache. */
-function withCacheBuster(url: string): string {
-  if (!url || url === PLACEHOLDER) return url;
-  const filename = url.split('/').pop()?.split('?')[0] || '';
-  const sep = url.includes('?') ? '&' : '?';
-  return `${url}${sep}v=${encodeURIComponent(filename)}`;
-}
-
 /**
- * Uses native <img> to avoid Next.js image optimization/validation,
- * which can throw when product image files are missing or invalid.
+ * Uses Next.js <Image> for automatic optimization (WebP/AVIF, resizing,
+ * longer cache TTLs). Falls back to placeholder on error.
  */
 export function ProductImage({ src, alt, fill, className, sizes, priority }: ProductImageProps) {
   const [errored, setErrored] = useState(false);
-  const effectiveSrc = !src || errored ? PLACEHOLDER : withCacheBuster(src);
+  const effectiveSrc = !src || errored ? PLACEHOLDER : src;
 
   return (
-    <img
+    <Image
       src={effectiveSrc}
       alt={alt}
+      fill={fill}
+      width={fill ? undefined : 400}
+      height={fill ? undefined : 400}
       className={className}
+      sizes={sizes || '(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw'}
+      priority={priority}
       loading={priority ? 'eager' : 'lazy'}
-      decoding="async"
       onError={() => setErrored(true)}
-      style={fill ? { position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, height: '100%', width: '100%', objectFit: 'cover' } : undefined}
-      sizes={sizes}
+      unoptimized={effectiveSrc === PLACEHOLDER}
     />
   );
 }
