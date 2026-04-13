@@ -91,6 +91,9 @@ export default function CheckoutPage() {
         clearCart();
         setCurrentStep('confirmation');
         return;
+      }
+
+      if (paymentMethod === 'razorpay') {
         const createRes = await fetch('/api/razorpay/create-order', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -263,7 +266,7 @@ export default function CheckoutPage() {
                     </li>
                     <li className="flex items-start">
                       <span className="text-green-600 mr-2">✓</span>
-                      You'll receive tracking information soon
+                      You&apos;ll receive tracking information soon
                     </li>
                   </ul>
                 </div>
