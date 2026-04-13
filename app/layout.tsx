@@ -119,8 +119,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
-        <Analytics />
-        <SpeedInsights />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationSchema) }}
@@ -135,6 +133,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               {children}
               <WhatsAppButton />
               <VercelAnalytics />
+              <SpeedInsights />
+              <Analytics />
             </AuthProvider>
           </CartProvider>
         </ThemeProvider>
