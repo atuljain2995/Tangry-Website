@@ -30,7 +30,8 @@ export function ProductImage({ src, alt, fill, className, sizes, priority }: Pro
       width={fill ? undefined : 400}
       height={fill ? undefined : 400}
       className={className}
-      sizes={sizes || '(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw'}
+      sizes={sizes || '(max-width: 640px) 90vw, (max-width: 1024px) 45vw, 25vw'}
+      quality={70}
       priority={priority}
       loading={priority ? 'eager' : 'lazy'}
       onError={() => setErrored(true)}
