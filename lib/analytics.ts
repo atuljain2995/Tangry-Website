@@ -5,10 +5,10 @@
 
 import { sendGAEvent } from '@next/third-parties/google';
 
-export const GA_MEASUREMENT_ID = 'G-8RS1QTPEX4';
+export const GA_MEASUREMENT_ID = process.env.NEXT_PUBLIC_GA_ID || '';
 
 export const isAnalyticsEnabled = (): boolean => {
-  return process.env.NODE_ENV !== 'development';
+  return !!GA_MEASUREMENT_ID && process.env.NODE_ENV !== 'development';
 };
 
 export interface WebVitalsMetric {
@@ -36,8 +36,6 @@ export function reportWebVitals(metric: WebVitalsMetric): void {
     }
     return;
   }
-
-  if (metric.label !== 'web-vital') return;
 
   const value = Math.round(metric.name === 'CLS' ? metric.value * 1000 : metric.value);
 
@@ -99,38 +97,40 @@ export const analytics = {
     }),
 
   // Ecommerce
-  trackProductView: (productId: string, productName: string, price: number) =>
-    trackEvent({
-      action: 'view_item',
-      category: 'ecommerce',
-      label: productName,
+  trackProductView: (productId: string, productName: string, price: number) => {
+    if (!isAnalyticsEnabled()) return;
+    sendGAEvent('event', 'view_item', {
+      currency: 'INR',
       value: price,
-      custom_parameters: { product_id: productId, product_name: productName, price },
-    }),
+      items: [{ item_id: productId, item_name: productName, price }],
+    });
+  },
 
-  trackAddToCart: (productId: string, productName: string, quantity: number, price: number) =>
-    trackEvent({
-      action: 'add_to_cart',
-      category: 'ecommerce',
-      label: productName,
+  trackAddToCart: (productId: string, productName: string, quantity: number, price: number) => {
+    if (!isAnalyticsEnabled()) return;
+    sendGAEvent('event', 'add_to_cart', {
+      currency: 'INR',
       value: price * quantity,
-      custom_parameters: { product_id: productId, product_name: productName, quantity, price },
-    }),
+      items: [{ item_id: productId, item_name: productName, quantity, price }],
+    });
+  },
 
-  trackBeginCheckout: (total: number, itemCount: number) =>
-    trackEvent({
-      action: 'begin_checkout',
-      category: 'ecommerce',
+  trackBeginCheckout: (total: number, itemCount: number) => {
+    if (!isAnalyticsEnabled()) return;
+    sendGAEvent('event', 'begin_checkout', {
+      currency: 'INR',
       value: total,
-      custom_parameters: { item_count: itemCount },
-    }),
+      items: [{ item_id: 'checkout', item_name: 'Checkout', quantity: itemCount, price: total }],
+    });
+  },
 
-  trackPurchase: (orderId: string, total: number, items: number) =>
-    trackEvent({
-      action: 'purchase',
-      category: 'ecommerce',
-      label: orderId,
+  trackPurchase: (orderId: string, total: number, items: number) => {
+    if (!isAnalyticsEnabled()) return;
+    sendGAEvent('event', 'purchase', {
+      transaction_id: orderId,
+      currency: 'INR',
       value: total,
-      custom_parameters: { order_id: orderId, order_total: total, item_count: items },
-    }),
+      items: [{ item_id: orderId, item_name: 'Order', quantity: items, price: total }],
+    });
+  },
 };

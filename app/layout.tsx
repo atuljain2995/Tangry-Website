@@ -7,6 +7,7 @@ import { WhatsAppButton } from "@/components/ui/WhatsAppButton";
 import { Analytics as VercelAnalytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { WebVitals } from "@/components/analytics/WebVitals";
+import GoogleAnalytics from "@/components/analytics/GoogleAnalytics";
 
 const poppins = Poppins({
   subsets: ["latin"],
@@ -123,14 +124,6 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
-        {/* Google tag (gtag.js) */}
-        {/* eslint-disable-next-line @next/next/next-script-for-ga */}
-        <script async src="https://www.googletagmanager.com/gtag/js?id=G-8RS1QTPEX4" />
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `window.dataLayer = window.dataLayer || [];\nfunction gtag(){dataLayer.push(arguments);}\ngtag('js', new Date());\ngtag('config', 'G-8RS1QTPEX4');`,
-          }}
-        />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
@@ -149,6 +142,7 @@ export default function RootLayout({
               <VercelAnalytics />
               <SpeedInsights />
               <WebVitals />
+              <GoogleAnalytics />
             </AuthProvider>
           </CartProvider>
         </ThemeProvider>
