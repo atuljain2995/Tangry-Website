@@ -56,6 +56,7 @@ export const CartDrawer = () => {
           <button
             type="button"
             onClick={closeCart}
+            aria-label="Close cart"
             className="text-gray-500 transition hover:text-gray-700 dark:text-neutral-400 dark:hover:text-neutral-200"
           >
             <X size={24} />
