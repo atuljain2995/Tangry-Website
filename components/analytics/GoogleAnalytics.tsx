@@ -1,11 +1,25 @@
-'use client';
-
-import { GoogleAnalytics as NextGoogleAnalytics } from '@next/third-parties/google';
+import Script from 'next/script';
 import { GA_MEASUREMENT_ID, isAnalyticsEnabled } from '@/lib/analytics';
 
 export { analytics, trackEvent, trackPageView, reportWebVitals } from '@/lib/analytics';
 
 export default function GoogleAnalytics() {
   if (!isAnalyticsEnabled()) return null;
-  return <NextGoogleAnalytics gaId={GA_MEASUREMENT_ID} />;
+
+  return (
+    <>
+      <Script
+        src={`https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`}
+        strategy="afterInteractive"
+      />
+      <Script id="google-analytics" strategy="afterInteractive">
+        {`
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+          gtag('config', '${GA_MEASUREMENT_ID}');
+        `}
+      </Script>
+    </>
+  );
 }

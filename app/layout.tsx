@@ -124,6 +124,7 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
+        <GoogleAnalytics />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
@@ -142,7 +143,6 @@ export default function RootLayout({
               <VercelAnalytics />
               <SpeedInsights />
               <WebVitals />
-              <GoogleAnalytics />
             </AuthProvider>
           </CartProvider>
         </ThemeProvider>
