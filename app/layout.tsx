@@ -125,6 +125,9 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
+        <link rel="preconnect" href="https://pmknwgwbwfyvrkfbrccu.supabase.co" />
+        <link rel="dns-prefetch" href="https://pmknwgwbwfyvrkfbrccu.supabase.co" />
+        <link rel="preconnect" href="https://www.googletagmanager.com" />
         <GoogleAnalytics />
         <script
           type="application/ld+json"
