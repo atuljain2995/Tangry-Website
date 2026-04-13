@@ -1,9 +1,18 @@
 /**
  * Google Analytics 4 utilities for Next.js
- * Using @next/third-parties/google
  */
 
-import { sendGAEvent } from '@next/third-parties/google';
+declare global {
+  interface Window {
+    gtag: (...args: unknown[]) => void;
+  }
+}
+
+function gtag(...args: unknown[]): void {
+  if (typeof window !== 'undefined' && window.gtag) {
+    window.gtag(...args);
+  }
+}
 
 export const GA_MEASUREMENT_ID = process.env.NEXT_PUBLIC_GA_ID || '';
 
@@ -39,7 +48,7 @@ export function reportWebVitals(metric: WebVitalsMetric): void {
 
   const value = Math.round(metric.name === 'CLS' ? metric.value * 1000 : metric.value);
 
-  sendGAEvent('event', 'web_vitals', {
+  gtag('event', 'web_vitals', {
     event_category: 'Web Vitals',
     event_label: metric.name,
     value,
@@ -52,7 +61,7 @@ export function reportWebVitals(metric: WebVitalsMetric): void {
 export function trackEvent(event: GAEvent): void {
   if (!isAnalyticsEnabled()) return;
 
-  sendGAEvent('event', event.action, {
+  gtag('event', event.action, {
     event_category: event.category || 'engagement',
     event_label: event.label,
     value: event.value,
@@ -63,7 +72,7 @@ export function trackEvent(event: GAEvent): void {
 export function trackPageView(url: string, title?: string): void {
   if (!isAnalyticsEnabled()) return;
 
-  sendGAEvent('event', 'page_view', {
+  gtag('event', 'page_view', {
     page_location: url,
     page_title: title,
   });
@@ -99,7 +108,7 @@ export const analytics = {
   // Ecommerce
   trackProductView: (productId: string, productName: string, price: number) => {
     if (!isAnalyticsEnabled()) return;
-    sendGAEvent('event', 'view_item', {
+    gtag('event', 'view_item', {
       currency: 'INR',
       value: price,
       items: [{ item_id: productId, item_name: productName, price }],
@@ -108,7 +117,7 @@ export const analytics = {
 
   trackAddToCart: (productId: string, productName: string, quantity: number, price: number) => {
     if (!isAnalyticsEnabled()) return;
-    sendGAEvent('event', 'add_to_cart', {
+    gtag('event', 'add_to_cart', {
       currency: 'INR',
       value: price * quantity,
       items: [{ item_id: productId, item_name: productName, quantity, price }],
@@ -117,7 +126,7 @@ export const analytics = {
 
   trackBeginCheckout: (total: number, itemCount: number) => {
     if (!isAnalyticsEnabled()) return;
-    sendGAEvent('event', 'begin_checkout', {
+    gtag('event', 'begin_checkout', {
       currency: 'INR',
       value: total,
       items: [{ item_id: 'checkout', item_name: 'Checkout', quantity: itemCount, price: total }],
@@ -126,7 +135,7 @@ export const analytics = {
 
   trackPurchase: (orderId: string, total: number, items: number) => {
     if (!isAnalyticsEnabled()) return;
-    sendGAEvent('event', 'purchase', {
+    gtag('event', 'purchase', {
       transaction_id: orderId,
       currency: 'INR',
       value: total,
