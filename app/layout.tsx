@@ -4,9 +4,9 @@ import { ThemeProvider } from "@/components/theme/ThemeProvider";
 import { CartProvider } from "@/lib/contexts/CartContext";
 import { AuthProvider } from "@/lib/contexts/AuthContext";
 import { WhatsAppButton } from "@/components/ui/WhatsAppButton";
+import Script from "next/script";
 import { Analytics as VercelAnalytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
-import GoogleAnalytics from "@/components/analytics/GoogleAnalytics";
 import { WebVitals } from "@/components/analytics/WebVitals";
 
 const poppins = Poppins({
@@ -42,34 +42,34 @@ export const metadata = {
   authors: [{ name: "Tangry Spices" }],
   creator: "Tangry Spices",
   publisher: "Tangry Spices",
-  metadataBase: new URL('https://tangryspices.com'),
+  metadataBase: new URL("https://tangryspices.com"),
   alternates: {
-    canonical: '/',
+    canonical: "/",
   },
   openGraph: {
     title: "Tangry Spices | Masalas & Pickles from Jaipur",
     description:
       "Authentic Rajasthani masalas and pickles from Tangry, Jaipur. FSSAI & ISO 22000 certified.",
-    url: 'https://tangryspices.com',
-    siteName: 'Tangry Spices',
+    url: "https://tangryspices.com",
+    siteName: "Tangry Spices",
     images: [
       {
-        url: '/og-image.jpg',
+        url: "/og-image.jpg",
         width: 1200,
         height: 630,
-        alt: 'Tangry Spices',
+        alt: "Tangry Spices",
       },
     ],
-    locale: 'en_IN',
-    type: 'website',
+    locale: "en_IN",
+    type: "website",
   },
   twitter: {
-    card: 'summary_large_image',
+    card: "summary_large_image",
     title: "Tangry Spices | Jaipur Masalas & Pickles",
     description:
       "Shop Tangry — Taste of Home. FSSAI licensed blends from Jaipur.",
-    images: ['/twitter-image.jpg'],
-    creator: '@tangryspices',
+    images: ["/twitter-image.jpg"],
+    creator: "@tangryspices",
   },
   robots: {
     index: true,
@@ -77,9 +77,9 @@ export const metadata = {
     googleBot: {
       index: true,
       follow: true,
-      'max-video-preview': -1,
-      'max-image-preview': 'large',
-      'max-snippet': -1,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
     },
   },
   // Ownership verified via DNS record in Cloudflare (Google Search Console)
@@ -116,13 +116,29 @@ const organizationSchema = {
   ],
 };
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
+        <Script
+          src="https://www.googletagmanager.com/gtag/js?id=G-8RS1QTPEX4"
+          strategy="beforeInteractive"
+        />
+        <Script id="gtag-init" strategy="beforeInteractive">
+          {`window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-8RS1QTPEX4');`}
+        </Script>
         <script
           type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationSchema) }}
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(organizationSchema),
+          }}
         />
       </head>
       <body
@@ -135,7 +151,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               <WhatsAppButton />
               <VercelAnalytics />
               <SpeedInsights />
-              <GoogleAnalytics />
               <WebVitals />
             </AuthProvider>
           </CartProvider>
