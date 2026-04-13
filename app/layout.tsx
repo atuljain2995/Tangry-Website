@@ -3,10 +3,11 @@ import "./globals.css";
 import { ThemeProvider } from "@/components/theme/ThemeProvider";
 import { CartProvider } from "@/lib/contexts/CartContext";
 import { AuthProvider } from "@/lib/contexts/AuthContext";
-import { Analytics } from "@/components/analytics/Analytics";
 import { WhatsAppButton } from "@/components/ui/WhatsAppButton";
 import { Analytics as VercelAnalytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
+import GoogleAnalytics from "@/components/analytics/GoogleAnalytics";
+import { WebVitals } from "@/components/analytics/WebVitals";
 
 const poppins = Poppins({
   subsets: ["latin"],
@@ -134,7 +135,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               <WhatsAppButton />
               <VercelAnalytics />
               <SpeedInsights />
-              <Analytics />
+              <GoogleAnalytics />
+              <WebVitals />
             </AuthProvider>
           </CartProvider>
         </ThemeProvider>

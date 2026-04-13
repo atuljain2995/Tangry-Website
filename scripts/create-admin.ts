@@ -74,7 +74,7 @@ async function main() {
   }
 
   const passwordHash = await bcrypt.hash(password, SALT_ROUNDS);
-  const { data: _newUser, error } = await supabase
+  const { error } = await supabase
     .from('users')
     .insert({
       email: normalizedEmail,
