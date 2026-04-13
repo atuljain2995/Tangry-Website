@@ -123,6 +123,7 @@ export const ProductCard = ({ product }: ProductCardProps) => {
           </div>
           <Link 
             href={`/products/${product.slug}`}
+            aria-label={`View ${product.name}`}
             className="w-10 h-10 bg-gray-900 rounded-full flex items-center justify-center text-white hover:bg-orange-600 transition group-hover:scale-110 shadow-lg"
           >
             <ArrowRight size={18} />
