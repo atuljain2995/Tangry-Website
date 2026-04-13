@@ -81,19 +81,48 @@ export const metadata = {
       'max-snippet': -1,
     },
   },
-  verification: {
-    google: 'your-google-verification-code',
-    // yandex: 'your-yandex-verification-code',
-    // bing: 'your-bing-verification-code',
+  // Ownership verified via DNS record in Cloudflare (Google Search Console)
+};
+
+const organizationSchema = {
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  name: "Tangry Spices",
+  url: "https://tangryspices.com",
+  logo: {
+    "@type": "ImageObject",
+    url: "https://tangryspices.com/images/logo-512.png",
+    width: 512,
+    height: 512,
   },
+  image: "https://tangryspices.com/images/logo-512.png",
+  description:
+    "Tangry — Taste of Home. Authentic Rajasthani masalas, ready powders, and pickles from Jhotwara, Jaipur. FSSAI licensed, ISO 22000 certified.",
+  address: {
+    "@type": "PostalAddress",
+    addressLocality: "Jhotwara",
+    addressRegion: "Jaipur, Rajasthan",
+    addressCountry: "IN",
+  },
+  contactPoint: {
+    "@type": "ContactPoint",
+    contactType: "customer service",
+    availableLanguage: ["English", "Hindi"],
+  },
+  sameAs: [
+    "https://www.instagram.com/tangryspices",
+    "https://www.facebook.com/tangryspices",
+  ],
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
-        <Analytics />
-        <SpeedInsights />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationSchema) }}
+        />
       </head>
       <body
         className={`${poppins.variable} ${playfair.variable} font-sans antialiased bg-neutral-50 text-neutral-900 transition-colors duration-200 dark:bg-neutral-950 dark:text-neutral-100`}
@@ -104,6 +133,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               {children}
               <WhatsAppButton />
               <VercelAnalytics />
+              <SpeedInsights />
+              <Analytics />
             </AuthProvider>
           </CartProvider>
         </ThemeProvider>
