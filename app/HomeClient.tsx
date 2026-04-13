@@ -37,7 +37,7 @@ export function HomeClient({ products, marketplaceLinks }: HomeClientProps) {
         <Header onMenuOpen={() => setIsMobileMenuOpen(true)} />
         <MobileMenu isOpen={isMobileMenuOpen} onClose={() => setIsMobileMenuOpen(false)} />
         <CartDrawer />
-        <Hero />
+        <Hero products={products} />
         <Stats />
         <Testimonials />
         <ProductCategories />

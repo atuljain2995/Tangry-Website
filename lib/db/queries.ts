@@ -472,6 +472,7 @@ interface DbProduct {
   is_featured: boolean;
   is_new: boolean;
   is_best_seller: boolean;
+  is_hero_product?: boolean;
   rating?: number;
   review_count?: number;
   min_order_quantity?: number;
@@ -582,6 +583,7 @@ function transformProduct(dbProduct: DbProduct): ProductExtended {
     isFeatured: dbProduct.is_featured,
     isNew: dbProduct.is_new,
     isBestSeller: dbProduct.is_best_seller,
+    isHeroProduct: dbProduct.is_hero_product ?? false,
     rating: dbProduct.rating || 4.5,
     reviewCount: dbProduct.review_count || 0,
     minOrderQuantity: dbProduct.min_order_quantity || 1,

@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import Image from 'next/image';
 
-const PLACEHOLDER = '/products/placeholder.png';
+const PLACEHOLDER = '/images/logo-512.png';
 
 interface ProductImageProps {
   src: string;

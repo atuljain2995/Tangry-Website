@@ -12,7 +12,7 @@ interface ProductCardProps {
   product: ProductExtended;
 }
 
-const PLACEHOLDER_IMAGE = '/products/placeholder.png';
+const PLACEHOLDER_IMAGE = '/images/logo-512.png';
 
 export const ProductCard = ({ product }: ProductCardProps) => {
   const [selectedVariantIndex, setSelectedVariantIndex] = useState(0);

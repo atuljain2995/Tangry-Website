@@ -27,7 +27,7 @@ export const Header = ({ onMenuOpen }: HeaderProps) => {
               alt="Tangry - Taste of Home"
               width={200}
               height={56}
-              className="hidden md:block h-14 w-auto object-contain"
+              className="hidden md:block h-10 w-auto object-contain"
               priority
             />
             {/* Mobile/Tablet: icon only */}

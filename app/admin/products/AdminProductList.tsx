@@ -12,7 +12,7 @@ function ProductRowImage({ src, alt }: { src: string; alt: string }) {
       src={url}
       alt={alt}
       className="w-12 h-12 object-cover rounded"
-      onError={() => setUrl('/products/placeholder.png')}
+      onError={() => setUrl('/images/logo-512.png')}
     />
   );
 }

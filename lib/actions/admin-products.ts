@@ -22,6 +22,7 @@ type ProductUpdate = {
   is_featured?: boolean;
   is_new?: boolean;
   is_best_seller?: boolean;
+  is_hero_product?: boolean;
 };
 
 type ImageInput = {
@@ -48,6 +49,7 @@ export async function updateProduct(
     if (data.is_featured !== undefined) payload.is_featured = data.is_featured;
     if (data.is_new !== undefined) payload.is_new = data.is_new;
     if (data.is_best_seller !== undefined) payload.is_best_seller = data.is_best_seller;
+    if (data.is_hero_product !== undefined) payload.is_hero_product = data.is_hero_product;
     const { error } = await supabaseAdmin
       .from('products')
       .update(payload as never)
@@ -140,6 +142,7 @@ export type CreateProductInput = {
   is_featured?: boolean;
   is_new?: boolean;
   is_best_seller?: boolean;
+  is_hero_product?: boolean;
   image_url?: string | null;
   variant_name?: string | null;
   variant_sku?: string | null;
@@ -182,6 +185,7 @@ export async function createProduct(
       is_featured: input.is_featured ?? false,
       is_new: input.is_new ?? false,
       is_best_seller: input.is_best_seller ?? false,
+      is_hero_product: input.is_hero_product ?? false,
       rating: 0,
       review_count: 0,
       min_order_quantity: 1,

@@ -90,6 +90,7 @@ export interface Database {
           is_featured: boolean
           is_new: boolean
           is_best_seller: boolean
+          is_hero_product: boolean
           rating: number
           review_count: number
           min_order_quantity: number
@@ -115,6 +116,7 @@ export interface Database {
           is_featured?: boolean
           is_new?: boolean
           is_best_seller?: boolean
+          is_hero_product?: boolean
           rating?: number
           review_count?: number
           min_order_quantity?: number
@@ -140,6 +142,7 @@ export interface Database {
           is_featured?: boolean
           is_new?: boolean
           is_best_seller?: boolean
+          is_hero_product?: boolean
           rating?: number
           review_count?: number
           min_order_quantity?: number

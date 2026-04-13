@@ -26,6 +26,7 @@ export function AdminProductEditForm({
   const [isFeatured, setIsFeatured] = useState(product.is_featured ?? false);
   const [isNew, setIsNew] = useState(product.is_new ?? false);
   const [isBestSeller, setIsBestSeller] = useState(product.is_best_seller ?? false);
+  const [isHeroProduct, setIsHeroProduct] = useState(product.is_hero_product ?? false);
   const [variantRows, setVariantRows] = useState<VariantRow[]>(
     initialVariants.length > 0
       ? initialVariants.map((v) => ({
@@ -139,6 +140,7 @@ export function AdminProductEditForm({
           is_featured: isFeatured,
           is_new: isNew,
           is_best_seller: isBestSeller,
+          is_hero_product: isHeroProduct,
         });
         if (!productResult.success) {
           setMessage({ type: 'error', text: productResult.error });
@@ -153,7 +155,7 @@ export function AdminProductEditForm({
           }));
         const imageResult = await updateProductImages(
           product.id,
-          imagesPayload.length > 0 ? imagesPayload : [{ url: '/products/placeholder.png', alt_text: 'Placeholder' }]
+          imagesPayload.length > 0 ? imagesPayload : [{ url: '/images/logo-512.png', alt_text: 'Placeholder' }]
         );
         if (!imageResult.success) {
           setMessage({ type: 'error', text: imageResult.error });
@@ -193,6 +195,7 @@ export function AdminProductEditForm({
       isFeatured,
       isNew,
       isBestSeller,
+      isHeroProduct,
       imageRows,
       variantRows,
     ]
@@ -317,6 +320,15 @@ export function AdminProductEditForm({
                 />
                 <span className="text-sm text-gray-700">Best seller</span>
               </label>
+              <label className="flex items-center gap-2">
+                <input
+                  type="checkbox"
+                  checked={isHeroProduct}
+                  onChange={(e) => setIsHeroProduct(e.target.checked)}
+                  className="rounded border-gray-300"
+                />
+                <span className="text-sm text-gray-700">Hero section</span>
+              </label>
             </div>
           </div>
         </section>
@@ -343,7 +355,7 @@ export function AdminProductEditForm({
                           alt=""
                           className="h-full w-full object-cover"
                           onError={(e) => {
-                            (e.target as HTMLImageElement).src = '/products/placeholder.png';
+                            (e.target as HTMLImageElement).src = '/images/logo-512.png';
                           }}
                         />
                         {uploadingRow === index && (

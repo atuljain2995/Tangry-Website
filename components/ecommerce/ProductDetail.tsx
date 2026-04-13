@@ -31,7 +31,7 @@ interface ProductDetailProps {
   product: ProductExtended;
 }
 
-const PLACEHOLDER_IMAGE = "/products/placeholder.png";
+const PLACEHOLDER_IMAGE = "/images/logo-512.png";
 
 export const ProductDetail = ({ product }: ProductDetailProps) => {
   const [selectedVariantIndex, setSelectedVariantIndex] = useState(0);

@@ -20,6 +20,7 @@ export function AdminNewProductForm({ categories }: { categories: DbProductCateg
   const [isFeatured, setIsFeatured] = useState(false);
   const [isNew, setIsNew] = useState(false);
   const [isBestSeller, setIsBestSeller] = useState(false);
+  const [isHeroProduct, setIsHeroProduct] = useState(false);
   const [imageUrl, setImageUrl] = useState('');
   const [variantName, setVariantName] = useState('Default');
   const [variantSku, setVariantSku] = useState('');
@@ -44,6 +45,7 @@ export function AdminNewProductForm({ categories }: { categories: DbProductCateg
       is_featured: isFeatured,
       is_new: isNew,
       is_best_seller: isBestSeller,
+      is_hero_product: isHeroProduct,
       image_url: imageUrl.trim() || undefined,
       variant_name: variantName.trim() || undefined,
       variant_sku: variantSku.trim() || undefined,
@@ -149,6 +151,10 @@ export function AdminNewProductForm({ categories }: { categories: DbProductCateg
             <label className="flex items-center gap-2">
               <input type="checkbox" checked={isBestSeller} onChange={(e) => setIsBestSeller(e.target.checked)} className="rounded border-gray-300" />
               <span className="text-sm text-gray-700">Best seller</span>
+            </label>
+            <label className="flex items-center gap-2">
+              <input type="checkbox" checked={isHeroProduct} onChange={(e) => setIsHeroProduct(e.target.checked)} className="rounded border-gray-300" />
+              <span className="text-sm text-gray-700">Hero section</span>
             </label>
           </div>
         </div>

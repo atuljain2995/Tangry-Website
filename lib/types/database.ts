@@ -62,6 +62,7 @@ export interface ProductExtended {
   isFeatured: boolean;
   isNew: boolean;
   isBestSeller: boolean;
+  isHeroProduct: boolean;
   rating: number;
   reviewCount: number;
   minOrderQuantity: number; // For B2B
