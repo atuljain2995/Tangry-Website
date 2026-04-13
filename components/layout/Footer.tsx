@@ -67,9 +67,9 @@ export const Footer = () => {
 
           {/* Shop */}
           <div>
-            <h4 className="mb-4 text-sm font-bold uppercase tracking-wider text-gray-900 dark:text-neutral-100">
+            <h3 className="mb-4 text-sm font-bold uppercase tracking-wider text-gray-900 dark:text-neutral-100">
               Shop
-            </h4>
+            </h3>
             <ul className="space-y-3 font-medium text-gray-500 dark:text-neutral-400">
               <li className="hover:text-orange-600 cursor-pointer transition">
                 <Link href="/products">All Spices</Link>
@@ -90,9 +90,9 @@ export const Footer = () => {
 
           {/* Help */}
           <div>
-            <h4 className="mb-4 text-sm font-bold uppercase tracking-wider text-gray-900 dark:text-neutral-100">
+            <h3 className="mb-4 text-sm font-bold uppercase tracking-wider text-gray-900 dark:text-neutral-100">
               Help
-            </h4>
+            </h3>
             <ul className="space-y-3 font-medium text-gray-500 dark:text-neutral-400">
               <li className="hover:text-orange-600 transition">
                 <Link href="/track-order">Track Order</Link>

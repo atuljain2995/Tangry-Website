@@ -38,28 +38,28 @@ export const Stats = () => {
         <div className="mx-auto mt-8 grid max-w-4xl grid-cols-1 gap-4 sm:mt-9 sm:grid-cols-2 sm:gap-4 md:mt-8 md:max-w-none md:grid-cols-4 md:gap-4 lg:mt-9 lg:gap-5">
           <div className="flex min-h-0 flex-col items-center justify-center rounded-xl bg-gray-50/90 px-4 py-5 text-center sm:min-h-[132px] sm:px-4 sm:py-5 md:min-h-[128px] md:px-3 md:py-5 lg:min-h-[136px] lg:px-4">
             <ShieldCheck className="mb-2.5 h-9 w-9 text-[#D32F2F] md:mb-2 md:h-8 md:w-8 lg:h-9 lg:w-9" aria-hidden />
-            <h3 className="text-base font-bold text-gray-800 md:text-lg">FSSAI</h3>
+            <h2 className="text-base font-bold text-gray-800 md:text-lg">FSSAI</h2>
             <p className="mt-1 text-[11px] font-medium uppercase tracking-wide text-gray-500 md:text-[11px] lg:text-xs">
               Licensed facility
             </p>
           </div>
           <div className="flex min-h-0 flex-col items-center justify-center rounded-xl bg-gray-50/90 px-4 py-5 text-center sm:min-h-[132px] sm:px-4 sm:py-5 md:min-h-[128px] md:px-3 md:py-5 lg:min-h-[136px] lg:px-4">
             <Award className="mb-2.5 h-9 w-9 text-[#D32F2F] md:mb-2 md:h-8 md:w-8 lg:h-9 lg:w-9" aria-hidden />
-            <h3 className="text-base font-bold text-gray-800 md:text-lg">ISO 22000</h3>
+            <h2 className="text-base font-bold text-gray-800 md:text-lg">ISO 22000</h2>
             <p className="mt-1 text-[11px] font-medium uppercase tracking-wide text-gray-500 md:text-[11px] lg:text-xs">
               Food safety
             </p>
           </div>
           <div className="flex min-h-0 flex-col items-center justify-center rounded-xl bg-gray-50/90 px-4 py-5 text-center sm:min-h-[132px] sm:px-4 sm:py-5 md:min-h-[128px] md:px-3 md:py-5 lg:min-h-[136px] lg:px-4">
             <MapPin className="mb-2.5 h-9 w-9 text-[#D32F2F] md:mb-2 md:h-8 md:w-8 lg:h-9 lg:w-9" aria-hidden />
-            <h3 className="text-base font-bold text-gray-800 md:text-lg">Jaipur</h3>
+            <h2 className="text-base font-bold text-gray-800 md:text-lg">Jaipur</h2>
             <p className="mt-1 text-[11px] font-medium uppercase tracking-wide text-gray-500 md:text-[11px] lg:text-xs">
               Blended & packed
             </p>
           </div>
           <div className="flex min-h-0 flex-col items-center justify-center rounded-xl bg-gray-50/90 px-4 py-5 text-center sm:min-h-[132px] sm:px-4 sm:py-5 md:min-h-[128px] md:px-3 md:py-5 lg:min-h-[136px] lg:px-4">
             <Truck className="mb-2.5 h-9 w-9 text-[#D32F2F] md:mb-2 md:h-8 md:w-8 lg:h-9 lg:w-9" aria-hidden />
-            <h3 className="text-base font-bold text-gray-800 md:text-lg">Pan-India</h3>
+            <h2 className="text-base font-bold text-gray-800 md:text-lg">Pan-India</h2>
             <p className="mt-1 text-[11px] font-medium uppercase tracking-wide text-gray-500 md:text-[11px] lg:text-xs">
               Shipping available
             </p>
