@@ -1,10 +1,10 @@
 'use client';
 
 import { usePathname, useSearchParams } from 'next/navigation';
-import { useEffect } from 'react';
+import { Suspense, useEffect } from 'react';
 import { GA_MEASUREMENT_ID, isAnalyticsEnabled } from '@/lib/analytics';
 
-export function PageViewTracker() {
+function PageViewTrackerInner() {
   const pathname = usePathname();
   const searchParams = useSearchParams();
 
@@ -20,4 +20,12 @@ export function PageViewTracker() {
   }, [pathname, searchParams]);
 
   return null;
+}
+
+export function PageViewTracker() {
+  return (
+    <Suspense fallback={null}>
+      <PageViewTrackerInner />
+    </Suspense>
+  );
 }
