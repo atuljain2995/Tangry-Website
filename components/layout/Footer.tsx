@@ -110,7 +110,7 @@ export const Footer = () => {
           </div>
         </div>
 
-        <div className="mt-12 border-t border-gray-100 pt-8 text-center text-sm font-medium text-gray-400 dark:border-neutral-800 dark:text-neutral-500">
+        <div className="mt-12 border-t border-gray-100 pt-8 text-center text-sm font-medium text-gray-600 dark:border-neutral-800 dark:text-neutral-400">
           &copy; {new Date().getFullYear()} {COMPANY_INFO.legalName} ({COMPANY_INFO.brandName}). Made with 🌶️ in India.
           <div className="mt-2 space-x-6">
             <Link href="/contact" className="transition hover:text-gray-900 dark:hover:text-neutral-100">

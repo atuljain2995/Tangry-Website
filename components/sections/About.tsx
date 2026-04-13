@@ -23,12 +23,12 @@ export const About = () => {
               <div className="bg-gray-800 p-6 rounded-2xl border border-gray-700">
                 <Leaf className="text-green-400 mb-3" size={28} />
                 <h4 className="font-bold text-xl mb-1">0% Filler</h4>
-                <p className="text-sm text-gray-500">Just pure spice.</p>
+                <p className="text-sm text-gray-300">Just pure spice.</p>
               </div>
               <div className="bg-gray-800 p-6 rounded-2xl border border-gray-700">
                 <ShieldCheck className="text-blue-400 mb-3" size={28} />
                 <h4 className="font-bold text-xl mb-1">Lab Tested</h4>
-                <p className="text-sm text-gray-500">Heavy metal free.</p>
+                <p className="text-sm text-gray-300">Heavy metal free.</p>
               </div>
             </div>
             

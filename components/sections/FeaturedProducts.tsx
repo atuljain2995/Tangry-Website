@@ -39,7 +39,7 @@ export const FeaturedProducts = ({ products }: FeaturedProductsProps) => {
             className={`px-4 py-2 rounded-lg text-sm font-bold transition capitalize ${
               activeCategory === 'all' 
                 ? 'bg-white shadow-md text-black' 
-                : 'text-gray-500 hover:text-black'
+                : 'text-gray-700 hover:text-black'
             }`}
           >
             All
@@ -51,7 +51,7 @@ export const FeaturedProducts = ({ products }: FeaturedProductsProps) => {
               className={`px-4 py-2 rounded-lg text-sm font-bold transition capitalize ${
                 activeCategory === category 
                   ? 'bg-white shadow-md text-black' 
-                  : 'text-gray-500 hover:text-black'
+                  : 'text-gray-700 hover:text-black'
               }`}
             >
               {category}

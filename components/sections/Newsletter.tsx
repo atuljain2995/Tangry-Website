@@ -61,7 +61,7 @@ export const Newsletter = () => {
                 href={SOCIAL_LINKS.instagram}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-orange-600 font-semibold hover:underline"
+                className="text-orange-700 font-semibold hover:underline"
               >
                 @tangryspices
               </a>{' '}

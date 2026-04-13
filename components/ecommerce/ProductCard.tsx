@@ -60,7 +60,7 @@ export const ProductCard = ({ product }: ProductCardProps) => {
       {/* Product Info */}
       <div className="px-2 pb-2 flex-1 flex flex-col">
         {/* Category */}
-        <p className="text-orange-600 text-xs font-bold uppercase tracking-wider mb-1">{product.category}</p>
+        <p className="text-orange-700 text-xs font-bold uppercase tracking-wider mb-1">{product.category}</p>
 
         {/* Product Name */}
         <Link href={`/products/${product.slug}`}>
@@ -133,9 +133,9 @@ export const ProductCard = ({ product }: ProductCardProps) => {
         {/* Stock Status */}
         <div className="mt-3">
           <span className={`text-xs font-bold uppercase tracking-wide ${
-            stockStatus.color === 'green' ? 'text-green-600' :
-            stockStatus.color === 'orange' ? 'text-orange-600' :
-            'text-red-600'
+            stockStatus.color === 'green' ? 'text-green-700' :
+            stockStatus.color === 'orange' ? 'text-orange-700' :
+            'text-red-700'
           }`}>
             {stockStatus.label}
           </span>
