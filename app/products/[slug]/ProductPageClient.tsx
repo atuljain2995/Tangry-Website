@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Header } from '@/components/layout/Header';
 import { MobileMenu } from '@/components/layout/MobileMenu';
 import { Footer } from '@/components/layout/Footer';
@@ -10,6 +10,7 @@ import { ProductCard } from '@/components/ecommerce/ProductCard';
 import { StructuredData } from '@/components/seo/StructuredData';
 import { getProductSchema, getBreadcrumbSchema } from '@/lib/utils/schema';
 import { ProductExtended } from '@/lib/types/database';
+import { analytics } from '@/lib/analytics';
 
 interface ProductPageClientProps {
   product: ProductExtended;
@@ -18,6 +19,11 @@ interface ProductPageClientProps {
 
 export function ProductPageClient({ product, relatedProducts }: ProductPageClientProps) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
+  useEffect(() => {
+    const price = product.variants?.[0]?.price ?? 0;
+    analytics.trackProductView(product.id, product.name, price);
+  }, [product.id, product.name, product.variants]);
 
   // Breadcrumbs for SEO
   const breadcrumbs = [

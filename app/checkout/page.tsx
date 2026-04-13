@@ -16,6 +16,7 @@ import { Address, PaymentMethod } from '@/lib/types/database';
 import { createOrder } from '@/lib/actions/orders';
 import { Check } from 'lucide-react';
 import Link from 'next/link';
+import { analytics } from '@/lib/analytics';
 
 type CheckoutStep = 'shipping' | 'payment' | 'confirmation';
 
@@ -60,6 +61,7 @@ export default function CheckoutPage() {
     setBillingAddress(billing);
     setCustomerEmail(email);
     setCurrentStep('payment');
+    analytics.trackBeginCheckout(cart.total, cart.items.length);
   };
 
   const createOrderPayload = () => ({
@@ -85,12 +87,10 @@ export default function CheckoutPage() {
           return;
         }
         setOrderNumber(result.orderNumber);
+        analytics.trackPurchase(result.orderNumber, cart.total, cart.items.length);
         clearCart();
         setCurrentStep('confirmation');
         return;
-      }
-
-      if (paymentMethod === 'razorpay') {
         const createRes = await fetch('/api/razorpay/create-order', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -101,7 +101,7 @@ export default function CheckoutPage() {
               quantity: i.quantity,
             })),
             couponCode: cart.couponCode ?? null,
-            country: shippingAddress.country || 'IN',
+            country: shippingAddress?.country || 'IN',
           }),
         });
         const createData = await createRes.json();
@@ -118,12 +118,12 @@ export default function CheckoutPage() {
           alert('Invalid payment response. Please try again.');
           return;
         }
-        const Razorpay = (window as { Razorpay?: new (opts: object) => { open: () => void } }).Razorpay;
-        if (!Razorpay) {
+        const RazorpayClass = (window as { Razorpay?: new (opts: object) => { open: () => void } }).Razorpay;
+        if (!RazorpayClass) {
           alert('Payment script not loaded. Please refresh and try again.');
           return;
         }
-        const rzp = new Razorpay({
+        const rzp = new (RazorpayClass as new (opts: object) => { open: () => void })({
           key: keyId,
           order_id: orderId,
           amount: amountPaise,
@@ -146,6 +146,7 @@ export default function CheckoutPage() {
               return;
             }
             setOrderNumber(verifyData.orderNumber);
+            analytics.trackPurchase(verifyData.orderNumber, cart.total, cart.items.length);
             clearCart();
             setCurrentStep('confirmation');
           },
@@ -165,6 +166,7 @@ export default function CheckoutPage() {
         return;
       }
       setOrderNumber(result.orderNumber);
+      analytics.trackPurchase(result.orderNumber, cart.total, cart.items.length);
       clearCart();
       setCurrentStep('confirmation');
     } catch (error) {
@@ -249,7 +251,7 @@ export default function CheckoutPage() {
                 <p className="text-2xl font-bold text-[#D32F2F] mb-8">Order #{orderNumber}</p>
                 
                 <div className="bg-white rounded-lg p-6 mb-8 text-left max-w-md mx-auto shadow-md">
-                  <h3 className="font-bold text-gray-900 mb-4">What's Next?</h3>
+                  <h3 className="font-bold text-gray-900 mb-4">What&apos;s Next?</h3>
                   <ul className="space-y-2 text-sm text-gray-700">
                     <li className="flex items-start">
                       <span className="text-green-600 mr-2">✓</span>

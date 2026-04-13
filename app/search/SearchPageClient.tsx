@@ -11,6 +11,7 @@ import { CartDrawer } from '@/components/ecommerce/CartDrawer';
 import { ProductCard } from '@/components/ecommerce/ProductCard';
 import type { ProductExtended } from '@/lib/types/database';
 import { useDebouncedValue } from '@/lib/hooks/useDebouncedValue';
+import { analytics } from '@/lib/analytics';
 
 type SearchPageClientProps = {
   query: string;
@@ -51,6 +52,10 @@ export function SearchPageClient({ query, products }: SearchPageClientProps) {
     }
     setDraft(urlQ);
   }, [urlQ]);
+
+  useEffect(() => {
+    if (query) analytics.trackSearch(query, products.length);
+  }, [query, products.length]);
 
   function submitNow() {
     const next = draft.trim();

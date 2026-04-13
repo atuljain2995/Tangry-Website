@@ -4,6 +4,7 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { Mail } from 'lucide-react';
 import { SOCIAL_LINKS } from '@/lib/data/constants';
+import { analytics } from '@/lib/analytics';
 
 export const Newsletter = () => {
   const [email, setEmail] = useState('');
@@ -31,6 +32,7 @@ export const Newsletter = () => {
 
       setStatus('success');
       setEmail('');
+      analytics.trackFormSubmission('newsletter', true);
       setMessage(
         data.alreadySubscribed
           ? "You're already on the list — we'll keep sending you Tangry updates."

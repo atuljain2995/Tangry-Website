@@ -1,29 +1,49 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { Star, Truck, Shield, Package, Plus, Minus, Heart, Share2 } from 'lucide-react';
-import { ProductExtended } from '@/lib/types/database';
-import { formatCurrency, calculateDiscountPercentage, getStockStatus, calculateSavings, estimateDeliveryDate, formatDeliveryDate } from '@/lib/utils/database';
-import { useCart } from '@/lib/contexts/CartContext';
-import { CartItem } from '@/lib/types/database';
-import { ProductImage } from './ProductImage';
-import { PincodeDeliveryCheck } from './PincodeDeliveryCheck';
-import { productImageAlt } from '@/lib/utils/product-image-alt';
+import { useState } from "react";
+import {
+  Star,
+  Truck,
+  Shield,
+  Package,
+  Plus,
+  Minus,
+  Heart,
+  Share2,
+} from "lucide-react";
+import { ProductExtended } from "@/lib/types/database";
+import {
+  formatCurrency,
+  calculateDiscountPercentage,
+  getStockStatus,
+  calculateSavings,
+  estimateDeliveryDate,
+  formatDeliveryDate,
+} from "@/lib/utils/database";
+import { useCart } from "@/lib/contexts/CartContext";
+import { CartItem } from "@/lib/types/database";
+import { ProductImage } from "./ProductImage";
+import { PincodeDeliveryCheck } from "./PincodeDeliveryCheck";
+import { productImageAlt } from "@/lib/utils/product-image-alt";
+import { analytics } from "@/lib/analytics";
 
 interface ProductDetailProps {
   product: ProductExtended;
 }
 
-const PLACEHOLDER_IMAGE = '/products/placeholder.png';
+const PLACEHOLDER_IMAGE = "/products/placeholder.png";
 
 export const ProductDetail = ({ product }: ProductDetailProps) => {
   const [selectedVariantIndex, setSelectedVariantIndex] = useState(0);
   const [quantity, setQuantity] = useState(1);
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
-  const [activeTab, setActiveTab] = useState<'description' | 'ingredients' | 'usage' | 'nutrition'>('description');
+  const [activeTab, setActiveTab] = useState<
+    "description" | "ingredients" | "usage" | "nutrition"
+  >("description");
   const { addToCart } = useCart();
 
-  const getDisplayImage = (index: number) => product.images[index] || PLACEHOLDER_IMAGE;
+  const getDisplayImage = (index: number) =>
+    product.images[index] || PLACEHOLDER_IMAGE;
 
   // Safety check: ensure product has variants
   if (!product.variants || product.variants.length === 0) {
@@ -31,7 +51,8 @@ export const ProductDetail = ({ product }: ProductDetailProps) => {
       <div className="container mx-auto px-6 py-12">
         <div className="bg-yellow-50 border-l-4 border-yellow-400 p-4">
           <p className="text-yellow-700">
-            This product doesn&apos;t have any variants configured. Please contact support.
+            This product doesn&apos;t have any variants configured. Please
+            contact support.
           </p>
         </div>
       </div>
@@ -39,8 +60,14 @@ export const ProductDetail = ({ product }: ProductDetailProps) => {
   }
 
   const selectedVariant = product.variants[selectedVariantIndex];
-  const discountPercentage = calculateDiscountPercentage(selectedVariant.price, selectedVariant.compareAtPrice);
-  const savings = calculateSavings(selectedVariant.price, selectedVariant.compareAtPrice);
+  const discountPercentage = calculateDiscountPercentage(
+    selectedVariant.price,
+    selectedVariant.compareAtPrice,
+  );
+  const savings = calculateSavings(
+    selectedVariant.price,
+    selectedVariant.compareAtPrice,
+  );
   const stockStatus = getStockStatus(selectedVariant.stock);
   const deliveryEstimate = estimateDeliveryDate();
 
@@ -52,13 +79,22 @@ export const ProductDetail = ({ product }: ProductDetailProps) => {
       variantName: selectedVariant.name,
       price: selectedVariant.price,
       quantity,
-      image: product.images[0] || PLACEHOLDER_IMAGE
+      image: product.images[0] || PLACEHOLDER_IMAGE,
     };
     addToCart(item);
+    analytics.trackAddToCart(
+      product.id,
+      product.name,
+      quantity,
+      selectedVariant.price,
+    );
   };
 
   const incrementQuantity = () => {
-    if (quantity < selectedVariant.stock && quantity < (product.maxOrderQuantity || 100)) {
+    if (
+      quantity < selectedVariant.stock &&
+      quantity < (product.maxOrderQuantity || 100)
+    ) {
       setQuantity(quantity + 1);
     }
   };
@@ -76,8 +112,9 @@ export const ProductDetail = ({ product }: ProductDetailProps) => {
         <div>
           {/* Main Image */}
           <div className="relative h-96 bg-gray-100 rounded-lg overflow-hidden mb-4">
-          {(product.images.length > 0 || getDisplayImage(0) === PLACEHOLDER_IMAGE) ? (
-            <ProductImage
+            {product.images.length > 0 ||
+            getDisplayImage(0) === PLACEHOLDER_IMAGE ? (
+              <ProductImage
                 src={getDisplayImage(selectedImageIndex)}
                 alt={productImageAlt(product.name, selectedVariant.name)}
                 fill
@@ -106,7 +143,9 @@ export const ProductDetail = ({ product }: ProductDetailProps) => {
                   onClick={() => setSelectedImageIndex(index)}
                   type="button"
                   className={`relative h-20 bg-gray-100 rounded-md overflow-hidden border-2 transition ${
-                    selectedImageIndex === index ? 'border-[#D32F2F]' : 'border-transparent'
+                    selectedImageIndex === index
+                      ? "border-[#D32F2F]"
+                      : "border-transparent"
                   }`}
                 >
                   <ProductImage
@@ -130,16 +169,22 @@ export const ProductDetail = ({ product }: ProductDetailProps) => {
           </p>
 
           {/* Product Name */}
-          <h1 className="text-4xl font-bold text-gray-900 mb-4">{product.name}</h1>
+          <h1 className="text-4xl font-bold text-gray-900 mb-4">
+            {product.name}
+          </h1>
 
           {/* Rating & Reviews */}
           <div className="flex items-center mb-4">
             <div className="flex items-center">
               {[...Array(5)].map((_, i) => (
-                <Star 
-                  key={i} 
-                  size={20} 
-                  className={i < Math.floor(product.rating) ? 'fill-yellow-400 text-yellow-400' : 'text-gray-300'}
+                <Star
+                  key={i}
+                  size={20}
+                  className={
+                    i < Math.floor(product.rating)
+                      ? "fill-yellow-400 text-yellow-400"
+                      : "text-gray-300"
+                  }
                 />
               ))}
             </div>
@@ -151,13 +196,20 @@ export const ProductDetail = ({ product }: ProductDetailProps) => {
           {/* Badges */}
           <div className="flex space-x-2 mb-4">
             {product.isNew && (
-              <span className="bg-green-600 text-white text-xs px-3 py-1 rounded-full font-bold">NEW</span>
+              <span className="bg-green-600 text-white text-xs px-3 py-1 rounded-full font-bold">
+                NEW
+              </span>
             )}
             {product.isBestSeller && (
-              <span className="bg-orange-600 text-white text-xs px-3 py-1 rounded-full font-bold">BEST SELLER</span>
+              <span className="bg-orange-600 text-white text-xs px-3 py-1 rounded-full font-bold">
+                BEST SELLER
+              </span>
             )}
             {product.certifications?.map((cert, i) => (
-              <span key={i} className="bg-blue-600 text-white text-xs px-3 py-1 rounded-full font-bold">
+              <span
+                key={i}
+                className="bg-blue-600 text-white text-xs px-3 py-1 rounded-full font-bold"
+              >
                 {cert}
               </span>
             ))}
@@ -177,7 +229,8 @@ export const ProductDetail = ({ product }: ProductDetailProps) => {
             </div>
             {savings > 0 && (
               <p className="text-sm text-green-700 font-semibold">
-                You save {formatCurrency(savings * quantity)} ({discountPercentage}%)
+                You save {formatCurrency(savings * quantity)} (
+                {discountPercentage}%)
               </p>
             )}
             <p className="text-xs text-gray-600 mt-1">Inclusive of all taxes</p>
@@ -186,7 +239,9 @@ export const ProductDetail = ({ product }: ProductDetailProps) => {
           {/* Variant Selector */}
           {product.variants.length > 1 && (
             <div className="mb-6">
-              <p className="text-sm font-semibold text-gray-700 mb-2">Select Size:</p>
+              <p className="text-sm font-semibold text-gray-700 mb-2">
+                Select Size:
+              </p>
               <div className="flex flex-wrap gap-2">
                 {product.variants.map((variant, index) => (
                   <button
@@ -197,13 +252,15 @@ export const ProductDetail = ({ product }: ProductDetailProps) => {
                     }}
                     className={`px-4 py-2 rounded-md border-2 transition ${
                       selectedVariantIndex === index
-                        ? 'border-[#D32F2F] bg-[#D32F2F] text-white'
-                        : 'border-gray-300 text-gray-700 hover:border-[#D32F2F]'
-                    } ${!variant.isAvailable || variant.stock === 0 ? 'opacity-50 cursor-not-allowed' : ''}`}
+                        ? "border-[#D32F2F] bg-[#D32F2F] text-white"
+                        : "border-gray-300 text-gray-700 hover:border-[#D32F2F]"
+                    } ${!variant.isAvailable || variant.stock === 0 ? "opacity-50 cursor-not-allowed" : ""}`}
                     disabled={!variant.isAvailable || variant.stock === 0}
                   >
                     <span className="font-semibold">{variant.name}</span>
-                    <span className="text-xs block">{formatCurrency(variant.price)}</span>
+                    <span className="text-xs block">
+                      {formatCurrency(variant.price)}
+                    </span>
                   </button>
                 ))}
               </div>
@@ -212,7 +269,9 @@ export const ProductDetail = ({ product }: ProductDetailProps) => {
 
           {/* Quantity Selector */}
           <div className="mb-6">
-            <p className="text-sm font-semibold text-gray-700 mb-2">Quantity:</p>
+            <p className="text-sm font-semibold text-gray-700 mb-2">
+              Quantity:
+            </p>
             <div className="flex items-center space-x-4">
               <div className="flex items-center border-2 border-gray-300 rounded-md">
                 <button
@@ -222,25 +281,36 @@ export const ProductDetail = ({ product }: ProductDetailProps) => {
                 >
                   <Minus size={18} />
                 </button>
-                <span className="px-6 py-2 font-semibold border-x-2 border-gray-300">{quantity}</span>
+                <span className="px-6 py-2 font-semibold border-x-2 border-gray-300">
+                  {quantity}
+                </span>
                 <button
                   onClick={incrementQuantity}
                   className="px-4 py-2 hover:bg-gray-100 transition"
-                  disabled={quantity >= selectedVariant.stock || quantity >= (product.maxOrderQuantity || 100)}
+                  disabled={
+                    quantity >= selectedVariant.stock ||
+                    quantity >= (product.maxOrderQuantity || 100)
+                  }
                 >
                   <Plus size={18} />
                 </button>
               </div>
-              <span className={`text-sm font-semibold ${
-                stockStatus.color === 'green' ? 'text-green-600' :
-                stockStatus.color === 'orange' ? 'text-orange-600' :
-                'text-red-600'
-              }`}>
+              <span
+                className={`text-sm font-semibold ${
+                  stockStatus.color === "green"
+                    ? "text-green-600"
+                    : stockStatus.color === "orange"
+                      ? "text-orange-600"
+                      : "text-red-600"
+                }`}
+              >
                 {stockStatus.label}
               </span>
             </div>
             {product.minOrderQuantity > 1 && (
-              <p className="text-xs text-gray-600 mt-1">Minimum order: {product.minOrderQuantity} units</p>
+              <p className="text-xs text-gray-600 mt-1">
+                Minimum order: {product.minOrderQuantity} units
+              </p>
             )}
           </div>
 
@@ -248,7 +318,9 @@ export const ProductDetail = ({ product }: ProductDetailProps) => {
           <div className="flex space-x-4 mb-6">
             <button
               onClick={handleAddToCart}
-              disabled={!selectedVariant.isAvailable || selectedVariant.stock === 0}
+              disabled={
+                !selectedVariant.isAvailable || selectedVariant.stock === 0
+              }
               className="flex-1 bg-[#D32F2F] text-white px-8 py-4 rounded-full font-bold text-lg hover:bg-[#B71C1C] transition disabled:bg-gray-300 disabled:cursor-not-allowed"
             >
               Add to Cart
@@ -283,12 +355,15 @@ export const ProductDetail = ({ product }: ProductDetailProps) => {
 
           {/* Delivery Info (default nationwide band) */}
           <div className="p-4 bg-green-50 rounded-lg border border-green-200">
-            <p className="text-sm font-semibold text-gray-700 mb-1">Typical delivery (India):</p>
+            <p className="text-sm font-semibold text-gray-700 mb-1">
+              Typical delivery (India):
+            </p>
             <p className="text-sm text-gray-600">
               {formatDeliveryDate(deliveryEstimate.min, deliveryEstimate.max)}
             </p>
             <p className="mt-2 text-xs text-gray-500">
-              Use the PIN checker above for a more specific estimate to your area.
+              Use the PIN checker above for a more specific estimate to your
+              area.
             </p>
           </div>
         </div>
@@ -299,22 +374,22 @@ export const ProductDetail = ({ product }: ProductDetailProps) => {
         {/* Tabs */}
         <div className="flex space-x-8 border-b border-gray-200 mb-6">
           <button
-            onClick={() => setActiveTab('description')}
+            onClick={() => setActiveTab("description")}
             className={`pb-3 font-semibold transition ${
-              activeTab === 'description'
-                ? 'text-[#D32F2F] border-b-2 border-[#D32F2F]'
-                : 'text-gray-600 hover:text-[#D32F2F]'
+              activeTab === "description"
+                ? "text-[#D32F2F] border-b-2 border-[#D32F2F]"
+                : "text-gray-600 hover:text-[#D32F2F]"
             }`}
           >
             Description
           </button>
           {product.ingredients && product.ingredients.length > 0 && (
             <button
-              onClick={() => setActiveTab('ingredients')}
+              onClick={() => setActiveTab("ingredients")}
               className={`pb-3 font-semibold transition ${
-                activeTab === 'ingredients'
-                  ? 'text-[#D32F2F] border-b-2 border-[#D32F2F]'
-                  : 'text-gray-600 hover:text-[#D32F2F]'
+                activeTab === "ingredients"
+                  ? "text-[#D32F2F] border-b-2 border-[#D32F2F]"
+                  : "text-gray-600 hover:text-[#D32F2F]"
               }`}
             >
               Ingredients
@@ -322,11 +397,11 @@ export const ProductDetail = ({ product }: ProductDetailProps) => {
           )}
           {product.usageInstructions && (
             <button
-              onClick={() => setActiveTab('usage')}
+              onClick={() => setActiveTab("usage")}
               className={`pb-3 font-semibold transition ${
-                activeTab === 'usage'
-                  ? 'text-[#D32F2F] border-b-2 border-[#D32F2F]'
-                  : 'text-gray-600 hover:text-[#D32F2F]'
+                activeTab === "usage"
+                  ? "text-[#D32F2F] border-b-2 border-[#D32F2F]"
+                  : "text-gray-600 hover:text-[#D32F2F]"
               }`}
             >
               Usage
@@ -334,11 +409,11 @@ export const ProductDetail = ({ product }: ProductDetailProps) => {
           )}
           {product.nutritionalInfo && (
             <button
-              onClick={() => setActiveTab('nutrition')}
+              onClick={() => setActiveTab("nutrition")}
               className={`pb-3 font-semibold transition ${
-                activeTab === 'nutrition'
-                  ? 'text-[#D32F2F] border-b-2 border-[#D32F2F]'
-                  : 'text-gray-600 hover:text-[#D32F2F]'
+                activeTab === "nutrition"
+                  ? "text-[#D32F2F] border-b-2 border-[#D32F2F]"
+                  : "text-gray-600 hover:text-[#D32F2F]"
               }`}
             >
               Nutrition
@@ -348,15 +423,19 @@ export const ProductDetail = ({ product }: ProductDetailProps) => {
 
         {/* Tab Content */}
         <div className="prose max-w-none">
-          {activeTab === 'description' && (
+          {activeTab === "description" && (
             <div>
               <p className="text-gray-700 mb-4">{product.description}</p>
               {product.features && product.features.length > 0 && (
                 <>
-                  <h3 className="font-bold text-gray-900 mb-2">Key Features:</h3>
+                  <h3 className="font-bold text-gray-900 mb-2">
+                    Key Features:
+                  </h3>
                   <ul className="list-disc list-inside space-y-1">
                     {product.features.map((feature, index) => (
-                      <li key={index} className="text-gray-700">{feature}</li>
+                      <li key={index} className="text-gray-700">
+                        {feature}
+                      </li>
                     ))}
                   </ul>
                 </>
@@ -368,30 +447,38 @@ export const ProductDetail = ({ product }: ProductDetailProps) => {
               )}
             </div>
           )}
-          {activeTab === 'ingredients' && product.ingredients && (
+          {activeTab === "ingredients" && product.ingredients && (
             <div>
               <ul className="list-disc list-inside space-y-1">
                 {product.ingredients.map((ingredient, index) => (
-                  <li key={index} className="text-gray-700">{ingredient}</li>
+                  <li key={index} className="text-gray-700">
+                    {ingredient}
+                  </li>
                 ))}
               </ul>
             </div>
           )}
-          {activeTab === 'usage' && product.usageInstructions && (
+          {activeTab === "usage" && product.usageInstructions && (
             <div>
               <p className="text-gray-700">{product.usageInstructions}</p>
             </div>
           )}
-          {activeTab === 'nutrition' && product.nutritionalInfo && (
+          {activeTab === "nutrition" && product.nutritionalInfo && (
             <div>
               <table className="w-full max-w-md">
                 <tbody>
-                  {Object.entries(product.nutritionalInfo).map(([key, value]) => (
-                    <tr key={key} className="border-b border-gray-200">
-                      <td className="py-2 font-semibold text-gray-700">{key}</td>
-                      <td className="py-2 text-gray-600 text-right">{value}</td>
-                    </tr>
-                  ))}
+                  {Object.entries(product.nutritionalInfo).map(
+                    ([key, value]) => (
+                      <tr key={key} className="border-b border-gray-200">
+                        <td className="py-2 font-semibold text-gray-700">
+                          {key}
+                        </td>
+                        <td className="py-2 text-gray-600 text-right">
+                          {value}
+                        </td>
+                      </tr>
+                    ),
+                  )}
                 </tbody>
               </table>
               <p className="text-xs text-gray-500 mt-4">*Per 100g serving</p>
@@ -402,4 +489,3 @@ export const ProductDetail = ({ product }: ProductDetailProps) => {
     </div>
   );
 };
-

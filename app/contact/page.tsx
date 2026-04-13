@@ -8,6 +8,7 @@ import { CartDrawer } from '@/components/ecommerce/CartDrawer';
 import { submitContact } from '@/lib/actions/contact';
 import { COMPANY_INFO } from '@/lib/data/constants';
 import { Mail, Phone, MapPin } from 'lucide-react';
+import { analytics } from '@/lib/analytics';
 
 export default function ContactPage() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -30,6 +31,7 @@ export default function ContactPage() {
 
     if (result.success) {
       setStatus('success');
+      analytics.trackFormSubmission('contact', true);
       setFormData({ name: '', email: '', phone: '', subject: '', message: '' });
     } else {
       setStatus('error');
