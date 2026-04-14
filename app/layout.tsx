@@ -9,6 +9,7 @@ import { SpeedInsights } from "@vercel/speed-insights/next";
 import { WebVitals } from "@/components/analytics/WebVitals";
 import { PageViewTracker } from "@/components/analytics/PageViewTracker";
 import GoogleAnalytics from "@/components/analytics/GoogleAnalytics";
+import MicrosoftClarity from "@/components/analytics/MicrosoftClarity";
 
 const poppins = Poppins({
   subsets: ["latin"],
@@ -129,6 +130,7 @@ export default function RootLayout({
         <link rel="dns-prefetch" href="https://pmknwgwbwfyvrkfbrccu.supabase.co" />
         <link rel="preconnect" href="https://www.googletagmanager.com" />
         <GoogleAnalytics />
+        <MicrosoftClarity />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
