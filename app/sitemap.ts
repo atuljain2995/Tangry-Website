@@ -4,47 +4,50 @@ import { PRODUCTS_EXTENDED } from '@/lib/data/productsExtended';
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = 'https://www.tangryspices.com';
 
+  // Build time — only changes on deploy, not per request
+  const buildTime = new Date();
+
   // Static pages
   const staticPages = [
     {
       url: baseUrl,
-      lastModified: new Date(),
+      lastModified: buildTime,
       changeFrequency: 'daily' as const,
       priority: 1,
     },
     {
       url: `${baseUrl}/products`,
-      lastModified: new Date(),
+      lastModified: buildTime,
       changeFrequency: 'daily' as const,
       priority: 0.9,
     },
     {
       url: `${baseUrl}/about`,
-      lastModified: new Date(),
+      lastModified: buildTime,
       changeFrequency: 'monthly' as const,
       priority: 0.7,
     },
     {
       url: `${baseUrl}/wholesale`,
-      lastModified: new Date(),
+      lastModified: buildTime,
       changeFrequency: 'monthly' as const,
       priority: 0.6,
     },
     {
       url: `${baseUrl}/contact`,
-      lastModified: new Date(),
+      lastModified: buildTime,
       changeFrequency: 'monthly' as const,
       priority: 0.5,
     },
     {
       url: `${baseUrl}/track-order`,
-      lastModified: new Date(),
+      lastModified: buildTime,
       changeFrequency: 'monthly' as const,
       priority: 0.5,
     },
     {
       url: `${baseUrl}/shipping-policy`,
-      lastModified: new Date(),
+      lastModified: buildTime,
       changeFrequency: 'monthly' as const,
       priority: 0.5,
     },

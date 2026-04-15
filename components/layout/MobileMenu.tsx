@@ -33,7 +33,7 @@ export const MobileMenu = ({ isOpen, onClose }: MobileMenuProps) => {
         <NavLink href="/blog" isMobile onClick={onClose}>Blog</NavLink>
       )}
       <NavLink href="/wholesale" isMobile onClick={onClose}>Wholesale</NavLink>
-      <NavLink href="/#contact" isMobile onClick={onClose}>Contact</NavLink>
+      <NavLink href="/contact" isMobile onClick={onClose}>Contact</NavLink>
 
       <div className="mt-auto border-t border-gray-100 pt-6 dark:border-neutral-800 sm:hidden">
         <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-neutral-400">

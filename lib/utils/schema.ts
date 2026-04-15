@@ -52,6 +52,7 @@ export function getProductSchema(product: ProductExtended) {
   return {
     '@context': 'https://schema.org',
     '@type': 'Product',
+    '@id': `https://www.tangryspices.com/products/${product.slug}`,
     name: product.name,
     description: product.description,
     image: product.images,
@@ -161,7 +162,7 @@ export function getLocalBusinessSchema() {
   return {
     '@context': 'https://schema.org',
     '@type': 'LocalBusiness',
-    '@id': 'https://www.tangryspices.com',
+    '@id': 'https://www.tangryspices.com/#local-business',
     name: 'Tangry',
     image: 'https://www.tangryspices.com/images/logo-512.png',
     telephone: COMPANY_INFO.phoneTel,

@@ -1,7 +1,13 @@
 import { redirect } from 'next/navigation';
+import type { Metadata } from 'next';
 import { getCurrentUserProfile } from '@/lib/auth/user';
 import { AccountSidebar } from '@/components/account/AccountSidebar';
 import { AccountLayoutShell } from '@/components/account/AccountLayoutShell';
+
+export const metadata: Metadata = {
+  title: 'My Account',
+  robots: { index: false, follow: false },
+};
 
 export default async function AccountLayout({ children }: { children: React.ReactNode }) {
   const profile = await getCurrentUserProfile();

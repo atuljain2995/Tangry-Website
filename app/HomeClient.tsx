@@ -14,7 +14,7 @@ import { Testimonials } from '@/components/sections/Testimonials';
 import { Newsletter } from '@/components/sections/Newsletter';
 import { CartDrawer } from '@/components/ecommerce/CartDrawer';
 import { StructuredData } from '@/components/seo/StructuredData';
-import { getOrganizationSchema, getWebSiteSchema } from '@/lib/utils/schema';
+import { getWebSiteSchema } from '@/lib/utils/schema';
 import { ProductExtended } from '@/lib/types/database';
 import type { MarketplaceLinks } from '@/lib/data/marketplaces';
 
@@ -31,7 +31,7 @@ export function HomeClient({ products, marketplaceLinks }: HomeClientProps) {
 
   return (
     <>
-      <StructuredData data={[getOrganizationSchema(), getWebSiteSchema()]} />
+      <StructuredData data={[getWebSiteSchema()]} />
       <main className="page-shell">
         <Header onMenuOpen={() => setIsMobileMenuOpen(true)} />
         <MobileMenu isOpen={isMobileMenuOpen} onClose={() => setIsMobileMenuOpen(false)} />

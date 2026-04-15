@@ -17,11 +17,13 @@ export async function generateMetadata({ searchParams }: PageProps): Promise<Met
     return {
       title: `Search: ${q}`,
       description: `Search results for “${q}” — Tangry Spices, Jaipur.`,
+      robots: { index: false, follow: true },
     };
   }
   return {
     title: 'Search',
     description: 'Search masalas, ready powders, and pickles from Tangry Spices.',
+    robots: { index: false, follow: true },
   };
 }
 
