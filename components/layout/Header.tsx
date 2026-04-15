@@ -23,7 +23,7 @@ export const Header = ({ onMenuOpen }: HeaderProps) => {
           <Link href="/" className="flex items-center group">
             {/* Desktop: full banner logo */}
             <Image
-              src="/images/logo-full.jpg"
+              src="/images/logo-full.png"
               alt="Tangry - Taste of Home"
               width={200}
               height={56}
@@ -32,7 +32,7 @@ export const Header = ({ onMenuOpen }: HeaderProps) => {
             />
             {/* Mobile/Tablet: icon only */}
             <Image
-              src="/images/logo-full.jpg"
+              src="/images/logo-full.png"
               alt="Tangry Spices"
               width={160}
               height={60}
