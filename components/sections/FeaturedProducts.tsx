@@ -22,24 +22,24 @@ export const FeaturedProducts = ({ products }: FeaturedProductsProps) => {
 
   return (
     <section id="products" className="py-24 container mx-auto px-4">
-      <div className="flex flex-col md:flex-row justify-between items-end mb-12">
+      <div className="flex flex-col md:flex-row justify-between md:items-end mb-12">
         <div>
           <h2 className="text-4xl md:text-5xl font-black text-gray-900 mb-2 uppercase italic tracking-tight">
             The Stash
           </h2>
           <p className="text-gray-500 font-medium text-lg">
-            Jaipur-made masalas, ready powders, and essentials — the same lines we sell every day.
+            Jaipur-made masalas, ready powders, and essentials.
           </p>
         </div>
         
-        {/* Toggle Switch */}
-        <div className="flex bg-gray-100 p-1.5 rounded-xl mt-6 md:mt-0 flex-wrap gap-2">
+        {/* Category Filters */}
+        <div className="flex mt-6 md:mt-0 gap-2 overflow-x-auto pb-2 md:pb-0 no-scrollbar">
           <button 
             onClick={() => setActiveCategory('all')}
-            className={`px-4 py-2 rounded-lg text-sm font-bold transition capitalize ${
+            className={`px-5 py-2 rounded-full text-sm font-semibold transition capitalize border whitespace-nowrap ${
               activeCategory === 'all' 
-                ? 'bg-white shadow-md text-black' 
-                : 'text-gray-700 hover:text-black'
+                ? 'bg-gray-900 text-white border-gray-900' 
+                : 'bg-white text-gray-700 border-gray-200 hover:border-gray-400'
             }`}
           >
             All
@@ -48,10 +48,10 @@ export const FeaturedProducts = ({ products }: FeaturedProductsProps) => {
             <button 
               key={category}
               onClick={() => setActiveCategory(category)}
-              className={`px-4 py-2 rounded-lg text-sm font-bold transition capitalize ${
+              className={`px-5 py-2 rounded-full text-sm font-semibold transition capitalize border whitespace-nowrap ${
                 activeCategory === category 
-                  ? 'bg-white shadow-md text-black' 
-                  : 'text-gray-700 hover:text-black'
+                  ? 'bg-gray-900 text-white border-gray-900' 
+                  : 'bg-white text-gray-700 border-gray-200 hover:border-gray-400'
               }`}
             >
               {category}
@@ -60,9 +60,9 @@ export const FeaturedProducts = ({ products }: FeaturedProductsProps) => {
         </div>
       </div>
 
-      {/* Product Grid */}
+      {/* Product Grid - max 2 rows (8 items) on homepage */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8">
-        {filteredProducts.map(product => (
+        {filteredProducts.slice(0, 8).map(product => (
           <ProductCard key={product.id} product={product} />
         ))}
       </div>

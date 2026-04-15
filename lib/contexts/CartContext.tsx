@@ -114,9 +114,6 @@ export function CartProvider({ children }: { children: ReactNode }) {
         updatedAt: new Date()
       };
     });
-
-    // Open cart drawer when item is added
-    setIsCartOpen(true);
   };
 
   const removeFromCart = (productId: string, variantId: string) => {

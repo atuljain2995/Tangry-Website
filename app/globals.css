@@ -4,6 +4,14 @@
 @custom-variant dark (&:where(.dark, .dark *));
 
 @layer components {
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+
   .page-shell {
     @apply min-h-screen text-neutral-900 dark:text-neutral-100 bg-[#fafafa] dark:bg-neutral-950 transition-colors duration-200;
   }

@@ -81,13 +81,15 @@ export function generateOrderNumber(): string {
  * Format currency for display
  */
 export function formatCurrency(amount: number, currency: string = 'INR'): string {
+  const isWholeNumber = amount % 1 === 0;
+  const formatted = isWholeNumber ? amount.toFixed(0) : amount.toFixed(2);
   if (currency === 'INR') {
-    return `₹${amount.toFixed(2)}`;
+    return `₹${formatted}`;
   }
   if (currency === 'USD') {
-    return `$${amount.toFixed(2)}`;
+    return `$${formatted}`;
   }
-  return `${amount.toFixed(2)} ${currency}`;
+  return `${formatted} ${currency}`;
 }
 
 /**
