@@ -27,10 +27,10 @@ export function ProductPageClient({ product, relatedProducts }: ProductPageClien
 
   // Breadcrumbs for SEO
   const breadcrumbs = [
-    { name: 'Home', url: 'https://tangryspices.com' },
-    { name: 'Products', url: 'https://tangryspices.com/products' },
-    { name: product.category, url: `https://tangryspices.com/category/${product.category}` },
-    { name: product.name, url: `https://tangryspices.com/products/${product.slug}` },
+    { name: 'Home', url: 'https://www.tangryspices.com' },
+    { name: 'Products', url: 'https://www.tangryspices.com/products' },
+    { name: product.category, url: `https://www.tangryspices.com/category/${product.category}` },
+    { name: product.name, url: `https://www.tangryspices.com/products/${product.slug}` },
   ];
 
   return (

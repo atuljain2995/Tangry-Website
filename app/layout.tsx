@@ -44,7 +44,7 @@ export const metadata = {
   authors: [{ name: "Tangry Spices" }],
   creator: "Tangry Spices",
   publisher: "Tangry Spices",
-  metadataBase: new URL("https://tangryspices.com"),
+  metadataBase: new URL("https://www.tangryspices.com"),
   alternates: {
     canonical: "/",
   },

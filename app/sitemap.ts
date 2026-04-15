@@ -5,7 +5,7 @@ import { getProductCategories } from '@/lib/db/queries';
 import { RECIPES } from '@/lib/data/products';
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const baseUrl = 'https://tangryspices.com'; // Replace with actual domain
+  const baseUrl = 'https://www.tangryspices.com';
 
   // Static pages
   const staticPages = [

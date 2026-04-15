@@ -22,8 +22,8 @@ export function getOrganizationSchema() {
     '@type': 'Organization',
     name: 'Tangry',
     alternateName: ['Tangry Spices'],
-    url: 'https://tangryspices.com',
-    logo: 'https://tangryspices.com/logo.png',
+    url: 'https://www.tangryspices.com',
+    logo: 'https://www.tangryspices.com/logo.png',
     description: `${COMPANY_INFO.brandName} — ${COMPANY_INFO.tagline}. Authentic spices and masalas from Jaipur, Rajasthan.`,
     address: orgPostalAddress,
     contactPoint: {
@@ -63,7 +63,7 @@ export function getProductSchema(product: ProductExtended) {
     category: product.category,
     offers: {
       '@type': 'AggregateOffer',
-      url: `https://tangryspices.com/products/${product.slug}`,
+      url: `https://www.tangryspices.com/products/${product.slug}`,
       priceCurrency: 'INR',
       lowPrice: lowestPrice,
       highPrice: highestPrice,
@@ -168,9 +168,9 @@ export function getLocalBusinessSchema() {
   return {
     '@context': 'https://schema.org',
     '@type': 'LocalBusiness',
-    '@id': 'https://tangryspices.com',
+    '@id': 'https://www.tangryspices.com',
     name: 'Tangry',
-    image: 'https://tangryspices.com/logo.png',
+    image: 'https://www.tangryspices.com/logo.png',
     telephone: COMPANY_INFO.phoneTel,
     email: COMPANY_INFO.email,
     address: orgPostalAddress,
@@ -179,7 +179,7 @@ export function getLocalBusinessSchema() {
       latitude: '26.9124',
       longitude: '75.7873',
     },
-    url: 'https://tangryspices.com',
+    url: 'https://www.tangryspices.com',
     priceRange: '₹₹',
     openingHoursSpecification: [
       {
@@ -200,12 +200,12 @@ export function getWebSiteSchema() {
     '@context': 'https://schema.org',
     '@type': 'WebSite',
     name: 'Tangry Spices',
-    url: 'https://tangryspices.com',
+    url: 'https://www.tangryspices.com',
     potentialAction: {
       '@type': 'SearchAction',
       target: {
         '@type': 'EntryPoint',
-        urlTemplate: 'https://tangryspices.com/search?q={search_term_string}',
+        urlTemplate: 'https://www.tangryspices.com/search?q={search_term_string}',
       },
       'query-input': 'required name=search_term_string',
     },
