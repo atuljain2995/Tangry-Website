@@ -66,14 +66,6 @@ export const metadata = {
       "Authentic Rajasthani masalas and pickles from Tangry, Jaipur. FSSAI & ISO 22000 certified.",
     url: "https://www.tangryspices.com",
     siteName: "Tangry Spices",
-    images: [
-      {
-        url: "/images/logo-512.png",
-        width: 512,
-        height: 512,
-        alt: "Tangry Spices",
-      },
-    ],
     locale: "en_IN",
     type: "website",
   },
@@ -82,7 +74,6 @@ export const metadata = {
     title: "Tangry Spices | Jaipur Masalas & Pickles",
     description:
       "Shop Tangry — Taste of Home. FSSAI licensed blends from Jaipur.",
-    images: ["/images/logo-512.png"],
     creator: "@tangryspices",
   },
   robots: {

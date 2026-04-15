@@ -75,13 +75,6 @@ export function getProductSchema(product: ProductExtended) {
         name: 'Tangry Spices',
       },
     },
-    aggregateRating: {
-      '@type': 'AggregateRating',
-      ratingValue: product.rating,
-      reviewCount: product.reviewCount,
-      bestRating: 5,
-      worstRating: 1,
-    },
   };
 }
 
