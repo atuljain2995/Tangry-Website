@@ -45,6 +45,16 @@ export const metadata = {
   creator: "Tangry Spices",
   publisher: "Tangry Spices",
   metadataBase: new URL("https://www.tangryspices.com"),
+  icons: {
+    icon: [
+      { url: '/favicon.ico', sizes: '32x32' },
+      { url: '/images/logo-192.png', sizes: '192x192', type: 'image/png' },
+      { url: '/images/logo-512.png', sizes: '512x512', type: 'image/png' },
+    ],
+    apple: [
+      { url: '/images/logo-192.png', sizes: '192x192' },
+    ],
+  },
   alternates: {
     canonical: "/",
   },
@@ -52,13 +62,13 @@ export const metadata = {
     title: "Tangry Spices | Masalas & Pickles from Jaipur",
     description:
       "Authentic Rajasthani masalas and pickles from Tangry, Jaipur. FSSAI & ISO 22000 certified.",
-    url: "https://tangryspices.com",
+    url: "https://www.tangryspices.com",
     siteName: "Tangry Spices",
     images: [
       {
-        url: "/og-image.jpg",
-        width: 1200,
-        height: 630,
+        url: "/images/logo-512.png",
+        width: 512,
+        height: 512,
         alt: "Tangry Spices",
       },
     ],
@@ -70,7 +80,7 @@ export const metadata = {
     title: "Tangry Spices | Jaipur Masalas & Pickles",
     description:
       "Shop Tangry — Taste of Home. FSSAI licensed blends from Jaipur.",
-    images: ["/twitter-image.jpg"],
+    images: ["/images/logo-512.png"],
     creator: "@tangryspices",
   },
   robots: {
@@ -91,14 +101,14 @@ const organizationSchema = {
   "@context": "https://schema.org",
   "@type": "Organization",
   name: "Tangry Spices",
-  url: "https://tangryspices.com",
+  url: "https://www.tangryspices.com",
   logo: {
     "@type": "ImageObject",
-    url: "https://tangryspices.com/images/logo-512.png",
+    url: "https://www.tangryspices.com/images/logo-512.png",
     width: 512,
     height: 512,
   },
-  image: "https://tangryspices.com/images/logo-512.png",
+  image: "https://www.tangryspices.com/images/logo-512.png",
   description:
     "Tangry — Taste of Home. Authentic Rajasthani masalas, ready powders, and pickles from Jhotwara, Jaipur. FSSAI licensed, ISO 22000 certified.",
   address: {
