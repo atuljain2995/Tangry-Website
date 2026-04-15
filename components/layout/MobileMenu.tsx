@@ -23,7 +23,7 @@ export const MobileMenu = ({ isOpen, onClose }: MobileMenuProps) => {
           <X size={24} />
         </button>
       </div>
-      <NavLink href="/#our-story" isMobile onClick={onClose}>Our Story</NavLink>
+      <NavLink href="/about" isMobile onClick={onClose}>About Us</NavLink>
       <NavLink href="/products" isMobile onClick={onClose}>Products</NavLink>
       <NavLink href="/search" isMobile onClick={onClose}>Search</NavLink>
       {showRecipesInNav() && (

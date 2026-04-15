@@ -11,6 +11,8 @@ import { PageViewTracker } from "@/components/analytics/PageViewTracker";
 import GoogleAnalytics from "@/components/analytics/GoogleAnalytics";
 import MicrosoftClarity from "@/components/analytics/MicrosoftClarity";
 
+import { getOrganizationSchema, getLocalBusinessSchema } from '@/lib/utils/schema';
+
 const poppins = Poppins({
   subsets: ["latin"],
   weight: ["300", "400", "600", "700"],
@@ -97,37 +99,6 @@ export const metadata = {
   // Ownership verified via DNS record in Cloudflare (Google Search Console)
 };
 
-const organizationSchema = {
-  "@context": "https://schema.org",
-  "@type": "Organization",
-  name: "Tangry Spices",
-  url: "https://www.tangryspices.com",
-  logo: {
-    "@type": "ImageObject",
-    url: "https://www.tangryspices.com/images/logo-512.png",
-    width: 512,
-    height: 512,
-  },
-  image: "https://www.tangryspices.com/images/logo-512.png",
-  description:
-    "Tangry — Taste of Home. Authentic Rajasthani masalas, ready powders, and pickles from Jhotwara, Jaipur. FSSAI licensed, ISO 22000 certified.",
-  address: {
-    "@type": "PostalAddress",
-    addressLocality: "Jhotwara",
-    addressRegion: "Jaipur, Rajasthan",
-    addressCountry: "IN",
-  },
-  contactPoint: {
-    "@type": "ContactPoint",
-    contactType: "customer service",
-    availableLanguage: ["English", "Hindi"],
-  },
-  sameAs: [
-    "https://www.instagram.com/tangryspices",
-    "https://www.facebook.com/tangryspices",
-  ],
-};
-
 export default function RootLayout({
   children,
 }: {
@@ -144,7 +115,7 @@ export default function RootLayout({
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
-            __html: JSON.stringify(organizationSchema),
+            __html: JSON.stringify([getOrganizationSchema(), getLocalBusinessSchema()]),
           }}
         />
       </head>

@@ -23,7 +23,7 @@ export function getOrganizationSchema() {
     name: 'Tangry',
     alternateName: ['Tangry Spices'],
     url: 'https://www.tangryspices.com',
-    logo: 'https://www.tangryspices.com/logo.png',
+    logo: 'https://www.tangryspices.com/images/logo-512.png',
     description: `${COMPANY_INFO.brandName} — ${COMPANY_INFO.tagline}. Authentic spices and masalas from Jaipur, Rajasthan.`,
     address: orgPostalAddress,
     contactPoint: {
@@ -170,7 +170,7 @@ export function getLocalBusinessSchema() {
     '@type': 'LocalBusiness',
     '@id': 'https://www.tangryspices.com',
     name: 'Tangry',
-    image: 'https://www.tangryspices.com/logo.png',
+    image: 'https://www.tangryspices.com/images/logo-512.png',
     telephone: COMPANY_INFO.phoneTel,
     email: COMPANY_INFO.email,
     address: orgPostalAddress,

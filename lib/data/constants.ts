@@ -36,9 +36,9 @@ export const SOCIAL_LINKS = {
 } as const;
 
 export const NAVIGATION_ITEMS = [
-  { label: "Home", href: "#home" },
-  { label: "Our Story", href: "/#our-story" },
+  { label: "Home", href: "/" },
+  { label: "About Us", href: "/about" },
   { label: "Recipes", href: "#recipes" },
-  { label: "Contact", href: "#contact" },
+  { label: "Contact", href: "/contact" },
 ];
 

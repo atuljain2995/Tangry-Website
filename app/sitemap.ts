@@ -1,8 +1,5 @@
 import { MetadataRoute } from 'next';
 import { PRODUCTS_EXTENDED } from '@/lib/data/productsExtended';
-import { PRODUCT_CATEGORIES } from '@/lib/data/products';
-import { getProductCategories } from '@/lib/db/queries';
-import { RECIPES } from '@/lib/data/products';
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = 'https://www.tangryspices.com';
@@ -20,12 +17,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       lastModified: new Date(),
       changeFrequency: 'daily' as const,
       priority: 0.9,
-    },
-    {
-      url: `${baseUrl}/search`,
-      lastModified: new Date(),
-      changeFrequency: 'weekly' as const,
-      priority: 0.6,
     },
     {
       url: `${baseUrl}/about`,
@@ -79,27 +70,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: product.isBestSeller || product.isFeatured ? 0.9 : 0.8,
   }));
 
-  const dbCategories = await getProductCategories();
-  const categorySlugs =
-    dbCategories.length > 0
-      ? dbCategories.map((c) => c.slug)
-      : PRODUCT_CATEGORIES.map((c) => c.id);
-
-  const categoryPages = categorySlugs.map((slug) => ({
-    url: `${baseUrl}/category/${slug}`,
-    lastModified: new Date(),
-    changeFrequency: 'weekly' as const,
-    priority: 0.7,
-  }));
-
-  // Recipe pages
-  const recipePages = RECIPES.map(recipe => ({
-    url: `${baseUrl}/recipes/${recipe.id}`,
-    lastModified: new Date(),
-    changeFrequency: 'monthly' as const,
-    priority: 0.6,
-  }));
-
-  return [...staticPages, ...productPages, ...categoryPages, ...recipePages];
+  return [...staticPages, ...productPages];
 }
 

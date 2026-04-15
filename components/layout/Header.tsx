@@ -47,7 +47,7 @@ export const Header = ({ onMenuOpen }: HeaderProps) => {
             {showRecipesInNav() && <NavLink href="/recipes">Recipes</NavLink>}
             {showBlogInNav() && <NavLink href="/blog">Blog</NavLink>}
             <NavLink href="/wholesale">Wholesale</NavLink>
-            <NavLink href="/#our-story">Our Story</NavLink>
+            <NavLink href="/about">About Us</NavLink>
           </div>
 
           {/* Right Side Actions - overflow-visible so dropdown isn't clipped */}

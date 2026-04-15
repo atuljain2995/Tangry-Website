@@ -91,6 +91,27 @@ export const Footer = () => {
           {/* Help */}
           <div>
             <h3 className="mb-4 text-sm font-bold uppercase tracking-wider text-gray-900 dark:text-neutral-100">
+              Company
+            </h3>
+            <ul className="space-y-3 font-medium text-gray-500 dark:text-neutral-400">
+              <li className="hover:text-orange-600 transition">
+                <Link href="/about">About Us</Link>
+              </li>
+              <li className="hover:text-orange-600 transition">
+                <Link href="/contact">Contact Us</Link>
+              </li>
+              <li className="hover:text-orange-600 transition">
+                <Link href="/blog">Blog</Link>
+              </li>
+              <li className="hover:text-orange-600 transition">
+                <Link href="/wholesale">Wholesale</Link>
+              </li>
+            </ul>
+          </div>
+
+          {/* Help */}
+          <div>
+            <h3 className="mb-4 text-sm font-bold uppercase tracking-wider text-gray-900 dark:text-neutral-100">
               Help
             </h3>
             <ul className="space-y-3 font-medium text-gray-500 dark:text-neutral-400">

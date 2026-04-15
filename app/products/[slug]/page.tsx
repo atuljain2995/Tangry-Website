@@ -34,9 +34,11 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     title: product.metaTitle || `${product.name} | Tangry Spices`,
     description: product.metaDescription || product.description,
     keywords: product.keywords,
+    alternates: { canonical: `/products/${resolvedParams.slug}` },
     openGraph: {
       title: product.name,
       description: product.description,
+      url: `https://www.tangryspices.com/products/${resolvedParams.slug}`,
     },
   };
 }

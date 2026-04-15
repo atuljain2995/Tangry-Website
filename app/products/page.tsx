@@ -6,8 +6,14 @@ import { getAllProducts, getProductCategories, type DbProductCategory } from '@/
 export const metadata: Metadata = {
   title: 'Shop Masalas, Powders & Pickles',
   description:
-    'Browse Tangry’s Jaipur-made masalas (dabeli, pav bhaji), ready-to-eat powders (gun powder, vada pav chutney), essentials, and pickles — FSSAI & ISO 22000.',
-};
+    'Browse Tangry’s Jaipur-made masalas (dabeli, pav bhaji), ready-to-eat powders (gun powder, vada pav chutney), essentials, and pickles — FSSAI & ISO 22000.',  alternates: { canonical: '/products' },
+  openGraph: {
+    title: 'Shop Tangry Spices — Masalas, Powders & Pickles',
+    description:
+      'Authentic Rajasthani masalas and spices from Jaipur. FSSAI licensed, ISO 22000 certified.',
+    url: 'https://www.tangryspices.com/products',
+    type: 'website',
+  },};
 
 export const revalidate = 3600; // Revalidate every hour
 
