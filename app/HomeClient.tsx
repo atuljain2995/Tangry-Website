@@ -5,7 +5,6 @@ import { Header } from '@/components/layout/Header';
 import { MobileMenu } from '@/components/layout/MobileMenu';
 import { Footer } from '@/components/layout/Footer';
 import { Hero } from '@/components/sections/Hero';
-import { Stats } from '@/components/sections/Stats';
 import { ProductCategories } from '@/components/sections/ProductCategories';
 import { FeaturedProducts } from '@/components/sections/FeaturedProducts';
 import { About } from '@/components/sections/About';
@@ -38,10 +37,9 @@ export function HomeClient({ products, marketplaceLinks }: HomeClientProps) {
         <MobileMenu isOpen={isMobileMenuOpen} onClose={() => setIsMobileMenuOpen(false)} />
         <CartDrawer />
         <Hero products={products} />
-        <Stats />
-        <Testimonials />
-        <ProductCategories />
         <FeaturedProducts products={featuredProducts} />
+        <ProductCategories />
+        <Testimonials />
         <About />
         <BuyOnline links={marketplaceLinks} />
         {process.env.NEXT_PUBLIC_SHOW_RECIPES_NAV === 'true' && <Recipes />}
