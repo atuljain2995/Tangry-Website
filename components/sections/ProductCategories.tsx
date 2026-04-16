@@ -44,7 +44,7 @@ export const ProductCategories = () => {
           {CATEGORIES.map((category) => (
             <Link
               key={category.id}
-              href="/products"
+              href={`/products?category=${category.id}`}
               className={`group bg-gradient-to-br ${category.gradient} rounded-2xl border ${category.accentBorder} p-6 md:p-7 flex flex-col justify-between transition-all duration-300 hover:shadow-xl hover:-translate-y-1 relative overflow-hidden min-h-[220px]`}
             >
               {/* Text Content */}

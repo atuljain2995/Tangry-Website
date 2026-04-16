@@ -9,11 +9,13 @@ import {
   HelpCircle,
   LogOut,
   Store,
+  Heart,
 } from 'lucide-react';
 import { useAuth } from '@/lib/contexts/AuthContext';
 
 const NAV_ITEMS = [
   { href: '/account/orders', label: 'Orders', icon: ClipboardList, section: 'My Orders' },
+  { href: '/account/wishlist', label: 'Wishlist', icon: Heart, section: 'My Wishlist' },
   { href: '/account', label: 'Profile', icon: User, section: 'Personal Info' },
   { href: '/account/addresses', label: 'Addresses', icon: MapPin, section: 'Addresses & Payments' },
   { href: '/account/help', label: 'Help', icon: HelpCircle, section: 'Help & Support' },
@@ -23,6 +25,10 @@ const NAV_SECTIONS = [
   {
     label: 'My Orders',
     items: [{ href: '/account/orders', label: 'Order History', icon: ClipboardList }],
+  },
+  {
+    label: 'My Wishlist',
+    items: [{ href: '/account/wishlist', label: 'Wishlist', icon: Heart }],
   },
   {
     label: 'Personal Info',

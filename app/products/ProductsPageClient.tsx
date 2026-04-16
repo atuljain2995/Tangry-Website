@@ -1,6 +1,7 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useMemo, useCallback } from 'react';
+import { useSearchParams, useRouter, usePathname } from 'next/navigation';
 import { ChevronDown, Package, Zap } from 'lucide-react';
 import { Header } from '@/components/layout/Header';
 import { MobileMenu } from '@/components/layout/MobileMenu';
@@ -16,9 +17,34 @@ interface ProductsPageClientProps {
 }
 
 export function ProductsPageClient({ products, categories }: ProductsPageClientProps) {
+  const searchParams = useSearchParams();
+  const router = useRouter();
+  const pathname = usePathname();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [selectedCategoryId, setSelectedCategoryId] = useState<'all' | string>('all');
   const [sortBy, setSortBy] = useState<'newest' | 'price-low' | 'price-high' | 'popular'>('popular');
+
+  // Derive selected category from URL search params (single source of truth)
+  const selectedCategoryId = useMemo<'all' | string>(() => {
+    const categoryParam = searchParams.get('category');
+    if (!categoryParam) return 'all';
+    const match = categories.find(
+      (c) => c.slug === categoryParam || c.id === categoryParam || c.title.toLowerCase() === categoryParam.toLowerCase()
+    );
+    return match ? match.id : 'all';
+  }, [searchParams, categories]);
+
+  // Update URL when category filter changes
+  const handleCategoryChange = useCallback((categoryId: 'all' | string) => {
+    const params = new URLSearchParams(searchParams.toString());
+    if (categoryId === 'all') {
+      params.delete('category');
+    } else {
+      const cat = categories.find((c) => c.id === categoryId);
+      params.set('category', cat?.slug || categoryId);
+    }
+    const qs = params.toString();
+    router.replace(`${pathname}${qs ? `?${qs}` : ''}`, { scroll: false });
+  }, [searchParams, categories, router, pathname]);
 
   // Filter by DB category id, with title fallback for legacy rows without category_id
   let filteredProducts =
@@ -74,8 +100,8 @@ export function ProductsPageClient({ products, categories }: ProductsPageClientP
             <div className="flex bg-gray-100 p-1.5 rounded-xl flex-wrap gap-2">
               <button
                 type="button"
-                onClick={() => setSelectedCategoryId('all')}
-                className={`px-4 py-2 rounded-lg text-sm font-bold transition capitalize ${
+                onClick={() => handleCategoryChange('all')}
+                className={`px-4 py-2 rounded-lg text-sm font-bold transition capitalize cursor-pointer ${
                   selectedCategoryId === 'all'
                     ? 'bg-white shadow-md text-black'
                     : 'text-gray-500 hover:text-black'
@@ -87,8 +113,8 @@ export function ProductsPageClient({ products, categories }: ProductsPageClientP
                 <button
                   type="button"
                   key={category.id}
-                  onClick={() => setSelectedCategoryId(category.id)}
-                  className={`px-4 py-2 rounded-lg text-sm font-bold transition capitalize ${
+                  onClick={() => handleCategoryChange(category.id)}
+                  className={`px-4 py-2 rounded-lg text-sm font-bold transition capitalize cursor-pointer ${
                     selectedCategoryId === category.id
                       ? 'bg-white shadow-md text-black'
                       : 'text-gray-500 hover:text-black'

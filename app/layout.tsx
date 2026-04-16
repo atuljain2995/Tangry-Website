@@ -3,6 +3,7 @@ import "./globals.css";
 import { ThemeProvider } from "@/components/theme/ThemeProvider";
 import { CartProvider } from "@/lib/contexts/CartContext";
 import { AuthProvider } from "@/lib/contexts/AuthContext";
+import { WishlistProvider } from "@/lib/contexts/WishlistContext";
 import { WhatsAppButton } from "@/components/ui/WhatsAppButton";
 import { Analytics as VercelAnalytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
@@ -116,12 +117,14 @@ export default function RootLayout({
         <ThemeProvider>
           <CartProvider>
             <AuthProvider>
+              <WishlistProvider>
               {children}
               <WhatsAppButton />
               <VercelAnalytics />
               <SpeedInsights />
               <WebVitals />
               <PageViewTracker />
+              </WishlistProvider>
             </AuthProvider>
           </CartProvider>
         </ThemeProvider>

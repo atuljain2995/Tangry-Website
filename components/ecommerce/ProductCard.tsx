@@ -1,13 +1,15 @@
 'use client';
 
 import { useState } from 'react';
-import { Star, Plus, Minus } from 'lucide-react';
+import { Star, Plus, Minus, Heart } from 'lucide-react';
 import { ProductExtended } from '@/lib/types/database';
 import { formatCurrency, calculateDiscountPercentage } from '@/lib/utils/database';
 import Link from 'next/link';
 import { ProductImage } from './ProductImage';
 import { productImageAlt } from '@/lib/utils/product-image-alt';
 import { useCart } from '@/lib/contexts/CartContext';
+import { useWishlist } from '@/lib/contexts/WishlistContext';
+import { useAuth } from '@/lib/contexts/AuthContext';
 
 interface ProductCardProps {
   product: ProductExtended;
@@ -18,6 +20,8 @@ const PLACEHOLDER_IMAGE = '/images/logo-512.png';
 export const ProductCard = ({ product }: ProductCardProps) => {
   const [selectedVariantIndex, setSelectedVariantIndex] = useState(0);
   const { addToCart, cart, updateQuantity } = useCart();
+  const { isWishlisted, toggle: toggleWishlist } = useWishlist();
+  const { user } = useAuth();
   const selectedVariant = product.variants[selectedVariantIndex];
   const discountPercentage = calculateDiscountPercentage(selectedVariant.price, selectedVariant.compareAtPrice);
   const imageSrc = product.images[0] || PLACEHOLDER_IMAGE;
@@ -90,6 +94,21 @@ export const ProductCard = ({ product }: ProductCardProps) => {
               </span>
             </div>
           )}
+
+          {/* Wishlist Heart */}
+          <button
+            onClick={(e) => {
+              e.preventDefault();
+              if (!user) { window.location.href = '/login'; return; }
+              toggleWishlist(product.id);
+            }}
+            className={`absolute bottom-3 right-3 p-1.5 rounded-full bg-white/80 backdrop-blur-sm shadow-sm transition hover:scale-110 z-10 ${
+              isWishlisted(product.id) ? 'text-[#D32F2F]' : 'text-gray-400 hover:text-[#D32F2F]'
+            }`}
+            aria-label={isWishlisted(product.id) ? 'Remove from wishlist' : 'Add to wishlist'}
+          >
+            <Heart size={16} fill={isWishlisted(product.id) ? 'currentColor' : 'none'} />
+          </button>
         </div>
       </Link>
 

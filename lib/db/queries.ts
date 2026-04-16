@@ -245,6 +245,44 @@ export async function getRelatedProducts(
   return transformProducts(enrichedProducts);
 }
 
+/**
+ * Fetch products by an array of IDs (e.g. for wishlists)
+ */
+export async function getProductsByIds(ids: string[]): Promise<ProductExtended[]> {
+  if (ids.length === 0) return [];
+
+  const { data: products, error: productsError } = await supabase
+    .from('products')
+    .select('*')
+    .in('id', ids);
+
+  if (productsError || !products || products.length === 0) {
+    isSupabaseUnreachable(productsError);
+    console.error('Error fetching products by IDs:', productsError);
+    return [];
+  }
+
+  const typedProducts = products as unknown as DbProduct[];
+  const productIds = typedProducts.map(p => p.id);
+  const { data: variants } = await supabase
+    .from('product_variants')
+    .select('*')
+    .in('product_id', productIds);
+
+  const { data: images } = await supabase
+    .from('product_images')
+    .select('*')
+    .in('product_id', productIds);
+
+  const enrichedProducts: DbProduct[] = typedProducts.map(product => ({
+    ...product,
+    variants: (variants as unknown as DbVariant[])?.filter(v => v.product_id === product.id) || [],
+    images: (images as unknown as DbImage[])?.filter(img => img.product_id === product.id) || [],
+  }));
+
+  return transformProducts(enrichedProducts);
+}
+
 /** Coupon row from DB (snake_case) */
 interface DbCoupon {
   id: string;

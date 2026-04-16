@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import {
   Star,
   Truck,
@@ -21,6 +21,8 @@ import {
   formatDeliveryDate,
 } from "@/lib/utils/database";
 import { useCart } from "@/lib/contexts/CartContext";
+import { useWishlist } from "@/lib/contexts/WishlistContext";
+import { useAuth } from "@/lib/contexts/AuthContext";
 import { CartItem } from "@/lib/types/database";
 import { ProductImage } from "./ProductImage";
 import { PincodeDeliveryCheck } from "./PincodeDeliveryCheck";
@@ -41,6 +43,36 @@ export const ProductDetail = ({ product }: ProductDetailProps) => {
     "description" | "ingredients" | "usage" | "nutrition"
   >("description");
   const { addToCart } = useCart();
+  const { isWishlisted: checkWishlisted, toggle: toggleWishlist } = useWishlist();
+  const { user } = useAuth();
+
+  const isWishlisted = checkWishlisted(product.id);
+
+  const handleWishlist = useCallback(() => {
+    if (!user) {
+      window.location.href = '/login';
+      return;
+    }
+    toggleWishlist(product.id);
+  }, [user, product.id, toggleWishlist]);
+
+  const handleShare = useCallback(async () => {
+    const shareData = {
+      title: product.name,
+      text: `Check out ${product.name} on Tangry Spices!`,
+      url: window.location.href,
+    };
+    if (navigator.share) {
+      try {
+        await navigator.share(shareData);
+      } catch {
+        // user cancelled share
+      }
+    } else {
+      await navigator.clipboard.writeText(window.location.href);
+      alert("Link copied to clipboard!");
+    }
+  }, [product.name]);
 
   const getDisplayImage = (index: number) =>
     product.images[index] || PLACEHOLDER_IMAGE;
@@ -325,10 +357,20 @@ export const ProductDetail = ({ product }: ProductDetailProps) => {
             >
               Add to Cart
             </button>
-            <button className="p-4 border-2 border-gray-300 rounded-full hover:border-[#D32F2F] hover:text-[#D32F2F] transition">
-              <Heart size={24} />
+            <button
+              onClick={handleWishlist}
+              className={`p-4 border-2 rounded-full transition ${
+                isWishlisted
+                  ? "border-[#D32F2F] text-[#D32F2F] bg-red-50"
+                  : "border-gray-300 hover:border-[#D32F2F] hover:text-[#D32F2F]"
+              }`}
+            >
+              <Heart size={24} fill={isWishlisted ? "currentColor" : "none"} />
             </button>
-            <button className="p-4 border-2 border-gray-300 rounded-full hover:border-[#D32F2F] hover:text-[#D32F2F] transition">
+            <button
+              onClick={handleShare}
+              className="p-4 border-2 border-gray-300 rounded-full hover:border-[#D32F2F] hover:text-[#D32F2F] transition"
+            >
               <Share2 size={24} />
             </button>
           </div>
