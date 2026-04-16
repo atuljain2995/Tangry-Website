@@ -94,17 +94,17 @@ export function ProductsPageClient({ products, categories }: ProductsPageClientP
 
       <div className="container mx-auto px-4 py-16">
         {/* Filters and Sorting */}
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-12 gap-6">
-          {/* Category Filter */}
-          <div className="flex-1">
-            <div className="flex bg-gray-100 p-1.5 rounded-xl flex-wrap gap-2">
+        <div className="mb-12 space-y-4">
+          {/* Category Filter — scrollable strip */}
+          <div className="w-full overflow-x-auto no-scrollbar">
+            <div className="flex gap-2 w-max min-w-full">
               <button
                 type="button"
                 onClick={() => handleCategoryChange('all')}
-                className={`px-4 py-2 rounded-lg text-sm font-bold transition capitalize cursor-pointer ${
+                className={`px-5 py-2 rounded-full text-sm font-semibold transition capitalize border whitespace-nowrap cursor-pointer ${
                   selectedCategoryId === 'all'
-                    ? 'bg-white shadow-md text-black'
-                    : 'text-gray-500 hover:text-black'
+                    ? 'bg-gray-900 text-white border-gray-900'
+                    : 'bg-white text-gray-700 border-gray-200 hover:border-gray-400'
                 }`}
               >
                 All
@@ -114,10 +114,10 @@ export function ProductsPageClient({ products, categories }: ProductsPageClientP
                   type="button"
                   key={category.id}
                   onClick={() => handleCategoryChange(category.id)}
-                  className={`px-4 py-2 rounded-lg text-sm font-bold transition capitalize cursor-pointer ${
+                  className={`px-5 py-2 rounded-full text-sm font-semibold transition capitalize border whitespace-nowrap cursor-pointer ${
                     selectedCategoryId === category.id
-                      ? 'bg-white shadow-md text-black'
-                      : 'text-gray-500 hover:text-black'
+                      ? 'bg-gray-900 text-white border-gray-900'
+                      : 'bg-white text-gray-700 border-gray-200 hover:border-gray-400'
                   }`}
                 >
                   {category.chip_label || category.title}
@@ -126,8 +126,8 @@ export function ProductsPageClient({ products, categories }: ProductsPageClientP
             </div>
           </div>
 
-          {/* Sort — custom chevron so spacing is consistent (native arrow ignores padding) */}
-          <div className="relative shrink-0">
+          {/* Sort */}
+          <div className="relative self-start">
             <select
               value={sortBy}
               onChange={(e) => setSortBy(e.target.value as typeof sortBy)}
