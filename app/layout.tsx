@@ -12,7 +12,11 @@ import { PageViewTracker } from "@/components/analytics/PageViewTracker";
 import GoogleAnalytics from "@/components/analytics/GoogleAnalytics";
 import MicrosoftClarity from "@/components/analytics/MicrosoftClarity";
 
-import { getOrganizationSchema, getLocalBusinessSchema } from '@/lib/utils/schema';
+import {
+  getOrganizationSchema,
+  getLocalBusinessSchema,
+} from "@/lib/utils/schema";
+import NextTopLoader from "nextjs-toploader";
 
 const poppins = Poppins({
   subsets: ["latin"],
@@ -50,13 +54,11 @@ export const metadata = {
   metadataBase: new URL("https://www.tangryspices.com"),
   icons: {
     icon: [
-      { url: '/favicon.ico', sizes: '32x32' },
-      { url: '/images/logo-192.png', sizes: '192x192', type: 'image/png' },
-      { url: '/images/logo-512.png', sizes: '512x512', type: 'image/png' },
+      { url: "/favicon.ico", sizes: "32x32" },
+      { url: "/images/logo-192.png", sizes: "192x192", type: "image/png" },
+      { url: "/images/logo-512.png", sizes: "512x512", type: "image/png" },
     ],
-    apple: [
-      { url: '/images/logo-192.png', sizes: '192x192' },
-    ],
+    apple: [{ url: "/images/logo-192.png", sizes: "192x192" }],
   },
   alternates: {
     canonical: "/",
@@ -99,31 +101,41 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
-        <link rel="preconnect" href="https://pmknwgwbwfyvrkfbrccu.supabase.co" />
-        <link rel="dns-prefetch" href="https://pmknwgwbwfyvrkfbrccu.supabase.co" />
+        <link
+          rel="preconnect"
+          href="https://pmknwgwbwfyvrkfbrccu.supabase.co"
+        />
+        <link
+          rel="dns-prefetch"
+          href="https://pmknwgwbwfyvrkfbrccu.supabase.co"
+        />
         <link rel="preconnect" href="https://www.googletagmanager.com" />
         <GoogleAnalytics />
         <MicrosoftClarity />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
-            __html: JSON.stringify([getOrganizationSchema(), getLocalBusinessSchema()]),
+            __html: JSON.stringify([
+              getOrganizationSchema(),
+              getLocalBusinessSchema(),
+            ]),
           }}
         />
       </head>
       <body
         className={`${poppins.variable} ${playfair.variable} font-sans antialiased bg-neutral-50 text-neutral-900 transition-colors duration-200 dark:bg-neutral-950 dark:text-neutral-100`}
       >
+        <NextTopLoader color="#D32F2F" height={3} showSpinner={false} />
         <ThemeProvider>
           <CartProvider>
             <AuthProvider>
               <WishlistProvider>
-              {children}
-              <WhatsAppButton />
-              <VercelAnalytics />
-              <SpeedInsights />
-              <WebVitals />
-              <PageViewTracker />
+                {children}
+                <WhatsAppButton />
+                <VercelAnalytics />
+                <SpeedInsights />
+                <WebVitals />
+                <PageViewTracker />
               </WishlistProvider>
             </AuthProvider>
           </CartProvider>
