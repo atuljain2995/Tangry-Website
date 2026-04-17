@@ -13,6 +13,8 @@ interface PaymentOptionsProps {
 export const PaymentOptions = ({ onSubmit, onBack, isProcessing = false }: PaymentOptionsProps) => {
   const [selectedMethod, setSelectedMethod] = useState<PaymentMethod>('razorpay');
 
+  const submitLabel = selectedMethod === 'razorpay' ? 'Continue to Payment' : 'Place Order';
+
   const paymentMethods = [
     {
       id: 'razorpay' as PaymentMethod,
@@ -25,9 +27,9 @@ export const PaymentOptions = ({ onSubmit, onBack, isProcessing = false }: Payme
     {
       id: 'stripe' as PaymentMethod,
       name: 'International Cards',
-      description: 'Stripe - International Credit/Debit Cards',
+      description: 'Temporarily unavailable',
       icon: CreditCard,
-      available: true,
+      available: false,
       recommended: false
     },
     {
@@ -116,8 +118,8 @@ export const PaymentOptions = ({ onSubmit, onBack, isProcessing = false }: Payme
         <ul className="space-y-1 text-sm text-blue-800">
           <li>• Your payment information is secure and encrypted</li>
           <li>• You will be redirected to the payment gateway</li>
-          <li>• COD available for orders below ₹5,000</li>
-          <li>• International payments supported via Stripe</li>
+          <li>• Online payments are currently supported via Razorpay</li>
+          <li>• Cash on Delivery is available on eligible orders</li>
         </ul>
       </div>
 
@@ -130,7 +132,7 @@ export const PaymentOptions = ({ onSubmit, onBack, isProcessing = false }: Payme
           className="w-4 h-4 mt-1 text-[#D32F2F] focus:ring-[#D32F2F] border-gray-300 rounded"
         />
         <label htmlFor="terms" className="text-sm text-gray-700">
-          I agree to the <a href="/terms" className="text-[#D32F2F] hover:underline">Terms & Conditions</a> and <a href="/privacy" className="text-[#D32F2F] hover:underline">Privacy Policy</a>
+          I agree to the Terms & Conditions and Privacy Policy.
         </label>
       </div>
 
@@ -155,7 +157,7 @@ export const PaymentOptions = ({ onSubmit, onBack, isProcessing = false }: Payme
               <span>Processing...</span>
             </>
           ) : (
-            <span>Place Order</span>
+            <span>{submitLabel}</span>
           )}
         </button>
       </div>

@@ -6,7 +6,6 @@ import { MobileMenu } from '@/components/layout/MobileMenu';
 import { Footer } from '@/components/layout/Footer';
 import { CartDrawer } from '@/components/ecommerce/CartDrawer';
 import { Clock, User } from 'lucide-react';
-import Link from 'next/link';
 
 // Sample blog posts - Replace with CMS or database
 const blogPosts = [
@@ -134,77 +133,73 @@ export default function BlogPage() {
         {selectedCategory === 'All' && filteredPosts.length > 0 && (
           <div className="mb-12">
             <h2 className="text-2xl font-bold text-gray-900 mb-6">Featured Article</h2>
-            <Link href={`/blog/${filteredPosts[0].slug}`}>
-              <div className="bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition group">
-                <div className="grid md:grid-cols-2 gap-0">
-                  <div className="relative h-64 md:h-auto bg-gray-200">
-                    <div className="w-full h-full flex items-center justify-center text-gray-400">
-                      Featured Image
-                    </div>
+            <article className="bg-white rounded-lg shadow-lg overflow-hidden group">
+              <div className="grid md:grid-cols-2 gap-0">
+                <div className="relative h-64 md:h-auto bg-gray-200">
+                  <div className="w-full h-full flex items-center justify-center text-gray-400">
+                    Featured Image
                   </div>
-                  <div className="p-8 flex flex-col justify-center">
-                    <span className="inline-block bg-[#D32F2F] text-white text-xs px-3 py-1 rounded-full font-bold uppercase mb-3 w-fit">
-                      {filteredPosts[0].category}
+                </div>
+                <div className="p-8 flex flex-col justify-center">
+                  <span className="inline-block bg-[#D32F2F] text-white text-xs px-3 py-1 rounded-full font-bold uppercase mb-3 w-fit">
+                    {filteredPosts[0].category}
+                  </span>
+                  <h3 className="text-3xl font-bold text-gray-900 mb-4">
+                    {filteredPosts[0].title}
+                  </h3>
+                  <p className="text-gray-600 mb-4 text-lg">{filteredPosts[0].excerpt}</p>
+                  <div className="flex items-center text-sm text-gray-500 space-x-4">
+                    <span className="flex items-center">
+                      <User size={16} className="mr-1" />
+                      {filteredPosts[0].author}
                     </span>
-                    <h3 className="text-3xl font-bold text-gray-900 mb-4 group-hover:text-[#D32F2F] transition">
-                      {filteredPosts[0].title}
-                    </h3>
-                    <p className="text-gray-600 mb-4 text-lg">{filteredPosts[0].excerpt}</p>
-                    <div className="flex items-center text-sm text-gray-500 space-x-4">
-                      <span className="flex items-center">
-                        <User size={16} className="mr-1" />
-                        {filteredPosts[0].author}
-                      </span>
-                      <span className="flex items-center">
-                        <Clock size={16} className="mr-1" />
-                        {filteredPosts[0].readTime}
-                      </span>
-                    </div>
+                    <span className="flex items-center">
+                      <Clock size={16} className="mr-1" />
+                      {filteredPosts[0].readTime}
+                    </span>
                   </div>
                 </div>
               </div>
-            </Link>
+            </article>
           </div>
         )}
 
         {/* Blog Grid */}
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
           {filteredPosts.slice(selectedCategory === 'All' ? 1 : 0).map(post => (
-            <Link key={post.id} href={`/blog/${post.slug}`}>
-              <article className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition group">
-                <div className="relative h-48 bg-gray-200">
-                  <div className="w-full h-full flex items-center justify-center text-gray-400">
-                    Blog Image
-                  </div>
-                  <span className="absolute top-4 left-4 bg-[#D32F2F] text-white text-xs px-3 py-1 rounded-full font-bold uppercase">
-                    {post.category}
+            <article key={post.id} className="bg-white rounded-lg shadow-md overflow-hidden group">
+              <div className="relative h-48 bg-gray-200">
+                <div className="w-full h-full flex items-center justify-center text-gray-400">
+                  Blog Image
+                </div>
+                <span className="absolute top-4 left-4 bg-[#D32F2F] text-white text-xs px-3 py-1 rounded-full font-bold uppercase">
+                  {post.category}
+                </span>
+              </div>
+              <div className="p-6">
+                <h3 className="text-xl font-bold text-gray-900 mb-3 line-clamp-2">
+                  {post.title}
+                </h3>
+                <p className="text-gray-600 mb-4 text-sm line-clamp-3">{post.excerpt}</p>
+                <div className="flex items-center text-xs text-gray-500 mb-4">
+                  <span className="flex items-center mr-4">
+                    <User size={14} className="mr-1" />
+                    {post.author}
+                  </span>
+                  <span className="flex items-center">
+                    <Clock size={14} className="mr-1" />
+                    {post.readTime}
                   </span>
                 </div>
-                <div className="p-6">
-                  <h3 className="text-xl font-bold text-gray-900 mb-3 group-hover:text-[#D32F2F] transition line-clamp-2">
-                    {post.title}
-                  </h3>
-                  <p className="text-gray-600 mb-4 text-sm line-clamp-3">{post.excerpt}</p>
-                  <div className="flex items-center text-xs text-gray-500 mb-4">
-                    <span className="flex items-center mr-4">
-                      <User size={14} className="mr-1" />
-                      {post.author}
+                <div className="flex flex-wrap gap-2">
+                  {post.tags.map(tag => (
+                    <span key={tag} className="text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded">
+                      #{tag}
                     </span>
-                    <span className="flex items-center">
-                      <Clock size={14} className="mr-1" />
-                      {post.readTime}
-                    </span>
-                  </div>
-                  <div className="flex flex-wrap gap-2">
-                    {post.tags.map(tag => (
-                      <span key={tag} className="text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded">
-                        #{tag}
-                      </span>
-                    ))}
-                  </div>
+                  ))}
                 </div>
-              </article>
-            </Link>
+              </div>
+            </article>
           ))}
         </div>
 

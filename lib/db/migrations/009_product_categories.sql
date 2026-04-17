@@ -24,7 +24,7 @@ VALUES
     1
   ),
   (
-    'ready-powders',
+    'ready-to-eat',
     'Ready to Eat',
     NULL,
     'Gun powder (podi), chaat masala, vada pav chutney, bhuna jeera, and everyday finishing spices.',

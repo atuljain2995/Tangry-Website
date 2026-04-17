@@ -6,7 +6,6 @@ import { MobileMenu } from '@/components/layout/MobileMenu';
 import { Footer } from '@/components/layout/Footer';
 import { CartDrawer } from '@/components/ecommerce/CartDrawer';
 import { Clock, ChefHat, Users, Search } from 'lucide-react';
-import Link from 'next/link';
 
 // Extended recipe data
 const recipes = [
@@ -205,41 +204,39 @@ export default function RecipesPage() {
             <h2 className="text-3xl font-bold text-gray-900 mb-6">Featured Recipes</h2>
             <div className="grid md:grid-cols-3 gap-6">
               {featuredRecipes.map(recipe => (
-                <Link key={recipe.id} href={`/recipes/${recipe.slug}`}>
-                  <div className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition group">
-                    <div className="relative h-48 bg-gray-200">
-                      <div className="w-full h-full flex items-center justify-center text-gray-400">
-                        Recipe Image
-                      </div>
-                      <span className="absolute top-4 right-4 bg-yellow-400 text-gray-900 text-xs px-3 py-1 rounded-full font-bold">
-                        ⭐ Featured
+                <article key={recipe.id} className="bg-white rounded-lg shadow-md overflow-hidden group">
+                  <div className="relative h-48 bg-gray-200">
+                    <div className="w-full h-full flex items-center justify-center text-gray-400">
+                      Recipe Image
+                    </div>
+                    <span className="absolute top-4 right-4 bg-yellow-400 text-gray-900 text-xs px-3 py-1 rounded-full font-bold">
+                      ⭐ Featured
+                    </span>
+                  </div>
+                  <div className="p-6">
+                    <h3 className="text-xl font-bold text-gray-900 mb-2">
+                      {recipe.title}
+                    </h3>
+                    <p className="text-gray-600 text-sm mb-4 line-clamp-2">{recipe.description}</p>
+                    <div className="flex items-center justify-between text-xs text-gray-500">
+                      <span className="flex items-center">
+                        <Clock size={14} className="mr-1" />
+                        {recipe.cookTime}
+                      </span>
+                      <span className="flex items-center">
+                        <Users size={14} className="mr-1" />
+                        {recipe.servings} servings
+                      </span>
+                      <span className={`px-2 py-1 rounded font-semibold ${
+                        recipe.difficulty === 'Easy' ? 'bg-green-100 text-green-700' :
+                        recipe.difficulty === 'Medium' ? 'bg-yellow-100 text-yellow-700' :
+                        'bg-red-100 text-red-700'
+                      }`}>
+                        {recipe.difficulty}
                       </span>
                     </div>
-                    <div className="p-6">
-                      <h3 className="text-xl font-bold text-gray-900 mb-2 group-hover:text-[#D32F2F] transition">
-                        {recipe.title}
-                      </h3>
-                      <p className="text-gray-600 text-sm mb-4 line-clamp-2">{recipe.description}</p>
-                      <div className="flex items-center justify-between text-xs text-gray-500">
-                        <span className="flex items-center">
-                          <Clock size={14} className="mr-1" />
-                          {recipe.cookTime}
-                        </span>
-                        <span className="flex items-center">
-                          <Users size={14} className="mr-1" />
-                          {recipe.servings} servings
-                        </span>
-                        <span className={`px-2 py-1 rounded font-semibold ${
-                          recipe.difficulty === 'Easy' ? 'bg-green-100 text-green-700' :
-                          recipe.difficulty === 'Medium' ? 'bg-yellow-100 text-yellow-700' :
-                          'bg-red-100 text-red-700'
-                        }`}>
-                          {recipe.difficulty}
-                        </span>
-                      </div>
-                    </div>
                   </div>
-                </Link>
+                </article>
               ))}
             </div>
           </div>
@@ -253,50 +250,48 @@ export default function RecipesPage() {
           {filteredRecipes.length > 0 ? (
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
               {filteredRecipes.map(recipe => (
-                <Link key={recipe.id} href={`/recipes/${recipe.slug}`}>
-                  <div className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition group">
-                    <div className="relative h-48 bg-gray-200">
-                      <div className="w-full h-full flex items-center justify-center text-gray-400">
-                        Recipe Image
-                      </div>
-                    </div>
-                    <div className="p-6">
-                      <div className="flex items-center justify-between mb-2">
-                        <span className="text-xs bg-[#D32F2F] text-white px-2 py-1 rounded font-semibold">
-                          {recipe.category}
-                        </span>
-                        <span className={`text-xs px-2 py-1 rounded font-semibold ${
-                          recipe.difficulty === 'Easy' ? 'bg-green-100 text-green-700' :
-                          recipe.difficulty === 'Medium' ? 'bg-yellow-100 text-yellow-700' :
-                          'bg-red-100 text-red-700'
-                        }`}>
-                          {recipe.difficulty}
-                        </span>
-                      </div>
-                      <h3 className="text-xl font-bold text-gray-900 mb-2 group-hover:text-[#D32F2F] transition">
-                        {recipe.title}
-                      </h3>
-                      <p className="text-gray-600 text-sm mb-4 line-clamp-2">{recipe.description}</p>
-                      <div className="flex flex-wrap gap-2 mb-4">
-                        {recipe.spices.slice(0, 2).map(spice => (
-                          <span key={spice} className="text-xs bg-orange-50 text-orange-700 px-2 py-1 rounded">
-                            {spice}
-                          </span>
-                        ))}
-                      </div>
-                      <div className="flex items-center justify-between text-xs text-gray-500">
-                        <span className="flex items-center">
-                          <Clock size={14} className="mr-1" />
-                          {recipe.prepTime} + {recipe.cookTime}
-                        </span>
-                        <span className="flex items-center">
-                          <Users size={14} className="mr-1" />
-                          {recipe.servings} servings
-                        </span>
-                      </div>
+                <article key={recipe.id} className="bg-white rounded-lg shadow-md overflow-hidden group">
+                  <div className="relative h-48 bg-gray-200">
+                    <div className="w-full h-full flex items-center justify-center text-gray-400">
+                      Recipe Image
                     </div>
                   </div>
-                </Link>
+                  <div className="p-6">
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="text-xs bg-[#D32F2F] text-white px-2 py-1 rounded font-semibold">
+                        {recipe.category}
+                      </span>
+                      <span className={`text-xs px-2 py-1 rounded font-semibold ${
+                        recipe.difficulty === 'Easy' ? 'bg-green-100 text-green-700' :
+                        recipe.difficulty === 'Medium' ? 'bg-yellow-100 text-yellow-700' :
+                        'bg-red-100 text-red-700'
+                      }`}>
+                        {recipe.difficulty}
+                      </span>
+                    </div>
+                    <h3 className="text-xl font-bold text-gray-900 mb-2">
+                      {recipe.title}
+                    </h3>
+                    <p className="text-gray-600 text-sm mb-4 line-clamp-2">{recipe.description}</p>
+                    <div className="flex flex-wrap gap-2 mb-4">
+                      {recipe.spices.slice(0, 2).map(spice => (
+                        <span key={spice} className="text-xs bg-orange-50 text-orange-700 px-2 py-1 rounded">
+                          {spice}
+                        </span>
+                      ))}
+                    </div>
+                    <div className="flex items-center justify-between text-xs text-gray-500">
+                      <span className="flex items-center">
+                        <Clock size={14} className="mr-1" />
+                        {recipe.prepTime} + {recipe.cookTime}
+                      </span>
+                      <span className="flex items-center">
+                        <Users size={14} className="mr-1" />
+                        {recipe.servings} servings
+                      </span>
+                    </div>
+                  </div>
+                </article>
               ))}
             </div>
           ) : (

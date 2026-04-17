@@ -39,7 +39,7 @@ export const PRODUCT_CATEGORIES: ProductCategory[] = [
     products: ['Dabeli Masala', 'Pav Bhaji Masala', 'Sambhar Masala', 'Chole Masala'],
   },
   {
-    id: 'ready-powders',
+    id: 'ready-to-eat',
     title: 'Ready to Eat',
     description:
       'Gun powder (podi), chaat masala, vada pav chutney, bhuna jeera, and everyday finishing spices—ready to sprinkle or stir in.',

@@ -1,5 +1,17 @@
 import { MetadataRoute } from 'next';
 import { PRODUCTS_EXTENDED } from '@/lib/data/productsExtended';
+import { PRODUCT_CATEGORIES } from '@/lib/data/products';
+import { getProductCategories, type DbProductCategory } from '@/lib/db/queries';
+
+function fallbackCategories(): DbProductCategory[] {
+  return PRODUCT_CATEGORIES.map((category, index) => ({
+    id: category.id,
+    slug: category.id,
+    title: category.title,
+    chip_label: category.chipLabel ?? null,
+    sort_order: index,
+  }));
+}
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = 'https://www.tangryspices.com';
@@ -61,6 +73,15 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: product.isBestSeller || product.isFeatured ? 0.9 : 0.8,
   }));
 
-  return [...staticPages, ...productPages];
+  const fromDb = await getProductCategories();
+  const categories = fromDb.length > 0 ? fromDb : fallbackCategories();
+  const categoryPages = categories.map((category) => ({
+    url: `${baseUrl}/categories/${category.slug}`,
+    lastModified: buildTime,
+    changeFrequency: 'weekly' as const,
+    priority: 0.7,
+  }));
+
+  return [...staticPages, ...categoryPages, ...productPages];
 }
 

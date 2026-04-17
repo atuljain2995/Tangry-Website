@@ -11,6 +11,7 @@ import { StructuredData } from '@/components/seo/StructuredData';
 import { getProductSchema, getBreadcrumbSchema } from '@/lib/utils/schema';
 import { ProductExtended } from '@/lib/types/database';
 import { analytics } from '@/lib/analytics';
+import { PRODUCT_CATEGORIES } from '@/lib/data/products';
 
 interface ProductPageClientProps {
   product: ProductExtended;
@@ -19,6 +20,11 @@ interface ProductPageClientProps {
 
 export function ProductPageClient({ product, relatedProducts }: ProductPageClientProps) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
+  const matchedCategory = PRODUCT_CATEGORIES.find((category) => category.title === product.category);
+  const categoryUrl = matchedCategory
+    ? `https://www.tangryspices.com/categories/${matchedCategory.id}`
+    : 'https://www.tangryspices.com/products';
 
   useEffect(() => {
     const price = product.variants?.[0]?.price ?? 0;
@@ -29,7 +35,7 @@ export function ProductPageClient({ product, relatedProducts }: ProductPageClien
   const breadcrumbs = [
     { name: 'Home', url: 'https://www.tangryspices.com' },
     { name: 'Products', url: 'https://www.tangryspices.com/products' },
-    { name: product.category, url: `https://www.tangryspices.com/category/${product.category}` },
+    { name: product.category, url: categoryUrl },
     { name: product.name, url: `https://www.tangryspices.com/products/${product.slug}` },
   ];
 

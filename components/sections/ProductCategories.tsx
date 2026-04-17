@@ -20,6 +20,14 @@ const CATEGORIES = [
     image: '/images/categories/ready-to-eat.png',
   },
   {
+    id: 'essentials',
+    title: 'Essentials',
+    description: 'Turmeric, jeera, and staple spices for the everyday Indian kitchen.',
+    gradient: 'from-blue-50 to-cyan-50',
+    accentBorder: 'border-blue-200',
+    image: '/images/categories/spices.png',
+  },
+  {
     id: 'pickles',
     title: 'Authentic Pickles',
     description: 'Traditional lemon, mango, garlic, and mixed veg recipes from Rajasthan.',
@@ -40,11 +48,11 @@ export const ProductCategories = () => {
           <div className="w-16 h-1 bg-orange-500 mx-auto mt-4 rounded-full"></div>
         </div>
 
-        <div className="grid md:grid-cols-3 gap-5">
+        <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-4">
           {CATEGORIES.map((category) => (
             <Link
               key={category.id}
-              href={`/products?category=${category.id}`}
+              href={`/categories/${category.id}`}
               className={`group bg-gradient-to-br ${category.gradient} rounded-2xl border ${category.accentBorder} p-6 md:p-7 flex flex-col justify-between transition-all duration-300 hover:shadow-xl hover:-translate-y-1 relative overflow-hidden min-h-[220px]`}
             >
               {/* Text Content */}
