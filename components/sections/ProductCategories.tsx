@@ -25,7 +25,7 @@ const CATEGORIES = [
     description: 'Turmeric, jeera, and staple spices for the everyday Indian kitchen.',
     gradient: 'from-blue-50 to-cyan-50',
     accentBorder: 'border-blue-200',
-    image: '/images/categories/spices.png',
+    image: '/images/categories/essentials.png',
   },
   {
     id: 'pickles',
@@ -53,35 +53,32 @@ export const ProductCategories = () => {
             <Link
               key={category.id}
               href={`/categories/${category.id}`}
-              className={`group bg-gradient-to-br ${category.gradient} rounded-2xl border ${category.accentBorder} p-6 md:p-7 flex flex-col justify-between transition-all duration-300 hover:shadow-xl hover:-translate-y-1 relative overflow-hidden min-h-[220px]`}
+              className={`group bg-gradient-to-br ${category.gradient} rounded-2xl overflow-hidden flex flex-col transition-all duration-300 hover:shadow-xl hover:-translate-y-1`}
             >
-              {/* Text Content */}
-              <div className="relative z-10 max-w-[60%]">
-                <h3 className="text-xl md:text-[22px] font-bold text-gray-900 mb-2 leading-tight">{category.title}</h3>
-                <p className="text-gray-500 text-[13px] leading-relaxed">{category.description}</p>
-              </div>
-
-              <div className="relative z-10">
-                <span className="text-orange-600 font-bold text-sm group-hover:text-orange-700 inline-flex items-center gap-1.5 transition-colors">
-                  View products <ArrowRight size={14} className="group-hover:translate-x-0.5 transition-transform" />
-                </span>
-              </div>
-
-              {/* Circular Image */}
-              <div className="absolute -right-6 top-1/2 -translate-y-1/2 w-40 h-40 md:w-48 md:h-48 rounded-full overflow-hidden border-4 border-white/80 shadow-lg">
+              {/* Image */}
+              <div className="relative w-full aspect-[4/3] overflow-hidden m-3 rounded-xl" style={{ width: 'calc(100% - 1.5rem)' }}>
                 {category.image ? (
                   <Image
                     src={category.image}
                     alt={category.title}
                     fill
-                    className="object-cover group-hover:scale-110 transition-transform duration-500"
-                    sizes="192px"
+                    className="object-cover group-hover:scale-105 transition-transform duration-500"
+                    sizes="(max-width: 768px) 50vw, 25vw"
                   />
                 ) : (
-                  <div className="w-full h-full bg-white/70 backdrop-blur-sm flex items-center justify-center">
-                    <span className="text-6xl md:text-7xl drop-shadow-sm">{category.emoji}</span>
+                  <div className="w-full h-full bg-white/60 flex items-center justify-center">
+                    <span className="text-7xl drop-shadow-sm">{category.emoji}</span>
                   </div>
                 )}
+              </div>
+
+              {/* Text Content */}
+              <div className="px-5 pb-6 pt-2 flex flex-col gap-2">
+                <h3 className="text-xl font-bold text-gray-900 leading-tight">{category.title}</h3>
+                <p className="text-gray-500 text-[13px] leading-relaxed">{category.description}</p>
+                <span className="text-gray-800 font-semibold text-sm group-hover:text-orange-600 inline-flex items-center gap-1.5 transition-colors mt-1">
+                  View products <ArrowRight size={14} className="group-hover:translate-x-0.5 transition-transform" />
+                </span>
               </div>
             </Link>
           ))}
