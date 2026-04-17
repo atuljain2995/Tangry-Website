@@ -358,7 +358,7 @@ export const Hero = ({ products = [] }: HeroProps) => {
       </div>
 
       {/* Animated Ticker */}
-      <div className="absolute bottom-6 left-0 z-[1] w-full origin-left -rotate-1 scale-105 overflow-hidden bg-black py-2.5 text-white shadow-lg sm:bottom-10 sm:py-3">
+      <div className="absolute bottom-1 left-0 z-[1] w-full origin-left -rotate-1 scale-105 overflow-hidden bg-black py-2.5 text-white shadow-lg sm:bottom-10 sm:py-3">
         <div className="animate-marquee flex gap-12 whitespace-nowrap text-sm font-bold uppercase tracking-widest">
           {['Pure Spices', 'Jaipur Made', 'FSSAI Licensed', 'Pure Spices', 'Jaipur Made', 'FSSAI Licensed', 'Pure Spices', 'Jaipur Made', 'FSSAI Licensed'].map((label, i) => (
             <span key={i} className="flex items-center gap-2">
