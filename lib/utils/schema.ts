@@ -1,37 +1,36 @@
 // Structured data (JSON-LD) generators for SEO
 
-import { ProductExtended } from '../types/database';
-import { COMPANY_INFO, SOCIAL_LINKS } from '../data/constants';
+import { ProductExtended } from "../types/database";
+import { COMPANY_INFO, SOCIAL_LINKS } from "../data/constants";
 
 /**
  * Generate Organization schema
  */
 const orgPostalAddress = {
-  '@type': 'PostalAddress' as const,
-  streetAddress:
-    'A7, Marg No A5, Khatipura Road, Kumawat Colony, Jhotwara',
-  addressLocality: 'Jaipur',
-  postalCode: '302012',
-  addressRegion: 'Rajasthan',
-  addressCountry: 'IN',
+  "@type": "PostalAddress" as const,
+  streetAddress: "A7, Marg No A5, Khatipura Road, Kumawat Colony, Jhotwara",
+  addressLocality: "Jaipur",
+  postalCode: "302012",
+  addressRegion: "Rajasthan",
+  addressCountry: "IN",
 };
 
 export function getOrganizationSchema() {
   return {
-    '@context': 'https://schema.org',
-    '@type': 'Organization',
-    name: 'Tangry',
-    alternateName: ['Tangry Spices'],
-    url: 'https://www.tangryspices.com',
-    logo: 'https://www.tangryspices.com/images/logo-512.png',
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    name: "Tangry",
+    alternateName: ["Tangry Spices"],
+    url: "https://www.tangryspices.com",
+    logo: "https://www.tangryspices.com/images/logo-512.png",
     description: `${COMPANY_INFO.brandName} — ${COMPANY_INFO.tagline}. Authentic spices and masalas from Jaipur, Rajasthan.`,
     address: orgPostalAddress,
     contactPoint: {
-      '@type': 'ContactPoint',
+      "@type": "ContactPoint",
       telephone: COMPANY_INFO.phoneTel,
-      contactType: 'Customer Service',
+      contactType: "Customer Service",
       email: COMPANY_INFO.email,
-      availableLanguage: ['English', 'Hindi'],
+      availableLanguage: ["English", "Hindi"],
     },
     sameAs: [
       SOCIAL_LINKS.facebook,
@@ -43,38 +42,100 @@ export function getOrganizationSchema() {
 }
 
 /**
- * Generate Product schema
+ * Generate Product schema with AggregateRating
  */
 export function getProductSchema(product: ProductExtended) {
-  const lowestPrice = Math.min(...product.variants.map(v => v.price));
-  const highestPrice = Math.max(...product.variants.map(v => v.price));
+  const productUrl = `https://www.tangryspices.com/products/${product.slug}`;
+  const lowestPrice = Math.min(...product.variants.map((v) => v.price));
+  const highestPrice = Math.max(...product.variants.map((v) => v.price));
+
+  const absoluteImages = product.images.map((image) =>
+    image.startsWith("http") ? image : `https://www.tangryspices.com${image}`,
+  );
+
+  const aggregateRating =
+    product.rating && product.reviewCount > 0
+      ? {
+          "@type": "AggregateRating",
+          ratingValue: product.rating,
+          reviewCount: product.reviewCount,
+          bestRating: "5",
+          worstRating: "1",
+        }
+      : undefined;
+
+  const availability = product.variants.some(
+    (v) => v.isAvailable && v.stock > 0,
+  )
+    ? "https://schema.org/InStock"
+    : "https://schema.org/OutOfStock";
+
+  const seller = {
+    "@type": "Organization",
+    name: "Tangry Spices",
+  };
+
+  if (product.variants.length > 1) {
+    return {
+      "@context": "https://schema.org",
+      "@type": "ProductGroup",
+      "@id": `${productUrl}#group`,
+      name: product.name,
+      url: productUrl,
+      description: product.description,
+      image: absoluteImages,
+      brand: {
+        "@type": "Brand",
+        name: "Tangry",
+      },
+      category: product.category,
+      aggregateRating,
+      variesBy: ["https://schema.org/size"],
+      hasVariant: product.variants.map((variant) => ({
+        "@type": "Product",
+        "@id": `${productUrl}#${variant.sku}`,
+        name: `${product.name} ${variant.name}`,
+        sku: variant.sku,
+        size: variant.name,
+        image: absoluteImages,
+        offers: {
+          "@type": "Offer",
+          url: productUrl,
+          priceCurrency: "INR",
+          price: variant.price,
+          availability:
+            variant.isAvailable && variant.stock > 0
+              ? "https://schema.org/InStock"
+              : "https://schema.org/OutOfStock",
+          seller,
+        },
+      })),
+    };
+  }
 
   return {
-    '@context': 'https://schema.org',
-    '@type': 'Product',
-    '@id': `https://www.tangryspices.com/products/${product.slug}`,
+    "@context": "https://schema.org",
+    "@type": "Product",
+    "@id": `${productUrl}#product`,
     name: product.name,
+    url: productUrl,
     description: product.description,
-    image: product.images,
+    image: absoluteImages,
     brand: {
-      '@type': 'Brand',
-      name: 'Tangry',
+      "@type": "Brand",
+      name: "Tangry",
     },
     sku: product.variants[0]?.sku || product.id,
     category: product.category,
+    aggregateRating,
     offers: {
-      '@type': 'AggregateOffer',
-      url: `https://www.tangryspices.com/products/${product.slug}`,
-      priceCurrency: 'INR',
+      "@type": "AggregateOffer",
+      url: productUrl,
+      priceCurrency: "INR",
       lowPrice: lowestPrice,
       highPrice: highestPrice,
-      availability: product.variants.some(v => v.isAvailable && v.stock > 0)
-        ? 'https://schema.org/InStock'
-        : 'https://schema.org/OutOfStock',
-      seller: {
-        '@type': 'Organization',
-        name: 'Tangry Spices',
-      },
+      availability,
+      seller,
     },
   };
 }
@@ -82,12 +143,14 @@ export function getProductSchema(product: ProductExtended) {
 /**
  * Generate BreadcrumbList schema
  */
-export function getBreadcrumbSchema(items: Array<{ name: string; url: string }>) {
+export function getBreadcrumbSchema(
+  items: Array<{ name: string; url: string }>,
+) {
   return {
-    '@context': 'https://schema.org',
-    '@type': 'BreadcrumbList',
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
     itemListElement: items.map((item, index) => ({
-      '@type': 'ListItem',
+      "@type": "ListItem",
       position: index + 1,
       name: item.name,
       item: item.url,
@@ -112,14 +175,14 @@ export function getRecipeSchema(recipe: {
   cuisine: string;
 }) {
   return {
-    '@context': 'https://schema.org',
-    '@type': 'Recipe',
+    "@context": "https://schema.org",
+    "@type": "Recipe",
     name: recipe.name,
     description: recipe.description,
     image: recipe.image,
     author: {
-      '@type': 'Organization',
-      name: 'Tangry Spices',
+      "@type": "Organization",
+      name: "Tangry Spices",
     },
     prepTime: recipe.prepTime,
     cookTime: recipe.cookTime,
@@ -127,28 +190,30 @@ export function getRecipeSchema(recipe: {
     recipeYield: recipe.servings,
     recipeIngredient: recipe.ingredients,
     recipeInstructions: recipe.instructions.map((instruction, index) => ({
-      '@type': 'HowToStep',
+      "@type": "HowToStep",
       position: index + 1,
       text: instruction,
     })),
     recipeCategory: recipe.category,
     recipeCuisine: recipe.cuisine,
-    keywords: [recipe.category, recipe.cuisine, 'Indian cooking', 'spices'],
+    keywords: [recipe.category, recipe.cuisine, "Indian cooking", "spices"],
   };
 }
 
 /**
  * Generate FAQ schema
  */
-export function getFAQSchema(faqs: Array<{ question: string; answer: string }>) {
+export function getFAQSchema(
+  faqs: Array<{ question: string; answer: string }>,
+) {
   return {
-    '@context': 'https://schema.org',
-    '@type': 'FAQPage',
-    mainEntity: faqs.map(faq => ({
-      '@type': 'Question',
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: faqs.map((faq) => ({
+      "@type": "Question",
       name: faq.question,
       acceptedAnswer: {
-        '@type': 'Answer',
+        "@type": "Answer",
         text: faq.answer,
       },
     })),
@@ -160,27 +225,27 @@ export function getFAQSchema(faqs: Array<{ question: string; answer: string }>) 
  */
 export function getLocalBusinessSchema() {
   return {
-    '@context': 'https://schema.org',
-    '@type': 'LocalBusiness',
-    '@id': 'https://www.tangryspices.com/#local-business',
-    name: 'Tangry',
-    image: 'https://www.tangryspices.com/images/logo-512.png',
+    "@context": "https://schema.org",
+    "@type": "LocalBusiness",
+    "@id": "https://www.tangryspices.com/#local-business",
+    name: "Tangry",
+    image: "https://www.tangryspices.com/images/logo-512.png",
     telephone: COMPANY_INFO.phoneTel,
     email: COMPANY_INFO.email,
     address: orgPostalAddress,
     geo: {
-      '@type': 'GeoCoordinates',
-      latitude: '26.9124',
-      longitude: '75.7873',
+      "@type": "GeoCoordinates",
+      latitude: "26.9124",
+      longitude: "75.7873",
     },
-    url: 'https://www.tangryspices.com',
-    priceRange: '₹₹',
+    url: "https://www.tangryspices.com",
+    priceRange: "₹₹",
     openingHoursSpecification: [
       {
-        '@type': 'OpeningHoursSpecification',
-        dayOfWeek: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'],
-        opens: '09:00',
-        closes: '18:00',
+        "@type": "OpeningHoursSpecification",
+        dayOfWeek: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
+        opens: "09:00",
+        closes: "18:00",
       },
     ],
   };
@@ -191,18 +256,18 @@ export function getLocalBusinessSchema() {
  */
 export function getWebSiteSchema() {
   return {
-    '@context': 'https://schema.org',
-    '@type': 'WebSite',
-    name: 'Tangry Spices',
-    url: 'https://www.tangryspices.com',
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    name: "Tangry Spices",
+    url: "https://www.tangryspices.com",
     potentialAction: {
-      '@type': 'SearchAction',
+      "@type": "SearchAction",
       target: {
-        '@type': 'EntryPoint',
-        urlTemplate: 'https://www.tangryspices.com/search?q={search_term_string}',
+        "@type": "EntryPoint",
+        urlTemplate:
+          "https://www.tangryspices.com/search?q={search_term_string}",
       },
-      'query-input': 'required name=search_term_string',
+      "query-input": "required name=search_term_string",
     },
   };
 }
-

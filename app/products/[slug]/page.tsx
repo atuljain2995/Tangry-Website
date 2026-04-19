@@ -1,7 +1,14 @@
-import { Metadata } from 'next';
-import { notFound } from 'next/navigation';
-import { ProductPageClient } from './ProductPageClient';
-import { getProductBySlug, getRelatedProducts, getAllProducts } from '@/lib/db/queries';
+import { Metadata } from "next";
+import { notFound } from "next/navigation";
+import { StructuredData } from "@/components/seo/StructuredData";
+import { PRODUCT_CATEGORIES } from "@/lib/data/products";
+import { getBreadcrumbSchema, getProductSchema } from "@/lib/utils/schema";
+import { ProductPageClient } from "./ProductPageClient";
+import {
+  getProductBySlug,
+  getRelatedProducts,
+  getAllProducts,
+} from "@/lib/db/queries";
 
 interface PageProps {
   params: Promise<{ slug: string }>;
@@ -19,13 +26,15 @@ export async function generateStaticParams() {
 }
 
 // Generate metadata for SEO
-export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+export async function generateMetadata({
+  params,
+}: PageProps): Promise<Metadata> {
   const resolvedParams = await params;
   const product = await getProductBySlug(resolvedParams.slug);
 
   if (!product) {
     return {
-      title: 'Product Not Found',
+      title: "Product Not Found",
     };
   }
 
@@ -52,7 +61,35 @@ export default async function ProductPage({ params }: PageProps) {
   }
 
   // Get related products (same category, exclude current)
-  const relatedProducts = await getRelatedProducts(product.category, product.id, 4);
+  const relatedProducts = await getRelatedProducts(
+    product.category,
+    product.id,
+    4,
+  );
 
-  return <ProductPageClient product={product} relatedProducts={relatedProducts} />;
+  const matchedCategory = PRODUCT_CATEGORIES.find(
+    (category) => category.title === product.category,
+  );
+  const categoryUrl = matchedCategory
+    ? `https://www.tangryspices.com/categories/${matchedCategory.id}`
+    : "https://www.tangryspices.com/products";
+
+  const breadcrumbs = [
+    { name: "Home", url: "https://www.tangryspices.com" },
+    { name: "Products", url: "https://www.tangryspices.com/products" },
+    { name: product.category, url: categoryUrl },
+    {
+      name: product.name,
+      url: `https://www.tangryspices.com/products/${product.slug}`,
+    },
+  ];
+
+  return (
+    <>
+      <StructuredData
+        data={[getProductSchema(product), getBreadcrumbSchema(breadcrumbs)]}
+      />
+      <ProductPageClient product={product} relatedProducts={relatedProducts} />
+    </>
+  );
 }
