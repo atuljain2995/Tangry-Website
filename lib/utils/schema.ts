@@ -3,6 +3,12 @@
 import { ProductExtended } from "../types/database";
 import { COMPANY_INFO, SOCIAL_LINKS } from "../data/constants";
 
+const SITE_URL = "https://www.tangryspices.com";
+
+function toAbsoluteUrl(url: string): string {
+  return url.startsWith("http") ? url : `${SITE_URL}${url}`;
+}
+
 /**
  * Generate Organization schema
  */
@@ -45,13 +51,17 @@ export function getOrganizationSchema() {
  * Generate Product schema with AggregateRating
  */
 export function getProductSchema(product: ProductExtended) {
-  const productUrl = `https://www.tangryspices.com/products/${product.slug}`;
-  const lowestPrice = Math.min(...product.variants.map((v) => v.price));
-  const highestPrice = Math.max(...product.variants.map((v) => v.price));
+  const productUrl = `${SITE_URL}/products/${product.slug}`;
+  const prices = product.variants
+    .map((variant) => Number(variant.price))
+    .filter((price) => Number.isFinite(price) && price >= 0);
 
-  const absoluteImages = product.images.map((image) =>
-    image.startsWith("http") ? image : `https://www.tangryspices.com${image}`,
-  );
+  const lowestPrice = prices.length > 0 ? Math.min(...prices) : 0;
+  const highestPrice = prices.length > 0 ? Math.max(...prices) : 0;
+
+  const absoluteImages = product.images.length
+    ? product.images.map(toAbsoluteUrl)
+    : [`${SITE_URL}/products/placeholder.png`];
 
   const aggregateRating =
     product.rating && product.reviewCount > 0
@@ -69,49 +79,6 @@ export function getProductSchema(product: ProductExtended) {
   )
     ? "https://schema.org/InStock"
     : "https://schema.org/OutOfStock";
-
-  const seller = {
-    "@type": "Organization",
-    name: "Tangry Spices",
-  };
-
-  if (product.variants.length > 1) {
-    return {
-      "@context": "https://schema.org",
-      "@type": "ProductGroup",
-      "@id": `${productUrl}#group`,
-      name: product.name,
-      url: productUrl,
-      description: product.description,
-      image: absoluteImages,
-      brand: {
-        "@type": "Brand",
-        name: "Tangry",
-      },
-      category: product.category,
-      aggregateRating,
-      variesBy: ["https://schema.org/size"],
-      hasVariant: product.variants.map((variant) => ({
-        "@type": "Product",
-        "@id": `${productUrl}#${variant.sku}`,
-        name: `${product.name} ${variant.name}`,
-        sku: variant.sku,
-        size: variant.name,
-        image: absoluteImages,
-        offers: {
-          "@type": "Offer",
-          url: productUrl,
-          priceCurrency: "INR",
-          price: variant.price,
-          availability:
-            variant.isAvailable && variant.stock > 0
-              ? "https://schema.org/InStock"
-              : "https://schema.org/OutOfStock",
-          seller,
-        },
-      })),
-    };
-  }
 
   return {
     "@context": "https://schema.org",
@@ -134,8 +101,8 @@ export function getProductSchema(product: ProductExtended) {
       priceCurrency: "INR",
       lowPrice: lowestPrice,
       highPrice: highestPrice,
+      offerCount: product.variants.length || 1,
       availability,
-      seller,
     },
   };
 }

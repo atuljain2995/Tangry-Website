@@ -1,7 +1,9 @@
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
+import { StructuredData } from '@/components/seo/StructuredData';
 import { CategoryPageClient } from './CategoryPageClient';
 import { PRODUCT_CATEGORIES } from '@/lib/data/products';
+import { getProductSchema } from '@/lib/utils/schema';
 import { getAllProducts, getProductCategories, type DbProductCategory } from '@/lib/db/queries';
 
 interface PageProps {
@@ -71,14 +73,17 @@ export default async function CategoryPage({ params }: PageProps) {
   });
 
   return (
-    <CategoryPageClient
-      category={{
-        slug: category.slug,
-        title: category.title,
-        description: fallbackMeta?.description || `Browse ${category.title} from Tangry Spices.`,
-        chipLabel: category.chip_label,
-      }}
-      products={filteredProducts}
-    />
+    <>
+      <StructuredData data={filteredProducts.map((product) => getProductSchema(product))} />
+      <CategoryPageClient
+        category={{
+          slug: category.slug,
+          title: category.title,
+          description: fallbackMeta?.description || `Browse ${category.title} from Tangry Spices.`,
+          chipLabel: category.chip_label,
+        }}
+        products={filteredProducts}
+      />
+    </>
   );
 }

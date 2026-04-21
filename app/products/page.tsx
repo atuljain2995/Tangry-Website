@@ -1,6 +1,8 @@
 import { Metadata } from 'next';
 import { ProductsPageClient } from './ProductsPageClient';
+import { StructuredData } from '@/components/seo/StructuredData';
 import { PRODUCT_CATEGORIES } from '@/lib/data/products';
+import { getProductSchema } from '@/lib/utils/schema';
 import { getAllProducts, getProductCategories, type DbProductCategory } from '@/lib/db/queries';
 
 export const metadata: Metadata = {
@@ -31,5 +33,10 @@ export default async function ProductsPage() {
   const [products, fromDb] = await Promise.all([getAllProducts(), getProductCategories()]);
   const categories = fromDb.length > 0 ? fromDb : fallbackCategories();
 
-  return <ProductsPageClient products={products} categories={categories} />;
+  return (
+    <>
+      <StructuredData data={products.map((product) => getProductSchema(product))} />
+      <ProductsPageClient products={products} categories={categories} />
+    </>
+  );
 }
