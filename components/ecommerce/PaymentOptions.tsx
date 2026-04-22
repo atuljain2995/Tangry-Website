@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { CreditCard, Banknote, Building } from 'lucide-react';
+import { CreditCard, Banknote } from 'lucide-react';
 import { PaymentMethod } from '@/lib/types/database';
 
 interface PaymentOptionsProps {
@@ -25,27 +25,11 @@ export const PaymentOptions = ({ onSubmit, onBack, isProcessing = false }: Payme
       recommended: true
     },
     {
-      id: 'stripe' as PaymentMethod,
-      name: 'International Cards',
-      description: 'Temporarily unavailable',
-      icon: CreditCard,
-      available: false,
-      recommended: false
-    },
-    {
       id: 'cod' as PaymentMethod,
       name: 'Cash on Delivery',
       description: 'Pay when you receive the product',
       icon: Banknote,
       available: true,
-      recommended: false
-    },
-    {
-      id: 'bank_transfer' as PaymentMethod,
-      name: 'Bank Transfer',
-      description: 'Direct bank transfer (For B2B orders)',
-      icon: Building,
-      available: false,
       recommended: false
     }
   ];
