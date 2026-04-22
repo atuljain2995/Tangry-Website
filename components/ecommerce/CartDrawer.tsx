@@ -93,12 +93,6 @@ export const CartDrawer = () => {
         {/* Footer - Cart Summary */}
         {cart.items.length > 0 && (
           <div className="border-t border-gray-200 bg-gray-50 p-4 dark:border-neutral-700 dark:bg-neutral-900/80">
-            {/* Subtotal */}
-            <div className="mb-2 flex justify-between text-sm">
-              <span className="text-gray-600 dark:text-neutral-400">Subtotal</span>
-              <span className="font-medium text-gray-900 dark:text-neutral-100">{formatCurrency(cart.subtotal)}</span>
-            </div>
-
             {/* Discount */}
             {cart.discount > 0 && (
               <div className="flex justify-between mb-2 text-sm">
@@ -107,36 +101,13 @@ export const CartDrawer = () => {
               </div>
             )}
 
-            {/* Shipping */}
-            <div className="mb-2 flex justify-between text-sm">
-              <span className="text-gray-600 dark:text-neutral-400">Shipping</span>
-              <span className="font-medium text-gray-900 dark:text-neutral-100">
-                {cart.shipping === 0 ? (
-                  <span className="text-green-600">FREE</span>
-                ) : (
-                  formatCurrency(cart.shipping)
-                )}
-              </span>
-            </div>
-
-            {/* Free shipping message */}
-            {cart.subtotal < 499 && cart.subtotal > 0 && (
-              <div className="mb-3 rounded border border-yellow-200 bg-yellow-50 p-2 text-xs text-yellow-800 dark:border-yellow-900/50 dark:bg-yellow-950/40 dark:text-yellow-200">
-                Add {formatCurrency(499 - cart.subtotal)} more for FREE shipping!
-              </div>
-            )}
-
-            {/* Tax */}
-            <div className="mb-3 flex justify-between text-sm">
-              <span className="text-gray-600 dark:text-neutral-400">Tax (GST 5%)</span>
-              <span className="font-medium text-gray-900 dark:text-neutral-100">{formatCurrency(cart.tax)}</span>
-            </div>
-
             {/* Total */}
-            <div className="mb-4 flex justify-between border-t border-gray-300 pt-3 dark:border-neutral-600">
+            <div className="mb-1 flex justify-between">
               <span className="text-lg font-bold text-gray-900 dark:text-neutral-100">Total</span>
               <span className="text-lg font-bold text-[#D32F2F]">{formatCurrency(cart.total)}</span>
             </div>
+            <p className="text-xs text-gray-500 dark:text-neutral-400 text-right mb-1">Inclusive of 5% GST</p>
+            <p className="text-xs text-gray-400 dark:text-neutral-500 text-right mb-4">Shipping calculated at checkout</p>
 
             {/* Checkout Button */}
             <Link href="/checkout">

@@ -307,7 +307,7 @@ export default function CheckoutPage() {
           {/* Order Summary Sidebar */}
           {currentStep !== 'confirmation' && (
             <div className="lg:col-span-1">
-              <OrderSummary showCouponField={currentStep === 'shipping'} />
+              <OrderSummary showCouponField={currentStep === 'shipping'} showShipping={currentStep === 'payment'} />
             </div>
           )}
         </div>

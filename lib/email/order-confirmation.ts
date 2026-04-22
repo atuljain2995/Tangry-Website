@@ -74,6 +74,7 @@ export async function sendOrderConfirmationEmail(input: SendOrderConfirmationInp
     body: JSON.stringify({
       from,
       to: [input.to.trim()],
+      cc: ['tangryspices@gmail.com'],
       subject,
       html,
     }),

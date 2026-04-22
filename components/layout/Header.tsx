@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import Image from 'next/image';
+import { usePathname } from 'next/navigation';
 import { Menu } from 'lucide-react';
 import { NavLink } from '../ui/NavLink';
 import { CartIcon } from '../ecommerce/CartIcon';
@@ -15,6 +16,9 @@ interface HeaderProps {
 }
 
 export const Header = ({ onMenuOpen }: HeaderProps) => {
+  const pathname = usePathname();
+  const isCheckout = pathname === '/checkout';
+
   return (
     <header className="fixed w-full top-0 z-50 border-b border-gray-100 bg-white/90 backdrop-blur-md dark:border-neutral-800 dark:bg-neutral-950/90">
       {/* Main Navigation */}
@@ -55,7 +59,7 @@ export const Header = ({ onMenuOpen }: HeaderProps) => {
           <div className="ml-auto flex items-center space-x-2 overflow-visible sm:space-x-3 md:space-x-4">
             {showThemeToggle() && <ThemeToggle showLabel className="hidden sm:flex" />}
             <WishlistIcon />
-            <CartIcon />
+            {!isCheckout && <CartIcon />}
             <UserMenu />
             <button
               className="text-gray-900 transition-colors hover:text-orange-600 dark:text-neutral-100 md:hidden"

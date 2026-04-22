@@ -16,8 +16,8 @@ export const TrustBadges = ({ variant = 'horizontal', className = '' }: TrustBad
     },
     {
       icon: Truck,
-      title: 'Free Shipping',
-      description: 'On orders above ₹499'
+      title: 'Pan India Delivery',
+      description: 'Flat ₹80 shipping'
     },
     {
       icon: RefreshCcw,

@@ -516,7 +516,7 @@ export const ProductDetail = ({ product }: ProductDetailProps) => {
           <div className="flex items-center flex-wrap gap-4 sm:gap-6 py-4 border-t border-gray-200 mb-5 text-sm text-gray-600">
             <div className="flex items-center gap-1.5">
               <Truck size={18} className="text-gray-400" />
-              <span>Free Shipping</span>
+              <span>Pan India Delivery</span>
             </div>
             <div className="flex items-center gap-1.5">
               <Shield size={18} className="text-gray-400" />

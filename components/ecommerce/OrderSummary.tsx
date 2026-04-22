@@ -1,16 +1,17 @@
 'use client';
 
 import { useCart } from '@/lib/contexts/CartContext';
-import { formatCurrency } from '@/lib/utils/database';
+import { formatCurrency, calculateShipping } from '@/lib/utils/database';
 import { Tag, Trash2 } from 'lucide-react';
 import { useState } from 'react';
 import { ProductImage } from './ProductImage';
 
 interface OrderSummaryProps {
   showCouponField?: boolean;
+  showShipping?: boolean;
 }
 
-export const OrderSummary = ({ showCouponField = true }: OrderSummaryProps) => {
+export const OrderSummary = ({ showCouponField = true, showShipping = false }: OrderSummaryProps) => {
   const { cart, applyCoupon, removeCoupon } = useCart();
   const [couponCode, setCouponCode] = useState('');
   const [couponError, setCouponError] = useState('');
@@ -130,37 +131,28 @@ export const OrderSummary = ({ showCouponField = true }: OrderSummaryProps) => {
           </div>
         )}
 
-        <div className="flex justify-between text-sm">
-          <span className="text-gray-600">Shipping</span>
-          <span className="font-medium text-gray-900">
-            {cart.shipping === 0 ? (
-              <span className="text-green-600 font-semibold">FREE</span>
-            ) : (
-              formatCurrency(cart.shipping)
-            )}
-          </span>
-        </div>
-
-        <div className="flex justify-between text-sm">
-          <span className="text-gray-600">Tax (GST 5%)</span>
-          <span className="font-medium text-gray-900">{formatCurrency(cart.tax)}</span>
-        </div>
+        {showShipping && (
+          <div className="flex justify-between text-sm">
+            <span className="text-gray-600">Shipping</span>
+            <span className="font-medium text-gray-900">
+              {formatCurrency(calculateShipping(cart.subtotal - cart.discount))}
+            </span>
+          </div>
+        )}
       </div>
-
-      {/* Free Shipping Banner */}
-      {cart.subtotal < 499 && cart.subtotal > 0 && (
-        <div className="mb-4 p-3 bg-yellow-50 border border-yellow-200 rounded-md text-sm">
-          <p className="text-yellow-800">
-            Add <span className="font-bold">{formatCurrency(499 - cart.subtotal)}</span> more for <span className="font-bold">FREE shipping!</span>
-          </p>
-        </div>
-      )}
 
       {/* Total */}
       <div className="flex justify-between items-center pt-4">
         <span className="text-lg font-bold text-gray-900">Total</span>
-        <span className="text-2xl font-bold text-[#D32F2F]">{formatCurrency(cart.total)}</span>
+        <span className="text-2xl font-bold text-[#D32F2F]">
+          {formatCurrency(
+            showShipping
+              ? cart.total + calculateShipping(cart.subtotal - cart.discount)
+              : cart.total
+          )}
+        </span>
       </div>
+      <p className="text-xs text-gray-500 text-right mt-1">Inclusive of 5% GST</p>
 
       {/* Savings */}
       {cart.discount > 0 && (

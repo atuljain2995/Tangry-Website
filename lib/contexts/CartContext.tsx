@@ -2,7 +2,7 @@
 
 import { createContext, useContext, useState, useEffect, useRef, ReactNode } from 'react';
 import { Cart, CartItem } from '../types/database';
-import { calculateCartTotals, calculateShipping } from '../utils/database';
+import { calculateCartTotals } from '../utils/database';
 
 interface CartContextType {
   cart: Cart;
@@ -71,7 +71,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
   // After mount, load cart from localStorage (avoids hydration mismatch on hard refresh)
   useEffect(() => {
     const stored = loadCartFromStorage();
-    if (stored) setCart(stored);
+    if (stored) setCart(calculateCartTotals(stored, 0));
     hasHydrated.current = true;
   }, []);
 
@@ -84,8 +84,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
   const updateCart = (updater: (cart: Cart) => Cart) => {
     setCart(currentCart => {
       const newCart = updater(currentCart);
-      const shipping = calculateShipping(newCart.subtotal);
-      return calculateCartTotals(newCart, shipping);
+      return calculateCartTotals(newCart, 0);
     });
   };
 

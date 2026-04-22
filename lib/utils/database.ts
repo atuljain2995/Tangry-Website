@@ -44,24 +44,19 @@ function calculateDiscount(subtotal: number, couponCode: string): number {
 
 /**
  * Calculate tax (GST in India)
- * Assuming 5% GST on spices
+ * GST 5% is already included in the listed MRP — no additional tax is charged.
  */
 export function calculateTax(amount: number): number {
-  return amount * 0.05; // 5% GST
+  return 0;
 }
 
 /**
  * Calculate shipping cost based on cart total and location
  */
 export function calculateShipping(subtotal: number, country: string = 'IN', state?: string): number {
-  // Free shipping above ₹499 in India
-  if (country === 'IN' && subtotal >= 499) {
-    return 0;
-  }
-
-  // Domestic shipping
+  // Domestic shipping — flat ₹80 across India
   if (country === 'IN') {
-    return 40;
+    return 80;
   }
 
   // International shipping (weight-based calculation would be better)
