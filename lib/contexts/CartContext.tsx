@@ -10,7 +10,7 @@ interface CartContextType {
   removeFromCart: (productId: string, variantId: string) => void;
   updateQuantity: (productId: string, variantId: string, quantity: number) => void;
   clearCart: () => void;
-  applyCoupon: (code: string) => void;
+  applyCoupon: (code: string, discount: number) => void;
   removeCoupon: () => void;
   cartItemCount: number;
   isCartOpen: boolean;
@@ -45,6 +45,28 @@ function loadCartFromStorage(): Cart | null {
   return null;
 }
 
+function normalizeStoredCart(cart: Cart): Cart {
+  const hasValidDiscount = typeof cart.discount === 'number' && cart.discount > 0;
+
+  // Prevent stale UI where coupon code exists from older sessions but discount is zero.
+  if (cart.couponCode && !hasValidDiscount) {
+    return {
+      ...cart,
+      couponCode: undefined,
+      discount: 0,
+    };
+  }
+
+  if (!cart.couponCode && cart.discount > 0) {
+    return {
+      ...cart,
+      discount: 0,
+    };
+  }
+
+  return cart;
+}
+
 function createEmptyCart(): Cart {
   return {
     id: generateCartId(),
@@ -71,7 +93,12 @@ export function CartProvider({ children }: { children: ReactNode }) {
   // After mount, load cart from localStorage (avoids hydration mismatch on hard refresh)
   useEffect(() => {
     const stored = loadCartFromStorage();
-    if (stored) setCart(calculateCartTotals(stored, 0));
+    if (stored) {
+      const normalized = normalizeStoredCart(stored);
+      queueMicrotask(() => {
+        setCart(() => calculateCartTotals(normalized, 0));
+      });
+    }
     hasHydrated.current = true;
   }, []);
 
@@ -110,6 +137,8 @@ export function CartProvider({ children }: { children: ReactNode }) {
       return {
         ...currentCart,
         items: newItems,
+        couponCode: undefined,
+        discount: 0,
         updatedAt: new Date()
       };
     });
@@ -121,6 +150,8 @@ export function CartProvider({ children }: { children: ReactNode }) {
       items: currentCart.items.filter(
         item => !(item.productId === productId && item.variantId === variantId)
       ),
+      couponCode: undefined,
+      discount: 0,
       updatedAt: new Date()
     }));
   };
@@ -138,6 +169,8 @@ export function CartProvider({ children }: { children: ReactNode }) {
           ? { ...item, quantity }
           : item
       ),
+      couponCode: undefined,
+      discount: 0,
       updatedAt: new Date()
     }));
   };
@@ -146,10 +179,11 @@ export function CartProvider({ children }: { children: ReactNode }) {
     setCart(createEmptyCart());
   };
 
-  const applyCoupon = (code: string) => {
+  const applyCoupon = (code: string, discount: number) => {
     updateCart(currentCart => ({
       ...currentCart,
       couponCode: code.toUpperCase(),
+      discount,
       updatedAt: new Date()
     }));
   };
@@ -158,6 +192,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
     updateCart(currentCart => ({
       ...currentCart,
       couponCode: undefined,
+      discount: 0,
       updatedAt: new Date()
     }));
   };

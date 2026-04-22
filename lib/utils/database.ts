@@ -7,7 +7,7 @@ import { Cart, CartItem } from '../types/database';
  */
 export function calculateCartTotals(cart: Cart, shippingCost: number = 0): Cart {
   const subtotal = cart.items.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-  const discount = cart.couponCode ? calculateDiscount(subtotal, cart.couponCode) : 0;
+  const discount = cart.couponCode ? Math.min(Math.max(cart.discount || 0, 0), subtotal) : 0;
   const tax = calculateTax(subtotal - discount);
   const total = subtotal - discount + tax + shippingCost;
 
@@ -22,31 +22,11 @@ export function calculateCartTotals(cart: Cart, shippingCost: number = 0): Cart 
 }
 
 /**
- * Calculate discount based on coupon code
- * This is a placeholder - implement actual coupon logic
- */
-function calculateDiscount(subtotal: number, couponCode: string): number {
-  // Placeholder logic
-  const coupons: Record<string, { type: 'percentage' | 'fixed'; value: number }> = {
-    'WELCOME10': { type: 'percentage', value: 10 },
-    'FLAT50': { type: 'fixed', value: 50 },
-    'FIRST100': { type: 'fixed', value: 100 }
-  };
-
-  const coupon = coupons[couponCode.toUpperCase()];
-  if (!coupon) return 0;
-
-  if (coupon.type === 'percentage') {
-    return (subtotal * coupon.value) / 100;
-  }
-  return coupon.value;
-}
-
-/**
  * Calculate tax (GST in India)
  * GST 5% is already included in the listed MRP — no additional tax is charged.
  */
 export function calculateTax(amount: number): number {
+  void amount;
   return 0;
 }
 
@@ -54,6 +34,8 @@ export function calculateTax(amount: number): number {
  * Calculate shipping cost based on cart total and location
  */
 export function calculateShipping(subtotal: number, country: string = 'IN', state?: string): number {
+  void subtotal;
+  void state;
   // Domestic shipping — flat ₹80 across India
   if (country === 'IN') {
     return 80;

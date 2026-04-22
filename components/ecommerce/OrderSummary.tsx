@@ -15,17 +15,56 @@ export const OrderSummary = ({ showCouponField = true, showShipping = false }: O
   const { cart, applyCoupon, removeCoupon } = useCart();
   const [couponCode, setCouponCode] = useState('');
   const [couponError, setCouponError] = useState('');
+  const [isApplyingCoupon, setIsApplyingCoupon] = useState(false);
 
-  const handleApplyCoupon = () => {
+  const handleApplyCoupon = async () => {
     if (!couponCode.trim()) {
       setCouponError('Please enter a coupon code');
       return;
     }
-    
-    // Apply coupon
-    applyCoupon(couponCode);
-    setCouponCode('');
+
+    if (!cart.items.length) {
+      setCouponError('Your cart is empty');
+      return;
+    }
+
+    setIsApplyingCoupon(true);
     setCouponError('');
+
+    try {
+      const res = await fetch('/api/coupons/validate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          couponCode: couponCode.trim(),
+          items: cart.items.map((item) => ({
+            productId: item.productId,
+            variantId: item.variantId,
+            quantity: item.quantity,
+          })),
+        }),
+      });
+
+      const data = (await res.json().catch(() => ({}))) as {
+        error?: string;
+        couponCode?: string;
+        discount?: number;
+      };
+
+      if (!res.ok || typeof data.discount !== 'number') {
+        setCouponError(data.error || 'Failed to apply coupon');
+        return;
+      }
+
+      applyCoupon(data.couponCode || couponCode, data.discount);
+    } catch {
+      setCouponError('Network error while validating coupon');
+      return;
+    } finally {
+      setIsApplyingCoupon(false);
+    }
+
+    setCouponCode('');
   };
 
   const handleRemoveCoupon = () => {
@@ -74,7 +113,7 @@ export const OrderSummary = ({ showCouponField = true, showShipping = false }: O
       {/* Coupon Code */}
       {showCouponField && (
         <div className="mb-6">
-          {cart.couponCode ? (
+          {cart.couponCode && cart.discount > 0 ? (
             <div className="flex items-center justify-between p-3 bg-green-50 border border-green-200 rounded-md">
               <div className="flex items-center space-x-2">
                 <Tag size={16} className="text-green-600" />
@@ -104,9 +143,10 @@ export const OrderSummary = ({ showCouponField = true, showShipping = false }: O
                 />
                 <button
                   onClick={handleApplyCoupon}
+                  disabled={isApplyingCoupon}
                   className="px-4 py-2 bg-gray-900 text-white rounded-md text-sm font-semibold hover:bg-gray-800 transition"
                 >
-                  Apply
+                  {isApplyingCoupon ? 'Applying...' : 'Apply'}
                 </button>
               </div>
               {couponError && (
