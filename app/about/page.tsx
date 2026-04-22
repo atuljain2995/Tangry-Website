@@ -270,6 +270,92 @@ export default function AboutPage() {
         </div>
       </section>
 
+      {/* Visit Our Store */}
+      <section className="py-20 bg-gray-50 dark:bg-neutral-900">
+        <div className="container mx-auto px-4">
+          <div className="max-w-3xl mx-auto text-center mb-12">
+            <h2 className="text-3xl md:text-4xl font-bold mb-4 text-neutral-900 dark:text-white">
+              Visit Our Store
+            </h2>
+            <p className="text-neutral-600 dark:text-neutral-400 text-lg">
+              Walk into our production unit in Jhotwara, Jaipur. See how we blend, taste fresh
+              samples, and pick up products directly.
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-2 gap-8 max-w-5xl mx-auto">
+            {/* Map */}
+            <div className="rounded-xl overflow-hidden shadow-lg border border-gray-200 dark:border-neutral-700 aspect-[4/3]">
+              <iframe
+                title="Tangry Spices — Jhotwara, Jaipur"
+                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3830.2644173353583!2d75.75710867562384!3d26.935058359129464!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x396db375832d3cb3%3A0x120c439a534ae39d!2sJain%20Electricals!5e1!3m2!1sen!2sin!4v1776817059884!5m2!1sen!2sin"
+                width="100%"
+                height="100%"
+                style={{ border: 0 }}
+                allowFullScreen
+                loading="lazy"
+                referrerPolicy="no-referrer-when-downgrade"
+              />
+            </div>
+
+            {/* Store Info */}
+            <div className="flex flex-col justify-center space-y-6">
+              <div className="flex items-start gap-3">
+                <MapPin className="text-orange-500 mt-1 shrink-0" size={22} />
+                <div>
+                  <h3 className="font-bold text-neutral-900 dark:text-white mb-1">Address</h3>
+                  <p className="text-neutral-600 dark:text-neutral-400 leading-relaxed">
+                    {COMPANY_INFO.address}
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex items-start gap-3">
+                <Target className="text-orange-500 mt-1 shrink-0" size={22} />
+                <div>
+                  <h3 className="font-bold text-neutral-900 dark:text-white mb-1">Nearby Landmarks</h3>
+                  <p className="text-neutral-600 dark:text-neutral-400 leading-relaxed">
+                    Near Khatipura Road, 2 km from Jhotwara Railway Station, 8 km from Jaipur Junction
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex items-start gap-3">
+                <Users className="text-orange-500 mt-1 shrink-0" size={22} />
+                <div>
+                  <h3 className="font-bold text-neutral-900 dark:text-white mb-1">Opening Hours</h3>
+                  <div className="text-neutral-600 dark:text-neutral-400 space-y-1">
+                    <p>Mon – Fri: 9:00 AM – 6:00 PM</p>
+                    <p>Saturday: 10:00 AM – 4:00 PM</p>
+                    <p className="text-red-500">Sunday: Closed</p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="flex items-start gap-3">
+                <Heart className="text-orange-500 mt-1 shrink-0" size={22} />
+                <div>
+                  <h3 className="font-bold text-neutral-900 dark:text-white mb-1">Walk-in Perks</h3>
+                  <p className="text-neutral-600 dark:text-neutral-400 leading-relaxed">
+                    Free tasting of all products. No shipping charges on in-store purchases.
+                  </p>
+                </div>
+              </div>
+
+              <a
+                href="https://www.google.com/maps?q=26.9124,75.7873"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 bg-orange-600 text-white font-bold py-3 px-6 rounded-full hover:bg-orange-700 transition w-fit"
+              >
+                <MapPin size={18} />
+                Get Directions
+              </a>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* CTA */}
       <section className="py-20 bg-gradient-to-r from-orange-500 to-red-500 text-white text-center">
         <div className="container mx-auto px-4">

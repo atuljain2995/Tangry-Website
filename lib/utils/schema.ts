@@ -188,31 +188,99 @@ export function getFAQSchema(
 }
 
 /**
- * Generate LocalBusiness schema
+ * Generate LocalBusiness schema — enriched for local SEO
  */
 export function getLocalBusinessSchema() {
   return {
     "@context": "https://schema.org",
-    "@type": "LocalBusiness",
+    "@type": ["LocalBusiness", "FoodEstablishment"],
     "@id": "https://www.tangryspices.com/#local-business",
     name: "Tangry",
-    image: "https://www.tangryspices.com/images/logo-512.png",
+    alternateName: "Tangry Spices",
+    description:
+      "Authentic spices, masalas, pickles, and condiments handcrafted in Jaipur, Rajasthan. FSSAI licensed and ISO 22000 certified.",
+    image: [
+      "https://www.tangryspices.com/images/logo-512.png",
+      "https://www.tangryspices.com/images/logo-full.png",
+    ],
     telephone: COMPANY_INFO.phoneTel,
     email: COMPANY_INFO.email,
+    url: "https://www.tangryspices.com",
     address: orgPostalAddress,
     geo: {
       "@type": "GeoCoordinates",
-      latitude: "26.9124",
-      longitude: "75.7873",
+      latitude: "26.935058",
+      longitude: "75.757109",
     },
-    url: "https://www.tangryspices.com",
+    hasMap:
+      "https://www.google.com/maps?q=26.935058,75.757109",
     priceRange: "₹₹",
+    servesCuisine: ["Indian", "Rajasthani"],
+    paymentAccepted: [
+      "Cash",
+      "UPI",
+      "Credit Card",
+      "Debit Card",
+      "Net Banking",
+    ],
+    currenciesAccepted: "INR",
+    areaServed: {
+      "@type": "Country",
+      name: "India",
+    },
     openingHoursSpecification: [
       {
         "@type": "OpeningHoursSpecification",
-        dayOfWeek: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
+        dayOfWeek: [
+          "Monday",
+          "Tuesday",
+          "Wednesday",
+          "Thursday",
+          "Friday",
+        ],
         opens: "09:00",
         closes: "18:00",
+      },
+      {
+        "@type": "OpeningHoursSpecification",
+        dayOfWeek: "Saturday",
+        opens: "10:00",
+        closes: "16:00",
+      },
+      {
+        "@type": "OpeningHoursSpecification",
+        dayOfWeek: "Sunday",
+        opens: "00:00",
+        closes: "00:00",
+        description: "Closed",
+      },
+    ],
+    sameAs: [
+      SOCIAL_LINKS.facebook,
+      SOCIAL_LINKS.instagram,
+      SOCIAL_LINKS.youtube,
+      SOCIAL_LINKS.twitter,
+    ],
+    founder: {
+      "@type": "Person",
+      name: "Atul Jain",
+    },
+    legalName: COMPANY_INFO.legalName,
+    taxID: "FSSAI 12225026001713",
+    hasCredential: [
+      {
+        "@type": "EducationalOccupationalCredential",
+        credentialCategory: "Food Safety License",
+        name: "FSSAI License",
+        recognizedBy: {
+          "@type": "Organization",
+          name: "Food Safety and Standards Authority of India",
+        },
+      },
+      {
+        "@type": "EducationalOccupationalCredential",
+        credentialCategory: "Quality Certification",
+        name: "ISO 22000",
       },
     ],
   };
