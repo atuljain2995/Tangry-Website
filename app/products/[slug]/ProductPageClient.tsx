@@ -7,6 +7,7 @@ import { Footer } from "@/components/layout/Footer";
 import { CartDrawer } from "@/components/ecommerce/CartDrawer";
 import { ProductDetail } from "@/components/ecommerce/ProductDetail";
 import { ProductCard } from "@/components/ecommerce/ProductCard";
+import { ProductReviews } from "@/components/ecommerce/ProductReviews";
 import { ProductExtended } from "@/lib/types/database";
 import { analytics } from "@/lib/analytics";
 
@@ -40,6 +41,8 @@ export function ProductPageClient({
         <div className="pt-20">
           <ProductDetail product={product} />
         </div>
+
+        <ProductReviews productId={product.id} />
 
         {/* Related Products */}
         {relatedProducts.length > 0 && (

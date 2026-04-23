@@ -1,6 +1,6 @@
 // Structured data (JSON-LD) generators for SEO
 
-import { ProductExtended } from "../types/database";
+import { ProductExtended, Review } from "../types/database";
 import { COMPANY_INFO, SOCIAL_LINKS } from "../data/constants";
 
 const SITE_URL = "https://www.tangryspices.com";
@@ -48,9 +48,9 @@ export function getOrganizationSchema() {
 }
 
 /**
- * Generate Product schema with AggregateRating
+ * Generate Product schema with AggregateRating and Review objects
  */
-export function getProductSchema(product: ProductExtended) {
+export function getProductSchema(product: ProductExtended, reviews: Review[] = []) {
   const productUrl = `${SITE_URL}/products/${product.slug}`;
   const prices = product.variants
     .map((variant) => Number(variant.price))
@@ -80,6 +80,26 @@ export function getProductSchema(product: ProductExtended) {
     ? "https://schema.org/InStock"
     : "https://schema.org/OutOfStock";
 
+  const reviewObjects =
+    reviews.length > 0
+      ? reviews.map((r) => ({
+          "@type": "Review",
+          name: r.title,
+          reviewBody: r.comment,
+          datePublished: r.createdAt.toISOString().split("T")[0],
+          author: {
+            "@type": "Person",
+            name: r.userName,
+          },
+          reviewRating: {
+            "@type": "Rating",
+            ratingValue: r.rating,
+            bestRating: "5",
+            worstRating: "1",
+          },
+        }))
+      : undefined;
+
   return {
     "@context": "https://schema.org",
     "@type": "Product",
@@ -95,6 +115,7 @@ export function getProductSchema(product: ProductExtended) {
     sku: product.variants[0]?.sku || product.id,
     category: product.category,
     aggregateRating,
+    review: reviewObjects,
     offers: {
       "@type": "AggregateOffer",
       url: productUrl,

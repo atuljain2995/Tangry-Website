@@ -1,6 +1,6 @@
 // Server-side database queries for products
 import { supabase, supabaseAdmin, isSupabaseUnreachable } from './supabase';
-import type { CartItem } from '../types/database';
+import type { CartItem, Review } from '../types/database';
 import { ProductExtended } from '../types/database';
 
 const PLACEHOLDER_IMAGE = '/products/placeholder.png';
@@ -622,7 +622,7 @@ function transformProduct(dbProduct: DbProduct): ProductExtended {
     isNew: dbProduct.is_new,
     isBestSeller: dbProduct.is_best_seller,
     isHeroProduct: dbProduct.is_hero_product ?? false,
-    rating: dbProduct.rating || 4.5,
+    rating: dbProduct.rating || 0,
     reviewCount: dbProduct.review_count || 0,
     minOrderQuantity: dbProduct.min_order_quantity || 1,
     maxOrderQuantity: dbProduct.max_order_quantity || 50,
@@ -1073,5 +1073,54 @@ export async function getAddressesForUser(userId: string): Promise<AccountAddres
     return [];
   }
   return (data as AccountAddressRow[]) ?? [];
+}
+
+/**
+ * Fetch the most recent reviews for a product (max 10).
+ * Used to populate Review structured data in product page JSON-LD.
+ */
+export async function getProductReviews(productId: string, limit = 10): Promise<Review[]> {
+  const { data, error } = await supabaseAdmin
+    .from('reviews')
+    .select('id, product_id, user_id, user_name, rating, title, comment, is_verified_purchase, images, helpful, created_at, updated_at')
+    .eq('product_id', productId)
+    .order('created_at', { ascending: false })
+    .limit(limit);
+
+  if (error) {
+    isSupabaseUnreachable(error);
+    console.error('getProductReviews:', error);
+    return [];
+  }
+
+  type DbReviewRow = {
+    id: string;
+    product_id: string;
+    user_id: string | null;
+    user_name: string;
+    rating: number;
+    title: string;
+    comment: string;
+    is_verified_purchase: boolean;
+    images: string[] | null;
+    helpful: number;
+    created_at: string;
+    updated_at: string;
+  };
+
+  return ((data ?? []) as unknown as DbReviewRow[]).map((r) => ({
+    id: r.id,
+    productId: r.product_id,
+    userId: r.user_id,
+    userName: r.user_name,
+    rating: r.rating,
+    title: r.title,
+    comment: r.comment,
+    isVerifiedPurchase: r.is_verified_purchase,
+    images: r.images,
+    helpful: r.helpful,
+    createdAt: new Date(r.created_at),
+    updatedAt: new Date(r.updated_at),
+  }));
 }
 

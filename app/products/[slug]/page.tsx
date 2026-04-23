@@ -8,6 +8,7 @@ import {
   getProductBySlug,
   getRelatedProducts,
   getAllProducts,
+  getProductReviews,
 } from "@/lib/db/queries";
 
 interface PageProps {
@@ -60,12 +61,11 @@ export default async function ProductPage({ params }: PageProps) {
     notFound();
   }
 
-  // Get related products (same category, exclude current)
-  const relatedProducts = await getRelatedProducts(
-    product.category,
-    product.id,
-    4,
-  );
+  // Get related products (same category, exclude current) and reviews in parallel
+  const [relatedProducts, reviews] = await Promise.all([
+    getRelatedProducts(product.category, product.id, 4),
+    getProductReviews(product.id),
+  ]);
 
   const matchedCategory = PRODUCT_CATEGORIES.find(
     (category) => category.title === product.category,
@@ -87,7 +87,7 @@ export default async function ProductPage({ params }: PageProps) {
   return (
     <>
       <StructuredData
-        data={[getProductSchema(product), getBreadcrumbSchema(breadcrumbs)]}
+        data={[getProductSchema(product, reviews), getBreadcrumbSchema(breadcrumbs)]}
       />
       <ProductPageClient product={product} relatedProducts={relatedProducts} />
     </>

@@ -71,6 +71,21 @@ export interface ProductExtended {
   updatedAt: Date;
 }
 
+export interface Review {
+  id: string;
+  productId: string;
+  userId?: string | null;
+  userName: string;
+  rating: number;
+  title: string;
+  comment: string;
+  isVerifiedPurchase: boolean;
+  images?: string[] | null;
+  helpful: number;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
 export interface CartItem {
   productId: string;
   variantId: string;
@@ -177,21 +192,6 @@ export interface B2BQuote {
   status: QuoteStatus;
   estimatedTotal?: number;
   adminNotes?: string;
-  createdAt: Date;
-  updatedAt: Date;
-}
-
-export interface Review {
-  id: string;
-  productId: string;
-  userId: string;
-  userName: string;
-  rating: number;
-  title: string;
-  comment: string;
-  isVerifiedPurchase: boolean;
-  images?: string[];
-  helpful: number;
   createdAt: Date;
   updatedAt: Date;
 }
