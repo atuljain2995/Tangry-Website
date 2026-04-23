@@ -48,16 +48,17 @@ export function getOrganizationSchema() {
 }
 
 /**
- * Generate Product schema with AggregateRating and Review objects
+ * Generate ProductGroup + hasVariant schema with per-SKU Offer,
+ * AggregateRating, and Review objects.
+ *
+ * Structure:
+ *   ProductGroup (parent — brand, images, ratings, reviews)
+ *     └─ hasVariant[] → Product (per variant — sku, weight, individual Offer)
+ *
+ * Falls back to a single flat Product when there is only one variant.
  */
 export function getProductSchema(product: ProductExtended, reviews: Review[] = []) {
   const productUrl = `${SITE_URL}/products/${product.slug}`;
-  const prices = product.variants
-    .map((variant) => Number(variant.price))
-    .filter((price) => Number.isFinite(price) && price >= 0);
-
-  const lowestPrice = prices.length > 0 ? Math.min(...prices) : 0;
-  const highestPrice = prices.length > 0 ? Math.max(...prices) : 0;
 
   const absoluteImages = product.images.length
     ? product.images.map(toAbsoluteUrl)
@@ -73,12 +74,6 @@ export function getProductSchema(product: ProductExtended, reviews: Review[] = [
           worstRating: "1",
         }
       : undefined;
-
-  const availability = product.variants.some(
-    (v) => v.isAvailable && v.stock > 0,
-  )
-    ? "https://schema.org/InStock"
-    : "https://schema.org/OutOfStock";
 
   const reviewObjects =
     reviews.length > 0
@@ -100,31 +95,85 @@ export function getProductSchema(product: ProductExtended, reviews: Review[] = [
         }))
       : undefined;
 
+  const brand = { "@type": "Brand", name: "Tangry" };
+
+  // Build per-variant Product + Offer objects
+  const variantSchemas = product.variants.map((v) => {
+    const price = Number(v.price);
+    const availability =
+      v.isAvailable && v.stock > 0
+        ? "https://schema.org/InStock"
+        : "https://schema.org/OutOfStock";
+
+    const offer: Record<string, unknown> = {
+      "@type": "Offer",
+      url: productUrl,
+      priceCurrency: "INR",
+      price: Number.isFinite(price) ? price : 0,
+      availability,
+      seller: { "@type": "Organization", name: "Tangry" },
+    };
+
+    // Emit priceValidUntil when a compare-at (sale) price is present
+    if (v.compareAtPrice && v.compareAtPrice > price) {
+      offer.priceValidUntil = new Date(Date.now() + 365 * 24 * 60 * 60 * 1000)
+        .toISOString()
+        .split("T")[0];
+    }
+
+    return {
+      "@type": "Product" as const,
+      name: `${product.name} – ${v.name}`,
+      sku: v.sku,
+      description: product.description,
+      image: absoluteImages,
+      brand,
+      weight: {
+        "@type": "QuantitativeValue" as const,
+        value: v.weight,
+        unitCode: "GRM",
+      },
+      offers: offer,
+    };
+  });
+
+  // Single variant → flat Product (no ProductGroup wrapper needed)
+  if (variantSchemas.length <= 1) {
+    const single = variantSchemas[0];
+    return {
+      "@context": "https://schema.org",
+      "@type": "Product" as const,
+      "@id": `${productUrl}#product`,
+      name: product.name,
+      url: productUrl,
+      description: product.description,
+      image: absoluteImages,
+      brand,
+      sku: single?.sku ?? product.id,
+      category: product.category,
+      weight: single?.weight,
+      aggregateRating,
+      review: reviewObjects,
+      offers: single?.offers,
+    };
+  }
+
+  // Multiple variants → ProductGroup + hasVariant
   return {
     "@context": "https://schema.org",
-    "@type": "Product",
+    "@type": "ProductGroup" as const,
     "@id": `${productUrl}#product`,
     name: product.name,
     url: productUrl,
     description: product.description,
     image: absoluteImages,
-    brand: {
-      "@type": "Brand",
-      name: "Tangry",
-    },
-    sku: product.variants[0]?.sku || product.id,
+    brand,
     category: product.category,
+    productGroupID: product.id,
+    variesBy: "https://schema.org/weight",
     aggregateRating,
     review: reviewObjects,
-    offers: {
-      "@type": "AggregateOffer",
-      url: productUrl,
-      priceCurrency: "INR",
-      lowPrice: lowestPrice,
-      highPrice: highestPrice,
-      offerCount: product.variants.length || 1,
-      availability,
-    },
+    hasVariant: variantSchemas,
   };
 }
 
