@@ -1124,3 +1124,122 @@ export async function getProductReviews(productId: string, limit = 10): Promise<
   }));
 }
 
+// ─── CWV / Performance ───────────────────────────────────────────────────────
+
+export type CWVThresholds = {
+  good: number;
+  poor: number;
+};
+
+export const CWV_THRESHOLDS: Record<string, CWVThresholds> = {
+  LCP:  { good: 2500,  poor: 4000  },
+  INP:  { good: 200,   poor: 500   },
+  CLS:  { good: 0.1,   poor: 0.25  },
+  FCP:  { good: 1800,  poor: 3000  },
+  TTFB: { good: 800,   poor: 1800  },
+};
+
+export type CWVMetricSummary = {
+  metricName: string;
+  p75: number;
+  sampleCount: number;
+  goodPct: number;
+  needsImprovementPct: number;
+  poorPct: number;
+  /** Latest reading timestamp */
+  lastSeen: Date;
+};
+
+export type CWVUrlRow = {
+  url: string;
+  metrics: CWVMetricSummary[];
+};
+
+type CWVRawRow = {
+  url: string;
+  metric_name: string;
+  value: number;
+  rating: 'good' | 'needs-improvement' | 'poor';
+  created_at: string;
+};
+
+/**
+ * Compute per-URL, per-metric P75 and distribution from first-party RUM data.
+ * Returns only URLs that have at least one reading in the last `days` days.
+ * P75 is approximated from raw readings (sorted) — no PostgreSQL percentile
+ * functions needed; works with any Supabase plan.
+ */
+export async function getCWVSummaryForAdmin(days = 28): Promise<CWVUrlRow[]> {
+  const since = new Date(Date.now() - days * 24 * 60 * 60 * 1000).toISOString();
+
+  const { data, error } = await supabaseAdmin
+    .from('cwv_readings')
+    .select('url, metric_name, value, rating, created_at')
+    .gte('created_at', since)
+    .order('url', { ascending: true })
+    .order('metric_name', { ascending: true })
+    .order('value', { ascending: true });
+
+  if (error) {
+    isSupabaseUnreachable(error);
+    console.error('getCWVSummaryForAdmin:', error);
+    return [];
+  }
+
+  const rows = (data ?? []) as unknown as CWVRawRow[];
+
+  // Group: url → metric_name → readings[]
+  const grouped = new Map<string, Map<string, CWVRawRow[]>>();
+  for (const row of rows) {
+    if (!grouped.has(row.url)) grouped.set(row.url, new Map());
+    const byMetric = grouped.get(row.url)!;
+    if (!byMetric.has(row.metric_name)) byMetric.set(row.metric_name, []);
+    byMetric.get(row.metric_name)!.push(row);
+  }
+
+  const result: CWVUrlRow[] = [];
+
+  for (const [url, byMetric] of grouped) {
+    const metrics: CWVMetricSummary[] = [];
+
+    for (const [metricName, readings] of byMetric) {
+      // Readings are already sorted by value (ascending) from the query
+      const values = readings.map((r) => r.value);
+      const n = values.length;
+      // P75 index: ceil(0.75 * n) - 1, clamped
+      const p75Idx = Math.min(Math.ceil(0.75 * n) - 1, n - 1);
+      const p75 = values[p75Idx] ?? 0;
+
+      const goodCount = readings.filter((r) => r.rating === 'good').length;
+      const poorCount = readings.filter((r) => r.rating === 'poor').length;
+      const niCount = n - goodCount - poorCount;
+
+      const latestCreatedAt = readings.reduce((max, r) =>
+        r.created_at > max ? r.created_at : max,
+        readings[0].created_at,
+      );
+
+      metrics.push({
+        metricName,
+        p75,
+        sampleCount: n,
+        goodPct: Math.round((goodCount / n) * 100),
+        needsImprovementPct: Math.round((niCount / n) * 100),
+        poorPct: Math.round((poorCount / n) * 100),
+        lastSeen: new Date(latestCreatedAt),
+      });
+    }
+
+    result.push({ url, metrics });
+  }
+
+  // Sort URLs: home first, then by path length
+  result.sort((a, b) => {
+    if (a.url === '/') return -1;
+    if (b.url === '/') return 1;
+    return a.url.localeCompare(b.url);
+  });
+
+  return result;
+}
+
