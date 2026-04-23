@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { Star, CheckCircle, Loader2 } from "lucide-react";
 import { useAuth } from "@/lib/contexts/AuthContext";
+import { analytics } from "@/lib/analytics";
 
 interface ReviewRow {
   id: string;
@@ -134,10 +135,12 @@ export function ProductReviews({ productId }: ProductReviewsProps) {
 
       const data = await res.json();
       if (!res.ok) {
+        analytics.trackReview(productId, formRating, false, data.error ?? 'unknown');
         setFormError(data.error ?? "Failed to submit review.");
         return;
       }
 
+      analytics.trackReview(productId, formRating, true);
       setSubmitted(true);
       setShowForm(false);
       setFormRating(0);

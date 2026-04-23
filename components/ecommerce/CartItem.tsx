@@ -4,6 +4,7 @@ import { Minus, Plus, Trash2 } from 'lucide-react';
 import { CartItem } from '@/lib/types/database';
 import { useCart } from '@/lib/contexts/CartContext';
 import { formatCurrency } from '@/lib/utils/database';
+import { analytics } from '@/lib/analytics';
 import { ProductImage } from './ProductImage';
 import { productImageAlt } from '@/lib/utils/product-image-alt';
 
@@ -25,6 +26,7 @@ export const CartItemComponent = ({ item }: CartItemProps) => {
   };
 
   const handleRemove = () => {
+    analytics.trackRemoveFromCart(item.productId, item.productName, item.quantity, item.price);
     removeFromCart(item.productId, item.variantId);
   };
 

@@ -142,4 +142,88 @@ export const analytics = {
       items: [{ item_id: orderId, item_name: 'Order', quantity: items, price: total }],
     });
   },
+
+  trackRemoveFromCart: (productId: string, productName: string, quantity: number, price: number) => {
+    if (!isAnalyticsEnabled()) return;
+    gtag('event', 'remove_from_cart', {
+      currency: 'INR',
+      value: price * quantity,
+      items: [{ item_id: productId, item_name: productName, quantity, price }],
+    });
+  },
+
+  trackAuth: (event: 'login_success' | 'login_failed' | 'signup_success' | 'signup_failed' | 'logout') =>
+    trackEvent({ action: event, category: 'authentication' }),
+
+  trackWishlist: (action: 'add' | 'remove', productId: string, productName: string) =>
+    trackEvent({
+      action: action === 'add' ? 'wishlist_add' : 'wishlist_remove',
+      category: 'engagement',
+      label: productName,
+      custom_parameters: { product_id: productId },
+    }),
+
+  trackShare: (productId: string, productName: string, method: 'native' | 'clipboard') =>
+    trackEvent({
+      action: 'product_shared',
+      category: 'engagement',
+      label: productName,
+      custom_parameters: { product_id: productId, share_method: method },
+    }),
+
+  trackCoupon: (action: 'applied' | 'removed' | 'error', code: string, discount?: number) =>
+    trackEvent({
+      action: `coupon_${action}`,
+      category: 'promotion',
+      label: code,
+      value: discount,
+    }),
+
+  trackPincodeCheck: (pincode: string, available: boolean, state?: string) =>
+    trackEvent({
+      action: 'pincode_check',
+      category: 'fulfillment',
+      label: available ? 'available' : 'unavailable',
+      custom_parameters: { pincode, delivery_available: available, state },
+    }),
+
+  trackFilter: (filterType: 'category' | 'sort', value: string) =>
+    trackEvent({
+      action: `filter_${filterType}`,
+      category: 'navigation',
+      label: value,
+    }),
+
+  trackVariantSelected: (productId: string, variantId: string, variantName: string, from: 'detail' | 'grid') =>
+    trackEvent({
+      action: 'variant_selected',
+      category: 'product_view',
+      label: variantName,
+      custom_parameters: { product_id: productId, variant_id: variantId, from_view: from },
+    }),
+
+  trackReview: (productId: string, rating: number, success: boolean, errorMsg?: string) =>
+    trackEvent({
+      action: success ? 'review_submitted' : 'review_error',
+      category: 'engagement',
+      label: productId,
+      value: success ? rating : 0,
+      custom_parameters: success ? { rating } : { error: errorMsg },
+    }),
+
+  trackCheckoutError: (paymentMethod: string, errorMsg: string) =>
+    trackEvent({
+      action: 'checkout_error',
+      category: 'checkout',
+      label: paymentMethod,
+      custom_parameters: { payment_method: paymentMethod, error: errorMsg },
+    }),
+
+  trackExternalMarketplace: (marketplace: string, url: string) =>
+    trackEvent({
+      action: 'click_external_marketplace',
+      category: 'engagement',
+      label: marketplace,
+      custom_parameters: { link_url: url },
+    }),
 };

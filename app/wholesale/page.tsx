@@ -7,6 +7,7 @@ import { Footer } from '@/components/layout/Footer';
 import { CartDrawer } from '@/components/ecommerce/CartDrawer';
 import { TrustBadges } from '@/components/ui/TrustBadges';
 import { submitWholesaleQuote } from '@/lib/actions/wholesale';
+import { analytics } from '@/lib/analytics';
 import { COMPANY_INFO } from '@/lib/data/constants';
 import { Building2, Users, Package, TrendingUp, Phone, Mail } from 'lucide-react';
 
@@ -32,6 +33,7 @@ export default function WholesalePage() {
     setErrorMessage('');
     const result = await submitWholesaleQuote(formData);
     if (result.success) {
+      analytics.trackFormSubmission('wholesale', true);
       setStatus('success');
       setFormData({
         companyName: '',
@@ -44,6 +46,7 @@ export default function WholesalePage() {
         message: '',
       });
     } else {
+      analytics.trackFormSubmission('wholesale', false);
       setStatus('error');
       setErrorMessage(result.error);
     }

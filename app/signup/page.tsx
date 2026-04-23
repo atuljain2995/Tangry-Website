@@ -4,6 +4,7 @@ import { useState, Suspense } from 'react';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import { safeRedirectPath } from '@/lib/utils/safe-redirect';
+import { analytics } from '@/lib/analytics';
 
 function SignupForm() {
   const searchParams = useSearchParams();
@@ -34,12 +35,15 @@ function SignupForm() {
       const data = await res.json().catch(() => ({}));
       if (!res.ok) {
         setError(data.error || 'Could not create account');
+        analytics.trackAuth('signup_failed');
         setLoading(false);
         return;
       }
+      analytics.trackAuth('signup_success');
       window.location.href = redirect;
     } catch {
       setError('Something went wrong');
+      analytics.trackAuth('signup_failed');
       setLoading(false);
     }
   }

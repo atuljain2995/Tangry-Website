@@ -4,6 +4,7 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { User, LogOut, LayoutDashboard, ShoppingBag, ChevronDown } from 'lucide-react';
 import { useAuth } from '@/lib/contexts/AuthContext';
+import { analytics } from '@/lib/analytics';
 
 export function UserMenu() {
   const { user, profile, loading, signOut } = useAuth();
@@ -151,6 +152,7 @@ export function UserMenu() {
             <button
               type="button"
               onClick={() => {
+                analytics.trackAuth('logout');
                 signOut();
                 setOpen(false);
               }}

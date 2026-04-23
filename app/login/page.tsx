@@ -4,6 +4,7 @@ import { useState, Suspense } from 'react';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import { safeRedirectPath } from '@/lib/utils/safe-redirect';
+import { analytics } from '@/lib/analytics';
 
 function LoginForm() {
   const searchParams = useSearchParams();
@@ -33,12 +34,15 @@ function LoginForm() {
       const data = await res.json().catch(() => ({}));
       if (!res.ok) {
         setError(data.error || 'Invalid email or password');
+        analytics.trackAuth('login_failed');
         setLoading(false);
         return;
       }
+      analytics.trackAuth('login_success');
       window.location.href = redirect;
     } catch {
       setError('Something went wrong');
+      analytics.trackAuth('login_failed');
       setLoading(false);
     }
   }

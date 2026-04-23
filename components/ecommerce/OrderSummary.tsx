@@ -4,6 +4,7 @@ import { useCart } from '@/lib/contexts/CartContext';
 import { formatCurrency, calculateShipping } from '@/lib/utils/database';
 import { Tag, Trash2 } from 'lucide-react';
 import { useState } from 'react';
+import { analytics } from '@/lib/analytics';
 import { ProductImage } from './ProductImage';
 
 interface OrderSummaryProps {
@@ -53,10 +54,12 @@ export const OrderSummary = ({ showCouponField = true, showShipping = false }: O
 
       if (!res.ok || typeof data.discount !== 'number') {
         setCouponError(data.error || 'Failed to apply coupon');
+        analytics.trackCoupon('error', couponCode.trim());
         return;
       }
 
       applyCoupon(data.couponCode || couponCode, data.discount);
+      analytics.trackCoupon('applied', data.couponCode || couponCode, data.discount);
     } catch {
       setCouponError('Network error while validating coupon');
       return;
@@ -68,6 +71,7 @@ export const OrderSummary = ({ showCouponField = true, showShipping = false }: O
   };
 
   const handleRemoveCoupon = () => {
+    analytics.trackCoupon('removed', cart.couponCode ?? '', cart.discount);
     removeCoupon();
   };
 

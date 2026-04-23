@@ -10,6 +10,7 @@ import { CartDrawer } from '@/components/ecommerce/CartDrawer';
 import { ProductCard } from '@/components/ecommerce/ProductCard';
 import type { DbProductCategory } from '@/lib/db/queries';
 import { ProductExtended } from '@/lib/types/database';
+import { analytics } from '@/lib/analytics';
 
 interface ProductsPageClientProps {
   products: ProductExtended[];
@@ -35,6 +36,8 @@ export function ProductsPageClient({ products, categories }: ProductsPageClientP
 
   // Update URL when category filter changes
   const handleCategoryChange = useCallback((categoryId: 'all' | string) => {
+    const cat = categories.find((c) => c.id === categoryId);
+    analytics.trackFilter('category', categoryId === 'all' ? 'all' : (cat?.title ?? categoryId));
     const params = new URLSearchParams(searchParams.toString());
     if (categoryId === 'all') {
       params.delete('category');
@@ -130,7 +133,11 @@ export function ProductsPageClient({ products, categories }: ProductsPageClientP
           <div className="relative self-start">
             <select
               value={sortBy}
-              onChange={(e) => setSortBy(e.target.value as typeof sortBy)}
+              onChange={(e) => {
+                const val = e.target.value as typeof sortBy;
+                analytics.trackFilter('sort', val);
+                setSortBy(val);
+              }}
               className="w-full min-w-[11.5rem] cursor-pointer appearance-none border-2 border-gray-200 bg-white py-3 pl-4 pr-11 text-sm font-bold text-gray-900 rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-500"
             >
               <option value="popular">Most Popular</option>

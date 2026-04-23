@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import {
   Star,
   Truck,
@@ -48,6 +48,13 @@ export const ProductDetail = ({ product }: ProductDetailProps) => {
 
   const isWishlisted = checkWishlisted(product.id);
 
+  // Fire view_item once per product so GA4 can calculate funnel conversion rates
+  useEffect(() => {
+    const v = product.variants[0];
+    analytics.trackProductView(product.id, product.name, v?.price ?? 0);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [product.id]);
+
   // Find quantity of this variant already in cart
   const cartItem = cart.items.find(
     (item) => item.productId === product.id && item.variantId === product.variants[selectedVariantIndex]?.id,
@@ -59,8 +66,9 @@ export const ProductDetail = ({ product }: ProductDetailProps) => {
       window.location.href = '/login';
       return;
     }
+    analytics.trackWishlist(isWishlisted ? 'remove' : 'add', product.id, product.name);
     toggleWishlist(product.id);
-  }, [user, product.id, toggleWishlist]);
+  }, [user, product.id, product.name, isWishlisted, toggleWishlist]);
 
   const handleShare = useCallback(async () => {
     const shareData = {
@@ -71,14 +79,16 @@ export const ProductDetail = ({ product }: ProductDetailProps) => {
     if (navigator.share) {
       try {
         await navigator.share(shareData);
+        analytics.trackShare(product.id, product.name, 'native');
       } catch {
         // user cancelled share
       }
     } else {
       await navigator.clipboard.writeText(window.location.href);
+      analytics.trackShare(product.id, product.name, 'clipboard');
       alert("Link copied to clipboard!");
     }
-  }, [product.name]);
+  }, [product.id, product.name]);
 
   const getDisplayImage = (index: number) =>
     product.images[index] || PLACEHOLDER_IMAGE;

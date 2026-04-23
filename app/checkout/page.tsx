@@ -83,6 +83,7 @@ export default function CheckoutPage() {
           paymentMethod: 'cod',
         });
         if (!result.success) {
+          analytics.trackCheckoutError('cod', result.error || 'order_failed');
           alert(result.error || 'Failed to place order.');
           return;
         }
@@ -109,6 +110,7 @@ export default function CheckoutPage() {
         });
         const createData = await createRes.json();
         if (!createRes.ok) {
+          analytics.trackCheckoutError('razorpay', createData.error || 'create_order_failed');
           alert(createData.error || 'Could not start payment.');
           return;
         }
@@ -145,6 +147,7 @@ export default function CheckoutPage() {
             });
             const verifyData = await verifyRes.json();
             if (!verifyRes.ok) {
+              analytics.trackCheckoutError('razorpay', verifyData.error || 'verify_failed');
               alert(verifyData.error || 'Payment verification failed.');
               return;
             }
@@ -174,6 +177,7 @@ export default function CheckoutPage() {
       setCurrentStep('confirmation');
     } catch (error) {
       console.error('Payment error:', error);
+      analytics.trackCheckoutError('unknown', 'exception');
       alert('Payment failed. Please try again.');
     } finally {
       setIsProcessing(false);

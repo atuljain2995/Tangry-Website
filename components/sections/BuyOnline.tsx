@@ -1,6 +1,7 @@
 import { ExternalLink } from 'lucide-react';
 import type { MarketplaceLinks } from '@/lib/data/marketplaces';
 import { FlipkartIcon } from '@/components/icons/FlipkartIcon';
+import { analytics } from '@/lib/analytics';
 
 type BuyOnlineProps = {
   links: MarketplaceLinks;
@@ -35,6 +36,7 @@ export const BuyOnline = ({ links }: BuyOnlineProps) => {
               href={links.flipkart}
               target="_blank"
               rel="noopener noreferrer"
+              onClick={() => analytics.trackExternalMarketplace('flipkart', links.flipkart)}
               className="inline-flex items-center gap-3 rounded-xl bg-white px-8 py-4 text-lg font-bold text-gray-900 shadow-lg transition duration-300 hover:-translate-y-1 hover:shadow-2xl"
             >
               <FlipkartIcon className="h-7 w-7 shrink-0" />

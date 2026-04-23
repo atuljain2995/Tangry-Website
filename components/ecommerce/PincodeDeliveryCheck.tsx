@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { MapPin, Loader2 } from 'lucide-react';
 import { validatePinCode } from '@/lib/utils/database';
+import { analytics } from '@/lib/analytics';
 
 export function PincodeDeliveryCheck() {
   const [pincode, setPincode] = useState('');
@@ -29,6 +30,7 @@ export function PincodeDeliveryCheck() {
       const data = await res.json().catch(() => ({}));
       if (!res.ok) {
         setError((data?.error as string) || 'Could not check delivery');
+        analytics.trackPincodeCheck(pc, false);
         return;
       }
       setResult({
@@ -36,6 +38,7 @@ export function PincodeDeliveryCheck() {
         areaLabel: [data.areaName, data.district].filter(Boolean).join(', '),
         state: data.state as string,
       });
+      analytics.trackPincodeCheck(pc, true, data.state as string);
     } catch {
       setError('Something went wrong. Try again.');
     } finally {
