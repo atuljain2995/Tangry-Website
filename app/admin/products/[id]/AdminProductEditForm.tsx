@@ -349,6 +349,7 @@ export function AdminProductEditForm({
                   <div className="relative h-28 w-28 flex-shrink-0 overflow-hidden rounded-lg border border-gray-200 bg-white shadow-inner">
                     {row.url ? (
                       <>
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
                         <img
                           key={row.previewKey ?? row.url}
                           src={row.url + (row.previewKey ? `?t=${row.previewKey}` : '')}

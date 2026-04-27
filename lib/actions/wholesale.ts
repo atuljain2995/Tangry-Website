@@ -36,6 +36,7 @@ export async function submitWholesaleQuote(payload: SubmitWholesalePayload): Pro
   const fullMessage = messageParts.reverse().join(' ').trim() || null;
 
   // b2b_quotes may not be in generated Database types
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const { error } = await (supabaseAdmin as any)
     .from('b2b_quotes')
     .insert({

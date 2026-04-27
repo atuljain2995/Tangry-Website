@@ -16,6 +16,7 @@ type OrderRow = {
 };
 
 async function getUserOrders(userId: string, email: string): Promise<OrderRow[]> {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const { data, error } = await (supabaseAdmin as any)
     .from('orders')
     .select('id, order_number, order_status, payment_status, payment_method, total, currency, items, created_at')
@@ -97,6 +98,7 @@ export default async function AccountOrdersPage() {
                   {(order.items ?? []).map((item, idx) => (
                     <div key={idx} className="flex items-center gap-3 py-2">
                       {item.image && (
+                        /* eslint-disable-next-line @next/next/no-img-element */
                         <img
                           src={item.image}
                           alt={item.productName}

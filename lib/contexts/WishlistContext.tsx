@@ -19,6 +19,7 @@ export function WishlistProvider({ children }: { children: React.ReactNode }) {
   const [loading, setLoading] = useState(false);
 
   // Fetch wishlist when user logs in
+  /* eslint-disable react-hooks/set-state-in-effect -- initialising state from async fetch */
   useEffect(() => {
     if (!user) {
       setProductIds([]);
@@ -34,6 +35,7 @@ export function WishlistProvider({ children }: { children: React.ReactNode }) {
     });
     return () => { cancelled = true; };
   }, [user]);
+  /* eslint-enable react-hooks/set-state-in-effect */
 
   const isWishlisted = useCallback(
     (productId: string) => productIds.includes(productId),

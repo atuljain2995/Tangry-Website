@@ -111,7 +111,7 @@ export default function RecipesPage() {
   const [searchQuery, setSearchQuery] = useState('');
 
   // Filter recipes
-  let filteredRecipes = recipes.filter(recipe => {
+  const filteredRecipes = recipes.filter(recipe => {
     const matchesCategory = selectedCategory === 'All' || recipe.category === selectedCategory;
     const matchesDifficulty = selectedDifficulty === 'All' || recipe.difficulty === selectedDifficulty;
     const matchesSearch = searchQuery === '' || 

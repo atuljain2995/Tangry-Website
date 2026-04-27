@@ -27,6 +27,7 @@ async function main() {
     console.log(`${hero}  |  ${(p.name || '').padEnd(30)}  |  ${(p.category || '').padEnd(12)}  |  ${feat} ${best}`);
   }
   console.log('-'.repeat(80));
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const heroCount = data.filter((p: any) => p.is_hero_product).length;
   console.log(`\nTotal: ${data.length} products, ${heroCount} marked as hero`);
 }

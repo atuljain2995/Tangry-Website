@@ -23,6 +23,7 @@ export async function submitContact(payload: SubmitContactPayload): Promise<Subm
   if (!message?.trim()) return { success: false, error: 'Message is required' };
 
   // contact_inquiries table not in generated Database types
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const { error } = await (supabaseAdmin as any)
     .from('contact_inquiries')
     .insert({

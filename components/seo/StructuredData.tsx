@@ -1,5 +1,6 @@
 interface StructuredDataProps {
-  data: Record<string, any> | Record<string, any>[];
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  data: Record<string, unknown> | Record<string, any>[];
 }
 
 export const StructuredData = ({ data }: StructuredDataProps) => {

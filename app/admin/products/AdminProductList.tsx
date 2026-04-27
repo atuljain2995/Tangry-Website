@@ -8,6 +8,7 @@ import type { ProductExtended } from '@/lib/types/database';
 function ProductRowImage({ src, alt }: { src: string; alt: string }) {
   const [url, setUrl] = React.useState(src);
   return (
+    // eslint-disable-next-line @next/next/no-img-element
     <img
       src={url}
       alt={alt}

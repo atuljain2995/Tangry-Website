@@ -93,10 +93,11 @@ async function testSupabaseConnection() {
     console.log(`- Sample data: ${products?.length || 0} products found`);
 
     return true;
-  } catch (error: any) {
-    console.error('❌ Unexpected error:', error.message || error);
-    if (error.cause) {
-      console.error('Error cause:', error.cause);
+  } catch (error: unknown) {
+    const err = error as Error;
+    console.error('❌ Unexpected error:', err.message || error);
+    if (err.cause) {
+      console.error('Error cause:', err.cause);
     }
     console.log('');
     console.log('Environment check:');

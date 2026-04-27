@@ -5,6 +5,7 @@ import { getProductsByIds } from '@/lib/db/queries';
 import { WishlistClient } from './WishlistClient';
 
 async function getWishlistProductIds(userId: string): Promise<string[]> {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const { data } = await (supabaseAdmin as any)
     .from('wishlists')
     .select('product_ids')

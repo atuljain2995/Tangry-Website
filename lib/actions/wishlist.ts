@@ -6,6 +6,7 @@ import { supabaseAdmin } from '@/lib/db/supabase';
 type WishlistResult = { success: true; productIds: string[] } | { success: false; error: string };
 
 // The wishlists table isn't in the generated Database type, so we cast to any.
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const wishlists = () => (supabaseAdmin as any).from('wishlists');
 
 export async function getWishlist(): Promise<WishlistResult> {

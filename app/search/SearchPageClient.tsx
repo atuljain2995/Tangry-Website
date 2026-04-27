@@ -50,6 +50,7 @@ export function SearchPageClient({ query, products }: SearchPageClientProps) {
       pendingCommit.current = null;
       return;
     }
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- syncing URL param to local draft
     setDraft(urlQ);
   }, [urlQ]);
 

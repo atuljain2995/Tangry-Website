@@ -59,8 +59,8 @@ export async function createOrder(payload: CreateOrderPayload): Promise<CreateOr
 
   // Validate stock availability BEFORE creating the order to prevent overselling
   for (const item of trustedItems) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const { data: variant } = await (supabaseAdmin as any)
-      .from('product_variants')
       .select('stock, sku')
       .eq('id', item.variantId)
       .single();
@@ -92,6 +92,7 @@ export async function createOrder(payload: CreateOrderPayload): Promise<CreateOr
   // Link order to logged-in user if available
   const sessionUser = await getSessionUser().catch(() => null);
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const { error: orderError } = await (supabaseAdmin as any)
     .from('orders')
     .insert({
@@ -151,6 +152,7 @@ export async function updateOrderStatus(
   if (!VALID_ORDER_STATUSES.includes(orderStatus as (typeof VALID_ORDER_STATUSES)[number])) {
     return { success: false, error: 'Invalid status' };
   }
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const { error } = await (supabaseAdmin as any)
     .from('orders')
     .update({ order_status: orderStatus, updated_at: new Date().toISOString() })
@@ -169,6 +171,7 @@ export async function setOrderTrackingNumber(
   orderId: string,
   trackingNumber: string | null
 ): Promise<{ success: true } | { success: false; error: string }> {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const { error } = await (supabaseAdmin as any)
     .from('orders')
     .update({

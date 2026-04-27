@@ -8,6 +8,7 @@ export async function GET() {
     return NextResponse.json([], { status: 200 });
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const { data, error } = await (supabaseAdmin as any)
     .from('addresses')
     .select('id, type, full_name, phone, address_line1, address_line2, city, state, postal_code, country, is_default')

@@ -31,6 +31,7 @@ export async function POST(request: Request) {
   }
 
   // Table exists in DB; generated client types occasionally resolve insert as `never` in this project.
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const { error } = await (supabaseAdmin as any).from('email_subscribers').insert({
     email,
     tags: ['website_newsletter'],
@@ -38,6 +39,7 @@ export async function POST(request: Request) {
   });
 
   if (error?.code === '23505') {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const { error: updateErr } = await (supabaseAdmin as any)
       .from('email_subscribers')
       .update({ is_active: true, unsubscribed_at: null })

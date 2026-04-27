@@ -32,40 +32,6 @@ export const CheckoutForm = ({ onSubmit, onBack }: CheckoutFormProps) => {
   const [savedAddresses, setSavedAddresses] = useState<SavedAddress[]>([]);
   const [loadingAddresses, setLoadingAddresses] = useState(false);
 
-  // Fetch saved addresses for logged-in user
-  useEffect(() => {
-    if (!user) return;
-    setEmail(user.email || '');
-    setLoadingAddresses(true);
-    fetch('/api/account/addresses', { credentials: 'include' })
-      .then((res) => (res.ok ? res.json() : Promise.reject()))
-      .then((data: SavedAddress[]) => {
-        setSavedAddresses(data);
-        // Auto-select default shipping address
-        const defaultShipping = data.find((a) => a.type === 'shipping' && a.is_default);
-        if (defaultShipping) applyAddress(defaultShipping, 'shipping');
-      })
-      .catch(() => {})
-      .finally(() => setLoadingAddresses(false));
-  }, [user]);
-
-  const applyAddress = (addr: SavedAddress, target: 'shipping' | 'billing') => {
-    const mapped: Partial<Address> = {
-      fullName: addr.full_name,
-      phone: addr.phone,
-      addressLine1: addr.address_line1,
-      addressLine2: addr.address_line2 || '',
-      city: addr.city,
-      state: addr.state,
-      postalCode: addr.postal_code,
-      country: addr.country || 'IN',
-      type: target,
-      isDefault: addr.is_default,
-    };
-    if (target === 'shipping') setShippingAddress(mapped);
-    else setBillingAddress(mapped);
-  };
-
   const [shippingAddress, setShippingAddress] = useState<Partial<Address>>({
     fullName: '',
     phone: '',
@@ -91,6 +57,42 @@ export const CheckoutForm = ({ onSubmit, onBack }: CheckoutFormProps) => {
     type: 'billing',
     isDefault: false
   });
+
+  const applyAddress = (addr: SavedAddress, target: 'shipping' | 'billing') => {
+    const mapped: Partial<Address> = {
+      fullName: addr.full_name,
+      phone: addr.phone,
+      addressLine1: addr.address_line1,
+      addressLine2: addr.address_line2 || '',
+      city: addr.city,
+      state: addr.state,
+      postalCode: addr.postal_code,
+      country: addr.country || 'IN',
+      type: target,
+      isDefault: addr.is_default,
+    };
+    if (target === 'shipping') setShippingAddress(mapped);
+    else setBillingAddress(mapped);
+  };
+
+  // Fetch saved addresses for logged-in user
+  /* eslint-disable react-hooks/set-state-in-effect -- initialising form from fetched user data */
+  useEffect(() => {
+    if (!user) return;
+    setEmail(user.email || '');
+    setLoadingAddresses(true);
+    fetch('/api/account/addresses', { credentials: 'include' })
+      .then((res) => (res.ok ? res.json() : Promise.reject()))
+      .then((data: SavedAddress[]) => {
+        setSavedAddresses(data);
+        // Auto-select default shipping address
+        const defaultShipping = data.find((a) => a.type === 'shipping' && a.is_default);
+        if (defaultShipping) applyAddress(defaultShipping, 'shipping');
+      })
+      .catch(() => {})
+      .finally(() => setLoadingAddresses(false));
+  }, [user]);
+  /* eslint-enable react-hooks/set-state-in-effect */
 
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
