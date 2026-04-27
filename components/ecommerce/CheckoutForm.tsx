@@ -20,7 +20,12 @@ interface SavedAddress {
 }
 
 interface CheckoutFormProps {
-  onSubmit: (shippingAddress: Address, billingAddress: Address, sameAsShipping: boolean, email: string) => void;
+  onSubmit: (
+    shippingAddress: Address,
+    billingAddress: Address,
+    sameAsShipping: boolean,
+    email: string,
+  ) => void;
   onBack: () => void;
 }
 
@@ -42,7 +47,7 @@ export const CheckoutForm = ({ onSubmit, onBack }: CheckoutFormProps) => {
     postalCode: '',
     country: 'IN',
     type: 'shipping',
-    isDefault: false
+    isDefault: false,
   });
 
   const [billingAddress, setBillingAddress] = useState<Partial<Address>>({
@@ -55,7 +60,7 @@ export const CheckoutForm = ({ onSubmit, onBack }: CheckoutFormProps) => {
     postalCode: '',
     country: 'IN',
     type: 'billing',
-    isDefault: false
+    isDefault: false,
   });
 
   const applyAddress = (addr: SavedAddress, target: 'shipping' | 'billing') => {
@@ -99,27 +104,34 @@ export const CheckoutForm = ({ onSubmit, onBack }: CheckoutFormProps) => {
 
     // Email validation
     if (!email?.trim()) newErrors.email = 'Email is required';
-    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) newErrors.email = 'Enter a valid email address';
+    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))
+      newErrors.email = 'Enter a valid email address';
     // Shipping validation
     if (!shippingAddress.fullName?.trim()) newErrors.shipping_fullName = 'Full name is required';
     if (!shippingAddress.phone?.trim()) newErrors.shipping_phone = 'Phone number is required';
-    else if (!/^[6-9]\d{9}$/.test(shippingAddress.phone)) newErrors.shipping_phone = 'Invalid phone number';
-    if (!shippingAddress.addressLine1?.trim()) newErrors.shipping_addressLine1 = 'Address is required';
+    else if (!/^[6-9]\d{9}$/.test(shippingAddress.phone))
+      newErrors.shipping_phone = 'Invalid phone number';
+    if (!shippingAddress.addressLine1?.trim())
+      newErrors.shipping_addressLine1 = 'Address is required';
     if (!shippingAddress.city?.trim()) newErrors.shipping_city = 'City is required';
     if (!shippingAddress.state?.trim()) newErrors.shipping_state = 'State is required';
     if (!shippingAddress.postalCode?.trim()) newErrors.shipping_postalCode = 'PIN code is required';
-    else if (!validatePinCode(shippingAddress.postalCode)) newErrors.shipping_postalCode = 'Invalid PIN code';
+    else if (!validatePinCode(shippingAddress.postalCode))
+      newErrors.shipping_postalCode = 'Invalid PIN code';
 
     // Billing validation (if different)
     if (!sameAsShipping) {
       if (!billingAddress.fullName?.trim()) newErrors.billing_fullName = 'Full name is required';
       if (!billingAddress.phone?.trim()) newErrors.billing_phone = 'Phone number is required';
-      else if (!/^[6-9]\d{9}$/.test(billingAddress.phone)) newErrors.billing_phone = 'Invalid phone number';
-      if (!billingAddress.addressLine1?.trim()) newErrors.billing_addressLine1 = 'Address is required';
+      else if (!/^[6-9]\d{9}$/.test(billingAddress.phone))
+        newErrors.billing_phone = 'Invalid phone number';
+      if (!billingAddress.addressLine1?.trim())
+        newErrors.billing_addressLine1 = 'Address is required';
       if (!billingAddress.city?.trim()) newErrors.billing_city = 'City is required';
       if (!billingAddress.state?.trim()) newErrors.billing_state = 'State is required';
       if (!billingAddress.postalCode?.trim()) newErrors.billing_postalCode = 'PIN code is required';
-      else if (!validatePinCode(billingAddress.postalCode)) newErrors.billing_postalCode = 'Invalid PIN code';
+      else if (!validatePinCode(billingAddress.postalCode))
+        newErrors.billing_postalCode = 'Invalid PIN code';
     }
 
     setErrors(newErrors);
@@ -129,23 +141,49 @@ export const CheckoutForm = ({ onSubmit, onBack }: CheckoutFormProps) => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (validateForm()) {
-      const finalBillingAddress = sameAsShipping ? { ...shippingAddress, type: 'billing' as const } : billingAddress;
+      const finalBillingAddress = sameAsShipping
+        ? { ...shippingAddress, type: 'billing' as const }
+        : billingAddress;
       onSubmit(
         shippingAddress as Address,
         finalBillingAddress as Address,
         sameAsShipping,
-        email.trim()
+        email.trim(),
       );
     }
   };
 
   const indianStates = [
-    'Andhra Pradesh', 'Arunachal Pradesh', 'Assam', 'Bihar', 'Chhattisgarh',
-    'Goa', 'Gujarat', 'Haryana', 'Himachal Pradesh', 'Jharkhand', 'Karnataka',
-    'Kerala', 'Madhya Pradesh', 'Maharashtra', 'Manipur', 'Meghalaya', 'Mizoram',
-    'Nagaland', 'Odisha', 'Punjab', 'Rajasthan', 'Sikkim', 'Tamil Nadu',
-    'Telangana', 'Tripura', 'Uttar Pradesh', 'Uttarakhand', 'West Bengal',
-    'Delhi', 'Puducherry'
+    'Andhra Pradesh',
+    'Arunachal Pradesh',
+    'Assam',
+    'Bihar',
+    'Chhattisgarh',
+    'Goa',
+    'Gujarat',
+    'Haryana',
+    'Himachal Pradesh',
+    'Jharkhand',
+    'Karnataka',
+    'Kerala',
+    'Madhya Pradesh',
+    'Maharashtra',
+    'Manipur',
+    'Meghalaya',
+    'Mizoram',
+    'Nagaland',
+    'Odisha',
+    'Punjab',
+    'Rajasthan',
+    'Sikkim',
+    'Tamil Nadu',
+    'Telangana',
+    'Tripura',
+    'Uttar Pradesh',
+    'Uttarakhand',
+    'West Bengal',
+    'Delhi',
+    'Puducherry',
   ];
 
   return (
@@ -191,7 +229,9 @@ export const CheckoutForm = ({ onSubmit, onBack }: CheckoutFormProps) => {
                 );
               })}
           </div>
-          <p className="text-xs text-gray-500 mt-2">Select an address above or enter a new one below.</p>
+          <p className="text-xs text-gray-500 mt-2">
+            Select an address above or enter a new one below.
+          </p>
         </div>
       )}
       {loadingAddresses && (
@@ -215,9 +255,7 @@ export const CheckoutForm = ({ onSubmit, onBack }: CheckoutFormProps) => {
               }`}
               placeholder="your@email.com"
             />
-            {errors.email && (
-              <p className="text-red-600 text-xs mt-1">{errors.email}</p>
-            )}
+            {errors.email && <p className="text-red-600 text-xs mt-1">{errors.email}</p>}
           </div>
 
           <div>
@@ -263,7 +301,9 @@ export const CheckoutForm = ({ onSubmit, onBack }: CheckoutFormProps) => {
             <input
               type="text"
               value={shippingAddress.addressLine1}
-              onChange={(e) => setShippingAddress({ ...shippingAddress, addressLine1: e.target.value })}
+              onChange={(e) =>
+                setShippingAddress({ ...shippingAddress, addressLine1: e.target.value })
+              }
               className={`w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#D32F2F] ${
                 errors.shipping_addressLine1 ? 'border-red-500' : 'border-gray-300'
               }`}
@@ -275,13 +315,13 @@ export const CheckoutForm = ({ onSubmit, onBack }: CheckoutFormProps) => {
           </div>
 
           <div className="md:col-span-2">
-            <label className="block text-sm font-semibold text-gray-700 mb-2">
-              Address Line 2
-            </label>
+            <label className="block text-sm font-semibold text-gray-700 mb-2">Address Line 2</label>
             <input
               type="text"
               value={shippingAddress.addressLine2}
-              onChange={(e) => setShippingAddress({ ...shippingAddress, addressLine2: e.target.value })}
+              onChange={(e) =>
+                setShippingAddress({ ...shippingAddress, addressLine2: e.target.value })
+              }
               className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#D32F2F]"
               placeholder="Road name, Area, Colony"
             />
@@ -317,8 +357,10 @@ export const CheckoutForm = ({ onSubmit, onBack }: CheckoutFormProps) => {
               }`}
             >
               <option value="">Select State</option>
-              {indianStates.map(state => (
-                <option key={state} value={state}>{state}</option>
+              {indianStates.map((state) => (
+                <option key={state} value={state}>
+                  {state}
+                </option>
               ))}
             </select>
             {errors.shipping_state && (
@@ -333,7 +375,9 @@ export const CheckoutForm = ({ onSubmit, onBack }: CheckoutFormProps) => {
             <input
               type="text"
               value={shippingAddress.postalCode}
-              onChange={(e) => setShippingAddress({ ...shippingAddress, postalCode: e.target.value })}
+              onChange={(e) =>
+                setShippingAddress({ ...shippingAddress, postalCode: e.target.value })
+              }
               className={`w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#D32F2F] ${
                 errors.shipping_postalCode ? 'border-red-500' : 'border-gray-300'
               }`}
@@ -374,7 +418,9 @@ export const CheckoutForm = ({ onSubmit, onBack }: CheckoutFormProps) => {
                 <input
                   type="text"
                   value={billingAddress.fullName}
-                  onChange={(e) => setBillingAddress({ ...billingAddress, fullName: e.target.value })}
+                  onChange={(e) =>
+                    setBillingAddress({ ...billingAddress, fullName: e.target.value })
+                  }
                   className={`w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#D32F2F] ${
                     errors.billing_fullName ? 'border-red-500' : 'border-gray-300'
                   }`}
@@ -428,4 +474,3 @@ export const CheckoutForm = ({ onSubmit, onBack }: CheckoutFormProps) => {
     </form>
   );
 };
-

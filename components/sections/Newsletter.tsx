@@ -22,7 +22,11 @@ export const Newsletter = () => {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email }),
       });
-      const data = (await res.json().catch(() => ({}))) as { error?: string; ok?: boolean; alreadySubscribed?: boolean };
+      const data = (await res.json().catch(() => ({}))) as {
+        error?: string;
+        ok?: boolean;
+        alreadySubscribed?: boolean;
+      };
 
       if (!res.ok) {
         setStatus('error');
@@ -36,7 +40,7 @@ export const Newsletter = () => {
       setMessage(
         data.alreadySubscribed
           ? "You're already on the list — we'll keep sending you Tangry updates."
-          : "Thanks! You're subscribed. Watch your inbox for offers and spice tips."
+          : "Thanks! You're subscribed. Watch your inbox for offers and spice tips.",
       );
     } catch {
       setStatus('error');

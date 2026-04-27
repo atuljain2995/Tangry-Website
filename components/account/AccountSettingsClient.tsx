@@ -256,7 +256,13 @@ export function AccountSettingsClient({ profile, addresses }: Props) {
             <div className="flex flex-wrap justify-center gap-2 sm:justify-start">
               <label className="cursor-pointer rounded-lg bg-orange-600 px-3 py-1.5 text-xs font-medium text-white hover:bg-orange-700">
                 {uploading ? 'Uploading…' : 'Change photo'}
-                <input type="file" accept="image/jpeg,image/png,image/webp" className="hidden" onChange={onAvatarFile} disabled={uploading} />
+                <input
+                  type="file"
+                  accept="image/jpeg,image/png,image/webp"
+                  className="hidden"
+                  onChange={onAvatarFile}
+                  disabled={uploading}
+                />
               </label>
               {avatarUrl ? (
                 <button
@@ -279,7 +285,12 @@ export function AccountSettingsClient({ profile, addresses }: Props) {
               <label className="block text-sm font-medium text-gray-700 mb-1" htmlFor="acc-name">
                 Name
               </label>
-              <input id="acc-name" className={inputCls} value={name} onChange={(e) => setName(e.target.value)} />
+              <input
+                id="acc-name"
+                className={inputCls}
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+              />
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1" htmlFor="acc-phone">
@@ -304,7 +315,9 @@ export function AccountSettingsClient({ profile, addresses }: Props) {
               Save profile
             </button>
             {profileMsg && (
-              <p className={`text-sm ${profileMsg.ok ? 'text-green-700' : 'text-red-600'}`}>{profileMsg.text}</p>
+              <p className={`text-sm ${profileMsg.ok ? 'text-green-700' : 'text-red-600'}`}>
+                {profileMsg.text}
+              </p>
             )}
           </div>
         </div>
@@ -338,11 +351,16 @@ export function AccountSettingsClient({ profile, addresses }: Props) {
         </div>
 
         {addrMsg && (
-          <p className={`mt-4 text-sm ${addrMsg.ok ? 'text-green-700' : 'text-red-600'}`}>{addrMsg.text}</p>
+          <p className={`mt-4 text-sm ${addrMsg.ok ? 'text-green-700' : 'text-red-600'}`}>
+            {addrMsg.text}
+          </p>
         )}
 
         {addrDraft && (
-          <form onSubmit={submitAddress} className="mt-6 space-y-4 rounded-lg border border-orange-200 bg-orange-50/40 p-4">
+          <form
+            onSubmit={submitAddress}
+            className="mt-6 space-y-4 rounded-lg border border-orange-200 bg-orange-50/40 p-4"
+          >
             <p className="text-sm font-semibold text-gray-900">
               {addrDraft.id ? 'Edit address' : 'New address'} ({addrDraft.type})
             </p>
@@ -361,7 +379,12 @@ export function AccountSettingsClient({ profile, addresses }: Props) {
                 <input
                   className={inputCls}
                   value={addrDraft.phone}
-                  onChange={(e) => setAddrDraft({ ...addrDraft, phone: e.target.value.replace(/\D/g, '').slice(0, 10) })}
+                  onChange={(e) =>
+                    setAddrDraft({
+                      ...addrDraft,
+                      phone: e.target.value.replace(/\D/g, '').slice(0, 10),
+                    })
+                  }
                   required
                   inputMode="numeric"
                 />
@@ -371,13 +394,20 @@ export function AccountSettingsClient({ profile, addresses }: Props) {
                 <input
                   className={inputCls}
                   value={addrDraft.postalCode}
-                  onChange={(e) => setAddrDraft({ ...addrDraft, postalCode: e.target.value.replace(/\D/g, '').slice(0, 6) })}
+                  onChange={(e) =>
+                    setAddrDraft({
+                      ...addrDraft,
+                      postalCode: e.target.value.replace(/\D/g, '').slice(0, 6),
+                    })
+                  }
                   required
                   inputMode="numeric"
                 />
               </div>
               <div className="sm:col-span-2">
-                <label className="mb-1 block text-xs font-medium text-gray-700">Address line 1</label>
+                <label className="mb-1 block text-xs font-medium text-gray-700">
+                  Address line 1
+                </label>
                 <input
                   className={inputCls}
                   value={addrDraft.addressLine1}
@@ -386,7 +416,9 @@ export function AccountSettingsClient({ profile, addresses }: Props) {
                 />
               </div>
               <div className="sm:col-span-2">
-                <label className="mb-1 block text-xs font-medium text-gray-700">Address line 2 (optional)</label>
+                <label className="mb-1 block text-xs font-medium text-gray-700">
+                  Address line 2 (optional)
+                </label>
                 <input
                   className={inputCls}
                   value={addrDraft.addressLine2 ?? ''}
@@ -425,7 +457,9 @@ export function AccountSettingsClient({ profile, addresses }: Props) {
                   onChange={(e) => setAddrDraft({ ...addrDraft, isDefault: e.target.checked })}
                   className="rounded border-gray-300"
                 />
-                <span className="text-sm text-gray-700">Set as default {addrDraft.type} address</span>
+                <span className="text-sm text-gray-700">
+                  Set as default {addrDraft.type} address
+                </span>
               </label>
             </div>
             <div className="flex gap-2">
@@ -450,7 +484,9 @@ export function AccountSettingsClient({ profile, addresses }: Props) {
 
         <ul className="mt-6 space-y-3">
           {addresses.length === 0 && !addrDraft && (
-            <li className="text-sm text-gray-500">No saved addresses yet. Add one for faster checkout.</li>
+            <li className="text-sm text-gray-500">
+              No saved addresses yet. Add one for faster checkout.
+            </li>
           )}
           {addresses.map((row) => (
             <li
@@ -491,7 +527,11 @@ export function AccountSettingsClient({ profile, addresses }: Props) {
                   disabled={deletingId === row.id}
                   className="inline-flex items-center gap-1 rounded-lg border border-red-200 px-3 py-1.5 text-xs font-medium text-red-700 hover:bg-red-50 disabled:opacity-50"
                 >
-                  {deletingId === row.id ? <Loader2 className="h-3.5 w-3.5 animate-spin" aria-hidden /> : <Trash2 className="h-3.5 w-3.5" aria-hidden />}
+                  {deletingId === row.id ? (
+                    <Loader2 className="h-3.5 w-3.5 animate-spin" aria-hidden />
+                  ) : (
+                    <Trash2 className="h-3.5 w-3.5" aria-hidden />
+                  )}
                   Remove
                 </button>
               </div>

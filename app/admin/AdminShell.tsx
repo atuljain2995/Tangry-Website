@@ -57,10 +57,7 @@ export function AdminShell({ children, profileEmail }: AdminShellProps) {
       )}
 
       <div className="flex">
-        <AdminSidebar
-          open={sidebarOpen}
-          onClose={() => setSidebarOpen(false)}
-        />
+        <AdminSidebar open={sidebarOpen} onClose={() => setSidebarOpen(false)} />
         <main className="min-w-0 flex-1 p-4 pb-[max(2rem,env(safe-area-inset-bottom,0px))] md:p-6 md:pb-6">
           {children}
         </main>

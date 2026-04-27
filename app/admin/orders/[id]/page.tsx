@@ -58,8 +58,23 @@ export default async function AdminOrderDetailPage({
   }
 
   const o = order as unknown as OrderRow;
-  const items = (o.items as { productName: string; variantName: string; quantity: number; price: number; subtotal: number }[]) ?? [];
-  const shipping = (o.shipping_address as { full_name?: string; address_line1?: string; city?: string; state?: string; postal_code?: string; phone?: string }) ?? {};
+  const items =
+    (o.items as {
+      productName: string;
+      variantName: string;
+      quantity: number;
+      price: number;
+      subtotal: number;
+    }[]) ?? [];
+  const shipping =
+    (o.shipping_address as {
+      full_name?: string;
+      address_line1?: string;
+      city?: string;
+      state?: string;
+      postal_code?: string;
+      phone?: string;
+    }) ?? {};
   const billing = (o.billing_address as { full_name?: string; address_line1?: string }) ?? {};
 
   return (
@@ -89,7 +104,9 @@ export default async function AdminOrderDetailPage({
                 <div>
                   <p className="font-medium text-gray-900">{item.productName}</p>
                   {item.variantName && (
-                    <p className="text-sm text-gray-500">{item.variantName} × {item.quantity}</p>
+                    <p className="text-sm text-gray-500">
+                      {item.variantName} × {item.quantity}
+                    </p>
                   )}
                 </div>
                 <p className="font-medium text-gray-900">{formatCurrency(item.subtotal)}</p>
@@ -132,16 +149,20 @@ export default async function AdminOrderDetailPage({
           <div className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
             <h2 className="text-lg font-semibold text-gray-900">Shipping address</h2>
             <p className="mt-2 text-sm text-gray-700">
-              {shipping.full_name}<br />
-              {shipping.address_line1}<br />
-              {shipping.city}, {shipping.state} {shipping.postal_code}<br />
+              {shipping.full_name}
+              <br />
+              {shipping.address_line1}
+              <br />
+              {shipping.city}, {shipping.state} {shipping.postal_code}
+              <br />
               {shipping.phone}
             </p>
           </div>
           <div className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
             <h2 className="text-lg font-semibold text-gray-900">Billing address</h2>
             <p className="mt-2 text-sm text-gray-700">
-              {billing.full_name}<br />
+              {billing.full_name}
+              <br />
               {billing.address_line1}
             </p>
           </div>

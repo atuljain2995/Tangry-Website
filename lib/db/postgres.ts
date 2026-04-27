@@ -9,9 +9,11 @@ let pool: Pool | null = null;
 export function getPool(): Pool {
   if (!pool) {
     if (!process.env.DATABASE_URL) {
-      throw new Error('DATABASE_URL environment variable is not set. Please configure your database connection.');
+      throw new Error(
+        'DATABASE_URL environment variable is not set. Please configure your database connection.',
+      );
     }
-    
+
     pool = new Pool({
       connectionString: process.env.DATABASE_URL,
       ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: true } : false,
@@ -32,19 +34,16 @@ export function getPool(): Pool {
 /**
  * Execute a query
  */
-export async function query(
-  text: string,
-  params?: unknown[]
-): Promise<QueryResult> {
+export async function query(text: string, params?: unknown[]): Promise<QueryResult> {
   const pool = getPool();
   const start = Date.now();
   const res = await pool.query(text, params);
   const duration = Date.now() - start;
-  
+
   if (process.env.NODE_ENV === 'development') {
     console.log('Executed query', { text, duration, rows: res.rowCount });
   }
-  
+
   return res;
 }
 
@@ -52,11 +51,11 @@ export async function query(
  * Execute a transaction
  */
 export async function transaction<T>(
-  callback: (client: Pool['connect'] extends () => Promise<infer C> ? C : never) => Promise<T>
+  callback: (client: Pool['connect'] extends () => Promise<infer C> ? C : never) => Promise<T>,
 ): Promise<T> {
   const pool = getPool();
   const client = await pool.connect();
-  
+
   try {
     await client.query('BEGIN');
     const result = await callback(client);
@@ -79,4 +78,3 @@ export async function closePool(): Promise<void> {
     pool = null;
   }
 }
-

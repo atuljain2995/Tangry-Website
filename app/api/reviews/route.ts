@@ -51,13 +51,22 @@ export async function POST(req: NextRequest) {
   }
   const ratingNum = Number(rating);
   if (!Number.isInteger(ratingNum) || ratingNum < 1 || ratingNum > 5) {
-    return NextResponse.json({ error: 'Rating must be an integer between 1 and 5' }, { status: 400 });
+    return NextResponse.json(
+      { error: 'Rating must be an integer between 1 and 5' },
+      { status: 400 },
+    );
   }
   if (typeof title !== 'string' || title.trim().length < 3 || title.trim().length > 120) {
-    return NextResponse.json({ error: 'Title must be between 3 and 120 characters' }, { status: 400 });
+    return NextResponse.json(
+      { error: 'Title must be between 3 and 120 characters' },
+      { status: 400 },
+    );
   }
   if (typeof comment !== 'string' || comment.trim().length < 10 || comment.trim().length > 1500) {
-    return NextResponse.json({ error: 'Review must be between 10 and 1500 characters' }, { status: 400 });
+    return NextResponse.json(
+      { error: 'Review must be between 10 and 1500 characters' },
+      { status: 400 },
+    );
   }
 
   // ── Verify product exists ─────────────────────────────────────────────────

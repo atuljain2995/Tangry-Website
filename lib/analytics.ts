@@ -143,7 +143,12 @@ export const analytics = {
     });
   },
 
-  trackRemoveFromCart: (productId: string, productName: string, quantity: number, price: number) => {
+  trackRemoveFromCart: (
+    productId: string,
+    productName: string,
+    quantity: number,
+    price: number,
+  ) => {
     if (!isAnalyticsEnabled()) return;
     gtag('event', 'remove_from_cart', {
       currency: 'INR',
@@ -152,8 +157,9 @@ export const analytics = {
     });
   },
 
-  trackAuth: (event: 'login_success' | 'login_failed' | 'signup_success' | 'signup_failed' | 'logout') =>
-    trackEvent({ action: event, category: 'authentication' }),
+  trackAuth: (
+    event: 'login_success' | 'login_failed' | 'signup_success' | 'signup_failed' | 'logout',
+  ) => trackEvent({ action: event, category: 'authentication' }),
 
   trackWishlist: (action: 'add' | 'remove', productId: string, productName: string) =>
     trackEvent({
@@ -194,7 +200,12 @@ export const analytics = {
       label: value,
     }),
 
-  trackVariantSelected: (productId: string, variantId: string, variantName: string, from: 'detail' | 'grid') =>
+  trackVariantSelected: (
+    productId: string,
+    variantId: string,
+    variantName: string,
+    from: 'detail' | 'grid',
+  ) =>
     trackEvent({
       action: 'variant_selected',
       category: 'product_view',

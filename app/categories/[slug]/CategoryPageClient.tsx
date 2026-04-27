@@ -132,7 +132,8 @@ export function CategoryPageClient({ category, products }: CategoryPageClientPro
 
         <div className="container mx-auto px-4 py-16">
           <p className="mb-8 text-sm text-gray-500">
-            Showing <span className="font-bold text-gray-900">{products.length}</span> {products.length === 1 ? 'product' : 'products'} in {category.title}.
+            Showing <span className="font-bold text-gray-900">{products.length}</span>{' '}
+            {products.length === 1 ? 'product' : 'products'} in {category.title}.
           </p>
 
           {products.length > 0 ? (
@@ -143,7 +144,9 @@ export function CategoryPageClient({ category, products }: CategoryPageClientPro
             </div>
           ) : (
             <div className="rounded-2xl border border-gray-200 bg-white p-10 text-center shadow-sm">
-              <h2 className="mb-2 text-2xl font-bold text-gray-900">No products in this category yet</h2>
+              <h2 className="mb-2 text-2xl font-bold text-gray-900">
+                No products in this category yet
+              </h2>
               <p className="mb-6 text-gray-600">
                 This category page is live, but the product list is currently empty.
               </p>
@@ -165,9 +168,7 @@ export function CategoryPageClient({ category, products }: CategoryPageClientPro
                 <h2 className="mb-4 text-2xl font-black tracking-tight text-gray-900 md:text-3xl dark:text-neutral-100">
                   How to choose {category.title.toLowerCase()} from Tangry
                 </h2>
-                <p className="mb-5 text-gray-700 leading-8 dark:text-neutral-300">
-                  {guide.intro}
-                </p>
+                <p className="mb-5 text-gray-700 leading-8 dark:text-neutral-300">{guide.intro}</p>
                 <ul className="space-y-3 text-gray-700 dark:text-neutral-300">
                   {guide.uses.map((item) => (
                     <li key={item} className="flex gap-3">

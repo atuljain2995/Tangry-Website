@@ -8,33 +8,24 @@ const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'placeholde
 const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY || 'placeholder-service-key';
 
 // Check if Supabase is properly configured
-export const isSupabaseConfigured = 
-  supabaseUrl !== 'https://placeholder.supabase.co' && 
-  supabaseAnonKey !== 'placeholder-anon-key';
+export const isSupabaseConfigured =
+  supabaseUrl !== 'https://placeholder.supabase.co' && supabaseAnonKey !== 'placeholder-anon-key';
 
 // Client-side Supabase client (public operations)
-export const supabase = createClient<Database>(
-  supabaseUrl,
-  supabaseAnonKey,
-  {
-    auth: {
-      persistSession: true,
-      autoRefreshToken: true,
-    },
-  }
-);
+export const supabase = createClient<Database>(supabaseUrl, supabaseAnonKey, {
+  auth: {
+    persistSession: true,
+    autoRefreshToken: true,
+  },
+});
 
 // Server-side Supabase client (admin operations)
-export const supabaseAdmin = createClient<Database>(
-  supabaseUrl,
-  supabaseServiceKey,
-  {
-    auth: {
-      persistSession: false,
-      autoRefreshToken: false,
-    },
-  }
-);
+export const supabaseAdmin = createClient<Database>(supabaseUrl, supabaseServiceKey, {
+  auth: {
+    persistSession: false,
+    autoRefreshToken: false,
+  },
+});
 
 // Track if we've already logged a connectivity warning (avoid console spam)
 let hasLoggedConnectivityWarning = false;
@@ -57,7 +48,7 @@ export function isSupabaseUnreachable(error: unknown): boolean {
         '[Supabase] Not configured. Add to .env.local:\n' +
           '  NEXT_PUBLIC_SUPABASE_URL=https://YOUR_PROJECT_REF.supabase.co\n' +
           '  NEXT_PUBLIC_SUPABASE_ANON_KEY=your_anon_key\n' +
-          'Get these from Supabase Dashboard → Project Settings → API.'
+          'Get these from Supabase Dashboard → Project Settings → API.',
       );
     } else {
       console.warn(
@@ -65,7 +56,7 @@ export function isSupabaseUnreachable(error: unknown): boolean {
           '  • Internet connection and VPN\n' +
           '  • NEXT_PUBLIC_SUPABASE_URL is correct (https://YOUR_REF.supabase.co)\n' +
           '  • Project not paused: dashboard.supabase.com → your project\n' +
-          '  • Run "npm run test-db" from this repo to verify connection'
+          '  • Run "npm run test-db" from this repo to verify connection',
       );
     }
   }
@@ -101,4 +92,3 @@ export const db = {
   coupons: supabaseAdmin.from('coupons'),
   email_subscribers: supabaseAdmin.from('email_subscribers'),
 };
-

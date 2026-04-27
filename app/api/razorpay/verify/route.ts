@@ -2,7 +2,10 @@ import { NextRequest, NextResponse } from 'next/server';
 import crypto from 'crypto';
 import Razorpay from 'razorpay';
 import { createOrder } from '@/lib/actions/orders';
-import { computeTrustedOrderDraft, orderLinesFromCartItems } from '@/lib/orders/compute-trusted-order';
+import {
+  computeTrustedOrderDraft,
+  orderLinesFromCartItems,
+} from '@/lib/orders/compute-trusted-order';
 import type { CreateOrderPayload } from '@/lib/actions/orders';
 import type { Address, CartItem } from '@/lib/types/database';
 
@@ -107,7 +110,10 @@ export async function POST(request: NextRequest) {
     } = body;
 
     if (!orderId || !paymentId || !signature || !createOrderPayload) {
-      return NextResponse.json({ error: 'Missing payment details or order payload' }, { status: 400 });
+      return NextResponse.json(
+        { error: 'Missing payment details or order payload' },
+        { status: 400 },
+      );
     }
 
     if (!verifyPaymentSignature(orderId, paymentId, signature)) {

@@ -34,7 +34,7 @@ type ImageInput = {
 
 export async function updateProduct(
   productId: string,
-  data: ProductUpdate
+  data: ProductUpdate,
 ): Promise<{ success: true } | { success: false; error: string }> {
   try {
     const payload: Database['public']['Tables']['products']['Update'] = {
@@ -68,7 +68,7 @@ export async function updateProduct(
 
 export async function updateProductImages(
   productId: string,
-  images: ImageInput[]
+  images: ImageInput[],
 ): Promise<{ success: true } | { success: false; error: string }> {
   try {
     const existingIds = images.filter((img) => img.id).map((img) => img.id as string);
@@ -84,7 +84,10 @@ export async function updateProductImages(
       };
     };
 
-    const { data: currentRows } = await db.from('product_images').select('id').eq('product_id', productId);
+    const { data: currentRows } = await db
+      .from('product_images')
+      .select('id')
+      .eq('product_id', productId);
     const currentIds = (currentRows as { id: string }[] | null)?.map((r) => r.id) ?? [];
     const toDelete = currentIds.filter((id) => !existingIds.includes(id));
     if (toDelete.length > 0) {
@@ -94,11 +97,14 @@ export async function updateProductImages(
     for (let i = 0; i < images.length; i++) {
       const img = images[i];
       if (img.id && img.url.trim() !== '') {
-        await db.from('product_images').update({
-          url: img.url.trim(),
-          alt_text: img.alt_text ?? null,
-          display_order: img.display_order ?? i,
-        }).eq('id', img.id);
+        await db
+          .from('product_images')
+          .update({
+            url: img.url.trim(),
+            alt_text: img.alt_text ?? null,
+            display_order: img.display_order ?? i,
+          })
+          .eq('id', img.id);
       }
     }
 
@@ -121,7 +127,11 @@ export async function updateProductImages(
 
     revalidatePath('/');
     revalidatePath('/products');
-    const { data: productRow } = await supabaseAdmin.from('products').select('slug').eq('id', productId).single();
+    const { data: productRow } = await supabaseAdmin
+      .from('products')
+      .select('slug')
+      .eq('id', productId)
+      .single();
     if (productRow && typeof productRow === 'object' && 'slug' in productRow) {
       revalidatePath(`/products/${(productRow as { slug: string }).slug}`);
     }
@@ -153,7 +163,7 @@ export type CreateProductInput = {
 };
 
 export async function createProduct(
-  input: CreateProductInput
+  input: CreateProductInput,
 ): Promise<{ success: true; productId: string; slug: string } | { success: false; error: string }> {
   try {
     const slug = (input.slug?.trim() || slugify(input.name)).toLowerCase();
@@ -191,9 +201,15 @@ export async function createProduct(
       min_order_quantity: 1,
       max_order_quantity: null,
     };
-    const { data: product, error: productError } = await (supabaseAdmin as unknown as {
-      from: (t: string) => { insert: (v: unknown) => { select: (c: string) => { single: () => Promise<{ data: unknown; error: unknown }> } } };
-    })
+    const { data: product, error: productError } = await (
+      supabaseAdmin as unknown as {
+        from: (t: string) => {
+          insert: (v: unknown) => {
+            select: (c: string) => { single: () => Promise<{ data: unknown; error: unknown }> };
+          };
+        };
+      }
+    )
       .from('products')
       .insert(productPayload)
       .select('id, slug')
@@ -201,7 +217,10 @@ export async function createProduct(
 
     if (productError || !product) {
       console.error('createProduct error:', productError);
-      return { success: false, error: (productError as { message?: string })?.message ?? 'Failed to create product' };
+      return {
+        success: false,
+        error: (productError as { message?: string })?.message ?? 'Failed to create product',
+      };
     }
 
     const productId = (product as { id: string }).id;
@@ -237,7 +256,11 @@ export async function createProduct(
       weight: vWeight,
       is_available: true,
     };
-    const { error: variantError } = await (supabaseAdmin as unknown as { from: (t: string) => { insert: (v: unknown) => Promise<{ error: unknown }> } })
+    const { error: variantError } = await (
+      supabaseAdmin as unknown as {
+        from: (t: string) => { insert: (v: unknown) => Promise<{ error: unknown }> };
+      }
+    )
       .from('product_variants')
       .insert(variantPayload);
 
@@ -270,7 +293,7 @@ export type VariantInput = {
 
 export async function upsertProductVariants(
   productId: string,
-  variants: VariantInput[]
+  variants: VariantInput[],
 ): Promise<{ success: true } | { success: false; error: string }> {
   try {
     const vTable = supabaseAdmin.from('product_variants');
@@ -306,7 +329,11 @@ export async function upsertProductVariants(
     revalidatePath('/');
     revalidatePath('/products');
     revalidatePath('/admin/products');
-    const { data: productRow } = await supabaseAdmin.from('products').select('slug').eq('id', productId).single();
+    const { data: productRow } = await supabaseAdmin
+      .from('products')
+      .select('slug')
+      .eq('id', productId)
+      .single();
     if (productRow && typeof productRow === 'object' && 'slug' in productRow) {
       revalidatePath(`/products/${(productRow as { slug: string }).slug}`);
     }

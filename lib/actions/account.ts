@@ -28,7 +28,10 @@ export async function updateAccountProfile(form: {
     update.avatar_url = form.avatarUrl?.trim() || null;
   }
 
-  const { error } = await supabaseAdmin.from('users').update(update as never).eq('id', profile.id);
+  const { error } = await supabaseAdmin
+    .from('users')
+    .update(update as never)
+    .eq('id', profile.id);
 
   if (error) {
     console.error('updateAccountProfile', error);
@@ -55,7 +58,7 @@ export type AccountAddressInput = {
 async function enforceSingleDefault(
   userId: string,
   type: 'shipping' | 'billing',
-  keepId: string
+  keepId: string,
 ): Promise<void> {
   await supabaseAdmin
     .from('addresses')
@@ -71,7 +74,7 @@ async function enforceSingleDefault(
 }
 
 export async function saveAccountAddress(
-  input: AccountAddressInput
+  input: AccountAddressInput,
 ): Promise<{ success: true } | { success: false; error: string }> {
   const profile = await getCurrentUserProfile();
   if (!profile) return { success: false, error: 'Not signed in' };
@@ -115,7 +118,10 @@ export async function saveAccountAddress(
     if (!row || row.user_id !== profile.id) {
       return { success: false, error: 'Address not found' };
     }
-    const { error } = await supabaseAdmin.from('addresses').update(base as never).eq('id', input.id);
+    const { error } = await supabaseAdmin
+      .from('addresses')
+      .update(base as never)
+      .eq('id', input.id);
     if (error) {
       console.error('saveAccountAddress update', error);
       return { success: false, error: 'Could not update address' };
@@ -146,12 +152,16 @@ export async function saveAccountAddress(
 }
 
 export async function deleteAccountAddress(
-  id: string
+  id: string,
 ): Promise<{ success: true } | { success: false; error: string }> {
   const profile = await getCurrentUserProfile();
   if (!profile) return { success: false, error: 'Not signed in' };
 
-  const { error } = await supabaseAdmin.from('addresses').delete().eq('id', id).eq('user_id', profile.id);
+  const { error } = await supabaseAdmin
+    .from('addresses')
+    .delete()
+    .eq('id', id)
+    .eq('user_id', profile.id);
 
   if (error) {
     console.error('deleteAccountAddress', error);

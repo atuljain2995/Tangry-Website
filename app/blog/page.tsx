@@ -15,9 +15,10 @@ export default function BlogPage() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState<(typeof blogCategories)[number]>('All');
 
-  const filteredPosts = selectedCategory === 'All' 
-    ? blogPosts 
-    : blogPosts.filter(post => post.category === selectedCategory);
+  const filteredPosts =
+    selectedCategory === 'All'
+      ? blogPosts
+      : blogPosts.filter((post) => post.category === selectedCategory);
 
   return (
     <main className="page-shell">
@@ -41,7 +42,7 @@ export default function BlogPage() {
 
         {/* Category Filter — matches homepage filter pills */}
         <div className="flex flex-wrap mt-8 gap-2 justify-center overflow-x-auto pb-2 no-scrollbar">
-          {blogCategories.map(category => (
+          {blogCategories.map((category) => (
             <button
               key={category}
               onClick={() => setSelectedCategory(category)}
@@ -86,7 +87,9 @@ export default function BlogPage() {
                     {filteredPosts[0].title}
                   </h2>
                 </Link>
-                <p className="text-gray-500 mb-5 text-base leading-relaxed">{filteredPosts[0].excerpt}</p>
+                <p className="text-gray-500 mb-5 text-base leading-relaxed">
+                  {filteredPosts[0].excerpt}
+                </p>
                 <div className="flex items-center gap-4 text-xs text-gray-400 mb-5">
                   <span className="flex items-center gap-1">
                     <User size={14} />
@@ -110,8 +113,11 @@ export default function BlogPage() {
 
         {/* Blog Grid */}
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredPosts.slice(selectedCategory === 'All' ? 1 : 0).map(post => (
-            <article key={post.slug} className="group flex flex-col rounded-2xl border border-gray-100 bg-white shadow-sm transition-all duration-300 hover:shadow-lg p-3">
+          {filteredPosts.slice(selectedCategory === 'All' ? 1 : 0).map((post) => (
+            <article
+              key={post.slug}
+              className="group flex flex-col rounded-2xl border border-gray-100 bg-white shadow-sm transition-all duration-300 hover:shadow-lg p-3"
+            >
               {/* Image */}
               <Link href={`/blog/${post.slug}`}>
                 <div className="relative h-52 rounded-xl overflow-hidden bg-gray-50">
@@ -135,7 +141,9 @@ export default function BlogPage() {
                     {post.title}
                   </h2>
                 </Link>
-                <p className="text-gray-500 mb-4 text-sm line-clamp-2 leading-relaxed">{post.excerpt}</p>
+                <p className="text-gray-500 mb-4 text-sm line-clamp-2 leading-relaxed">
+                  {post.excerpt}
+                </p>
 
                 <div className="mt-auto flex items-center justify-between">
                   <div className="flex items-center gap-3 text-[11px] text-gray-400">
@@ -168,4 +176,3 @@ export default function BlogPage() {
     </main>
   );
 }
-

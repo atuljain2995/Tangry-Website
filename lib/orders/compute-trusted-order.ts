@@ -1,4 +1,8 @@
-import { validateCouponAndGetDiscount, resolveOrderLineItems, type OrderLineInput } from '@/lib/db/queries';
+import {
+  validateCouponAndGetDiscount,
+  resolveOrderLineItems,
+  type OrderLineInput,
+} from '@/lib/db/queries';
 import { calculateShipping, calculateTax } from '@/lib/utils/database';
 import type { CartItem } from '@/lib/types/database';
 
@@ -55,7 +59,7 @@ export async function computeTrustedOrderDraft(input: {
 }
 
 export function orderLinesFromCartItems(
-  items: { productId: string; variantId: string; quantity: number }[]
+  items: { productId: string; variantId: string; quantity: number }[],
 ): OrderLineInput[] {
   return items.map((i) => ({
     productId: i.productId,

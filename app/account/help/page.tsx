@@ -2,18 +2,38 @@ import Link from 'next/link';
 import { Mail, Phone, MessageCircle, HelpCircle, FileText, Truck } from 'lucide-react';
 
 const FAQ_ITEMS = [
-  { q: 'How do I track my order?', a: 'Go to the Track Order page from the footer or visit /track-order. Enter your order number and email to see real-time status.' },
-  { q: 'What payment methods do you accept?', a: 'We accept Razorpay (UPI, Cards, Netbanking), Cash on Delivery for orders under ₹5,000, and bank transfer for bulk/wholesale orders.' },
-  { q: 'What is your return policy?', a: 'We accept returns within 7 days of delivery for unopened, sealed products. Contact us with your order number to initiate a return.' },
-  { q: 'How long does delivery take?', a: 'Standard delivery takes 3–7 business days across India. Orders within Rajasthan are typically delivered in 2–4 days.' },
-  { q: 'Do you ship internationally?', a: 'Currently we ship only within India. International shipping is coming soon.' },
-  { q: 'How can I cancel my order?', a: 'Contact us within 24 hours of placing the order via email or WhatsApp. Once shipped, cancellations are not possible.' },
+  {
+    q: 'How do I track my order?',
+    a: 'Go to the Track Order page from the footer or visit /track-order. Enter your order number and email to see real-time status.',
+  },
+  {
+    q: 'What payment methods do you accept?',
+    a: 'We accept Razorpay (UPI, Cards, Netbanking), Cash on Delivery for orders under ₹5,000, and bank transfer for bulk/wholesale orders.',
+  },
+  {
+    q: 'What is your return policy?',
+    a: 'We accept returns within 7 days of delivery for unopened, sealed products. Contact us with your order number to initiate a return.',
+  },
+  {
+    q: 'How long does delivery take?',
+    a: 'Standard delivery takes 3–7 business days across India. Orders within Rajasthan are typically delivered in 2–4 days.',
+  },
+  {
+    q: 'Do you ship internationally?',
+    a: 'Currently we ship only within India. International shipping is coming soon.',
+  },
+  {
+    q: 'How can I cancel my order?',
+    a: 'Contact us within 24 hours of placing the order via email or WhatsApp. Once shipped, cancellations are not possible.',
+  },
 ];
 
 export default function HelpPage() {
   return (
     <div>
-      <h1 className="mb-6 text-2xl font-bold text-gray-900 dark:text-neutral-100">Help & Support</h1>
+      <h1 className="mb-6 text-2xl font-bold text-gray-900 dark:text-neutral-100">
+        Help & Support
+      </h1>
 
       {/* Contact options */}
       <div className="grid gap-4 sm:grid-cols-3 mb-8">
@@ -53,18 +73,26 @@ export default function HelpPage() {
 
       {/* Quick links */}
       <div className="mb-8">
-        <h2 className="mb-3 text-lg font-semibold text-gray-900 dark:text-neutral-100">Quick Links</h2>
+        <h2 className="mb-3 text-lg font-semibold text-gray-900 dark:text-neutral-100">
+          Quick Links
+        </h2>
         <div className="grid gap-3 sm:grid-cols-2">
-          <Link href="/track-order"
-            className="flex items-center gap-2.5 rounded-lg border border-gray-200 bg-white p-3 text-sm font-medium text-gray-700 hover:border-orange-300 transition dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-300">
+          <Link
+            href="/track-order"
+            className="flex items-center gap-2.5 rounded-lg border border-gray-200 bg-white p-3 text-sm font-medium text-gray-700 hover:border-orange-300 transition dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-300"
+          >
             <Truck className="h-4 w-4 text-orange-600 shrink-0" /> Track Your Order
           </Link>
-          <Link href="/shipping-policy"
-            className="flex items-center gap-2.5 rounded-lg border border-gray-200 bg-white p-3 text-sm font-medium text-gray-700 hover:border-orange-300 transition dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-300">
+          <Link
+            href="/shipping-policy"
+            className="flex items-center gap-2.5 rounded-lg border border-gray-200 bg-white p-3 text-sm font-medium text-gray-700 hover:border-orange-300 transition dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-300"
+          >
             <FileText className="h-4 w-4 text-orange-600 shrink-0" /> Shipping Policy
           </Link>
-          <Link href="/contact"
-            className="flex items-center gap-2.5 rounded-lg border border-gray-200 bg-white p-3 text-sm font-medium text-gray-700 hover:border-orange-300 transition dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-300">
+          <Link
+            href="/contact"
+            className="flex items-center gap-2.5 rounded-lg border border-gray-200 bg-white p-3 text-sm font-medium text-gray-700 hover:border-orange-300 transition dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-300"
+          >
             <Mail className="h-4 w-4 text-orange-600 shrink-0" /> Contact Form
           </Link>
         </div>
@@ -78,7 +106,10 @@ export default function HelpPage() {
         </h2>
         <div className="space-y-3">
           {FAQ_ITEMS.map((faq, i) => (
-            <details key={i} className="group rounded-xl border border-gray-200 bg-white shadow-sm dark:border-neutral-700 dark:bg-neutral-900">
+            <details
+              key={i}
+              className="group rounded-xl border border-gray-200 bg-white shadow-sm dark:border-neutral-700 dark:bg-neutral-900"
+            >
               <summary className="cursor-pointer px-5 py-4 text-sm font-semibold text-gray-900 dark:text-neutral-100 select-none">
                 {faq.q}
               </summary>

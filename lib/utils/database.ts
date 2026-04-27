@@ -6,7 +6,7 @@ import { Cart, CartItem } from '../types/database';
  * Calculate cart totals
  */
 export function calculateCartTotals(cart: Cart, shippingCost: number = 0): Cart {
-  const subtotal = cart.items.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+  const subtotal = cart.items.reduce((sum, item) => sum + item.price * item.quantity, 0);
   const discount = cart.couponCode ? Math.min(Math.max(cart.discount || 0, 0), subtotal) : 0;
   const tax = calculateTax(subtotal - discount);
   const total = subtotal - discount + tax + shippingCost;
@@ -17,7 +17,7 @@ export function calculateCartTotals(cart: Cart, shippingCost: number = 0): Cart 
     discount,
     tax,
     shipping: shippingCost,
-    total
+    total,
   };
 }
 
@@ -33,7 +33,11 @@ export function calculateTax(amount: number): number {
 /**
  * Calculate shipping cost based on cart total and location
  */
-export function calculateShipping(subtotal: number, country: string = 'IN', state?: string): number {
+export function calculateShipping(
+  subtotal: number,
+  country: string = 'IN',
+  state?: string,
+): number {
   void subtotal;
   void state;
   // Domestic shipping — flat ₹80 across India
@@ -72,7 +76,10 @@ export function formatCurrency(amount: number, currency: string = 'INR'): string
 /**
  * Validate cart item availability
  */
-export function validateCartItem(item: CartItem, availableStock: number): { isValid: boolean; message?: string } {
+export function validateCartItem(
+  item: CartItem,
+  availableStock: number,
+): { isValid: boolean; message?: string } {
   if (item.quantity <= 0) {
     return { isValid: false, message: 'Quantity must be greater than 0' };
   }
@@ -90,14 +97,14 @@ export function validateCartItem(item: CartItem, availableStock: number): { isVa
 export function mergeCartItems(items: CartItem[]): CartItem[] {
   const merged = new Map<string, CartItem>();
 
-  items.forEach(item => {
+  items.forEach((item) => {
     const key = `${item.productId}-${item.variantId}`;
     const existing = merged.get(key);
 
     if (existing) {
       merged.set(key, {
         ...existing,
-        quantity: existing.quantity + item.quantity
+        quantity: existing.quantity + item.quantity,
       });
     } else {
       merged.set(key, { ...item });
@@ -160,7 +167,10 @@ export function validateGSTNumber(gst: string): boolean {
 /**
  * Estimate delivery date
  */
-export function estimateDeliveryDate(shippingMethod: 'standard' | 'express' = 'standard'): { min: Date; max: Date } {
+export function estimateDeliveryDate(shippingMethod: 'standard' | 'express' = 'standard'): {
+  min: Date;
+  max: Date;
+} {
   const today = new Date();
   const minDays = shippingMethod === 'express' ? 2 : 5;
   const maxDays = shippingMethod === 'express' ? 3 : 7;
@@ -181,4 +191,3 @@ export function formatDeliveryDate(min: Date, max: Date): string {
   const options: Intl.DateTimeFormatOptions = { month: 'short', day: 'numeric' };
   return `${min.toLocaleDateString('en-IN', options)} - ${max.toLocaleDateString('en-IN', options)}`;
 }
-

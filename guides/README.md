@@ -5,6 +5,7 @@ Welcome to the Tangry Spices documentation directory! All project guides and doc
 ## 📖 Quick Navigation
 
 ### 🚀 [INDEX.md](./INDEX.md)
+
 **Start here!** Complete index of all documentation with recommended reading order.
 
 ---
@@ -26,14 +27,17 @@ This folder contains **19 documentation files** covering:
 ## 🎯 Most Important Files
 
 ### For First-Time Setup:
+
 1. **[README_FIRST.md](./README_FIRST.md)** ⭐
 2. **[SETUP_README.md](./SETUP_README.md)** ⭐
 3. **[QUICK_START_SUPABASE.md](./QUICK_START_SUPABASE.md)** ⭐
 
 ### For Deployment:
+
 1. **[FREE_HOSTING_GUIDE.md](./FREE_HOSTING_GUIDE.md)** ⭐
 
 ### For Development:
+
 1. **[ARCHITECTURE.md](./ARCHITECTURE.md)**
 2. **[COMPONENT_GUIDE.md](./COMPONENT_GUIDE.md)**
 3. **[IMPLEMENTATION_GUIDE.md](./IMPLEMENTATION_GUIDE.md)**
@@ -49,4 +53,3 @@ This folder contains **19 documentation files** covering:
 ---
 
 **Happy Building!** 🌶️
-

@@ -1,6 +1,7 @@
 # Quick Fix for Cart and Product Page Issues
 
 ## Problem
+
 1. Product detail pages not opening
 2. Cannot add items to cart
 3. Build errors related to missing Supabase package
@@ -14,6 +15,7 @@ npm install
 ```
 
 This will install:
+
 - `@supabase/supabase-js` (needed even if not using database yet)
 - `pg` (PostgreSQL client)
 - Other dependencies
@@ -90,4 +92,3 @@ npx tsx scripts/test-db-connection.ts
 3. **Then**: Connect real database for orders and user accounts
 
 The cart will work perfectly with localStorage until you're ready to connect the database!
-

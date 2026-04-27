@@ -11,7 +11,9 @@ export async function GET() {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const { data, error } = await (supabaseAdmin as any)
     .from('addresses')
-    .select('id, type, full_name, phone, address_line1, address_line2, city, state, postal_code, country, is_default')
+    .select(
+      'id, type, full_name, phone, address_line1, address_line2, city, state, postal_code, country, is_default',
+    )
     .eq('user_id', user.id)
     .order('is_default', { ascending: false })
     .order('created_at', { ascending: false });

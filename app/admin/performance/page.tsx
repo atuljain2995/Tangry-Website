@@ -7,7 +7,11 @@ export const dynamic = 'force-dynamic';
 
 // ── Thresholds ────────────────────────────────────────────────────────────────
 const METRIC_UNITS: Record<string, string> = {
-  LCP: 'ms', INP: 'ms', CLS: '', FCP: 'ms', TTFB: 'ms',
+  LCP: 'ms',
+  INP: 'ms',
+  CLS: '',
+  FCP: 'ms',
+  TTFB: 'ms',
 };
 
 const METRIC_LABEL: Record<string, string> = {
@@ -35,10 +39,22 @@ function ratingBadge(name: string, p75: number) {
   const t = CWV_THRESHOLDS[name];
   if (!t) return null;
   if (p75 <= t.good)
-    return <span className="rounded-full bg-green-100 px-2 py-0.5 text-xs font-medium text-green-700">Good</span>;
+    return (
+      <span className="rounded-full bg-green-100 px-2 py-0.5 text-xs font-medium text-green-700">
+        Good
+      </span>
+    );
   if (p75 <= t.poor)
-    return <span className="rounded-full bg-amber-100 px-2 py-0.5 text-xs font-medium text-amber-700">Needs Improvement</span>;
-  return <span className="rounded-full bg-red-100 px-2 py-0.5 text-xs font-medium text-red-700">Poor</span>;
+    return (
+      <span className="rounded-full bg-amber-100 px-2 py-0.5 text-xs font-medium text-amber-700">
+        Needs Improvement
+      </span>
+    );
+  return (
+    <span className="rounded-full bg-red-100 px-2 py-0.5 text-xs font-medium text-red-700">
+      Poor
+    </span>
+  );
 }
 
 // ── Aggregate across all URLs for summary cards ────────────────────────────
@@ -70,8 +86,8 @@ export default async function AdminPerformancePage() {
       <div>
         <h1 className="text-2xl font-bold text-gray-900">Core Web Vitals</h1>
         <p className="mt-1 text-sm text-gray-500">
-          First-party RUM — P75 from real page loads over the last 28 days.
-          No PSI or CrUX API dependency.
+          First-party RUM — P75 from real page loads over the last 28 days. No PSI or CrUX API
+          dependency.
         </p>
       </div>
 
@@ -124,7 +140,10 @@ export default async function AdminPerformancePage() {
                     Page
                   </th>
                   {coreMetrics.map((m) => (
-                    <th key={m} className="px-3 py-3 text-center font-medium text-gray-500 uppercase tracking-wider text-xs">
+                    <th
+                      key={m}
+                      className="px-3 py-3 text-center font-medium text-gray-500 uppercase tracking-wider text-xs"
+                    >
                       {m}
                     </th>
                   ))}
@@ -146,8 +165,10 @@ export default async function AdminPerformancePage() {
                 {rows.map(({ url, metrics }) => {
                   const byName = Object.fromEntries(metrics.map((m) => [m.metricName, m]));
                   const maxSamples = Math.max(...metrics.map((m) => m.sampleCount), 0);
-                  const lastSeen = metrics.reduce((max, m) =>
-                    m.lastSeen > max ? m.lastSeen : max, metrics[0]?.lastSeen ?? new Date(0));
+                  const lastSeen = metrics.reduce(
+                    (max, m) => (m.lastSeen > max ? m.lastSeen : max),
+                    metrics[0]?.lastSeen ?? new Date(0),
+                  );
 
                   return (
                     <tr key={url} className="hover:bg-gray-50">
@@ -195,7 +216,10 @@ export default async function AdminPerformancePage() {
             <thead className="bg-gray-50">
               <tr>
                 {['Metric', 'Full name', 'Good', 'Needs Improvement', 'Poor'].map((h) => (
-                  <th key={h} className="px-4 py-3 text-left font-medium text-gray-500 uppercase tracking-wider text-xs sm:px-6">
+                  <th
+                    key={h}
+                    className="px-4 py-3 text-left font-medium text-gray-500 uppercase tracking-wider text-xs sm:px-6"
+                  >
                     {h}
                   </th>
                 ))}

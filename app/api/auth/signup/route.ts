@@ -9,7 +9,9 @@ const SALT_ROUNDS = 10;
 type UsersTable = {
   from: (t: string) => {
     select: (c: string) => { eq: (k: string, v: string) => Promise<{ data: unknown }> };
-    insert: (r: object) => { select: (c: string) => { single: () => Promise<{ data: unknown; error: unknown }> } };
+    insert: (r: object) => {
+      select: (c: string) => { single: () => Promise<{ data: unknown; error: unknown }> };
+    };
   };
 };
 const db = supabaseAdmin as unknown as UsersTable;
@@ -31,12 +33,18 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Email and password required' }, { status: 400 });
     }
     if (password.length < 6) {
-      return NextResponse.json({ error: 'Password must be at least 6 characters' }, { status: 400 });
+      return NextResponse.json(
+        { error: 'Password must be at least 6 characters' },
+        { status: 400 },
+      );
     }
 
     const { data: existing } = await db.from('users').select('id').eq('email', email);
     if (Array.isArray(existing) && existing.length > 0) {
-      return NextResponse.json({ error: 'An account with this email already exists' }, { status: 409 });
+      return NextResponse.json(
+        { error: 'An account with this email already exists' },
+        { status: 409 },
+      );
     }
 
     const passwordHash = await bcrypt.hash(password, SALT_ROUNDS);
@@ -57,7 +65,10 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Could not create account. Try again.' }, { status: 500 });
     }
 
-    const userId = newUser && typeof newUser === 'object' && 'id' in newUser ? (newUser as { id: string }).id : null;
+    const userId =
+      newUser && typeof newUser === 'object' && 'id' in newUser
+        ? (newUser as { id: string }).id
+        : null;
     if (!userId) {
       return NextResponse.json({ error: 'Could not create account. Try again.' }, { status: 500 });
     }

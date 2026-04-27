@@ -111,27 +111,18 @@ export interface Cart {
   updatedAt: Date;
 }
 
-export type OrderStatus = 
-  | 'pending' 
-  | 'confirmed' 
-  | 'processing' 
-  | 'shipped' 
-  | 'delivered' 
-  | 'cancelled' 
+export type OrderStatus =
+  | 'pending'
+  | 'confirmed'
+  | 'processing'
+  | 'shipped'
+  | 'delivered'
+  | 'cancelled'
   | 'refunded';
 
-export type PaymentStatus = 
-  | 'pending' 
-  | 'processing' 
-  | 'completed' 
-  | 'failed' 
-  | 'refunded';
+export type PaymentStatus = 'pending' | 'processing' | 'completed' | 'failed' | 'refunded';
 
-export type PaymentMethod = 
-  | 'razorpay' 
-  | 'stripe' 
-  | 'cod' 
-  | 'bank_transfer';
+export type PaymentMethod = 'razorpay' | 'stripe' | 'cod' | 'bank_transfer';
 
 export interface OrderItem {
   productId: string;
@@ -168,12 +159,7 @@ export interface Order {
   updatedAt: Date;
 }
 
-export type QuoteStatus = 
-  | 'pending' 
-  | 'reviewed' 
-  | 'approved' 
-  | 'rejected' 
-  | 'converted';
+export type QuoteStatus = 'pending' | 'reviewed' | 'approved' | 'rejected' | 'converted';
 
 export interface B2BQuote {
   id: string;
@@ -230,4 +216,3 @@ export interface EmailSubscriber {
   subscribedAt: Date;
   unsubscribedAt?: Date;
 }
-

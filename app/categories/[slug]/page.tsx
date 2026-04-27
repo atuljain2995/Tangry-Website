@@ -41,7 +41,9 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     return { title: 'Category Not Found' };
   }
 
-  const fallbackMeta = PRODUCT_CATEGORIES.find((item) => item.id === category.slug || item.title === category.title);
+  const fallbackMeta = PRODUCT_CATEGORIES.find(
+    (item) => item.id === category.slug || item.title === category.title,
+  );
   const description = fallbackMeta?.description || `Browse ${category.title} from Tangry Spices.`;
 
   return {
@@ -66,7 +68,9 @@ export default async function CategoryPage({ params }: PageProps) {
     notFound();
   }
 
-  const fallbackMeta = PRODUCT_CATEGORIES.find((item) => item.id === category.slug || item.title === category.title);
+  const fallbackMeta = PRODUCT_CATEGORIES.find(
+    (item) => item.id === category.slug || item.title === category.title,
+  );
   const filteredProducts = products.filter((product) => {
     if (product.categoryId === category.id) return true;
     return product.category === category.title;

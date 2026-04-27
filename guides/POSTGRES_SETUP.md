@@ -3,6 +3,7 @@
 Complete guide to set up PostgreSQL database for Everest Spices ecommerce.
 
 ## Table of Contents
+
 1. [Choose Your Setup](#choose-your-setup)
 2. [Option A: Supabase (Recommended)](#option-a-supabase-recommended)
 3. [Option B: Direct PostgreSQL](#option-b-direct-postgresql)
@@ -15,7 +16,9 @@ Complete guide to set up PostgreSQL database for Everest Spices ecommerce.
 ## Choose Your Setup
 
 ### Option A: Supabase ✅ Recommended for MVP
+
 **Pros:**
+
 - Free tier: 500 MB database, 50,000 rows
 - Built-in authentication
 - Auto-generated REST API
@@ -27,7 +30,9 @@ Complete guide to set up PostgreSQL database for Everest Spices ecommerce.
 **Best for:** Quick launch, learning, MVP
 
 ### Option B: Direct PostgreSQL
+
 **Pros:**
+
 - Full control
 - No vendor lock-in
 - Unlimited customization
@@ -106,10 +111,7 @@ Create `test-db.ts` in project root:
 import { supabase } from './lib/db/supabase';
 
 async function testConnection() {
-  const { data, error } = await supabase
-    .from('products')
-    .select('*')
-    .limit(5);
+  const { data, error } = await supabase.from('products').select('*').limit(5);
 
   if (error) {
     console.error('Error:', error);
@@ -123,6 +125,7 @@ testConnection();
 ```
 
 Run:
+
 ```bash
 npx tsx test-db.ts
 ```
@@ -134,11 +137,13 @@ npx tsx test-db.ts
 ### Step 1: Choose Hosting
 
 **Free Options:**
+
 - **Railway**: [railway.app](https://railway.app) - $5 free credit
 - **Render**: [render.com](https://render.com) - Free tier available
 - **Supabase** (still uses PostgreSQL directly)
 
 **Paid Options:**
+
 - **Heroku Postgres**: From $5/month
 - **AWS RDS**: From $15/month
 - **Digital Ocean**: From $15/month
@@ -147,12 +152,14 @@ npx tsx test-db.ts
 ### Step 2: Create PostgreSQL Database
 
 #### Using Railway:
+
 1. Go to [railway.app](https://railway.app)
 2. Click "Start a New Project"
 3. Choose "Provision PostgreSQL"
 4. Copy connection string
 
 #### Using Render:
+
 1. Go to [render.com](https://render.com)
 2. New → PostgreSQL
 3. Free tier
@@ -163,6 +170,7 @@ npx tsx test-db.ts
 Format: `postgresql://username:password@host:5432/database`
 
 Example:
+
 ```
 postgresql://postgres:mypassword@roundhouse.proxy.rlwy.net:12345/railway
 ```
@@ -209,12 +217,12 @@ import { Pool } from 'pg';
 
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
-  ssl: { rejectUnauthorized: false }
+  ssl: { rejectUnauthorized: false },
 });
 
 async function runMigrations() {
   const client = await pool.connect();
-  
+
   try {
     const schema = readFileSync('lib/db/migrations/001_initial_schema.sql', 'utf8');
     await client.query(schema);
@@ -235,6 +243,7 @@ runMigrations();
 ```
 
 Run:
+
 ```bash
 npx tsx migrate.ts
 ```
@@ -260,6 +269,7 @@ testConnection();
 ```
 
 Run:
+
 ```bash
 npx tsx test-pg.ts
 ```
@@ -300,10 +310,7 @@ CREATE TABLE IF NOT EXISTS new_table (
 
 ```typescript
 // Test product fetch
-const { data: products } = await supabase
-  .from('products')
-  .select('*')
-  .limit(5);
+const { data: products } = await supabase.from('products').select('*').limit(5);
 
 // Test product insert
 const { data: newProduct, error } = await supabase
@@ -325,10 +332,7 @@ const { data: updated } = await supabase
   .select();
 
 // Test product delete
-const { error: deleteError } = await supabase
-  .from('products')
-  .delete()
-  .eq('slug', 'test-product');
+const { error: deleteError } = await supabase.from('products').delete().eq('slug', 'test-product');
 ```
 
 ---
@@ -336,27 +340,34 @@ const { error: deleteError } = await supabase
 ## Common Issues
 
 ### Issue: "relation does not exist"
+
 **Solution**: Run migrations again. Tables weren't created.
 
 ### Issue: "permission denied"
+
 **Solution**: Check RLS policies or use service_role key for admin operations.
 
 ### Issue: "connection timeout"
-**Solution**: 
+
+**Solution**:
+
 - Check firewall settings
 - Verify DATABASE_URL is correct
 - Ensure database is running
 
 ### Issue: "SSL required"
+
 **Solution**: Add `?sslmode=require` to connection string or configure SSL in pool:
+
 ```typescript
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
-  ssl: { rejectUnauthorized: false }
+  ssl: { rejectUnauthorized: false },
 });
 ```
 
 ### Issue: "too many connections"
+
 **Solution**: Use connection pooling (already configured in `lib/db/postgres.ts`)
 
 ---
@@ -395,21 +406,25 @@ See `IMPLEMENTATION_GUIDE.md` for detailed API implementation examples.
 ### Supabase CLI (Optional)
 
 Install:
+
 ```bash
 npm install -g supabase
 ```
 
 Login:
+
 ```bash
 supabase login
 ```
 
 Link project:
+
 ```bash
 supabase link --project-ref xxxxx
 ```
 
 Pull schema:
+
 ```bash
 supabase db pull
 ```
@@ -452,4 +467,3 @@ SELECT pg_size_pretty(pg_database_size('database_name'));
 - GitHub Issues: Open issue in your repo
 
 Good luck with your database setup! 🚀
-

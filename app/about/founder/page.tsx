@@ -92,9 +92,8 @@ export default function FounderPage() {
             Meet Maya Jain
           </h1>
           <p className="text-lg md:text-xl leading-relaxed text-gray-600 border-l-4 border-orange-400 pl-5">
-            I started Tangry with one belief: the masalas you buy should taste
-            exactly like the ones your family grinds at home. No fillers, no
-            shortcuts — just real spice.
+            I started Tangry with one belief: the masalas you buy should taste exactly like the ones
+            your family grinds at home. No fillers, no shortcuts — just real spice.
           </p>
         </div>
       </section>
@@ -107,24 +106,22 @@ export default function FounderPage() {
           </h2>
           <div className="space-y-5 text-base leading-7 text-gray-600 dark:text-neutral-300">
             <p>
-              Growing up in Jaipur, the kitchen always smelled of fresh-ground
-              spices — my mother would toast cumin, blend garam masala by hand,
-              and adjust every pinch by instinct. When I moved out and started
-              buying packaged masalas, something was missing. The colour came from
-              artificial dyes. The aroma was flat. The taste was diluted with
+              Growing up in Jaipur, the kitchen always smelled of fresh-ground spices — my mother
+              would toast cumin, blend garam masala by hand, and adjust every pinch by instinct.
+              When I moved out and started buying packaged masalas, something was missing. The
+              colour came from artificial dyes. The aroma was flat. The taste was diluted with
               fillers I couldn&apos;t identify.
             </p>
             <p>
-              I spoke to kirana store owners, restaurant chefs, and home cooks.
-              The complaint was the same: &quot;packaged masala doesn&apos;t taste like
-              home-ground.&quot; So I decided to fix that — starting with a small
-              production unit in Jhotwara, sourcing whole spices directly from
-              farms, and blending in small batches to preserve the natural oils.
+              I spoke to kirana store owners, restaurant chefs, and home cooks. The complaint was
+              the same: &quot;packaged masala doesn&apos;t taste like home-ground.&quot; So I
+              decided to fix that — starting with a small production unit in Jhotwara, sourcing
+              whole spices directly from farms, and blending in small batches to preserve the
+              natural oils.
             </p>
             <p>
-              The name &quot;Tangry&quot; captures what we aim for — that sharp,
-              authentic <em>tang</em> of real spices that makes every dish come
-              alive. Taste of Home.
+              The name &quot;Tangry&quot; captures what we aim for — that sharp, authentic{' '}
+              <em>tang</em> of real spices that makes every dish come alive. Taste of Home.
             </p>
           </div>
         </div>
@@ -143,14 +140,10 @@ export default function FounderPage() {
                   <span className="w-10 h-10 rounded-full bg-orange-100 text-orange-700 flex items-center justify-center text-xs font-bold shrink-0">
                     {m.year}
                   </span>
-                  {i < MILESTONES.length - 1 && (
-                    <div className="w-px flex-1 bg-orange-200 mt-2" />
-                  )}
+                  {i < MILESTONES.length - 1 && <div className="w-px flex-1 bg-orange-200 mt-2" />}
                 </div>
                 <div className="pb-2">
-                  <h3 className="font-bold text-gray-900 dark:text-neutral-100 mb-1">
-                    {m.title}
-                  </h3>
+                  <h3 className="font-bold text-gray-900 dark:text-neutral-100 mb-1">{m.title}</h3>
                   <p className="text-sm text-gray-600 dark:text-neutral-300 leading-relaxed">
                     {m.text}
                   </p>
@@ -173,9 +166,7 @@ export default function FounderPage() {
                 <div className="w-14 h-14 rounded-2xl bg-orange-50 flex items-center justify-center mx-auto mb-4">
                   <v.icon size={24} className="text-orange-600" />
                 </div>
-                <h3 className="font-bold text-gray-900 dark:text-neutral-100 mb-2">
-                  {v.title}
-                </h3>
+                <h3 className="font-bold text-gray-900 dark:text-neutral-100 mb-2">{v.title}</h3>
                 <p className="text-sm text-gray-500 dark:text-neutral-400 leading-relaxed">
                   {v.text}
                 </p>
@@ -192,8 +183,7 @@ export default function FounderPage() {
             Ready to Taste the Difference?
           </h2>
           <p className="text-gray-500 mb-8 max-w-lg mx-auto">
-            Try our small-batch masalas — made the way your grandmother would
-            approve.
+            Try our small-batch masalas — made the way your grandmother would approve.
           </p>
           <div className="flex flex-wrap gap-4 justify-center">
             <Link

@@ -22,7 +22,7 @@ const recipes = [
     cuisine: 'Indian',
     spices: ['Garam Masala', 'Red Chilli Powder', 'Turmeric'],
     image: '/recipes/paneer-butter-masala.jpg',
-    featured: true
+    featured: true,
   },
   {
     id: 2,
@@ -37,7 +37,7 @@ const recipes = [
     cuisine: 'Indian',
     spices: ['Biryani Masala', 'Garam Masala'],
     image: '/recipes/chicken-biryani.jpg',
-    featured: true
+    featured: true,
   },
   {
     id: 3,
@@ -52,7 +52,7 @@ const recipes = [
     cuisine: 'Indian',
     spices: ['Turmeric', 'Cumin', 'Red Chilli Powder'],
     image: '/recipes/dal-tadka.jpg',
-    featured: false
+    featured: false,
   },
   {
     id: 4,
@@ -67,7 +67,7 @@ const recipes = [
     cuisine: 'Indian',
     spices: ['Chole Masala', 'Garam Masala'],
     image: '/recipes/chole-masala.jpg',
-    featured: false
+    featured: false,
   },
   {
     id: 5,
@@ -82,7 +82,7 @@ const recipes = [
     cuisine: 'Indian',
     spices: ['Garam Masala', 'Kasuri Methi'],
     image: '/recipes/butter-chicken.jpg',
-    featured: true
+    featured: true,
   },
   {
     id: 6,
@@ -97,11 +97,19 @@ const recipes = [
     cuisine: 'Indian',
     spices: ['Pav Bhaji Masala'],
     image: '/recipes/pav-bhaji.jpg',
-    featured: false
-  }
+    featured: false,
+  },
 ];
 
-const categories = ['All', 'North Indian', 'South Indian', 'Street Food', 'Vegetarian', 'Non-Vegetarian', 'Rice'];
+const categories = [
+  'All',
+  'North Indian',
+  'South Indian',
+  'Street Food',
+  'Vegetarian',
+  'Non-Vegetarian',
+  'Rice',
+];
 const difficulties = ['All', 'Easy', 'Medium', 'Hard'];
 
 export default function RecipesPage() {
@@ -111,17 +119,19 @@ export default function RecipesPage() {
   const [searchQuery, setSearchQuery] = useState('');
 
   // Filter recipes
-  const filteredRecipes = recipes.filter(recipe => {
+  const filteredRecipes = recipes.filter((recipe) => {
     const matchesCategory = selectedCategory === 'All' || recipe.category === selectedCategory;
-    const matchesDifficulty = selectedDifficulty === 'All' || recipe.difficulty === selectedDifficulty;
-    const matchesSearch = searchQuery === '' || 
+    const matchesDifficulty =
+      selectedDifficulty === 'All' || recipe.difficulty === selectedDifficulty;
+    const matchesSearch =
+      searchQuery === '' ||
       recipe.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
       recipe.description.toLowerCase().includes(searchQuery.toLowerCase());
-    
+
     return matchesCategory && matchesDifficulty && matchesSearch;
   });
 
-  const featuredRecipes = recipes.filter(r => r.featured);
+  const featuredRecipes = recipes.filter((r) => r.featured);
 
   return (
     <main className="page-shell">
@@ -146,7 +156,10 @@ export default function RecipesPage() {
           {/* Search Bar */}
           <div className="max-w-2xl mx-auto">
             <div className="relative">
-              <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
+              <Search
+                className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400"
+                size={20}
+              />
               <input
                 type="text"
                 value={searchQuery}
@@ -161,7 +174,7 @@ export default function RecipesPage() {
           <div>
             <p className="text-sm font-semibold text-gray-700 mb-2 text-center">Category:</p>
             <div className="flex flex-wrap gap-2 justify-center">
-              {categories.map(category => (
+              {categories.map((category) => (
                 <button
                   key={category}
                   onClick={() => setSelectedCategory(category)}
@@ -181,7 +194,7 @@ export default function RecipesPage() {
           <div>
             <p className="text-sm font-semibold text-gray-700 mb-2 text-center">Difficulty:</p>
             <div className="flex flex-wrap gap-2 justify-center">
-              {difficulties.map(difficulty => (
+              {difficulties.map((difficulty) => (
                 <button
                   key={difficulty}
                   onClick={() => setSelectedDifficulty(difficulty)}
@@ -203,8 +216,11 @@ export default function RecipesPage() {
           <div className="mb-12">
             <h2 className="text-3xl font-bold text-gray-900 mb-6">Featured Recipes</h2>
             <div className="grid md:grid-cols-3 gap-6">
-              {featuredRecipes.map(recipe => (
-                <article key={recipe.id} className="bg-white rounded-lg shadow-md overflow-hidden group">
+              {featuredRecipes.map((recipe) => (
+                <article
+                  key={recipe.id}
+                  className="bg-white rounded-lg shadow-md overflow-hidden group"
+                >
                   <div className="relative h-48 bg-gray-200">
                     <div className="w-full h-full flex items-center justify-center text-gray-400">
                       Recipe Image
@@ -214,9 +230,7 @@ export default function RecipesPage() {
                     </span>
                   </div>
                   <div className="p-6">
-                    <h3 className="text-xl font-bold text-gray-900 mb-2">
-                      {recipe.title}
-                    </h3>
+                    <h3 className="text-xl font-bold text-gray-900 mb-2">{recipe.title}</h3>
                     <p className="text-gray-600 text-sm mb-4 line-clamp-2">{recipe.description}</p>
                     <div className="flex items-center justify-between text-xs text-gray-500">
                       <span className="flex items-center">
@@ -227,11 +241,15 @@ export default function RecipesPage() {
                         <Users size={14} className="mr-1" />
                         {recipe.servings} servings
                       </span>
-                      <span className={`px-2 py-1 rounded font-semibold ${
-                        recipe.difficulty === 'Easy' ? 'bg-green-100 text-green-700' :
-                        recipe.difficulty === 'Medium' ? 'bg-yellow-100 text-yellow-700' :
-                        'bg-red-100 text-red-700'
-                      }`}>
+                      <span
+                        className={`px-2 py-1 rounded font-semibold ${
+                          recipe.difficulty === 'Easy'
+                            ? 'bg-green-100 text-green-700'
+                            : recipe.difficulty === 'Medium'
+                              ? 'bg-yellow-100 text-yellow-700'
+                              : 'bg-red-100 text-red-700'
+                        }`}
+                      >
                         {recipe.difficulty}
                       </span>
                     </div>
@@ -249,8 +267,11 @@ export default function RecipesPage() {
           </h2>
           {filteredRecipes.length > 0 ? (
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {filteredRecipes.map(recipe => (
-                <article key={recipe.id} className="bg-white rounded-lg shadow-md overflow-hidden group">
+              {filteredRecipes.map((recipe) => (
+                <article
+                  key={recipe.id}
+                  className="bg-white rounded-lg shadow-md overflow-hidden group"
+                >
                   <div className="relative h-48 bg-gray-200">
                     <div className="w-full h-full flex items-center justify-center text-gray-400">
                       Recipe Image
@@ -261,21 +282,26 @@ export default function RecipesPage() {
                       <span className="text-xs bg-[#D32F2F] text-white px-2 py-1 rounded font-semibold">
                         {recipe.category}
                       </span>
-                      <span className={`text-xs px-2 py-1 rounded font-semibold ${
-                        recipe.difficulty === 'Easy' ? 'bg-green-100 text-green-700' :
-                        recipe.difficulty === 'Medium' ? 'bg-yellow-100 text-yellow-700' :
-                        'bg-red-100 text-red-700'
-                      }`}>
+                      <span
+                        className={`text-xs px-2 py-1 rounded font-semibold ${
+                          recipe.difficulty === 'Easy'
+                            ? 'bg-green-100 text-green-700'
+                            : recipe.difficulty === 'Medium'
+                              ? 'bg-yellow-100 text-yellow-700'
+                              : 'bg-red-100 text-red-700'
+                        }`}
+                      >
                         {recipe.difficulty}
                       </span>
                     </div>
-                    <h3 className="text-xl font-bold text-gray-900 mb-2">
-                      {recipe.title}
-                    </h3>
+                    <h3 className="text-xl font-bold text-gray-900 mb-2">{recipe.title}</h3>
                     <p className="text-gray-600 text-sm mb-4 line-clamp-2">{recipe.description}</p>
                     <div className="flex flex-wrap gap-2 mb-4">
-                      {recipe.spices.slice(0, 2).map(spice => (
-                        <span key={spice} className="text-xs bg-orange-50 text-orange-700 px-2 py-1 rounded">
+                      {recipe.spices.slice(0, 2).map((spice) => (
+                        <span
+                          key={spice}
+                          className="text-xs bg-orange-50 text-orange-700 px-2 py-1 rounded"
+                        >
                           {spice}
                         </span>
                       ))}
@@ -306,4 +332,3 @@ export default function RecipesPage() {
     </main>
   );
 }
-

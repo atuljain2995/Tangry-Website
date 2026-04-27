@@ -3,6 +3,7 @@
 ## 🎯 Recommended: Vercel (Best for Next.js)
 
 ### ✅ Why Vercel?
+
 - **Built by Next.js creators** - Perfect integration
 - **Zero configuration** - Deploy in 2 minutes
 - **Automatic builds** - On every git push
@@ -11,6 +12,7 @@
 - **Preview deployments** - For every PR
 
 ### Free Tier Includes:
+
 - ✅ 100GB bandwidth/month
 - ✅ Unlimited deployments
 - ✅ Automatic SSL
@@ -21,6 +23,7 @@
 ### 🚀 Deploy to Vercel (5 Minutes)
 
 #### Step 1: Push to GitHub
+
 ```bash
 # Initialize git (if not already done)
 git init
@@ -36,6 +39,7 @@ git push -u origin main
 ```
 
 #### Step 2: Deploy to Vercel
+
 1. Go to: https://vercel.com/signup
 2. Sign up with GitHub
 3. Click **"Import Project"**
@@ -47,7 +51,9 @@ git push -u origin main
    - Output Directory: `.next`
 
 #### Step 3: Add Environment Variables
+
 In Vercel Dashboard → Settings → Environment Variables:
+
 ```
 NEXT_PUBLIC_SUPABASE_URL=https://pmknwgwbwfyvrkfbrccu.supabase.co
 NEXT_PUBLIC_SUPABASE_ANON_KEY=your_anon_key
@@ -55,6 +61,7 @@ SUPABASE_SERVICE_ROLE_KEY=your_service_role_key
 ```
 
 #### Step 4: Deploy! 🎉
+
 Click **"Deploy"** - Your site will be live in ~2 minutes!
 
 **Your URL**: `https://tangry-spices.vercel.app`
@@ -66,12 +73,14 @@ Click **"Deploy"** - Your site will be live in ~2 minutes!
 ### 2. Netlify
 
 **Pros:**
+
 - Easy deployment
 - Great for static sites
 - Good free tier
 - Automatic builds
 
 **Free Tier:**
+
 - ✅ 100GB bandwidth/month
 - ✅ 300 build minutes/month
 - ✅ Automatic SSL
@@ -79,6 +88,7 @@ Click **"Deploy"** - Your site will be live in ~2 minutes!
 - ⚠️ Serverless functions limited to 125k requests/month
 
 **Deploy:**
+
 ```bash
 npm install -g netlify-cli
 netlify login
@@ -93,18 +103,21 @@ netlify deploy --prod
 ### 3. Railway
 
 **Pros:**
+
 - Supports full-stack apps
 - Database hosting included
 - Simple deployment
 - Good for Node.js apps
 
 **Free Tier (New):**
+
 - ✅ $5 credit/month (no credit card required for trial)
 - ✅ Auto-deploy from GitHub
 - ✅ Can host database + app
 - ⚠️ May need credit card after trial
 
 **Deploy:**
+
 1. Go to: https://railway.app
 2. Connect GitHub
 3. New Project → Deploy from GitHub
@@ -115,18 +128,21 @@ netlify deploy --prod
 ### 4. Render
 
 **Pros:**
+
 - Free tier available
 - Good for full-stack
 - Auto-deploy from GitHub
 - Database hosting
 
 **Free Tier:**
+
 - ✅ 750 hours/month
 - ✅ Free PostgreSQL (90 days)
 - ✅ Auto SSL
 - ⚠️ Spins down after inactivity (slow first load)
 
 **Deploy:**
+
 1. Go to: https://render.com
 2. New → Web Service
 3. Connect GitHub repo
@@ -140,12 +156,14 @@ netlify deploy --prod
 ### 5. Cloudflare Pages
 
 **Pros:**
+
 - Cloudflare's edge network (super fast)
 - Unlimited bandwidth
 - Good for static sites
 - Free tier is generous
 
 **Free Tier:**
+
 - ✅ Unlimited bandwidth
 - ✅ Unlimited requests
 - ✅ 500 builds/month
@@ -153,6 +171,7 @@ netlify deploy --prod
 - ⚠️ Next.js requires adapter
 
 **Deploy:**
+
 1. Go to: https://pages.cloudflare.com
 2. Connect GitHub
 3. Select Next.js preset
@@ -163,11 +182,13 @@ netlify deploy --prod
 ### 6. AWS Amplify
 
 **Pros:**
+
 - Amazon's infrastructure
 - Good integration with AWS services
 - Auto-scaling
 
 **Free Tier:**
+
 - ✅ 1,000 build minutes/month
 - ✅ 15GB served/month
 - ✅ Custom domain
@@ -178,6 +199,7 @@ netlify deploy --prod
 ## 🗄️ Database (Already Free!)
 
 ### Supabase Free Tier:
+
 You're already using Supabase, which has an excellent free tier:
 
 - ✅ **500MB database space**
@@ -188,6 +210,7 @@ You're already using Supabase, which has an excellent free tier:
 - ✅ **Auto-generated APIs**
 
 **Your current database:**
+
 - URL: `pmknwgwbwfyvrkfbrccu.supabase.co`
 - Already configured ✅
 
@@ -196,6 +219,7 @@ You're already using Supabase, which has an excellent free tier:
 ## 🎯 Recommended Setup
 
 ### Best Free Stack:
+
 ```
 Frontend: Vercel (Free)
 Database: Supabase (Free)
@@ -210,42 +234,46 @@ Analytics: Google Analytics (Free)
 
 ## 📊 Comparison Table
 
-| Feature | Vercel | Netlify | Railway | Render | Cloudflare |
-|---------|--------|---------|---------|--------|------------|
-| Next.js Support | ⭐⭐⭐⭐⭐ | ⭐⭐⭐ | ⭐⭐⭐⭐ | ⭐⭐⭐⭐ | ⭐⭐⭐ |
-| Bandwidth | 100GB | 100GB | Limited | Limited | Unlimited |
-| Build Time | Fast | Fast | Fast | Medium | Fast |
-| SSR Support | ✅ | ⚠️ | ✅ | ✅ | ⚠️ |
-| Auto Deploy | ✅ | ✅ | ✅ | ✅ | ✅ |
-| Custom Domain | ✅ | ✅ | ✅ | ✅ | ✅ |
-| **Best For** | Next.js | Static | Full-stack | Full-stack | Static |
+| Feature         | Vercel     | Netlify | Railway    | Render     | Cloudflare |
+| --------------- | ---------- | ------- | ---------- | ---------- | ---------- |
+| Next.js Support | ⭐⭐⭐⭐⭐ | ⭐⭐⭐  | ⭐⭐⭐⭐   | ⭐⭐⭐⭐   | ⭐⭐⭐     |
+| Bandwidth       | 100GB      | 100GB   | Limited    | Limited    | Unlimited  |
+| Build Time      | Fast       | Fast    | Fast       | Medium     | Fast       |
+| SSR Support     | ✅         | ⚠️      | ✅         | ✅         | ⚠️         |
+| Auto Deploy     | ✅         | ✅      | ✅         | ✅         | ✅         |
+| Custom Domain   | ✅         | ✅      | ✅         | ✅         | ✅         |
+| **Best For**    | Next.js    | Static  | Full-stack | Full-stack | Static     |
 
 ---
 
 ## 🚀 Quick Start: Deploy to Vercel NOW
 
 ### 1. Install Vercel CLI
+
 ```bash
 npm install -g vercel
 ```
 
 ### 2. Login
+
 ```bash
 vercel login
 ```
 
 ### 3. Deploy!
+
 ```bash
 cd /Users/Atul_Jain/Desktop/development-projects/everest-clone
 vercel
 ```
 
 Follow prompts:
+
 - Set up and deploy? **Y**
 - Which scope? **Your account**
 - Link to existing project? **N**
 - Project name? **tangry-spices**
-- Directory? **./  (press Enter)**
+- Directory? **./ (press Enter)**
 - Override settings? **N**
 
 **Done!** Your site is live in ~2 minutes! 🎉
@@ -270,6 +298,7 @@ Follow prompts:
    - Professional
 
 ### Add to Vercel:
+
 1. Go to Vercel Dashboard → Your Project
 2. Settings → Domains
 3. Add your domain
@@ -282,15 +311,18 @@ Follow prompts:
 For order confirmations and newsletters:
 
 ### 1. Brevo (formerly Sendinblue)
+
 - ✅ 300 emails/day FREE
 - ✅ Email templates
 - ✅ SMTP relay
 
 ### 2. SendGrid
+
 - ✅ 100 emails/day FREE
 - ✅ Good API
 
 ### 3. Mailgun
+
 - ✅ 5,000 emails/month FREE (first 3 months)
 
 ---
@@ -298,12 +330,14 @@ For order confirmations and newsletters:
 ## 📈 Analytics (Free)
 
 ### Google Analytics 4
+
 - ✅ Completely free
 - ✅ Unlimited tracking
 - ✅ Real-time data
 - Already configured in your code! ✅
 
 ### Vercel Analytics
+
 - ✅ Free basic tier
 - ✅ Web Vitals
 - ✅ Page views
@@ -313,12 +347,14 @@ For order confirmations and newsletters:
 ## 🎨 CDN for Images (Free)
 
 ### Cloudinary
+
 - ✅ 25GB storage FREE
 - ✅ 25GB bandwidth/month
 - ✅ Image transformations
 - ✅ CDN delivery
 
 ### ImageKit
+
 - ✅ 20GB bandwidth/month FREE
 - ✅ Image optimization
 - ✅ CDN
@@ -346,6 +382,7 @@ git rm --cached .env.local 2>/dev/null || true
 ### 2. Optimize Build
 
 In `next.config.mjs`:
+
 ```javascript
 /** @type {import('next').NextConfig} */
 const nextConfig = {
@@ -363,6 +400,7 @@ export default nextConfig;
 ### 3. Add Production Environment Variables
 
 Create `.env.production` (don't commit!):
+
 ```env
 NEXT_PUBLIC_SUPABASE_URL=your_url
 NEXT_PUBLIC_SUPABASE_ANON_KEY=your_key
@@ -447,6 +485,7 @@ npx vercel --prod
 ## 📞 Need Help?
 
 If you get stuck:
+
 1. Check Vercel logs in dashboard
 2. Verify environment variables are set
 3. Check Supabase is accessible
@@ -468,4 +507,3 @@ If you get stuck:
 ---
 
 **Ready to deploy? Let me know and I can help you through the process!** 🚀
-

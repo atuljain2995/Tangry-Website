@@ -43,8 +43,12 @@ export const ProductCategories = () => {
     <section className="py-20 bg-[#fafafa]">
       <div className="container mx-auto px-6">
         <div className="text-center mb-14">
-          <span className="text-orange-600 font-bold uppercase tracking-widest text-xs">Explore Our Range</span>
-          <h2 className="text-3xl md:text-4xl font-serif font-bold text-gray-900 mt-2">Products You Will Love</h2>
+          <span className="text-orange-600 font-bold uppercase tracking-widest text-xs">
+            Explore Our Range
+          </span>
+          <h2 className="text-3xl md:text-4xl font-serif font-bold text-gray-900 mt-2">
+            Products You Will Love
+          </h2>
           <div className="w-16 h-1 bg-orange-500 mx-auto mt-4 rounded-full"></div>
         </div>
 
@@ -56,7 +60,10 @@ export const ProductCategories = () => {
               className={`group bg-gradient-to-br ${category.gradient} rounded-2xl overflow-hidden flex flex-col transition-all duration-300 hover:shadow-xl hover:-translate-y-1`}
             >
               {/* Image */}
-              <div className="relative w-full aspect-[4/3] overflow-hidden m-3 rounded-xl" style={{ width: 'calc(100% - 1.5rem)' }}>
+              <div
+                className="relative w-full aspect-[4/3] overflow-hidden m-3 rounded-xl"
+                style={{ width: 'calc(100% - 1.5rem)' }}
+              >
                 {category.image ? (
                   <Image
                     src={category.image}
@@ -77,7 +84,11 @@ export const ProductCategories = () => {
                 <h3 className="text-xl font-bold text-gray-900 leading-tight">{category.title}</h3>
                 <p className="text-gray-500 text-[13px] leading-relaxed">{category.description}</p>
                 <span className="text-gray-800 font-semibold text-sm group-hover:text-orange-600 inline-flex items-center gap-1.5 transition-colors mt-1">
-                  View products <ArrowRight size={14} className="group-hover:translate-x-0.5 transition-transform" />
+                  View products{' '}
+                  <ArrowRight
+                    size={14}
+                    className="group-hover:translate-x-0.5 transition-transform"
+                  />
                 </span>
               </div>
             </Link>
@@ -87,4 +98,3 @@ export const ProductCategories = () => {
     </section>
   );
 };
-

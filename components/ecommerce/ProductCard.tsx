@@ -24,12 +24,15 @@ export const ProductCard = ({ product }: ProductCardProps) => {
   const { isWishlisted, toggle: toggleWishlist } = useWishlist();
   const { user } = useAuth();
   const selectedVariant = product.variants[selectedVariantIndex];
-  const discountPercentage = calculateDiscountPercentage(selectedVariant.price, selectedVariant.compareAtPrice);
+  const discountPercentage = calculateDiscountPercentage(
+    selectedVariant.price,
+    selectedVariant.compareAtPrice,
+  );
   const imageSrc = product.images[0] || PLACEHOLDER_IMAGE;
 
   // Find quantity of this variant already in cart
   const cartItem = cart.items.find(
-    item => item.productId === product.id && item.variantId === selectedVariant.id
+    (item) => item.productId === product.id && item.variantId === selectedVariant.id,
   );
   const quantityInCart = cartItem?.quantity || 0;
 
@@ -101,7 +104,10 @@ export const ProductCard = ({ product }: ProductCardProps) => {
           <button
             onClick={(e) => {
               e.preventDefault();
-              if (!user) { window.location.href = '/login'; return; }
+              if (!user) {
+                window.location.href = '/login';
+                return;
+              }
               toggleWishlist(product.id);
             }}
             className={`absolute bottom-3 right-3 p-1.5 rounded-full bg-white/80 backdrop-blur-sm shadow-sm transition hover:scale-110 z-10 ${
@@ -117,7 +123,9 @@ export const ProductCard = ({ product }: ProductCardProps) => {
       {/* Product Info */}
       <div className="px-4 pt-4 pb-5 flex-1 flex flex-col">
         {/* Category */}
-        <p className="text-orange-600 text-[11px] font-bold uppercase tracking-widest mb-1">{product.category}</p>
+        <p className="text-orange-600 text-[11px] font-bold uppercase tracking-widest mb-1">
+          {product.category}
+        </p>
 
         {/* Product Name */}
         <Link href={`/products/${product.slug}`}>
@@ -149,10 +157,12 @@ export const ProductCard = ({ product }: ProductCardProps) => {
         <div className="flex items-center mb-4">
           <div className="flex items-center">
             {[...Array(5)].map((_, i) => (
-              <Star 
-                key={i} 
-                size={13} 
-                className={i < Math.floor(product.rating) ? 'fill-amber-400 text-amber-400' : 'text-gray-200'}
+              <Star
+                key={i}
+                size={13}
+                className={
+                  i < Math.floor(product.rating) ? 'fill-amber-400 text-amber-400' : 'text-gray-200'
+                }
               />
             ))}
           </div>
@@ -170,11 +180,12 @@ export const ProductCard = ({ product }: ProductCardProps) => {
             <span className="text-xl font-black text-gray-900 dark:text-neutral-100">
               {formatCurrency(selectedVariant.price)}
             </span>
-            {selectedVariant.compareAtPrice && selectedVariant.compareAtPrice > selectedVariant.price && (
-              <span className="text-sm text-gray-400 line-through dark:text-neutral-500">
-                {formatCurrency(selectedVariant.compareAtPrice)}
-              </span>
-            )}
+            {selectedVariant.compareAtPrice &&
+              selectedVariant.compareAtPrice > selectedVariant.price && (
+                <span className="text-sm text-gray-400 line-through dark:text-neutral-500">
+                  {formatCurrency(selectedVariant.compareAtPrice)}
+                </span>
+              )}
           </div>
           {quantityInCart > 0 ? (
             <div className="flex items-center gap-2 bg-orange-50 rounded-lg px-1 py-0.5">
@@ -197,7 +208,7 @@ export const ProductCard = ({ product }: ProductCardProps) => {
               </button>
             </div>
           ) : (
-            <button 
+            <button
               onClick={handleAddToCart}
               aria-label={`Add ${product.name} to cart`}
               className="flex items-center gap-1 text-sm font-bold text-orange-600 hover:text-orange-700 border border-orange-200 rounded-lg px-3 py-1.5 hover:bg-orange-50 transition-colors"

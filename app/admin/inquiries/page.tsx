@@ -34,16 +34,18 @@ export default async function AdminInquiriesPage() {
                     <div>
                       <p className="font-medium text-gray-900">{inquiry.name}</p>
                       <p className="text-sm text-gray-500">{inquiry.email}</p>
-                      {inquiry.phone && (
-                        <p className="text-sm text-gray-500">{inquiry.phone}</p>
-                      )}
+                      {inquiry.phone && <p className="text-sm text-gray-500">{inquiry.phone}</p>}
                     </div>
                     <p className="text-sm text-gray-500">{formatDate(inquiry.created_at)}</p>
                   </div>
                   {inquiry.subject && (
-                    <p className="mt-2 text-sm font-medium text-gray-700">Subject: {inquiry.subject}</p>
+                    <p className="mt-2 text-sm font-medium text-gray-700">
+                      Subject: {inquiry.subject}
+                    </p>
                   )}
-                  <p className="mt-1 text-sm text-gray-600 whitespace-pre-wrap">{inquiry.message}</p>
+                  <p className="mt-1 text-sm text-gray-600 whitespace-pre-wrap">
+                    {inquiry.message}
+                  </p>
                 </div>
               ))}
             </div>

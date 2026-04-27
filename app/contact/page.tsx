@@ -73,7 +73,9 @@ export default function ContactPage() {
                 <MapPin size={20} className="flex-shrink-0 mt-0.5" />
                 <span>{COMPANY_INFO.address}</span>
               </p>
-              <p className="text-sm text-gray-600 mt-3">{COMPANY_INFO.certifications.join(' · ')}</p>
+              <p className="text-sm text-gray-600 mt-3">
+                {COMPANY_INFO.certifications.join(' · ')}
+              </p>
             </div>
           </div>
 
@@ -135,11 +137,11 @@ export default function ContactPage() {
                 />
               </div>
               {status === 'success' && (
-                <p className="text-green-600 font-medium">Thank you! We&apos;ll get back to you soon.</p>
+                <p className="text-green-600 font-medium">
+                  Thank you! We&apos;ll get back to you soon.
+                </p>
               )}
-              {status === 'error' && (
-                <p className="text-red-600 text-sm">{errorMessage}</p>
-              )}
+              {status === 'error' && <p className="text-red-600 text-sm">{errorMessage}</p>}
               <button
                 type="submit"
                 disabled={status === 'sending'}

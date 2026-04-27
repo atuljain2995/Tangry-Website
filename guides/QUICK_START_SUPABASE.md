@@ -1,6 +1,7 @@
 # ⚡ Quick Start - Connect to Supabase (10 minutes)
 
 ## ✅ Your Current Setup
+
 - [x] Supabase project created: `pmknwgwbwfyvrkfbrccu`
 - [x] URL and anon key configured in `.env.local`
 - [ ] Service role key needed
@@ -24,6 +25,7 @@
    ```
 
 **Example:**
+
 ```env
 NEXT_PUBLIC_SUPABASE_URL=https://pmknwgwbwfyvrkfbrccu.supabase.co
 NEXT_PUBLIC_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS...
@@ -62,6 +64,7 @@ npm run test-db
 ```
 
 **Expected Output:**
+
 ```
 🔍 Testing Supabase connection...
 ✅ Test 1: Fetching products... Success! Found 5 products
@@ -74,12 +77,14 @@ npm run test-db
 ## 🎉 Done! What's Next?
 
 ### Restart Your Server:
+
 ```bash
 # Press Ctrl+C to stop, then:
 npm run dev
 ```
 
 ### Your Website Now Has:
+
 - ✅ Products loaded from Supabase database
 - ✅ Real-time inventory tracking
 - ✅ Order management ready
@@ -88,6 +93,7 @@ npm run dev
 - ✅ Coupon system
 
 ### Manage Your Data:
+
 - **View Products**: https://supabase.com/dashboard/project/pmknwgwbwfyvrkfbrccu/editor
 - **View Orders**: Click "orders" table
 - **Add New Products**: Click "+ Insert row"
@@ -97,6 +103,7 @@ npm run dev
 ## 🐛 Troubleshooting
 
 ### Test Fails: "Invalid API key"
+
 ```bash
 # Check your .env.local has the correct service_role key
 # Make sure it starts with "eyJ"
@@ -104,12 +111,14 @@ npm run dev
 ```
 
 ### Test Fails: "relation 'products' does not exist"
+
 ```bash
 # Run the migrations again in Supabase SQL Editor
 # Verify in Table Editor that tables exist
 ```
 
 ### Can't Find Service Role Key
+
 ```bash
 # Direct link:
 https://supabase.com/dashboard/project/pmknwgwbwfyvrkfbrccu/settings/api
@@ -121,15 +130,15 @@ https://supabase.com/dashboard/project/pmknwgwbwfyvrkfbrccu/settings/api
 
 ## 📋 Quick Reference
 
-| What | Where |
-|------|-------|
+| What                   | Where                                                       |
+| ---------------------- | ----------------------------------------------------------- |
 | **Supabase Dashboard** | https://supabase.com/dashboard/project/pmknwgwbwfyvrkfbrccu |
-| **SQL Editor** | Dashboard → SQL Editor |
-| **Table Editor** | Dashboard → Table Editor |
-| **API Settings** | Dashboard → Settings → API |
-| **Migration Files** | `lib/db/migrations/` |
-| **Test Script** | `npm run test-db` |
-| **Environment File** | `.env.local` |
+| **SQL Editor**         | Dashboard → SQL Editor                                      |
+| **Table Editor**       | Dashboard → Table Editor                                    |
+| **API Settings**       | Dashboard → Settings → API                                  |
+| **Migration Files**    | `lib/db/migrations/`                                        |
+| **Test Script**        | `npm run test-db`                                           |
+| **Environment File**   | `.env.local`                                                |
 
 ---
 
@@ -150,4 +159,3 @@ https://supabase.com/dashboard/project/pmknwgwbwfyvrkfbrccu/settings/api
 Once you have it, come back and continue with Steps 2 & 3.
 
 Need help? Just ask! 🙋‍♂️
-

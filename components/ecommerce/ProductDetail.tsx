@@ -1,6 +1,6 @@
-"use client";
+'use client';
 
-import { useState, useCallback, useEffect } from "react";
+import { useState, useCallback, useEffect } from 'react';
 import {
   Star,
   Truck,
@@ -12,8 +12,8 @@ import {
   Share2,
   ChevronLeft,
   ChevronRight,
-} from "lucide-react";
-import { ProductExtended } from "@/lib/types/database";
+} from 'lucide-react';
+import { ProductExtended } from '@/lib/types/database';
 import {
   formatCurrency,
   calculateDiscountPercentage,
@@ -21,23 +21,23 @@ import {
   calculateSavings,
   estimateDeliveryDate,
   formatDeliveryDate,
-} from "@/lib/utils/database";
-import { useCart } from "@/lib/contexts/CartContext";
-import { useWishlist } from "@/lib/contexts/WishlistContext";
-import { useAuth } from "@/lib/contexts/AuthContext";
-import { CartItem } from "@/lib/types/database";
-import { ProductImage } from "./ProductImage";
-import { PincodeDeliveryCheck } from "./PincodeDeliveryCheck";
-import { productImageAlt } from "@/lib/utils/product-image-alt";
-import { analytics } from "@/lib/analytics";
-import { PRODUCT_CATEGORIES } from "@/lib/data/products";
-import Link from "next/link";
+} from '@/lib/utils/database';
+import { useCart } from '@/lib/contexts/CartContext';
+import { useWishlist } from '@/lib/contexts/WishlistContext';
+import { useAuth } from '@/lib/contexts/AuthContext';
+import { CartItem } from '@/lib/types/database';
+import { ProductImage } from './ProductImage';
+import { PincodeDeliveryCheck } from './PincodeDeliveryCheck';
+import { productImageAlt } from '@/lib/utils/product-image-alt';
+import { analytics } from '@/lib/analytics';
+import { PRODUCT_CATEGORIES } from '@/lib/data/products';
+import Link from 'next/link';
 
 interface ProductDetailProps {
   product: ProductExtended;
 }
 
-const PLACEHOLDER_IMAGE = "/images/logo-512.png";
+const PLACEHOLDER_IMAGE = '/images/logo-512.png';
 
 export const ProductDetail = ({ product }: ProductDetailProps) => {
   const [selectedVariantIndex, setSelectedVariantIndex] = useState(0);
@@ -52,12 +52,14 @@ export const ProductDetail = ({ product }: ProductDetailProps) => {
   useEffect(() => {
     const v = product.variants[0];
     analytics.trackProductView(product.id, product.name, v?.price ?? 0);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [product.id]);
 
   // Find quantity of this variant already in cart
   const cartItem = cart.items.find(
-    (item) => item.productId === product.id && item.variantId === product.variants[selectedVariantIndex]?.id,
+    (item) =>
+      item.productId === product.id &&
+      item.variantId === product.variants[selectedVariantIndex]?.id,
   );
   const quantityInCart = cartItem?.quantity || 0;
 
@@ -86,12 +88,11 @@ export const ProductDetail = ({ product }: ProductDetailProps) => {
     } else {
       await navigator.clipboard.writeText(window.location.href);
       analytics.trackShare(product.id, product.name, 'clipboard');
-      alert("Link copied to clipboard!");
+      alert('Link copied to clipboard!');
     }
   }, [product.id, product.name]);
 
-  const getDisplayImage = (index: number) =>
-    product.images[index] || PLACEHOLDER_IMAGE;
+  const getDisplayImage = (index: number) => product.images[index] || PLACEHOLDER_IMAGE;
 
   // Safety check: ensure product has variants
   if (!product.variants || product.variants.length === 0) {
@@ -99,8 +100,7 @@ export const ProductDetail = ({ product }: ProductDetailProps) => {
       <div className="container mx-auto px-6 py-12">
         <div className="bg-yellow-50 border-l-4 border-yellow-400 p-4">
           <p className="text-yellow-700">
-            This product doesn&apos;t have any variants configured. Please
-            contact support.
+            This product doesn&apos;t have any variants configured. Please contact support.
           </p>
         </div>
       </div>
@@ -112,10 +112,7 @@ export const ProductDetail = ({ product }: ProductDetailProps) => {
     selectedVariant.price,
     selectedVariant.compareAtPrice,
   );
-  const savings = calculateSavings(
-    selectedVariant.price,
-    selectedVariant.compareAtPrice,
-  );
+  const savings = calculateSavings(selectedVariant.price, selectedVariant.compareAtPrice);
   const stockStatus = getStockStatus(selectedVariant.stock);
   const deliveryEstimate = estimateDeliveryDate();
   const parseTextBlocks = (text: string) =>
@@ -139,9 +136,7 @@ export const ProductDetail = ({ product }: ProductDetailProps) => {
         const [, label, content] = labelMatch;
         return (
           <div key={`${keyPrefix}-${index}`} className="space-y-2">
-            <h3 className="text-2xl font-bold text-gray-900 tracking-tight">
-              {label}
-            </h3>
+            <h3 className="text-2xl font-bold text-gray-900 tracking-tight">{label}</h3>
             <p className="text-gray-700 leading-8 whitespace-pre-line">
               {capitalizeFirstCharacter(content)}
             </p>
@@ -150,10 +145,7 @@ export const ProductDetail = ({ product }: ProductDetailProps) => {
       }
 
       return (
-        <p
-          key={`${keyPrefix}-${index}`}
-          className="text-gray-700 leading-8 whitespace-pre-line"
-        >
+        <p key={`${keyPrefix}-${index}`} className="text-gray-700 leading-8 whitespace-pre-line">
           {capitalizeFirstCharacter(block)}
         </p>
       );
@@ -161,9 +153,7 @@ export const ProductDetail = ({ product }: ProductDetailProps) => {
   };
 
   const descriptionBlocks = parseTextBlocks(product.description);
-  const usageBlocks = product.usageInstructions
-    ? parseTextBlocks(product.usageInstructions)
-    : [];
+  const usageBlocks = product.usageInstructions ? parseTextBlocks(product.usageInstructions) : [];
 
   const handleAddToCart = () => {
     const item: CartItem = {
@@ -176,12 +166,7 @@ export const ProductDetail = ({ product }: ProductDetailProps) => {
       image: product.images[0] || PLACEHOLDER_IMAGE,
     };
     addToCart(item);
-    analytics.trackAddToCart(
-      product.id,
-      product.name,
-      1,
-      selectedVariant.price,
-    );
+    analytics.trackAddToCart(product.id, product.name, 1, selectedVariant.price);
   };
 
   const breadcrumbCategory = product.category
@@ -189,7 +174,7 @@ export const ProductDetail = ({ product }: ProductDetailProps) => {
     : null;
 
   const breadcrumbItems = [
-    { label: "Products", href: "/products" },
+    { label: 'Products', href: '/products' },
     ...(breadcrumbCategory
       ? [{ label: product.category, href: `/categories/${breadcrumbCategory.id}` }]
       : []),
@@ -204,7 +189,10 @@ export const ProductDetail = ({ product }: ProductDetailProps) => {
           {breadcrumbItems.map((item, index) => {
             const isLast = index === breadcrumbItems.length - 1;
             return (
-              <li key={index} className={`flex items-center min-w-0 ${isLast ? "flex-shrink" : "shrink-0"}`}>
+              <li
+                key={index}
+                className={`flex items-center min-w-0 ${isLast ? 'flex-shrink' : 'shrink-0'}`}
+              >
                 {index > 0 && (
                   <ChevronRight size={14} className="mx-1.5 sm:mx-2 text-gray-300 shrink-0" />
                 )}
@@ -231,8 +219,7 @@ export const ProductDetail = ({ product }: ProductDetailProps) => {
         <div>
           {/* Main Image Card */}
           <div className="relative aspect-square border border-gray-200 rounded-lg overflow-hidden bg-white">
-            {product.images.length > 0 ||
-            getDisplayImage(0) === PLACEHOLDER_IMAGE ? (
+            {product.images.length > 0 || getDisplayImage(0) === PLACEHOLDER_IMAGE ? (
               <>
                 {product.images.map((_, index) => (
                   <div
@@ -265,7 +252,9 @@ export const ProductDetail = ({ product }: ProductDetailProps) => {
               </div>
             )}
             {/* Badges on image */}
-            {(product.isNew || product.isBestSeller || (product.certifications && product.certifications.length > 0)) && (
+            {(product.isNew ||
+              product.isBestSeller ||
+              (product.certifications && product.certifications.length > 0)) && (
               <div className="absolute top-4 right-4 z-10 flex flex-col gap-1.5 items-end">
                 {product.isNew && (
                   <span className="bg-green-600 text-white text-[10px] px-2.5 py-1 rounded-md font-bold uppercase tracking-wide">
@@ -312,8 +301,8 @@ export const ProductDetail = ({ product }: ProductDetailProps) => {
                     type="button"
                     className={`relative shrink-0 w-20 h-20 border-2 rounded-md overflow-hidden transition ${
                       selectedImageIndex === index
-                        ? "border-gray-900"
-                        : "border-gray-200 hover:border-gray-400"
+                        ? 'border-gray-900'
+                        : 'border-gray-200 hover:border-gray-400'
                     }`}
                   >
                     <ProductImage
@@ -358,15 +347,13 @@ export const ProductDetail = ({ product }: ProductDetailProps) => {
                   size={16}
                   className={
                     i < Math.floor(product.rating)
-                      ? "fill-amber-400 text-amber-400"
-                      : "text-gray-300"
+                      ? 'fill-amber-400 text-amber-400'
+                      : 'text-gray-300'
                   }
                 />
               ))}
             </div>
-            <span className="text-sm text-gray-500">
-              | &nbsp;{product.reviewCount} Ratings
-            </span>
+            <span className="text-sm text-gray-500">| &nbsp;{product.reviewCount} Ratings</span>
           </div>
 
           {/* Price Row */}
@@ -390,7 +377,7 @@ export const ProductDetail = ({ product }: ProductDetailProps) => {
           <div className="flex items-center justify-between mb-1">
             {selectedVariant.compareAtPrice ? (
               <span className="text-sm text-gray-500">
-                M.R.P.:{" "}
+                M.R.P.:{' '}
                 <span className="line-through">
                   {formatCurrency(selectedVariant.compareAtPrice)}
                 </span>
@@ -400,11 +387,11 @@ export const ProductDetail = ({ product }: ProductDetailProps) => {
             )}
             <span
               className={`text-sm font-semibold ${
-                stockStatus.color === "green"
-                  ? "text-green-600"
-                  : stockStatus.color === "orange"
-                    ? "text-orange-600"
-                    : "text-red-600"
+                stockStatus.color === 'green'
+                  ? 'text-green-600'
+                  : stockStatus.color === 'orange'
+                    ? 'text-orange-600'
+                    : 'text-red-600'
               }`}
             >
               {stockStatus.label.toUpperCase()}
@@ -417,16 +404,12 @@ export const ProductDetail = ({ product }: ProductDetailProps) => {
           )}
 
           {/* Short Description */}
-          <p className="text-gray-600 leading-7 mb-6">
-            {product.description.split("\n")[0]}
-          </p>
+          <p className="text-gray-600 leading-7 mb-6">{product.description.split('\n')[0]}</p>
 
           {/* Variant / Weight Selector */}
           {product.variants.length > 1 && (
             <div className="mb-6">
-              <p className="text-sm font-bold text-gray-900 uppercase tracking-wide mb-3">
-                Weight
-              </p>
+              <p className="text-sm font-bold text-gray-900 uppercase tracking-wide mb-3">Weight</p>
               <div className="flex flex-wrap gap-2">
                 {product.variants.map((variant, index) => (
                   <button
@@ -436,9 +419,9 @@ export const ProductDetail = ({ product }: ProductDetailProps) => {
                     }}
                     className={`px-5 py-2 rounded-full text-sm font-semibold border-2 transition ${
                       selectedVariantIndex === index
-                        ? "border-gray-900 bg-gray-900 text-white"
-                        : "border-gray-300 text-gray-700 hover:border-gray-500"
-                    } ${!variant.isAvailable || variant.stock === 0 ? "opacity-40 cursor-not-allowed" : ""}`}
+                        ? 'border-gray-900 bg-gray-900 text-white'
+                        : 'border-gray-300 text-gray-700 hover:border-gray-500'
+                    } ${!variant.isAvailable || variant.stock === 0 ? 'opacity-40 cursor-not-allowed' : ''}`}
                     disabled={!variant.isAvailable || variant.stock === 0}
                   >
                     {variant.name}
@@ -484,9 +467,7 @@ export const ProductDetail = ({ product }: ProductDetailProps) => {
             ) : (
               <button
                 onClick={handleAddToCart}
-                disabled={
-                  !selectedVariant.isAvailable || selectedVariant.stock === 0
-                }
+                disabled={!selectedVariant.isAvailable || selectedVariant.stock === 0}
                 className="flex-1 bg-orange-600 text-white px-5 py-3.5 rounded-lg font-bold text-sm tracking-wide hover:bg-orange-700 transition disabled:bg-gray-300 disabled:cursor-not-allowed"
               >
                 + Add
@@ -498,12 +479,12 @@ export const ProductDetail = ({ product }: ProductDetailProps) => {
               onClick={handleWishlist}
               className={`p-2.5 border border-gray-300 rounded-md transition ${
                 isWishlisted
-                  ? "text-[#D32F2F] border-[#D32F2F]"
-                  : "text-gray-500 hover:text-[#D32F2F] hover:border-[#D32F2F]"
+                  ? 'text-[#D32F2F] border-[#D32F2F]'
+                  : 'text-gray-500 hover:text-[#D32F2F] hover:border-[#D32F2F]'
               }`}
               aria-label="Add to wishlist"
             >
-              <Heart size={18} fill={isWishlisted ? "currentColor" : "none"} />
+              <Heart size={18} fill={isWishlisted ? 'currentColor' : 'none'} />
             </button>
 
             {/* Share */}
@@ -545,9 +526,7 @@ export const ProductDetail = ({ product }: ProductDetailProps) => {
 
           {/* Delivery Info */}
           <div className="p-4 bg-gray-50 rounded-lg border border-gray-200 text-sm">
-            <p className="font-semibold text-gray-700 mb-1">
-              Typical delivery (India):
-            </p>
+            <p className="font-semibold text-gray-700 mb-1">Typical delivery (India):</p>
             <p className="text-gray-600">
               {formatDeliveryDate(deliveryEstimate.min, deliveryEstimate.max)}
             </p>
@@ -566,11 +545,9 @@ export const ProductDetail = ({ product }: ProductDetailProps) => {
               Description
             </h3>
             {descriptionBlocks.length > 0 ? (
-              renderTextBlocks(descriptionBlocks, "description")
+              renderTextBlocks(descriptionBlocks, 'description')
             ) : (
-              <p className="text-gray-700 leading-8 whitespace-pre-line">
-                {product.description}
-              </p>
+              <p className="text-gray-700 leading-8 whitespace-pre-line">{product.description}</p>
             )}
           </section>
 
@@ -606,11 +583,9 @@ export const ProductDetail = ({ product }: ProductDetailProps) => {
 
           {product.usageInstructions && (
             <section className="space-y-4">
-              <h3 className="text-xl sm:text-2xl font-bold text-gray-900 tracking-tight">
-                Usage
-              </h3>
+              <h3 className="text-xl sm:text-2xl font-bold text-gray-900 tracking-tight">Usage</h3>
               {usageBlocks.length > 0 ? (
-                renderTextBlocks(usageBlocks, "usage")
+                renderTextBlocks(usageBlocks, 'usage')
               ) : (
                 <p className="text-gray-700 leading-8 whitespace-pre-line">
                   {product.usageInstructions}

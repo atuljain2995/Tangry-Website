@@ -1,9 +1,9 @@
-"use client";
+'use client';
 
-import { useState, useEffect, useCallback } from "react";
-import { Star, CheckCircle, Loader2 } from "lucide-react";
-import { useAuth } from "@/lib/contexts/AuthContext";
-import { analytics } from "@/lib/analytics";
+import { useState, useEffect, useCallback } from 'react';
+import { Star, CheckCircle, Loader2 } from 'lucide-react';
+import { useAuth } from '@/lib/contexts/AuthContext';
+import { analytics } from '@/lib/analytics';
 
 interface ReviewRow {
   id: string;
@@ -40,10 +40,8 @@ function StarRating({
           key={i}
           size={size}
           className={`transition-colors ${
-            i <= active
-              ? "fill-amber-400 text-amber-400"
-              : "fill-gray-200 text-gray-200"
-          } ${!readonly ? "cursor-pointer" : ""}`}
+            i <= active ? 'fill-amber-400 text-amber-400' : 'fill-gray-200 text-gray-200'
+          } ${!readonly ? 'cursor-pointer' : ''}`}
           onMouseEnter={() => !readonly && setHovered(i)}
           onMouseLeave={() => !readonly && setHovered(0)}
           onClick={() => !readonly && onChange?.(i)}
@@ -78,8 +76,8 @@ export function ProductReviews({ productId }: ProductReviewsProps) {
 
   // Form state
   const [formRating, setFormRating] = useState(0);
-  const [formTitle, setFormTitle] = useState("");
-  const [formComment, setFormComment] = useState("");
+  const [formTitle, setFormTitle] = useState('');
+  const [formComment, setFormComment] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const [formError, setFormError] = useState<string | null>(null);
   const [submitted, setSubmitted] = useState(false);
@@ -102,9 +100,7 @@ export function ProductReviews({ productId }: ProductReviewsProps) {
   }, [fetchReviews]);
 
   const avgRating =
-    reviews.length > 0
-      ? reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length
-      : 0;
+    reviews.length > 0 ? reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length : 0;
 
   const distribution = [5, 4, 3, 2, 1].map((star) => ({
     label: String(star),
@@ -116,15 +112,15 @@ export function ProductReviews({ productId }: ProductReviewsProps) {
     setFormError(null);
 
     if (formRating === 0) {
-      setFormError("Please select a star rating.");
+      setFormError('Please select a star rating.');
       return;
     }
 
     setSubmitting(true);
     try {
-      const res = await fetch("/api/reviews", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
+      const res = await fetch('/api/reviews', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           productId,
           rating: formRating,
@@ -136,7 +132,7 @@ export function ProductReviews({ productId }: ProductReviewsProps) {
       const data = await res.json();
       if (!res.ok) {
         analytics.trackReview(productId, formRating, false, data.error ?? 'unknown');
-        setFormError(data.error ?? "Failed to submit review.");
+        setFormError(data.error ?? 'Failed to submit review.');
         return;
       }
 
@@ -144,8 +140,8 @@ export function ProductReviews({ productId }: ProductReviewsProps) {
       setSubmitted(true);
       setShowForm(false);
       setFormRating(0);
-      setFormTitle("");
-      setFormComment("");
+      setFormTitle('');
+      setFormComment('');
       // Refresh review list
       await fetchReviews();
     } finally {
@@ -156,30 +152,21 @@ export function ProductReviews({ productId }: ProductReviewsProps) {
   return (
     <section className="bg-white border-t border-gray-100 py-12">
       <div className="container mx-auto px-6 max-w-4xl">
-        <h2 className="text-2xl font-bold text-gray-900 mb-8">
-          Customer Reviews
-        </h2>
+        <h2 className="text-2xl font-bold text-gray-900 mb-8">Customer Reviews</h2>
 
         {/* Summary */}
         {reviews.length > 0 && (
           <div className="flex flex-col sm:flex-row gap-8 mb-10 p-6 bg-amber-50 rounded-xl border border-amber-100">
             <div className="flex flex-col items-center justify-center min-w-[100px]">
-              <span className="text-5xl font-bold text-gray-900">
-                {avgRating.toFixed(1)}
-              </span>
+              <span className="text-5xl font-bold text-gray-900">{avgRating.toFixed(1)}</span>
               <StarRating value={Math.round(avgRating)} readonly size={18} />
               <span className="text-sm text-gray-500 mt-1">
-                {reviews.length} {reviews.length === 1 ? "review" : "reviews"}
+                {reviews.length} {reviews.length === 1 ? 'review' : 'reviews'}
               </span>
             </div>
             <div className="flex-1 flex flex-col gap-1.5">
               {distribution.map((d) => (
-                <RatingBar
-                  key={d.label}
-                  label={d.label}
-                  count={d.count}
-                  total={reviews.length}
-                />
+                <RatingBar key={d.label} label={d.label} count={d.count} total={reviews.length} />
               ))}
             </div>
           </div>
@@ -205,7 +192,7 @@ export function ProductReviews({ productId }: ProductReviewsProps) {
               <p className="text-sm text-gray-500">
                 <a href="/login" className="text-gray-900 underline font-medium">
                   Log in
-                </a>{" "}
+                </a>{' '}
                 to leave a review.
               </p>
             )}
@@ -218,9 +205,7 @@ export function ProductReviews({ productId }: ProductReviewsProps) {
             onSubmit={handleSubmit}
             className="mb-10 p-6 border border-gray-200 rounded-xl bg-gray-50"
           >
-            <h3 className="text-lg font-semibold text-gray-900 mb-5">
-              Write Your Review
-            </h3>
+            <h3 className="text-lg font-semibold text-gray-900 mb-5">Write Your Review</h3>
 
             <div className="mb-4">
               <label className="block text-sm font-medium text-gray-700 mb-1.5">
@@ -257,14 +242,10 @@ export function ProductReviews({ productId }: ProductReviewsProps) {
                 required
                 className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-gray-900 resize-none"
               />
-              <p className="text-xs text-gray-400 text-right mt-0.5">
-                {formComment.length}/1500
-              </p>
+              <p className="text-xs text-gray-400 text-right mt-0.5">{formComment.length}/1500</p>
             </div>
 
-            {formError && (
-              <p className="text-red-600 text-sm mb-4">{formError}</p>
-            )}
+            {formError && <p className="text-red-600 text-sm mb-4">{formError}</p>}
 
             <div className="flex gap-3">
               <button
@@ -273,7 +254,7 @@ export function ProductReviews({ productId }: ProductReviewsProps) {
                 className="flex items-center gap-2 px-5 py-2.5 bg-gray-900 text-white text-sm font-medium rounded-lg hover:bg-gray-700 disabled:opacity-50 transition-colors"
               >
                 {submitting && <Loader2 size={15} className="animate-spin" />}
-                {submitting ? "Submitting…" : "Submit Review"}
+                {submitting ? 'Submitting…' : 'Submit Review'}
               </button>
               <button
                 type="button"
@@ -310,18 +291,14 @@ export function ProductReviews({ productId }: ProductReviewsProps) {
                         </span>
                       )}
                     </div>
-                    <p className="font-semibold text-gray-900 text-sm">
-                      {review.title}
-                    </p>
-                    <p className="text-gray-600 text-sm mt-1 leading-relaxed">
-                      {review.comment}
-                    </p>
+                    <p className="font-semibold text-gray-900 text-sm">{review.title}</p>
+                    <p className="text-gray-600 text-sm mt-1 leading-relaxed">{review.comment}</p>
                     <p className="text-xs text-gray-400 mt-2">
-                      {review.user_name} &middot;{" "}
-                      {new Date(review.created_at).toLocaleDateString("en-IN", {
-                        day: "numeric",
-                        month: "long",
-                        year: "numeric",
+                      {review.user_name} &middot;{' '}
+                      {new Date(review.created_at).toLocaleDateString('en-IN', {
+                        day: 'numeric',
+                        month: 'long',
+                        year: 'numeric',
                       })}
                     </p>
                   </div>

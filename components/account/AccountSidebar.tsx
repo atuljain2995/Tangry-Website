@@ -2,15 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import {
-  ClipboardList,
-  User,
-  MapPin,
-  HelpCircle,
-  LogOut,
-  Store,
-  Heart,
-} from 'lucide-react';
+import { ClipboardList, User, MapPin, HelpCircle, LogOut, Store, Heart } from 'lucide-react';
 import { useAuth } from '@/lib/contexts/AuthContext';
 
 const NAV_ITEMS = [
@@ -61,10 +53,17 @@ export function AccountSidebar() {
                 </p>
               </div>
               <div className="flex items-center gap-2 shrink-0">
-                <Link href="/" className="p-1.5 rounded-lg text-gray-500 hover:bg-gray-50 dark:text-neutral-400 dark:hover:bg-neutral-800">
+                <Link
+                  href="/"
+                  className="p-1.5 rounded-lg text-gray-500 hover:bg-gray-50 dark:text-neutral-400 dark:hover:bg-neutral-800"
+                >
                   <Store className="h-4 w-4" aria-hidden />
                 </Link>
-                <button type="button" onClick={() => signOut()} className="p-1.5 rounded-lg text-red-500 hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-950">
+                <button
+                  type="button"
+                  onClick={() => signOut()}
+                  className="p-1.5 rounded-lg text-red-500 hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-950"
+                >
                   <LogOut className="h-4 w-4" aria-hidden />
                 </button>
               </div>

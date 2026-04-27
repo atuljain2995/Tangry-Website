@@ -6,17 +6,8 @@ import { MobileMenu } from '@/components/layout/MobileMenu';
 import { Footer } from '@/components/layout/Footer';
 import { CartDrawer } from '@/components/ecommerce/CartDrawer';
 import { TrustBadges } from '@/components/ui/TrustBadges';
-import { COMPANY_INFO} from '@/lib/data/constants';
-import {
-  MapPin,
-  Leaf,
-  ShieldCheck,
-  Award,
-  Heart,
-  Package,
-  Users,
-  Target,
-} from 'lucide-react';
+import { COMPANY_INFO } from '@/lib/data/constants';
+import { MapPin, Leaf, ShieldCheck, Award, Heart, Package, Users, Target } from 'lucide-react';
 import Link from 'next/link';
 
 const values = [
@@ -48,7 +39,11 @@ const values = [
 
 const milestones = [
   { year: '2025', event: 'Tangry founded in Jhotwara, Jaipur as a home-kitchen masala brand' },
-  { year: '2025', event: 'FSSAI license & ISO 22000 certification obtained; production facility set up on Khatipura Road' },
+  {
+    year: '2025',
+    event:
+      'FSSAI license & ISO 22000 certification obtained; production facility set up on Khatipura Road',
+  },
   { year: '2026', event: 'Launched online store — shipping across India' },
 ];
 
@@ -70,14 +65,13 @@ export default function AboutPage() {
               <MapPin size={18} /> Jhotwara, Jaipur
             </div>
             <h1 className="text-4xl md:text-6xl font-black mb-6 leading-tight">
-              Rooted in Rajasthan.{' '}
-              <span className="text-gray-400">Built for Every Kitchen.</span>
+              Rooted in Rajasthan. <span className="text-gray-400">Built for Every Kitchen.</span>
             </h1>
             <p className="text-gray-300 text-lg md:text-xl leading-relaxed max-w-2xl">
               {COMPANY_INFO.brandName} is crafted in Jhotwara, Jaipur. We blend masalas and
-              ready-to-eat powders in small batches, source ingredients from trusted partners
-              across India, and pack under FSSAI supervision — so what reaches your shelf matches
-              what we serve at home.
+              ready-to-eat powders in small batches, source ingredients from trusted partners across
+              India, and pack under FSSAI supervision — so what reaches your shelf matches what we
+              serve at home.
             </p>
           </div>
         </div>
@@ -92,8 +86,8 @@ export default function AboutPage() {
             </h2>
             <p className="text-neutral-600 dark:text-neutral-400 text-lg leading-relaxed">
               Tangry started with a simple belief: the masalas you buy should taste exactly like the
-              ones your family grinds at home. We noticed that most packaged spices were diluted with
-              fillers, artificial colours, and stale ingredients. So we set out to change that.
+              ones your family grinds at home. We noticed that most packaged spices were diluted
+              with fillers, artificial colours, and stale ingredients. So we set out to change that.
             </p>
             <p className="text-neutral-600 dark:text-neutral-400 text-lg leading-relaxed mt-4">
               From a small production unit on Khatipura Road in Jhotwara, we carefully source whole
@@ -153,9 +147,7 @@ export default function AboutPage() {
                   <span className="text-sm font-bold text-orange-500 uppercase tracking-wider">
                     {m.year}
                   </span>
-                  <p className="text-neutral-700 dark:text-neutral-300 mt-1 text-lg">
-                    {m.event}
-                  </p>
+                  <p className="text-neutral-700 dark:text-neutral-300 mt-1 text-lg">{m.event}</p>
                 </div>
               ))}
             </div>
@@ -247,7 +239,9 @@ export default function AboutPage() {
             </div>
             <div className="text-center">
               <Users className="text-orange-500 mx-auto mb-3" size={28} />
-              <h3 className="font-bold text-lg mb-2 text-neutral-900 dark:text-white">Legal Entity</h3>
+              <h3 className="font-bold text-lg mb-2 text-neutral-900 dark:text-white">
+                Legal Entity
+              </h3>
               <p className="text-neutral-600 dark:text-neutral-400 text-sm">
                 {COMPANY_INFO.legalName}
               </p>
@@ -257,13 +251,11 @@ export default function AboutPage() {
             </div>
             <div className="text-center">
               <Heart className="text-orange-500 mx-auto mb-3" size={28} />
-              <h3 className="font-bold text-lg mb-2 text-neutral-900 dark:text-white">Get in Touch</h3>
-              <p className="text-neutral-600 dark:text-neutral-400 text-sm">
-                {COMPANY_INFO.phone}
-              </p>
-              <p className="text-neutral-600 dark:text-neutral-400 text-sm">
-                {COMPANY_INFO.email}
-              </p>
+              <h3 className="font-bold text-lg mb-2 text-neutral-900 dark:text-white">
+                Get in Touch
+              </h3>
+              <p className="text-neutral-600 dark:text-neutral-400 text-sm">{COMPANY_INFO.phone}</p>
+              <p className="text-neutral-600 dark:text-neutral-400 text-sm">{COMPANY_INFO.email}</p>
             </div>
           </div>
         </div>
@@ -319,9 +311,12 @@ export default function AboutPage() {
               <div className="flex items-start gap-3">
                 <Target className="text-orange-500 mt-1 shrink-0" size={22} />
                 <div>
-                  <h3 className="font-bold text-neutral-900 dark:text-white mb-1">Nearby Landmarks</h3>
+                  <h3 className="font-bold text-neutral-900 dark:text-white mb-1">
+                    Nearby Landmarks
+                  </h3>
                   <p className="text-neutral-600 dark:text-neutral-400 leading-relaxed">
-                    Near Khatipura Road, 2 km from Jhotwara Railway Station, 8 km from Jaipur Junction
+                    Near Khatipura Road, 2 km from Jhotwara Railway Station, 8 km from Jaipur
+                    Junction
                   </p>
                 </div>
               </div>
@@ -365,9 +360,7 @@ export default function AboutPage() {
       {/* CTA */}
       <section className="py-20 bg-gradient-to-r from-orange-500 to-red-500 text-white text-center">
         <div className="container mx-auto px-4">
-          <h2 className="text-3xl md:text-4xl font-bold mb-4">
-            Ready to Taste the Difference?
-          </h2>
+          <h2 className="text-3xl md:text-4xl font-bold mb-4">Ready to Taste the Difference?</h2>
           <p className="text-orange-100 text-lg mb-8 max-w-lg mx-auto">
             Explore our range of authentic masalas, ready powders, and pickles — made the way your
             grandmother would approve.

@@ -30,10 +30,7 @@ export function ThemeToggle({ showLabel = true, className = '' }: ThemeTogglePro
 
   if (!isClient) {
     return (
-      <div
-        className={`flex items-center gap-2 ${className}`}
-        aria-hidden
-      >
+      <div className={`flex items-center gap-2 ${className}`} aria-hidden>
         {showLabel && <span className="w-10 text-sm font-medium text-neutral-800" />}
         <div className={`${TRACK} opacity-60`}>
           <span className={KNOB} />

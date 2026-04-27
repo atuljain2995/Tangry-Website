@@ -108,4 +108,3 @@ export const CartItemComponent = ({ item }: CartItemProps) => {
     </div>
   );
 };
-

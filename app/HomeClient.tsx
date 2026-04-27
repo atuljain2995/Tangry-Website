@@ -14,12 +14,24 @@ import { ProductExtended } from '@/lib/types/database';
 import type { MarketplaceLinks } from '@/lib/data/marketplaces';
 
 // Lazy-load below-fold sections to reduce initial JS bundle and improve LCP/TBT
-const ProductCategories = dynamic(() => import('@/components/sections/ProductCategories').then(m => ({ default: m.ProductCategories })));
-const Testimonials = dynamic(() => import('@/components/sections/Testimonials').then(m => ({ default: m.Testimonials })));
-const About = dynamic(() => import('@/components/sections/About').then(m => ({ default: m.About })));
-const BuyOnline = dynamic(() => import('@/components/sections/BuyOnline').then(m => ({ default: m.BuyOnline })));
-const Recipes = dynamic(() => import('@/components/sections/Recipes').then(m => ({ default: m.Recipes })));
-const Newsletter = dynamic(() => import('@/components/sections/Newsletter').then(m => ({ default: m.Newsletter })));
+const ProductCategories = dynamic(() =>
+  import('@/components/sections/ProductCategories').then((m) => ({ default: m.ProductCategories })),
+);
+const Testimonials = dynamic(() =>
+  import('@/components/sections/Testimonials').then((m) => ({ default: m.Testimonials })),
+);
+const About = dynamic(() =>
+  import('@/components/sections/About').then((m) => ({ default: m.About })),
+);
+const BuyOnline = dynamic(() =>
+  import('@/components/sections/BuyOnline').then((m) => ({ default: m.BuyOnline })),
+);
+const Recipes = dynamic(() =>
+  import('@/components/sections/Recipes').then((m) => ({ default: m.Recipes })),
+);
+const Newsletter = dynamic(() =>
+  import('@/components/sections/Newsletter').then((m) => ({ default: m.Newsletter })),
+);
 
 interface HomeClientProps {
   products: ProductExtended[];
@@ -30,7 +42,7 @@ export function HomeClient({ products, marketplaceLinks }: HomeClientProps) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   // Filter featured products
-  const featuredProducts = products.filter(p => p.isFeatured);
+  const featuredProducts = products.filter((p) => p.isFeatured);
 
   return (
     <>
@@ -47,10 +59,9 @@ export function HomeClient({ products, marketplaceLinks }: HomeClientProps) {
         <BuyOnline links={marketplaceLinks} />
         {process.env.NEXT_PUBLIC_SHOW_RECIPES_NAV === 'true' && <Recipes />}
         <Newsletter />
-        
+
         <Footer />
       </main>
     </>
   );
 }
-

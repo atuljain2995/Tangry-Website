@@ -61,9 +61,7 @@ async function testSupabaseConnection() {
 
     // Test 3: Check email subscribers table
     console.log('Test 3: Checking email_subscribers table...');
-    const { error: subscribersError } = await supabase
-      .from('email_subscribers')
-      .select('count');
+    const { error: subscribersError } = await supabase.from('email_subscribers').select('count');
 
     if (subscribersError) {
       console.log('⚠️  email_subscribers table might not exist yet');
@@ -74,9 +72,7 @@ async function testSupabaseConnection() {
 
     // Test 4: Check orders table
     console.log('Test 4: Checking orders table...');
-    const { error: ordersError } = await supabase
-      .from('orders')
-      .select('count');
+    const { error: ordersError } = await supabase.from('orders').select('count');
 
     if (ordersError) {
       console.log('⚠️  orders table might not exist yet');
@@ -101,9 +97,18 @@ async function testSupabaseConnection() {
     }
     console.log('');
     console.log('Environment check:');
-    console.log('- NEXT_PUBLIC_SUPABASE_URL:', process.env.NEXT_PUBLIC_SUPABASE_URL ? '✅ Set' : '❌ Missing');
-    console.log('- NEXT_PUBLIC_SUPABASE_ANON_KEY:', process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ? '✅ Set' : '❌ Missing');
-    console.log('- SUPABASE_SERVICE_ROLE_KEY:', process.env.SUPABASE_SERVICE_ROLE_KEY ? '✅ Set' : '❌ Missing');
+    console.log(
+      '- NEXT_PUBLIC_SUPABASE_URL:',
+      process.env.NEXT_PUBLIC_SUPABASE_URL ? '✅ Set' : '❌ Missing',
+    );
+    console.log(
+      '- NEXT_PUBLIC_SUPABASE_ANON_KEY:',
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ? '✅ Set' : '❌ Missing',
+    );
+    console.log(
+      '- SUPABASE_SERVICE_ROLE_KEY:',
+      process.env.SUPABASE_SERVICE_ROLE_KEY ? '✅ Set' : '❌ Missing',
+    );
     console.log('');
     console.log('Troubleshooting:');
     console.log('1. Check if NEXT_PUBLIC_SUPABASE_URL is set in .env.local');
@@ -117,11 +122,10 @@ async function testSupabaseConnection() {
 
 // Run the test
 testSupabaseConnection()
-  .then(success => {
+  .then((success) => {
     process.exit(success ? 0 : 1);
   })
-  .catch(error => {
+  .catch((error) => {
     console.error('Fatal error:', error);
     process.exit(1);
   });
-

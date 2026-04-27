@@ -19,18 +19,35 @@ export const MobileMenu = ({ isOpen, onClose }: MobileMenuProps) => {
     >
       <div className="mb-8 flex items-center justify-between">
         <h2 className="text-xl font-bold text-[#D32F2F]">Menu</h2>
-        <button type="button" onClick={onClose} className="text-gray-500 dark:text-neutral-400" aria-label="Close menu">
+        <button
+          type="button"
+          onClick={onClose}
+          className="text-gray-500 dark:text-neutral-400"
+          aria-label="Close menu"
+        >
           <X size={24} />
         </button>
       </div>
-      <NavLink href="/about" isMobile onClick={onClose}>About Us</NavLink>
-      <NavLink href="/products" isMobile onClick={onClose}>Products</NavLink>
-      <NavLink href="/search" isMobile onClick={onClose}>Search</NavLink>
+      <NavLink href="/about" isMobile onClick={onClose}>
+        About Us
+      </NavLink>
+      <NavLink href="/products" isMobile onClick={onClose}>
+        Products
+      </NavLink>
+      <NavLink href="/search" isMobile onClick={onClose}>
+        Search
+      </NavLink>
       {showRecipesInNav() && (
-        <NavLink href="/recipes" isMobile onClick={onClose}>Recipes</NavLink>
+        <NavLink href="/recipes" isMobile onClick={onClose}>
+          Recipes
+        </NavLink>
       )}
-      <NavLink href="/wholesale" isMobile onClick={onClose}>Wholesale</NavLink>
-      <NavLink href="/contact" isMobile onClick={onClose}>Contact</NavLink>
+      <NavLink href="/wholesale" isMobile onClick={onClose}>
+        Wholesale
+      </NavLink>
+      <NavLink href="/contact" isMobile onClick={onClose}>
+        Contact
+      </NavLink>
 
       <div className="mt-auto border-t border-gray-100 pt-6 dark:border-neutral-800 sm:hidden">
         <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-neutral-400">

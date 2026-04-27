@@ -11,7 +11,9 @@ export default async function AddressesPage() {
 
   return (
     <div>
-      <h1 className="mb-6 text-2xl font-bold text-gray-900 dark:text-neutral-100">Saved Addresses</h1>
+      <h1 className="mb-6 text-2xl font-bold text-gray-900 dark:text-neutral-100">
+        Saved Addresses
+      </h1>
       <AddressesClient addresses={addresses} />
     </div>
   );

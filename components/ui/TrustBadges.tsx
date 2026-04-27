@@ -12,41 +12,41 @@ export const TrustBadges = ({ variant = 'horizontal', className = '' }: TrustBad
     {
       icon: Shield,
       title: '100% Authentic',
-      description: 'Quality Assured'
+      description: 'Quality Assured',
     },
     {
       icon: Truck,
       title: 'Pan India Delivery',
-      description: 'Flat ₹80 shipping'
+      description: 'Flat ₹80 shipping',
     },
     {
       icon: RefreshCcw,
       title: 'Easy Returns',
-      description: '7-day return policy'
+      description: '7-day return policy',
     },
     {
       icon: Lock,
       title: 'Secure Payment',
-      description: '100% Safe & Secure'
+      description: '100% Safe & Secure',
     },
     {
       icon: Award,
       title: 'FSSAI & ISO 22000',
-      description: 'Licensed & certified (12225026001713)'
+      description: 'Licensed & certified (12225026001713)',
     },
     {
       icon: Leaf,
       title: 'Organic Options',
-      description: 'Natural & Pure'
-    }
+      description: 'Natural & Pure',
+    },
   ];
 
   if (variant === 'grid') {
     return (
       <div className={`grid grid-cols-2 md:grid-cols-3 gap-4 ${className}`}>
         {badges.map((badge, index) => (
-          <div 
-            key={index} 
+          <div
+            key={index}
             className="flex flex-col items-center text-center p-4 bg-white rounded-lg shadow-sm hover:shadow-md transition"
           >
             <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mb-3">
@@ -63,8 +63,8 @@ export const TrustBadges = ({ variant = 'horizontal', className = '' }: TrustBad
   return (
     <div className={`flex flex-wrap justify-center gap-6 ${className}`}>
       {badges.map((badge, index) => (
-        <div 
-          key={index} 
+        <div
+          key={index}
           className="flex items-center space-x-3 p-3 bg-white rounded-lg shadow-sm hover:shadow-md transition"
         >
           <div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center flex-shrink-0">
@@ -121,4 +121,3 @@ export const SecurityBadges = ({ className = '' }: { className?: string }) => {
     </div>
   );
 };
-

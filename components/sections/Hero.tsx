@@ -123,17 +123,17 @@ export const Hero = ({ products = [] }: HeroProps) => {
     promo2 = products.find((p) => p !== promo1 && p.images?.[0]) || null;
   } else {
     // Fallback: auto-pick one spice + one pickle
-    const spice = products.find((p) => p.category?.toLowerCase() !== 'pickles' && p.images?.[0]) ?? null;
-    const pickle = products.find((p) => p.category?.toLowerCase() === 'pickles' && p.images?.[0]) ?? null;
+    const spice =
+      products.find((p) => p.category?.toLowerCase() !== 'pickles' && p.images?.[0]) ?? null;
+    const pickle =
+      products.find((p) => p.category?.toLowerCase() === 'pickles' && p.images?.[0]) ?? null;
     promo1 = spice || products.find((p) => p.images?.[0]) || null;
     promo2 = pickle || products.filter((p) => p !== promo1).find((p) => p.images?.[0]) || null;
   }
 
   return (
     <section className="relative overflow-hidden bg-[#FFF8F3] pb-14 pt-16 sm:pb-16 md:pb-20 md:pt-20 dark:bg-neutral-900">
-      <h1 className="sr-only">
-        Authentic Jaipur flavours from Tangry Spices
-      </h1>
+      <h1 className="sr-only">Authentic Jaipur flavours from Tangry Spices</h1>
       {/* Decorative blobs */}
       <div className="pointer-events-none absolute inset-0 opacity-20">
         <div className="absolute left-10 top-20 h-72 w-72 animate-pulse rounded-full bg-orange-400 blur-3xl"></div>
@@ -152,7 +152,10 @@ export const Hero = ({ products = [] }: HeroProps) => {
         </div>
 
         {/* Heading — centered */}
-        <div aria-hidden="true" className="mb-4 text-center text-[2.25rem] font-black leading-[1.08] tracking-tight text-slate-900 dark:text-neutral-50 sm:text-5xl">
+        <div
+          aria-hidden="true"
+          className="mb-4 text-center text-[2.25rem] font-black leading-[1.08] tracking-tight text-slate-900 dark:text-neutral-50 sm:text-5xl"
+        >
           AUTHENTIC{' '}
           <span className="bg-gradient-to-r from-orange-500 to-red-600 bg-clip-text font-serif italic text-transparent">
             JAIPUR
@@ -187,19 +190,25 @@ export const Hero = ({ products = [] }: HeroProps) => {
         <div className="mx-auto mt-7 flex max-w-sm items-center justify-between border-t border-slate-200/80 pt-5 dark:border-neutral-700">
           <div className="text-center">
             <div className="text-lg font-black text-slate-900 dark:text-neutral-50">25+</div>
-            <div className="text-[10px] font-medium text-slate-500 dark:text-neutral-400">Masalas &amp; pickles</div>
+            <div className="text-[10px] font-medium text-slate-500 dark:text-neutral-400">
+              Masalas &amp; pickles
+            </div>
           </div>
           <div className="h-6 w-px bg-slate-200 dark:bg-neutral-700"></div>
           <div className="text-center">
             <div className="text-lg font-black text-slate-900 dark:text-neutral-50">Jaipur</div>
-            <div className="text-[10px] font-medium text-slate-500 dark:text-neutral-400">Blended &amp; packed</div>
+            <div className="text-[10px] font-medium text-slate-500 dark:text-neutral-400">
+              Blended &amp; packed
+            </div>
           </div>
           <div className="h-6 w-px bg-slate-200 dark:bg-neutral-700"></div>
           <div className="text-center">
             <div className="flex items-center justify-center gap-0.5 text-lg font-black text-slate-900 dark:text-neutral-50">
               ISO <ShieldCheck className="h-4 w-4 text-green-500" />
             </div>
-            <div className="text-[10px] font-medium text-slate-500 dark:text-neutral-400">Licensed facility</div>
+            <div className="text-[10px] font-medium text-slate-500 dark:text-neutral-400">
+              Licensed facility
+            </div>
           </div>
         </div>
 
@@ -266,7 +275,10 @@ export const Hero = ({ products = [] }: HeroProps) => {
               TASTE OF HOME · NO PRESERVATIVES
             </div>
 
-            <div aria-hidden="true" className="mb-6 text-7xl font-black leading-[1.1] tracking-tight text-slate-900 dark:text-neutral-50">
+            <div
+              aria-hidden="true"
+              className="mb-6 text-7xl font-black leading-[1.1] tracking-tight text-slate-900 dark:text-neutral-50"
+            >
               AUTHENTIC{' '}
               <span className="bg-gradient-to-r from-orange-500 to-red-600 bg-clip-text font-serif italic text-transparent">
                 JAIPUR
@@ -275,8 +287,8 @@ export const Hero = ({ products = [] }: HeroProps) => {
             </div>
 
             <p className="mb-8 text-lg leading-relaxed text-slate-600 dark:text-neutral-300">
-              Masalas, ready-to-eat powders, and pickles from Tangry Spices—small-batch blends rooted
-              in Jaipur. FSSAI licensed, ISO 22000 certified, no unnecessary fillers.
+              Masalas, ready-to-eat powders, and pickles from Tangry Spices—small-batch blends
+              rooted in Jaipur. FSSAI licensed, ISO 22000 certified, no unnecessary fillers.
             </p>
 
             <div className="mb-12 flex flex-wrap gap-4">
@@ -298,17 +310,25 @@ export const Hero = ({ products = [] }: HeroProps) => {
             <div className="grid grid-cols-3 gap-6 border-t border-slate-200 pt-8 dark:border-neutral-700">
               <div>
                 <div className="text-2xl font-black text-slate-900 dark:text-neutral-50">25+</div>
-                <div className="text-xs font-medium text-slate-500 dark:text-neutral-400">Masalas &amp; pickles</div>
+                <div className="text-xs font-medium text-slate-500 dark:text-neutral-400">
+                  Masalas &amp; pickles
+                </div>
               </div>
               <div>
-                <div className="text-2xl font-black text-slate-900 dark:text-neutral-50">Jaipur</div>
-                <div className="text-xs font-medium text-slate-500 dark:text-neutral-400">Blended &amp; packed</div>
+                <div className="text-2xl font-black text-slate-900 dark:text-neutral-50">
+                  Jaipur
+                </div>
+                <div className="text-xs font-medium text-slate-500 dark:text-neutral-400">
+                  Blended &amp; packed
+                </div>
               </div>
               <div>
                 <div className="flex items-center gap-1 text-2xl font-black text-slate-900 dark:text-neutral-50">
                   ISO <ShieldCheck className="h-5 w-5 text-green-500" />
                 </div>
-                <div className="text-xs font-medium text-slate-500 dark:text-neutral-400">Licensed facility</div>
+                <div className="text-xs font-medium text-slate-500 dark:text-neutral-400">
+                  Licensed facility
+                </div>
               </div>
             </div>
           </div>
@@ -370,7 +390,17 @@ export const Hero = ({ products = [] }: HeroProps) => {
       {/* Animated Ticker */}
       <div className="absolute bottom-1 left-0 z-[1] w-full origin-left -rotate-1 scale-105 overflow-hidden bg-black py-2.5 text-white shadow-lg sm:bottom-10 sm:py-3">
         <div className="animate-marquee flex gap-12 whitespace-nowrap text-sm font-bold uppercase tracking-widest">
-          {['Pure Spices', 'Jaipur Made', 'FSSAI Licensed', 'Pure Spices', 'Jaipur Made', 'FSSAI Licensed', 'Pure Spices', 'Jaipur Made', 'FSSAI Licensed'].map((label, i) => (
+          {[
+            'Pure Spices',
+            'Jaipur Made',
+            'FSSAI Licensed',
+            'Pure Spices',
+            'Jaipur Made',
+            'FSSAI Licensed',
+            'Pure Spices',
+            'Jaipur Made',
+            'FSSAI Licensed',
+          ].map((label, i) => (
             <span key={i} className="flex items-center gap-2">
               <Sparkles className="h-3 w-3 fill-current text-orange-500" /> {label}
             </span>

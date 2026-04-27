@@ -33,7 +33,9 @@ export function WishlistProvider({ children }: { children: React.ReactNode }) {
       }
       if (!cancelled) setLoading(false);
     });
-    return () => { cancelled = true; };
+    return () => {
+      cancelled = true;
+    };
   }, [user]);
   /* eslint-enable react-hooks/set-state-in-effect */
 
@@ -47,9 +49,7 @@ export function WishlistProvider({ children }: { children: React.ReactNode }) {
       if (!user) return;
       // Optimistic update
       setProductIds((prev) =>
-        prev.includes(productId)
-          ? prev.filter((id) => id !== productId)
-          : [...prev, productId],
+        prev.includes(productId) ? prev.filter((id) => id !== productId) : [...prev, productId],
       );
       const res = await toggleWishlistItem(productId);
       if (res.success) {

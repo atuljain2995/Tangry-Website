@@ -28,7 +28,8 @@ export function ProductCategorySelect({
     <div className="space-y-1">
       {showLegacyHint && (
         <p className="text-xs font-medium text-amber-800">
-          Stored label &quot;{legacyCategoryTitle}&quot; is not linked to a category. Pick one below to fix.
+          Stored label &quot;{legacyCategoryTitle}&quot; is not linked to a category. Pick one below
+          to fix.
         </p>
       )}
       <select
@@ -47,8 +48,11 @@ export function ProductCategorySelect({
         ))}
       </select>
       <p className="text-xs text-gray-500">
-        Categories are stored in the <code className="rounded bg-gray-100 px-1 font-mono text-[11px] text-gray-800">product_categories</code> table.
-        Add or edit rows in Supabase (or run SQL migrations) to update the list.
+        Categories are stored in the{' '}
+        <code className="rounded bg-gray-100 px-1 font-mono text-[11px] text-gray-800">
+          product_categories
+        </code>{' '}
+        table. Add or edit rows in Supabase (or run SQL migrations) to update the list.
       </p>
     </div>
   );

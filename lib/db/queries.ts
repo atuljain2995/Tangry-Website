@@ -55,7 +55,7 @@ export async function getAllProducts(): Promise<ProductExtended[]> {
   const typedProducts = products as unknown as DbProduct[];
 
   // Fetch all variants for these products
-  const productIds = typedProducts.map(p => p.id);
+  const productIds = typedProducts.map((p) => p.id);
   const { data: variants } = await supabase
     .from('product_variants')
     .select('*')
@@ -69,10 +69,11 @@ export async function getAllProducts(): Promise<ProductExtended[]> {
     .order('display_order', { ascending: true });
 
   // Combine the data
-  const enrichedProducts: DbProduct[] = typedProducts.map(product => ({
+  const enrichedProducts: DbProduct[] = typedProducts.map((product) => ({
     ...product,
-    variants: (variants as unknown as DbVariant[])?.filter(v => v.product_id === product.id) || [],
-    images: (images as unknown as DbImage[])?.filter(img => img.product_id === product.id) || [],
+    variants:
+      (variants as unknown as DbVariant[])?.filter((v) => v.product_id === product.id) || [],
+    images: (images as unknown as DbImage[])?.filter((img) => img.product_id === product.id) || [],
   }));
 
   return transformProducts(enrichedProducts);
@@ -135,7 +136,7 @@ export async function getProductsByCategory(category: string): Promise<ProductEx
     .from('products')
     .select('*')
     .eq('category', category)
-    .order('created_at', { ascending: false});
+    .order('created_at', { ascending: false });
 
   if (productsError || !products || products.length === 0) {
     isSupabaseUnreachable(productsError);
@@ -144,7 +145,7 @@ export async function getProductsByCategory(category: string): Promise<ProductEx
   }
 
   const typedProducts = products as unknown as DbProduct[];
-  const productIds = typedProducts.map(p => p.id);
+  const productIds = typedProducts.map((p) => p.id);
   const { data: variants } = await supabase
     .from('product_variants')
     .select('*')
@@ -155,10 +156,11 @@ export async function getProductsByCategory(category: string): Promise<ProductEx
     .select('*')
     .in('product_id', productIds);
 
-  const enrichedProducts: DbProduct[] = typedProducts.map(product => ({
+  const enrichedProducts: DbProduct[] = typedProducts.map((product) => ({
     ...product,
-    variants: (variants as unknown as DbVariant[])?.filter(v => v.product_id === product.id) || [],
-    images: (images as unknown as DbImage[])?.filter(img => img.product_id === product.id) || [],
+    variants:
+      (variants as unknown as DbVariant[])?.filter((v) => v.product_id === product.id) || [],
+    images: (images as unknown as DbImage[])?.filter((img) => img.product_id === product.id) || [],
   }));
 
   return transformProducts(enrichedProducts);
@@ -182,7 +184,7 @@ export async function getFeaturedProducts(limit: number = 6): Promise<ProductExt
   }
 
   const typedProducts = products as unknown as DbProduct[];
-  const productIds = typedProducts.map(p => p.id);
+  const productIds = typedProducts.map((p) => p.id);
   const { data: variants } = await supabase
     .from('product_variants')
     .select('*')
@@ -193,10 +195,11 @@ export async function getFeaturedProducts(limit: number = 6): Promise<ProductExt
     .select('*')
     .in('product_id', productIds);
 
-  const enrichedProducts: DbProduct[] = typedProducts.map(product => ({
+  const enrichedProducts: DbProduct[] = typedProducts.map((product) => ({
     ...product,
-    variants: (variants as unknown as DbVariant[])?.filter(v => v.product_id === product.id) || [],
-    images: (images as unknown as DbImage[])?.filter(img => img.product_id === product.id) || [],
+    variants:
+      (variants as unknown as DbVariant[])?.filter((v) => v.product_id === product.id) || [],
+    images: (images as unknown as DbImage[])?.filter((img) => img.product_id === product.id) || [],
   }));
 
   return transformProducts(enrichedProducts);
@@ -208,7 +211,7 @@ export async function getFeaturedProducts(limit: number = 6): Promise<ProductExt
 export async function getRelatedProducts(
   category: string,
   excludeId: string,
-  limit: number = 4
+  limit: number = 4,
 ): Promise<ProductExtended[]> {
   const { data: products, error: productsError } = await supabase
     .from('products')
@@ -225,7 +228,7 @@ export async function getRelatedProducts(
   }
 
   const typedProducts = products as unknown as DbProduct[];
-  const productIds = typedProducts.map(p => p.id);
+  const productIds = typedProducts.map((p) => p.id);
   const { data: variants } = await supabase
     .from('product_variants')
     .select('*')
@@ -236,10 +239,11 @@ export async function getRelatedProducts(
     .select('*')
     .in('product_id', productIds);
 
-  const enrichedProducts: DbProduct[] = typedProducts.map(product => ({
+  const enrichedProducts: DbProduct[] = typedProducts.map((product) => ({
     ...product,
-    variants: (variants as unknown as DbVariant[])?.filter(v => v.product_id === product.id) || [],
-    images: (images as unknown as DbImage[])?.filter(img => img.product_id === product.id) || [],
+    variants:
+      (variants as unknown as DbVariant[])?.filter((v) => v.product_id === product.id) || [],
+    images: (images as unknown as DbImage[])?.filter((img) => img.product_id === product.id) || [],
   }));
 
   return transformProducts(enrichedProducts);
@@ -263,7 +267,7 @@ export async function getProductsByIds(ids: string[]): Promise<ProductExtended[]
   }
 
   const typedProducts = products as unknown as DbProduct[];
-  const productIds = typedProducts.map(p => p.id);
+  const productIds = typedProducts.map((p) => p.id);
   const { data: variants } = await supabase
     .from('product_variants')
     .select('*')
@@ -274,10 +278,11 @@ export async function getProductsByIds(ids: string[]): Promise<ProductExtended[]
     .select('*')
     .in('product_id', productIds);
 
-  const enrichedProducts: DbProduct[] = typedProducts.map(product => ({
+  const enrichedProducts: DbProduct[] = typedProducts.map((product) => ({
     ...product,
-    variants: (variants as unknown as DbVariant[])?.filter(v => v.product_id === product.id) || [],
-    images: (images as unknown as DbImage[])?.filter(img => img.product_id === product.id) || [],
+    variants:
+      (variants as unknown as DbVariant[])?.filter((v) => v.product_id === product.id) || [],
+    images: (images as unknown as DbImage[])?.filter((img) => img.product_id === product.id) || [],
   }));
 
   return transformProducts(enrichedProducts);
@@ -319,7 +324,7 @@ export async function getCouponByCode(code: string): Promise<DbCoupon | null> {
  */
 export async function validateCouponAndGetDiscount(
   code: string,
-  subtotal: number
+  subtotal: number,
 ): Promise<{ discount: number; couponId: string } | { error: string }> {
   const coupon = await getCouponByCode(code);
   if (!coupon) return { error: 'Invalid or expired coupon' };
@@ -357,24 +362,34 @@ export async function validateCouponAndGetDiscount(
  * Increment coupon usage_count (call after order is placed).
  */
 export async function incrementCouponUsage(couponId: string): Promise<void> {
-  const { data: row } = await supabaseAdmin.from('coupons').select('usage_count').eq('id', couponId).single();
+  const { data: row } = await supabaseAdmin
+    .from('coupons')
+    .select('usage_count')
+    .eq('id', couponId)
+    .single();
   const current = (row as { usage_count: number } | null)?.usage_count ?? 0;
   await (supabaseAdmin as { from: (table: string) => ReturnType<typeof supabaseAdmin.from> })
-    .from('coupons').update({ usage_count: current + 1 } as Record<string, unknown>).eq('id', couponId);
+    .from('coupons')
+    .update({ usage_count: current + 1 } as Record<string, unknown>)
+    .eq('id', couponId);
 }
 
 /**
  * Decrement variant stock (call after order is placed). Returns false if insufficient stock.
  */
 export async function decrementVariantStock(variantId: string, quantity: number): Promise<boolean> {
-  const pv = (supabaseAdmin as { from: (table: string) => ReturnType<typeof supabaseAdmin.from> }).from('product_variants');
+  const pv = (
+    supabaseAdmin as { from: (table: string) => ReturnType<typeof supabaseAdmin.from> }
+  ).from('product_variants');
   const { data: variant, error: fetchErr } = await pv.select('stock').eq('id', variantId).single();
 
   if (fetchErr || !variant) return false;
   const current = (variant as { stock: number }).stock;
   if (current < quantity) return false;
 
-  const { error: updateErr } = await pv.update({ stock: current - quantity } as Record<string, unknown>).eq('id', variantId);
+  const { error: updateErr } = await pv
+    .update({ stock: current - quantity } as Record<string, unknown>)
+    .eq('id', variantId);
   return !updateErr;
 }
 
@@ -411,7 +426,7 @@ function mergeOrderLines(lines: OrderLineInput[]): OrderLineInput[] | { error: s
  * Resolve cart lines using live DB prices, stock, and product names. Rejects tampered prices.
  */
 export async function resolveOrderLineItems(
-  lines: OrderLineInput[]
+  lines: OrderLineInput[],
 ): Promise<{ ok: true; items: CartItem[] } | { ok: false; error: string }> {
   if (!lines?.length) return { ok: false, error: 'Cart is empty' };
 
@@ -435,7 +450,10 @@ export async function resolveOrderLineItems(
   }
 
   const productIds = [...new Set(variants.map((v: { product_id: string }) => v.product_id))];
-  const { data: products, error: pErr } = await supabaseAdmin.from('products').select('id, name').in('id', productIds);
+  const { data: products, error: pErr } = await supabaseAdmin
+    .from('products')
+    .select('id, name')
+    .in('id', productIds);
   if (pErr || !products?.length) {
     return { ok: false, error: 'One or more products are unavailable' };
   }
@@ -446,7 +464,9 @@ export async function resolveOrderLineItems(
     .in('product_id', productIds)
     .order('display_order', { ascending: true });
 
-  const nameByProduct = new Map((products as { id: string; name: string }[]).map((p) => [p.id, p.name]));
+  const nameByProduct = new Map(
+    (products as { id: string; name: string }[]).map((p) => [p.id, p.name]),
+  );
   const imageByProduct = new Map<string, string>();
   for (const img of (images as { product_id: string; url: string }[]) ?? []) {
     if (!imageByProduct.has(img.product_id)) {
@@ -599,16 +619,17 @@ function transformProduct(dbProduct: DbProduct): ProductExtended {
     description: dbProduct.description,
     categoryId: dbProduct.category_id ?? null,
     category: dbProduct.category || '',
-    variants: dbProduct.variants?.map((v) => ({
-      id: v.id,
-      name: v.name,
-      sku: v.sku,
-      price: v.price,
-      compareAtPrice: v.compare_at_price,
-      stock: v.stock,
-      weight: v.weight,
-      isAvailable: v.is_available,
-    })) || [],
+    variants:
+      dbProduct.variants?.map((v) => ({
+        id: v.id,
+        name: v.name,
+        sku: v.sku,
+        price: v.price,
+        compareAtPrice: v.compare_at_price,
+        stock: v.stock,
+        weight: v.weight,
+        isAvailable: v.is_available,
+      })) || [],
     images: (dbProduct.images || [])
       .sort((a, b) => (a.display_order ?? 0) - (b.display_order ?? 0))
       .map((img) => img.url)
@@ -682,7 +703,7 @@ export async function searchProducts(query: string): Promise<ProductExtended[]> 
 
   const typedProducts = [...byId.values()].slice(0, 20);
   if (typedProducts.length === 0) return [];
-  const productIds = typedProducts.map(p => p.id);
+  const productIds = typedProducts.map((p) => p.id);
   const { data: variants } = await supabase
     .from('product_variants')
     .select('*')
@@ -693,10 +714,11 @@ export async function searchProducts(query: string): Promise<ProductExtended[]> 
     .select('*')
     .in('product_id', productIds);
 
-  const enrichedProducts: DbProduct[] = typedProducts.map(product => ({
+  const enrichedProducts: DbProduct[] = typedProducts.map((product) => ({
     ...product,
-    variants: (variants as unknown as DbVariant[])?.filter(v => v.product_id === product.id) || [],
-    images: (images as unknown as DbImage[])?.filter(img => img.product_id === product.id) || [],
+    variants:
+      (variants as unknown as DbVariant[])?.filter((v) => v.product_id === product.id) || [],
+    images: (images as unknown as DbImage[])?.filter((img) => img.product_id === product.id) || [],
   }));
 
   return transformProducts(enrichedProducts);
@@ -831,7 +853,9 @@ export type AdminCouponRow = {
 export async function getCouponsForAdmin(): Promise<AdminCouponRow[]> {
   const { data, error } = await supabaseAdmin
     .from('coupons')
-    .select('id, code, description, discount_type, discount_value, min_order_value, max_discount, usage_limit, usage_count, valid_from, valid_until, is_active, created_at')
+    .select(
+      'id, code, description, discount_type, discount_value, min_order_value, max_discount, usage_limit, usage_count, valid_from, valid_until, is_active, created_at',
+    )
     .order('created_at', { ascending: false });
 
   if (error) {
@@ -845,7 +869,9 @@ export async function getCouponsForAdmin(): Promise<AdminCouponRow[]> {
 export async function getCouponByIdForAdmin(id: string): Promise<AdminCouponRow | null> {
   const { data, error } = await supabaseAdmin
     .from('coupons')
-    .select('id, code, description, discount_type, discount_value, min_order_value, max_discount, usage_limit, usage_count, valid_from, valid_until, is_active, created_at')
+    .select(
+      'id, code, description, discount_type, discount_value, min_order_value, max_discount, usage_limit, usage_count, valid_from, valid_until, is_active, created_at',
+    )
     .eq('id', id)
     .single();
 
@@ -864,7 +890,9 @@ export type AdminInquiryRow = {
 };
 
 export async function getContactInquiriesForAdmin(): Promise<AdminInquiryRow[]> {
-  const { data, error } = await (supabaseAdmin as unknown as { from: (t: string) => ReturnType<typeof supabaseAdmin.from> })
+  const { data, error } = await (
+    supabaseAdmin as unknown as { from: (t: string) => ReturnType<typeof supabaseAdmin.from> }
+  )
     .from('contact_inquiries')
     .select('id, name, email, phone, subject, message, created_at')
     .order('created_at', { ascending: false });
@@ -999,7 +1027,7 @@ export type AdminLowStockVariantRow = {
  */
 export async function getLowStockVariantsForAdmin(
   threshold = 10,
-  limit = 200
+  limit = 200,
 ): Promise<AdminLowStockVariantRow[]> {
   const { data: variants, error: vErr } = await supabaseAdmin
     .from('product_variants')
@@ -1015,7 +1043,14 @@ export async function getLowStockVariantsForAdmin(
     return [];
   }
 
-  const vrows = (variants as { id: string; product_id: string; name: string; sku: string | null; stock: number }[]) ?? [];
+  const vrows =
+    (variants as {
+      id: string;
+      product_id: string;
+      name: string;
+      sku: string | null;
+      stock: number;
+    }[]) ?? [];
   if (vrows.length === 0) return [];
 
   const productIds = [...new Set(vrows.map((v) => v.product_id))];
@@ -1061,7 +1096,7 @@ export async function getAddressesForUser(userId: string): Promise<AccountAddres
   const { data, error } = await supabaseAdmin
     .from('addresses')
     .select(
-      'id, user_id, type, full_name, phone, address_line1, address_line2, city, state, postal_code, country, is_default'
+      'id, user_id, type, full_name, phone, address_line1, address_line2, city, state, postal_code, country, is_default',
     )
     .eq('user_id', userId)
     .order('is_default', { ascending: false })
@@ -1082,7 +1117,9 @@ export async function getAddressesForUser(userId: string): Promise<AccountAddres
 export async function getProductReviews(productId: string, limit = 10): Promise<Review[]> {
   const { data, error } = await supabaseAdmin
     .from('reviews')
-    .select('id, product_id, user_id, user_name, rating, title, comment, is_verified_purchase, images, helpful, created_at, updated_at')
+    .select(
+      'id, product_id, user_id, user_name, rating, title, comment, is_verified_purchase, images, helpful, created_at, updated_at',
+    )
     .eq('product_id', productId)
     .order('created_at', { ascending: false })
     .limit(limit);
@@ -1132,11 +1169,11 @@ export type CWVThresholds = {
 };
 
 export const CWV_THRESHOLDS: Record<string, CWVThresholds> = {
-  LCP:  { good: 2500,  poor: 4000  },
-  INP:  { good: 200,   poor: 500   },
-  CLS:  { good: 0.1,   poor: 0.25  },
-  FCP:  { good: 1800,  poor: 3000  },
-  TTFB: { good: 800,   poor: 1800  },
+  LCP: { good: 2500, poor: 4000 },
+  INP: { good: 200, poor: 500 },
+  CLS: { good: 0.1, poor: 0.25 },
+  FCP: { good: 1800, poor: 3000 },
+  TTFB: { good: 800, poor: 1800 },
 };
 
 export type CWVMetricSummary = {
@@ -1214,8 +1251,8 @@ export async function getCWVSummaryForAdmin(days = 28): Promise<CWVUrlRow[]> {
       const poorCount = readings.filter((r) => r.rating === 'poor').length;
       const niCount = n - goodCount - poorCount;
 
-      const latestCreatedAt = readings.reduce((max, r) =>
-        r.created_at > max ? r.created_at : max,
+      const latestCreatedAt = readings.reduce(
+        (max, r) => (r.created_at > max ? r.created_at : max),
         readings[0].created_at,
       );
 
@@ -1242,4 +1279,3 @@ export async function getCWVSummaryForAdmin(days = 28): Promise<CWVUrlRow[]> {
 
   return result;
 }
-

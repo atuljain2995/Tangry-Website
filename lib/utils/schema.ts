@@ -1,42 +1,42 @@
 // Structured data (JSON-LD) generators for SEO
 
-import { ProductExtended, Review } from "../types/database";
-import { COMPANY_INFO, SOCIAL_LINKS } from "../data/constants";
+import { ProductExtended, Review } from '../types/database';
+import { COMPANY_INFO, SOCIAL_LINKS } from '../data/constants';
 
-const SITE_URL = "https://www.tangryspices.com";
+const SITE_URL = 'https://www.tangryspices.com';
 
 function toAbsoluteUrl(url: string): string {
-  return url.startsWith("http") ? url : `${SITE_URL}${url}`;
+  return url.startsWith('http') ? url : `${SITE_URL}${url}`;
 }
 
 /**
  * Generate Organization schema
  */
 const orgPostalAddress = {
-  "@type": "PostalAddress" as const,
-  streetAddress: "A7, Marg No A5, Khatipura Road, Kumawat Colony, Jhotwara",
-  addressLocality: "Jaipur",
-  postalCode: "302012",
-  addressRegion: "Rajasthan",
-  addressCountry: "IN",
+  '@type': 'PostalAddress' as const,
+  streetAddress: 'A7, Marg No A5, Khatipura Road, Kumawat Colony, Jhotwara',
+  addressLocality: 'Jaipur',
+  postalCode: '302012',
+  addressRegion: 'Rajasthan',
+  addressCountry: 'IN',
 };
 
 export function getOrganizationSchema() {
   return {
-    "@context": "https://schema.org",
-    "@type": "Organization",
-    name: "Tangry",
-    alternateName: ["Tangry Spices"],
-    url: "https://www.tangryspices.com",
-    logo: "https://www.tangryspices.com/images/logo-512.png",
+    '@context': 'https://schema.org',
+    '@type': 'Organization',
+    name: 'Tangry',
+    alternateName: ['Tangry Spices'],
+    url: 'https://www.tangryspices.com',
+    logo: 'https://www.tangryspices.com/images/logo-512.png',
     description: `${COMPANY_INFO.brandName} — ${COMPANY_INFO.tagline}. Authentic spices and masalas from Jaipur, Rajasthan.`,
     address: orgPostalAddress,
     contactPoint: {
-      "@type": "ContactPoint",
+      '@type': 'ContactPoint',
       telephone: COMPANY_INFO.phoneTel,
-      contactType: "Customer Service",
+      contactType: 'Customer Service',
       email: COMPANY_INFO.email,
-      availableLanguage: ["English", "Hindi"],
+      availableLanguage: ['English', 'Hindi'],
     },
     sameAs: [
       SOCIAL_LINKS.facebook,
@@ -67,71 +67,69 @@ export function getProductSchema(product: ProductExtended, reviews: Review[] = [
   const aggregateRating =
     product.rating && product.reviewCount > 0
       ? {
-          "@type": "AggregateRating",
+          '@type': 'AggregateRating',
           ratingValue: product.rating,
           reviewCount: product.reviewCount,
-          bestRating: "5",
-          worstRating: "1",
+          bestRating: '5',
+          worstRating: '1',
         }
       : undefined;
 
   const reviewObjects =
     reviews.length > 0
       ? reviews.map((r) => ({
-          "@type": "Review",
+          '@type': 'Review',
           name: r.title,
           reviewBody: r.comment,
-          datePublished: r.createdAt.toISOString().split("T")[0],
+          datePublished: r.createdAt.toISOString().split('T')[0],
           author: {
-            "@type": "Person",
+            '@type': 'Person',
             name: r.userName,
           },
           reviewRating: {
-            "@type": "Rating",
+            '@type': 'Rating',
             ratingValue: r.rating,
-            bestRating: "5",
-            worstRating: "1",
+            bestRating: '5',
+            worstRating: '1',
           },
         }))
       : undefined;
 
-  const brand = { "@type": "Brand", name: "Tangry" };
+  const brand = { '@type': 'Brand', name: 'Tangry' };
 
   // Build per-variant Product + Offer objects
   const variantSchemas = product.variants.map((v) => {
     const price = Number(v.price);
     const availability =
-      v.isAvailable && v.stock > 0
-        ? "https://schema.org/InStock"
-        : "https://schema.org/OutOfStock";
+      v.isAvailable && v.stock > 0 ? 'https://schema.org/InStock' : 'https://schema.org/OutOfStock';
 
     const offer: Record<string, unknown> = {
-      "@type": "Offer",
+      '@type': 'Offer',
       url: productUrl,
-      priceCurrency: "INR",
+      priceCurrency: 'INR',
       price: Number.isFinite(price) ? price : 0,
       availability,
-      seller: { "@type": "Organization", name: "Tangry" },
+      seller: { '@type': 'Organization', name: 'Tangry' },
     };
 
     // Emit priceValidUntil when a compare-at (sale) price is present
     if (v.compareAtPrice && v.compareAtPrice > price) {
       offer.priceValidUntil = new Date(Date.now() + 365 * 24 * 60 * 60 * 1000)
         .toISOString()
-        .split("T")[0];
+        .split('T')[0];
     }
 
     return {
-      "@type": "Product" as const,
+      '@type': 'Product' as const,
       name: `${product.name} – ${v.name}`,
       sku: v.sku,
       description: product.description,
       image: absoluteImages,
       brand,
       weight: {
-        "@type": "QuantitativeValue" as const,
+        '@type': 'QuantitativeValue' as const,
         value: v.weight,
-        unitCode: "GRM",
+        unitCode: 'GRM',
       },
       offers: offer,
     };
@@ -141,9 +139,9 @@ export function getProductSchema(product: ProductExtended, reviews: Review[] = [
   if (variantSchemas.length <= 1) {
     const single = variantSchemas[0];
     return {
-      "@context": "https://schema.org",
-      "@type": "Product" as const,
-      "@id": `${productUrl}#product`,
+      '@context': 'https://schema.org',
+      '@type': 'Product' as const,
+      '@id': `${productUrl}#product`,
       name: product.name,
       url: productUrl,
       description: product.description,
@@ -160,9 +158,9 @@ export function getProductSchema(product: ProductExtended, reviews: Review[] = [
 
   // Multiple variants → ProductGroup + hasVariant
   return {
-    "@context": "https://schema.org",
-    "@type": "ProductGroup" as const,
-    "@id": `${productUrl}#product`,
+    '@context': 'https://schema.org',
+    '@type': 'ProductGroup' as const,
+    '@id': `${productUrl}#product`,
     name: product.name,
     url: productUrl,
     description: product.description,
@@ -170,7 +168,7 @@ export function getProductSchema(product: ProductExtended, reviews: Review[] = [
     brand,
     category: product.category,
     productGroupID: product.id,
-    variesBy: "https://schema.org/weight",
+    variesBy: 'https://schema.org/weight',
     aggregateRating,
     review: reviewObjects,
     hasVariant: variantSchemas,
@@ -180,14 +178,12 @@ export function getProductSchema(product: ProductExtended, reviews: Review[] = [
 /**
  * Generate BreadcrumbList schema
  */
-export function getBreadcrumbSchema(
-  items: Array<{ name: string; url: string }>,
-) {
+export function getBreadcrumbSchema(items: Array<{ name: string; url: string }>) {
   return {
-    "@context": "https://schema.org",
-    "@type": "BreadcrumbList",
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
     itemListElement: items.map((item, index) => ({
-      "@type": "ListItem",
+      '@type': 'ListItem',
       position: index + 1,
       name: item.name,
       item: item.url,
@@ -212,14 +208,14 @@ export function getRecipeSchema(recipe: {
   cuisine: string;
 }) {
   return {
-    "@context": "https://schema.org",
-    "@type": "Recipe",
+    '@context': 'https://schema.org',
+    '@type': 'Recipe',
     name: recipe.name,
     description: recipe.description,
     image: recipe.image,
     author: {
-      "@type": "Organization",
-      name: "Tangry Spices",
+      '@type': 'Organization',
+      name: 'Tangry Spices',
     },
     prepTime: recipe.prepTime,
     cookTime: recipe.cookTime,
@@ -227,13 +223,13 @@ export function getRecipeSchema(recipe: {
     recipeYield: recipe.servings,
     recipeIngredient: recipe.ingredients,
     recipeInstructions: recipe.instructions.map((instruction, index) => ({
-      "@type": "HowToStep",
+      '@type': 'HowToStep',
       position: index + 1,
       text: instruction,
     })),
     recipeCategory: recipe.category,
     recipeCuisine: recipe.cuisine,
-    keywords: [recipe.category, recipe.cuisine, "Indian cooking", "spices"],
+    keywords: [recipe.category, recipe.cuisine, 'Indian cooking', 'spices'],
   };
 }
 
@@ -242,67 +238,54 @@ export function getRecipeSchema(recipe: {
  */
 export function getLocalBusinessSchema() {
   return {
-    "@context": "https://schema.org",
-    "@type": ["LocalBusiness", "FoodEstablishment"],
-    "@id": "https://www.tangryspices.com/#local-business",
-    name: "Tangry",
-    alternateName: "Tangry Spices",
+    '@context': 'https://schema.org',
+    '@type': ['LocalBusiness', 'FoodEstablishment'],
+    '@id': 'https://www.tangryspices.com/#local-business',
+    name: 'Tangry',
+    alternateName: 'Tangry Spices',
     description:
-      "Authentic spices, masalas, pickles, and condiments handcrafted in Jaipur, Rajasthan. FSSAI licensed and ISO 22000 certified.",
+      'Authentic spices, masalas, pickles, and condiments handcrafted in Jaipur, Rajasthan. FSSAI licensed and ISO 22000 certified.',
     image: [
-      "https://www.tangryspices.com/images/logo-512.png",
-      "https://www.tangryspices.com/images/logo-full.png",
+      'https://www.tangryspices.com/images/logo-512.png',
+      'https://www.tangryspices.com/images/logo-full.png',
     ],
     telephone: COMPANY_INFO.phoneTel,
     email: COMPANY_INFO.email,
-    url: "https://www.tangryspices.com",
+    url: 'https://www.tangryspices.com',
     address: orgPostalAddress,
     geo: {
-      "@type": "GeoCoordinates",
-      latitude: "26.935058",
-      longitude: "75.757109",
+      '@type': 'GeoCoordinates',
+      latitude: '26.935058',
+      longitude: '75.757109',
     },
-    hasMap:
-      "https://www.google.com/maps?q=26.935058,75.757109",
-    priceRange: "₹₹",
-    servesCuisine: ["Indian", "Rajasthani"],
-    paymentAccepted: [
-      "Cash",
-      "UPI",
-      "Credit Card",
-      "Debit Card",
-      "Net Banking",
-    ],
-    currenciesAccepted: "INR",
+    hasMap: 'https://www.google.com/maps?q=26.935058,75.757109',
+    priceRange: '₹₹',
+    servesCuisine: ['Indian', 'Rajasthani'],
+    paymentAccepted: ['Cash', 'UPI', 'Credit Card', 'Debit Card', 'Net Banking'],
+    currenciesAccepted: 'INR',
     areaServed: {
-      "@type": "Country",
-      name: "India",
+      '@type': 'Country',
+      name: 'India',
     },
     openingHoursSpecification: [
       {
-        "@type": "OpeningHoursSpecification",
-        dayOfWeek: [
-          "Monday",
-          "Tuesday",
-          "Wednesday",
-          "Thursday",
-          "Friday",
-        ],
-        opens: "09:00",
-        closes: "18:00",
+        '@type': 'OpeningHoursSpecification',
+        dayOfWeek: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'],
+        opens: '09:00',
+        closes: '18:00',
       },
       {
-        "@type": "OpeningHoursSpecification",
-        dayOfWeek: "Saturday",
-        opens: "10:00",
-        closes: "16:00",
+        '@type': 'OpeningHoursSpecification',
+        dayOfWeek: 'Saturday',
+        opens: '10:00',
+        closes: '16:00',
       },
       {
-        "@type": "OpeningHoursSpecification",
-        dayOfWeek: "Sunday",
-        opens: "00:00",
-        closes: "00:00",
-        description: "Closed",
+        '@type': 'OpeningHoursSpecification',
+        dayOfWeek: 'Sunday',
+        opens: '00:00',
+        closes: '00:00',
+        description: 'Closed',
       },
     ],
     sameAs: [
@@ -312,25 +295,25 @@ export function getLocalBusinessSchema() {
       SOCIAL_LINKS.twitter,
     ],
     founder: {
-      "@type": "Person",
-      name: "Maya Jain",
+      '@type': 'Person',
+      name: 'Maya Jain',
     },
     legalName: COMPANY_INFO.legalName,
-    taxID: "FSSAI 12225026001713",
+    taxID: 'FSSAI 12225026001713',
     hasCredential: [
       {
-        "@type": "EducationalOccupationalCredential",
-        credentialCategory: "Food Safety License",
-        name: "FSSAI License",
+        '@type': 'EducationalOccupationalCredential',
+        credentialCategory: 'Food Safety License',
+        name: 'FSSAI License',
         recognizedBy: {
-          "@type": "Organization",
-          name: "Food Safety and Standards Authority of India",
+          '@type': 'Organization',
+          name: 'Food Safety and Standards Authority of India',
         },
       },
       {
-        "@type": "EducationalOccupationalCredential",
-        credentialCategory: "Quality Certification",
-        name: "ISO 22000",
+        '@type': 'EducationalOccupationalCredential',
+        credentialCategory: 'Quality Certification',
+        name: 'ISO 22000',
       },
     ],
   };
@@ -341,18 +324,17 @@ export function getLocalBusinessSchema() {
  */
 export function getWebSiteSchema() {
   return {
-    "@context": "https://schema.org",
-    "@type": "WebSite",
-    name: "Tangry Spices",
-    url: "https://www.tangryspices.com",
+    '@context': 'https://schema.org',
+    '@type': 'WebSite',
+    name: 'Tangry Spices',
+    url: 'https://www.tangryspices.com',
     potentialAction: {
-      "@type": "SearchAction",
+      '@type': 'SearchAction',
       target: {
-        "@type": "EntryPoint",
-        urlTemplate:
-          "https://www.tangryspices.com/search?q={search_term_string}",
+        '@type': 'EntryPoint',
+        urlTemplate: 'https://www.tangryspices.com/search?q={search_term_string}',
       },
-      "query-input": "required name=search_term_string",
+      'query-input': 'required name=search_term_string',
     },
   };
 }
@@ -364,13 +346,13 @@ export function getWebSiteSchema() {
  */
 export function getFAQSchema(faqs: Array<{ question: string; answer: string }>) {
   return {
-    "@context": "https://schema.org",
-    "@type": "FAQPage",
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
     mainEntity: faqs.map((faq) => ({
-      "@type": "Question",
+      '@type': 'Question',
       name: faq.question,
       acceptedAnswer: {
-        "@type": "Answer",
+        '@type': 'Answer',
         text: faq.answer,
       },
     })),
@@ -380,12 +362,16 @@ export function getFAQSchema(faqs: Array<{ question: string; answer: string }>) 
 /**
  * Build standard FAQ pairs for a product from its structured data.
  */
-export function getProductFAQs(product: ProductExtended): Array<{ question: string; answer: string }> {
+export function getProductFAQs(
+  product: ProductExtended,
+): Array<{ question: string; answer: string }> {
   const faqs: Array<{ question: string; answer: string }> = [];
 
   faqs.push({
     question: `What is ${product.name} from Tangry Spices?`,
-    answer: product.description || `${product.name} is a premium spice product from Tangry Spices, Jaipur. FSSAI licensed, ISO 22000 certified.`,
+    answer:
+      product.description ||
+      `${product.name} is a premium spice product from Tangry Spices, Jaipur. FSSAI licensed, ISO 22000 certified.`,
   });
 
   if (product.usageInstructions) {
@@ -404,8 +390,8 @@ export function getProductFAQs(product: ProductExtended): Array<{ question: stri
 
   const variants = product.variants;
   if (variants.length > 0) {
-    const sizes = variants.map(v => v.name).join(', ');
-    const prices = variants.map(v => `${v.name}: ₹${v.price}`).join(', ');
+    const sizes = variants.map((v) => v.name).join(', ');
+    const prices = variants.map((v) => `${v.name}: ₹${v.price}`).join(', ');
     faqs.push({
       question: `What sizes and prices does ${product.name} come in?`,
       answer: `${product.name} is available in ${sizes}. Prices: ${prices}.`,

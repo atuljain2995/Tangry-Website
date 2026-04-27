@@ -16,7 +16,9 @@ export default function ProductsError({
 
   return (
     <div className="flex min-h-[60vh] flex-col items-center justify-center px-6 text-center">
-      <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">Unable to load products</h1>
+      <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">
+        Unable to load products
+      </h1>
       <p className="mt-3 text-gray-600 dark:text-gray-400">
         Something went wrong while fetching products. Please try again.
       </p>

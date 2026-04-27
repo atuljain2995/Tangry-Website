@@ -71,7 +71,10 @@ export async function getSessionUser(): Promise<UserProfile | null> {
   const token = await getSessionToken();
   if (!token) return null;
 
-  const { data: sessionData } = await db.from('sessions').select('user_id, expires_at').eq('token', token);
+  const { data: sessionData } = await db
+    .from('sessions')
+    .select('user_id, expires_at')
+    .eq('token', token);
   const session = Array.isArray(sessionData) ? sessionData[0] : sessionData;
   if (!session) return null;
 

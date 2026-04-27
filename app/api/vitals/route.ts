@@ -3,7 +3,14 @@ import { supabaseAdmin } from '@/lib/db/supabase';
 
 const ALLOWED_METRICS = new Set(['LCP', 'INP', 'CLS', 'FCP', 'TTFB']);
 const ALLOWED_RATINGS = new Set(['good', 'needs-improvement', 'poor']);
-const ALLOWED_NAV_TYPES = new Set(['navigate', 'reload', 'back-forward', 'prerender', 'back-forward-cache', '']);
+const ALLOWED_NAV_TYPES = new Set([
+  'navigate',
+  'reload',
+  'back-forward',
+  'prerender',
+  'back-forward-cache',
+  '',
+]);
 
 // ── POST /api/vitals ──────────────────────────────────────────────────────────
 // Public endpoint — receives CWV beacons from the browser.
@@ -57,17 +64,15 @@ export async function POST(req: NextRequest) {
       : null;
 
   // ── Insert ──────────────────────────────────────────────────────────────────
-  const { error } = await supabaseAdmin
-    .from('cwv_readings')
-    .insert({
-      url: cleanUrl,
-      metric_name: name,
-      value: numValue,
-      rating,
-      metric_id: metricId,
-      delta: numDelta,
-      navigation_type: navType,
-    } as never);
+  const { error } = await supabaseAdmin.from('cwv_readings').insert({
+    url: cleanUrl,
+    metric_name: name,
+    value: numValue,
+    rating,
+    metric_id: metricId,
+    delta: numDelta,
+    navigation_type: navType,
+  } as never);
 
   if (error) {
     // Log but return 200 — a beacon failure should never surface as an error to the browser.

@@ -77,7 +77,7 @@ Create the bucket in Cloudflare Dashboard → R2 → Create bucket, then create 
   Put image files in **`public/products/`** in this repo, e.g.:
   - `public/products/garam-masala.jpg`
   - `public/products/turmeric-powder.jpg`
-  Then set **`product_images.url`** in Supabase to `/products/garam-masala.jpg` (no leading slash is also fine; the app serves from root).
+    Then set **`product_images.url`** in Supabase to `/products/garam-masala.jpg` (no leading slash is also fine; the app serves from root).
 
 - **External or Supabase Storage:**  
   Upload images to Supabase Storage (or any host), get the public URL, and set that as **`product_images.url`** in the Table Editor.
@@ -92,12 +92,12 @@ Create the bucket in Cloudflare Dashboard → R2 → Create bucket, then create 
 
 ## Summary
 
-| What to change        | Where to change it                          |
-|-----------------------|---------------------------------------------|
-| Name, description     | Admin UI → Edit product, or `products` table |
-| Category, meta, flags | Admin UI → Edit product, or `products` table |
-| Prices, stock         | Admin UI → product **Variants**, or `product_variants` table |
-| Image URL             | Admin UI → Images section, or `product_images` table |
+| What to change        | Where to change it                                                    |
+| --------------------- | --------------------------------------------------------------------- |
+| Name, description     | Admin UI → Edit product, or `products` table                          |
+| Category, meta, flags | Admin UI → Edit product, or `products` table                          |
+| Prices, stock         | Admin UI → product **Variants**, or `product_variants` table          |
+| Image URL             | Admin UI → Images section, or `product_images` table                  |
 | Image file            | Admin upload (R2/Supabase in prod), or `public/products/` + URL above |
 
 After updating, refresh the storefront (e.g. `/products` or the product page) to see changes.

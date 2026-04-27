@@ -36,7 +36,7 @@ function loadCartFromStorage(): Cart | null {
       return {
         ...parsedCart,
         createdAt: new Date(parsedCart.createdAt),
-        updatedAt: new Date(parsedCart.updatedAt)
+        updatedAt: new Date(parsedCart.updatedAt),
       };
     }
   } catch (error) {
@@ -77,7 +77,7 @@ function createEmptyCart(): Cart {
     shipping: 0,
     total: 0,
     createdAt: new Date(),
-    updatedAt: new Date()
+    updatedAt: new Date(),
   };
 }
 
@@ -109,16 +109,16 @@ export function CartProvider({ children }: { children: ReactNode }) {
   }, [cart]);
 
   const updateCart = (updater: (cart: Cart) => Cart) => {
-    setCart(currentCart => {
+    setCart((currentCart) => {
       const newCart = updater(currentCart);
       return calculateCartTotals(newCart, 0);
     });
   };
 
   const addToCart = (item: CartItem) => {
-    updateCart(currentCart => {
+    updateCart((currentCart) => {
       const existingItemIndex = currentCart.items.findIndex(
-        i => i.productId === item.productId && i.variantId === item.variantId
+        (i) => i.productId === item.productId && i.variantId === item.variantId,
       );
 
       let newItems: CartItem[];
@@ -127,7 +127,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
         newItems = [...currentCart.items];
         newItems[existingItemIndex] = {
           ...newItems[existingItemIndex],
-          quantity: newItems[existingItemIndex].quantity + item.quantity
+          quantity: newItems[existingItemIndex].quantity + item.quantity,
         };
       } else {
         // Add new item
@@ -139,20 +139,20 @@ export function CartProvider({ children }: { children: ReactNode }) {
         items: newItems,
         couponCode: undefined,
         discount: 0,
-        updatedAt: new Date()
+        updatedAt: new Date(),
       };
     });
   };
 
   const removeFromCart = (productId: string, variantId: string) => {
-    updateCart(currentCart => ({
+    updateCart((currentCart) => ({
       ...currentCart,
       items: currentCart.items.filter(
-        item => !(item.productId === productId && item.variantId === variantId)
+        (item) => !(item.productId === productId && item.variantId === variantId),
       ),
       couponCode: undefined,
       discount: 0,
-      updatedAt: new Date()
+      updatedAt: new Date(),
     }));
   };
 
@@ -162,16 +162,14 @@ export function CartProvider({ children }: { children: ReactNode }) {
       return;
     }
 
-    updateCart(currentCart => ({
+    updateCart((currentCart) => ({
       ...currentCart,
-      items: currentCart.items.map(item =>
-        item.productId === productId && item.variantId === variantId
-          ? { ...item, quantity }
-          : item
+      items: currentCart.items.map((item) =>
+        item.productId === productId && item.variantId === variantId ? { ...item, quantity } : item,
       ),
       couponCode: undefined,
       discount: 0,
-      updatedAt: new Date()
+      updatedAt: new Date(),
     }));
   };
 
@@ -180,20 +178,20 @@ export function CartProvider({ children }: { children: ReactNode }) {
   };
 
   const applyCoupon = (code: string, discount: number) => {
-    updateCart(currentCart => ({
+    updateCart((currentCart) => ({
       ...currentCart,
       couponCode: code.toUpperCase(),
       discount,
-      updatedAt: new Date()
+      updatedAt: new Date(),
     }));
   };
 
   const removeCoupon = () => {
-    updateCart(currentCart => ({
+    updateCart((currentCart) => ({
       ...currentCart,
       couponCode: undefined,
       discount: 0,
-      updatedAt: new Date()
+      updatedAt: new Date(),
     }));
   };
 
@@ -215,7 +213,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
         cartItemCount,
         isCartOpen,
         openCart,
-        closeCart
+        closeCart,
       }}
     >
       {children}
@@ -230,4 +228,3 @@ export function useCart() {
   }
   return context;
 }
-

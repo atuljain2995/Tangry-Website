@@ -45,24 +45,26 @@
 ## 📦 Component Categories
 
 ### 1. **UI Components** (`components/ui/`)
+
 **Purpose**: Small, reusable building blocks
 
-| Component | Purpose | Props |
-|-----------|---------|-------|
-| `ChiliIcon` | Logo SVG | `className?: string` |
-| `NavLink` | Navigation link | `href, children, isMobile?, onClick?` |
+| Component   | Purpose         | Props                                 |
+| ----------- | --------------- | ------------------------------------- |
+| `ChiliIcon` | Logo SVG        | `className?: string`                  |
+| `NavLink`   | Navigation link | `href, children, isMobile?, onClick?` |
 
 **When to add here**: Buttons, inputs, icons, badges
 
 ---
 
 ### 2. **Layout Components** (`components/layout/`)
+
 **Purpose**: Persistent across all pages
 
-| Component | Purpose | State |
-|-----------|---------|-------|
-| `Header` | Top bar + nav | Prop: `onMenuOpen` |
-| `Footer` | Site footer | None |
+| Component    | Purpose           | State                    |
+| ------------ | ----------------- | ------------------------ |
+| `Header`     | Top bar + nav     | Prop: `onMenuOpen`       |
+| `Footer`     | Site footer       | None                     |
 | `MobileMenu` | Mobile navigation | Props: `isOpen, onClose` |
 
 **When to add here**: Navigation, sidebars, headers, footers
@@ -70,18 +72,19 @@
 ---
 
 ### 3. **Section Components** (`components/sections/`)
+
 **Purpose**: Feature-complete page sections
 
-| Component | Purpose | Client/Server |
-|-----------|---------|---------------|
-| `Hero` | Carousel hero | Client (useState) |
-| `Stats` | Statistics | Server |
-| `ProductCategories` | Category cards | Server |
-| `FeaturedProducts` | Product grid | Client (filters) |
-| `About` | Company info | Server |
-| `BuyOnline` | E-commerce links | Server |
-| `Recipes` | Recipe cards | Server |
-| `Newsletter` | Email form | Server |
+| Component           | Purpose          | Client/Server     |
+| ------------------- | ---------------- | ----------------- |
+| `Hero`              | Carousel hero    | Client (useState) |
+| `Stats`             | Statistics       | Server            |
+| `ProductCategories` | Category cards   | Server            |
+| `FeaturedProducts`  | Product grid     | Client (filters)  |
+| `About`             | Company info     | Server            |
+| `BuyOnline`         | E-commerce links | Server            |
+| `Recipes`           | Recipe cards     | Server            |
+| `Newsletter`        | Email form       | Server            |
 
 **When to add here**: New features, landing sections
 
@@ -90,18 +93,21 @@
 ## 🔧 How to Use Components
 
 ### Example 1: Import Individual Components
+
 ```typescript
 import { Header } from '@/components/layout/Header';
 import { Hero } from '@/components/sections/Hero';
 ```
 
 ### Example 2: Import from Barrel (Cleaner)
+
 ```typescript
 import { Header, Footer } from '@/components/layout';
 import { Hero, Stats } from '@/components/sections';
 ```
 
 ### Example 3: Compose a Page
+
 ```typescript
 // app/page.tsx
 import { Header, Footer } from '@/components/layout';
@@ -125,15 +131,18 @@ export default function Home() {
 ## 🎨 Component Patterns
 
 ### Pattern 1: Server Component (Default)
+
 ```typescript
 // components/sections/Stats.tsx
 export const Stats = () => {
   return <section>...</section>;
 };
 ```
+
 **Use when**: No interactivity needed
 
 ### Pattern 2: Client Component
+
 ```typescript
 // components/sections/Hero.tsx
 'use client';
@@ -145,9 +154,11 @@ export const Hero = () => {
   return <section>...</section>;
 };
 ```
+
 **Use when**: Need hooks, event handlers, browser APIs
 
 ### Pattern 3: Component with Props
+
 ```typescript
 interface HeaderProps {
   onMenuOpen: () => void;
@@ -163,6 +174,7 @@ export const Header = ({ onMenuOpen }: HeaderProps) => {
 ## 📊 Data Management
 
 ### Centralized Data
+
 ```typescript
 // lib/data/products.ts
 export const PRODUCT_CATEGORIES = [
@@ -174,11 +186,12 @@ import { PRODUCT_CATEGORIES } from '@/lib/data/products';
 ```
 
 ### Constants
+
 ```typescript
 // lib/data/constants.ts
 export const COMPANY_INFO = {
-  phone: "1800-123-4567",
-  email: "consumer@everestspices.com",
+  phone: '1800-123-4567',
+  email: 'consumer@everestspices.com',
 };
 ```
 
@@ -187,6 +200,7 @@ export const COMPANY_INFO = {
 ## ➕ Adding New Features
 
 ### Step 1: Create Component
+
 ```typescript
 // components/sections/NewFeature.tsx
 export const NewFeature = () => {
@@ -199,12 +213,14 @@ export const NewFeature = () => {
 ```
 
 ### Step 2: Export from Barrel
+
 ```typescript
 // components/sections/index.ts
 export { NewFeature } from './NewFeature';
 ```
 
 ### Step 3: Add to Page
+
 ```typescript
 // app/page.tsx
 import { NewFeature } from '@/components/sections';
@@ -224,6 +240,7 @@ export default function Home() {
 ## 🚀 Creating New Pages
 
 ### Example: About Page
+
 ```
 1. Create: app/about/page.tsx
 2. Reuse components:
@@ -254,6 +271,7 @@ export default function AboutPage() {
 ## 🎯 Best Practices
 
 ### ✅ DO:
+
 - Keep components focused (single responsibility)
 - Use TypeScript interfaces for props
 - Extract reusable logic into custom hooks
@@ -261,6 +279,7 @@ export default function AboutPage() {
 - Keep components under 200 lines
 
 ### ❌ DON'T:
+
 - Mix data fetching with presentation
 - Create deeply nested components
 - Put business logic in UI components
@@ -302,19 +321,19 @@ npm run lint
 
 ```typescript
 // Brand Colors
-'bg-[#D32F2F]'    // Primary Red
-'bg-[#B71C1C]'    // Dark Red
-'bg-[#FFC107]'    // Yellow/Gold
-'text-[#D32F2F]'  // Text Red
+'bg-[#D32F2F]'; // Primary Red
+'bg-[#B71C1C]'; // Dark Red
+'bg-[#FFC107]'; // Yellow/Gold
+'text-[#D32F2F]'; // Text Red
 
 // Responsive
-'md:text-4xl'     // Medium screens+
-'lg:grid-cols-3'  // Large screens+
+'md:text-4xl'; // Medium screens+
+'lg:grid-cols-3'; // Large screens+
 
 // Common Patterns
-'hover:bg-[#D32F2F] transition duration-300'
-'transform hover:-translate-y-1'
-'shadow-lg hover:shadow-2xl'
+'hover:bg-[#D32F2F] transition duration-300';
+'transform hover:-translate-y-1';
+'shadow-lg hover:shadow-2xl';
 ```
 
 ---
@@ -325,4 +344,3 @@ npm run lint
 - [Next.js Docs](https://nextjs.org/docs)
 - [Tailwind CSS](https://tailwindcss.com)
 - [React Patterns](https://www.patterns.dev/react)
-

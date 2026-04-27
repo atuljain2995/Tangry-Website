@@ -1,4 +1,4 @@
-@import "tailwindcss";
+@import 'tailwindcss';
 
 /* Class-based dark mode (next-themes sets .dark on <html>) */
 @custom-variant dark (&:where(.dark, .dark *));
@@ -6,7 +6,7 @@
 @layer base {
   button,
   select,
-  [role="button"] {
+  [role='button'] {
     cursor: pointer;
   }
 }

@@ -46,11 +46,17 @@ export default function TrackOrderPage() {
                 {!user && (
                   <p className="text-sm text-gray-500 mt-3">
                     No account yet?{' '}
-                    <Link href="/signup?redirect=/account/orders" className="text-orange-600 font-medium hover:underline">
+                    <Link
+                      href="/signup?redirect=/account/orders"
+                      className="text-orange-600 font-medium hover:underline"
+                    >
                       Create one
                     </Link>{' '}
                     or{' '}
-                    <Link href="/login?redirect=/account/orders" className="text-orange-600 font-medium hover:underline">
+                    <Link
+                      href="/login?redirect=/account/orders"
+                      className="text-orange-600 font-medium hover:underline"
+                    >
                       Sign in
                     </Link>
                     .
@@ -68,8 +74,8 @@ export default function TrackOrderPage() {
               <div>
                 <h2 className="font-bold text-gray-900 mb-2">Email &amp; support</h2>
                 <p className="text-gray-600 text-sm mb-4">
-                  Your order confirmation includes details. For tracking help, reply to that email or write to us with
-                  your order number.
+                  Your order confirmation includes details. For tracking help, reply to that email
+                  or write to us with your order number.
                 </p>
                 <a
                   href={`mailto:${COMPANY_INFO.email}?subject=${encodeURIComponent('Order tracking help')}`}

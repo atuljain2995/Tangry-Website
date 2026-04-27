@@ -52,8 +52,12 @@ function SignupForm() {
     <div className="flex min-h-screen items-center justify-center bg-gray-50 px-4 dark:bg-neutral-950">
       <div className="w-full max-w-md">
         <div className="rounded-xl border border-gray-200 bg-white p-8 shadow-sm dark:border-neutral-700 dark:bg-neutral-900">
-          <h1 className="mb-2 text-2xl font-bold text-gray-900 dark:text-neutral-100">Create account</h1>
-          <p className="mb-6 text-sm text-gray-600 dark:text-neutral-400">Sign up with your email and a password.</p>
+          <h1 className="mb-2 text-2xl font-bold text-gray-900 dark:text-neutral-100">
+            Create account
+          </h1>
+          <p className="mb-6 text-sm text-gray-600 dark:text-neutral-400">
+            Sign up with your email and a password.
+          </p>
           <form onSubmit={handleSubmit} className="space-y-4">
             {error && (
               <div className="rounded-lg bg-red-50 border border-red-200 text-red-700 text-sm px-4 py-3">
@@ -61,7 +65,10 @@ function SignupForm() {
               </div>
             )}
             <div>
-              <label htmlFor="name" className="mb-1 block text-sm font-medium text-gray-700 dark:text-neutral-300">
+              <label
+                htmlFor="name"
+                className="mb-1 block text-sm font-medium text-gray-700 dark:text-neutral-300"
+              >
                 Name (optional)
               </label>
               <input
@@ -75,7 +82,10 @@ function SignupForm() {
               />
             </div>
             <div>
-              <label htmlFor="email" className="mb-1 block text-sm font-medium text-gray-700 dark:text-neutral-300">
+              <label
+                htmlFor="email"
+                className="mb-1 block text-sm font-medium text-gray-700 dark:text-neutral-300"
+              >
                 Email
               </label>
               <input
@@ -90,7 +100,10 @@ function SignupForm() {
               />
             </div>
             <div>
-              <label htmlFor="password" className="mb-1 block text-sm font-medium text-gray-700 dark:text-neutral-300">
+              <label
+                htmlFor="password"
+                className="mb-1 block text-sm font-medium text-gray-700 dark:text-neutral-300"
+              >
                 Password
               </label>
               <input
@@ -115,13 +128,19 @@ function SignupForm() {
           </form>
           <p className="mt-6 text-center text-sm text-gray-600 dark:text-neutral-400">
             Already have an account?{' '}
-            <Link href={`/login${redirect !== '/' ? `?redirect=${encodeURIComponent(redirect)}` : ''}`} className="text-orange-600 font-medium hover:underline">
+            <Link
+              href={`/login${redirect !== '/' ? `?redirect=${encodeURIComponent(redirect)}` : ''}`}
+              className="text-orange-600 font-medium hover:underline"
+            >
               Sign in
             </Link>
           </p>
         </div>
         <p className="mt-4 text-center">
-          <Link href="/" className="text-sm text-gray-500 hover:text-gray-700 dark:text-neutral-500 dark:hover:text-neutral-300">
+          <Link
+            href="/"
+            className="text-sm text-gray-500 hover:text-gray-700 dark:text-neutral-500 dark:hover:text-neutral-300"
+          >
             ← Back to store
           </Link>
         </p>

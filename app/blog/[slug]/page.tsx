@@ -134,7 +134,12 @@ export default async function BlogPostPage({ params }: PageProps) {
             </span>
             <span className="text-gray-300 dark:text-neutral-700">•</span>
             <time dateTime={post.updated}>
-              Updated {new Date(post.updated).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}
+              Updated{' '}
+              {new Date(post.updated).toLocaleDateString('en-IN', {
+                day: 'numeric',
+                month: 'short',
+                year: 'numeric',
+              })}
             </time>
           </div>
         </div>
@@ -157,7 +162,10 @@ export default async function BlogPostPage({ params }: PageProps) {
                   </h2>
                   <div className="space-y-4">
                     {section.body.map((paragraph) => (
-                      <p key={paragraph} className="text-base leading-7 text-gray-600 dark:text-neutral-300">
+                      <p
+                        key={paragraph}
+                        className="text-base leading-7 text-gray-600 dark:text-neutral-300"
+                      >
                         {paragraph}
                       </p>
                     ))}
@@ -184,60 +192,60 @@ export default async function BlogPostPage({ params }: PageProps) {
           {/* Sidebar */}
           <aside className="mt-10 lg:mt-0">
             <div className="lg:sticky lg:top-28 space-y-6">
-            {/* Product CTAs */}
-            <div className="rounded-2xl border border-gray-100 bg-white p-6 shadow-sm dark:border-neutral-800 dark:bg-neutral-900">
-              <p className="text-[11px] font-bold uppercase tracking-widest text-orange-600 mb-2">
-                Shop Tangry
-              </p>
-              <h2 className="mb-5 text-lg font-bold text-gray-900 dark:text-neutral-100">
-                Related products
-              </h2>
-              <div className="space-y-3">
-                {post.productLinks.map((link) => (
-                  <Link
-                    key={link.href}
-                    href={link.href}
-                    className="flex items-center justify-between rounded-xl bg-gray-900 px-5 py-3 text-sm font-bold text-white transition hover:bg-gray-800"
-                  >
-                    {link.label}
-                    <ArrowRight size={14} />
-                  </Link>
-                ))}
+              {/* Product CTAs */}
+              <div className="rounded-2xl border border-gray-100 bg-white p-6 shadow-sm dark:border-neutral-800 dark:bg-neutral-900">
+                <p className="text-[11px] font-bold uppercase tracking-widest text-orange-600 mb-2">
+                  Shop Tangry
+                </p>
+                <h2 className="mb-5 text-lg font-bold text-gray-900 dark:text-neutral-100">
+                  Related products
+                </h2>
+                <div className="space-y-3">
+                  {post.productLinks.map((link) => (
+                    <Link
+                      key={link.href}
+                      href={link.href}
+                      className="flex items-center justify-between rounded-xl bg-gray-900 px-5 py-3 text-sm font-bold text-white transition hover:bg-gray-800"
+                    >
+                      {link.label}
+                      <ArrowRight size={14} />
+                    </Link>
+                  ))}
+                </div>
               </div>
-            </div>
 
-            {/* Related posts */}
-            <div className="rounded-2xl border border-gray-100 bg-white p-6 shadow-sm dark:border-neutral-800 dark:bg-neutral-900">
-              <p className="text-[11px] font-bold uppercase tracking-widest text-orange-600 mb-2">
-                Keep reading
-              </p>
-              <h2 className="mb-5 text-lg font-bold text-gray-900 dark:text-neutral-100">
-                More spice stories
-              </h2>
-              <div className="space-y-4">
-                {relatedPosts.map((related) => (
-                  <Link key={related.slug} href={`/blog/${related.slug}`} className="block group">
-                    <div className="flex gap-3 items-start">
-                      <div className="relative w-16 h-16 rounded-lg overflow-hidden bg-gray-50 shrink-0">
-                        <Image
-                          src={related.image}
-                          alt={related.imageAlt}
-                          fill
-                          className="object-cover"
-                          sizes="64px"
-                        />
+              {/* Related posts */}
+              <div className="rounded-2xl border border-gray-100 bg-white p-6 shadow-sm dark:border-neutral-800 dark:bg-neutral-900">
+                <p className="text-[11px] font-bold uppercase tracking-widest text-orange-600 mb-2">
+                  Keep reading
+                </p>
+                <h2 className="mb-5 text-lg font-bold text-gray-900 dark:text-neutral-100">
+                  More spice stories
+                </h2>
+                <div className="space-y-4">
+                  {relatedPosts.map((related) => (
+                    <Link key={related.slug} href={`/blog/${related.slug}`} className="block group">
+                      <div className="flex gap-3 items-start">
+                        <div className="relative w-16 h-16 rounded-lg overflow-hidden bg-gray-50 shrink-0">
+                          <Image
+                            src={related.image}
+                            alt={related.imageAlt}
+                            fill
+                            className="object-cover"
+                            sizes="64px"
+                          />
+                        </div>
+                        <div>
+                          <p className="text-sm font-bold text-gray-900 group-hover:text-orange-600 transition-colors line-clamp-2 leading-snug dark:text-neutral-100">
+                            {related.title}
+                          </p>
+                          <p className="mt-1 text-[11px] text-gray-400">{related.readTime}</p>
+                        </div>
                       </div>
-                      <div>
-                        <p className="text-sm font-bold text-gray-900 group-hover:text-orange-600 transition-colors line-clamp-2 leading-snug dark:text-neutral-100">
-                          {related.title}
-                        </p>
-                        <p className="mt-1 text-[11px] text-gray-400">{related.readTime}</p>
-                      </div>
-                    </div>
-                  </Link>
-                ))}
+                    </Link>
+                  ))}
+                </div>
               </div>
-            </div>
             </div>
           </aside>
         </div>

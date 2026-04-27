@@ -7,4 +7,3 @@ export { ProductDetail } from './ProductDetail';
 export { CheckoutForm } from './CheckoutForm';
 export { OrderSummary } from './OrderSummary';
 export { PaymentOptions } from './PaymentOptions';
-

@@ -3,6 +3,7 @@
 This guide covers the implementation steps for features that require external services, API keys, and configurations.
 
 ## Table of Contents
+
 1. [Payment Gateway Integration](#payment-gateway-integration)
 2. [Authentication System](#authentication-system)
 3. [Order Management](#order-management)
@@ -16,17 +17,21 @@ This guide covers the implementation steps for features that require external se
 ### Razorpay Integration (India)
 
 #### Step 1: Create Razorpay Account
+
 1. Sign up at [https://razorpay.com](https://razorpay.com)
 2. Complete KYC verification
 3. Get API keys from Dashboard → API Keys
 
 #### Step 2: Install Dependencies
+
 ```bash
 npm install razorpay
 ```
 
 #### Step 3: Environment Variables
+
 Add to `.env.local`:
+
 ```env
 RAZORPAY_KEY_ID=rzp_test_xxxxxx
 RAZORPAY_KEY_SECRET=xxxxxx
@@ -34,7 +39,9 @@ NEXT_PUBLIC_RAZORPAY_KEY_ID=rzp_test_xxxxxx
 ```
 
 #### Step 4: Create API Route
+
 Create `app/api/payment/razorpay/create-order/route.ts`:
+
 ```typescript
 import Razorpay from 'razorpay';
 import { NextRequest, NextResponse } from 'next/server';
@@ -63,7 +70,9 @@ export async function POST(request: NextRequest) {
 ```
 
 #### Step 5: Frontend Integration
+
 Update `components/ecommerce/PaymentOptions.tsx` to handle Razorpay:
+
 ```typescript
 const handleRazorpayPayment = async () => {
   // Create order
@@ -73,8 +82,8 @@ const handleRazorpayPayment = async () => {
     body: JSON.stringify({
       amount: cart.total,
       currency: 'INR',
-      receipt: orderNumber
-    })
+      receipt: orderNumber,
+    }),
   });
 
   const { order } = await response.json();
@@ -93,11 +102,11 @@ const handleRazorpayPayment = async () => {
     },
     prefill: {
       email: userEmail,
-      contact: userPhone
+      contact: userPhone,
     },
     theme: {
-      color: '#D32F2F'
-    }
+      color: '#D32F2F',
+    },
   };
 
   const rzp = new window.Razorpay(options);
@@ -106,7 +115,9 @@ const handleRazorpayPayment = async () => {
 ```
 
 #### Step 6: Verify Payment
+
 Create `app/api/payment/razorpay/verify/route.ts`:
+
 ```typescript
 import crypto from 'crypto';
 
@@ -131,15 +142,18 @@ export async function POST(request: NextRequest) {
 ### Stripe Integration (International)
 
 #### Step 1: Create Stripe Account
+
 1. Sign up at [https://stripe.com](https://stripe.com)
 2. Get API keys from Dashboard
 
 #### Step 2: Install Dependencies
+
 ```bash
 npm install stripe @stripe/stripe-js
 ```
 
 #### Step 3: Environment Variables
+
 ```env
 STRIPE_SECRET_KEY=sk_test_xxxxxx
 NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=pk_test_xxxxxx
@@ -147,7 +161,9 @@ STRIPE_WEBHOOK_SECRET=whsec_xxxxxx
 ```
 
 #### Step 4: Create Checkout Session
+
 Create `app/api/payment/stripe/create-checkout/route.ts`:
+
 ```typescript
 import Stripe from 'stripe';
 
@@ -187,12 +203,15 @@ export async function POST(request: NextRequest) {
 ### Option A: NextAuth.js (Recommended)
 
 #### Step 1: Install NextAuth
+
 ```bash
 npm install next-auth
 ```
 
 #### Step 2: Create Auth Configuration
+
 Create `app/api/auth/[...nextauth]/route.ts`:
+
 ```typescript
 import NextAuth from 'next-auth';
 import GoogleProvider from 'next-auth/providers/google';
@@ -207,15 +226,15 @@ export const authOptions = {
     CredentialsProvider({
       name: 'Credentials',
       credentials: {
-        email: { label: "Email", type: "email" },
-        password: { label: "Password", type: "password" }
+        email: { label: 'Email', type: 'email' },
+        password: { label: 'Password', type: 'password' },
       },
       async authorize(credentials) {
         // Verify credentials against database
         // Return user object if valid
         return null;
-      }
-    })
+      },
+    }),
   ],
   pages: {
     signIn: '/auth/signin',
@@ -224,8 +243,8 @@ export const authOptions = {
     async session({ session, token }: any) {
       session.user.id = token.sub;
       return session;
-    }
-  }
+    },
+  },
 };
 
 const handler = NextAuth(authOptions);
@@ -233,21 +252,23 @@ export { handler as GET, handler as POST };
 ```
 
 #### Step 3: Create Auth Pages
+
 - `app/auth/signin/page.tsx` - Login page
 - `app/auth/signup/page.tsx` - Registration page
 - `app/account/page.tsx` - User dashboard
 
 #### Step 4: Protect Routes
+
 ```typescript
 import { getServerSession } from 'next-auth';
 
 export default async function ProtectedPage() {
   const session = await getServerSession(authOptions);
-  
+
   if (!session) {
     redirect('/auth/signin');
   }
-  
+
   return <div>Protected content</div>;
 }
 ```
@@ -255,23 +276,27 @@ export default async function ProtectedPage() {
 ### Option B: Supabase Auth
 
 #### Step 1: Create Supabase Project
+
 1. Sign up at [https://supabase.com](https://supabase.com)
 2. Create new project
 3. Get API keys
 
 #### Step 2: Install Supabase Client
+
 ```bash
 npm install @supabase/supabase-js
 ```
 
 #### Step 3: Initialize Client
+
 Create `lib/supabase/client.ts`:
+
 ```typescript
 import { createClient } from '@supabase/supabase-js';
 
 export const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
 );
 ```
 
@@ -356,6 +381,7 @@ CREATE TABLE products (
 ### Order Tracking Implementation
 
 Create `app/account/orders/[orderId]/page.tsx`:
+
 ```typescript
 export default function OrderTrackingPage({ params }: { params: { orderId: string } }) {
   // Fetch order details
@@ -379,17 +405,21 @@ export default function OrderTrackingPage({ params }: { params: { orderId: strin
 ### Option A: Resend (Recommended)
 
 #### Step 1: Create Resend Account
+
 1. Sign up at [https://resend.com](https://resend.com)
 2. Get API key
 3. Verify domain
 
 #### Step 2: Install Resend
+
 ```bash
 npm install resend
 ```
 
 #### Step 3: Create Email Templates
+
 Create `lib/email/templates/welcome.tsx`:
+
 ```typescript
 export const WelcomeEmail = ({ name }: { name: string }) => (
   <html>
@@ -402,7 +432,9 @@ export const WelcomeEmail = ({ name }: { name: string }) => (
 ```
 
 #### Step 4: Send Emails
+
 Create `lib/email/send.ts`:
+
 ```typescript
 import { Resend } from 'resend';
 
@@ -430,6 +462,7 @@ export async function sendOrderConfirmation(to: string, orderData: any) {
 ### Abandoned Cart Recovery
 
 Create scheduled task (cron job or Vercel Cron):
+
 ```typescript
 // app/api/cron/abandoned-cart/route.ts
 export async function GET() {
@@ -440,6 +473,7 @@ export async function GET() {
 ```
 
 ### Email Campaigns Setup
+
 1. Create segments (new customers, repeat buyers, inactive users)
 2. Set up welcome series (Day 0, 3, 7)
 3. Product recommendation emails
@@ -456,6 +490,7 @@ export async function GET() {
 2. **Run Migrations**: Execute the SQL schemas above in Supabase SQL Editor
 
 3. **Enable Row Level Security (RLS)**:
+
 ```sql
 -- Enable RLS on orders table
 ALTER TABLE orders ENABLE ROW LEVEL SECURITY;
@@ -466,6 +501,7 @@ CREATE POLICY "Users can view own orders" ON orders
 ```
 
 4. **Environment Variables**:
+
 ```env
 NEXT_PUBLIC_SUPABASE_URL=https://xxxxx.supabase.co
 NEXT_PUBLIC_SUPABASE_ANON_KEY=xxxxx
@@ -477,7 +513,8 @@ SUPABASE_SERVICE_ROLE_KEY=xxxxx
 1. Create cluster at [https://cloud.mongodb.com](https://cloud.mongodb.com)
 2. Install mongoose: `npm install mongoose`
 3. Create models based on TypeScript interfaces
-4. Connect: 
+4. Connect:
+
 ```typescript
 import mongoose from 'mongoose';
 
@@ -503,4 +540,3 @@ mongoose.connect(process.env.MONGODB_URI!);
 5. Test thoroughly in development
 6. Deploy to production
 7. Configure webhooks and cron jobs
-

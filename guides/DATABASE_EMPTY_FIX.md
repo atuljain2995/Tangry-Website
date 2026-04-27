@@ -5,6 +5,7 @@
 ## ❓ What's Happening?
 
 Your app is running perfectly! The errors you're seeing mean:
+
 - ✅ Supabase connection is working
 - ✅ Database structure exists
 - ❌ **No product data** has been added yet
@@ -26,6 +27,7 @@ The app is trying to display products, but your database tables are empty.
 You need to run these SQL files in order:
 
 #### Migration 1: Create Tables (if not done)
+
 ```sql
 -- File: lib/db/migrations/001_initial_schema.sql
 -- Copy and paste the entire contents of this file into SQL Editor
@@ -33,6 +35,7 @@ You need to run these SQL files in order:
 ```
 
 #### Migration 2: Add Product Data
+
 ```sql
 -- File: lib/db/migrations/002_seed_products.sql
 -- Copy and paste the entire contents of this file into SQL Editor
@@ -40,6 +43,7 @@ You need to run these SQL files in order:
 ```
 
 #### Migration 3: Add Product Variants
+
 ```sql
 -- File: lib/db/migrations/003_add_product_variants.sql
 -- Copy and paste the entire contents of this file into SQL Editor
@@ -47,6 +51,7 @@ You need to run these SQL files in order:
 ```
 
 #### Migration 4: Create Variant Tables (if needed)
+
 ```sql
 -- File: lib/db/migrations/002b_create_variants_tables.sql
 -- Copy and paste the entire contents of this file into SQL Editor
@@ -56,6 +61,7 @@ You need to run these SQL files in order:
 ### Step 3: Verify Data
 
 In Supabase, go to **Table Editor** and check:
+
 - ✅ `products` table has 5+ rows
 - ✅ `product_variants` table has 10+ rows
 - ✅ `product_images` table has data
@@ -84,6 +90,7 @@ cd /Users/Atul_Jain/Desktop/development-projects/everest-clone
 ## 📊 After Running Migrations
 
 You should see:
+
 - ✅ Products displaying on homepage
 - ✅ Products page working
 - ✅ Product detail pages opening
@@ -115,11 +122,13 @@ Should show: ✅ Connected successfully
 ## 🎯 Expected Behavior
 
 ### Before Migrations:
+
 ```
 Error fetching product: { code: 'PGRST116', details: 'The result contains 0 rows' }
 ```
 
 ### After Migrations:
+
 ```
 GET / 200 in 500ms ✓
 GET /products 200 in 300ms ✓
@@ -133,7 +142,7 @@ No errors!
 **Problem:** Database tables are empty  
 **Solution:** Run migration SQL files in Supabase  
 **Time:** 5 minutes  
-**Result:** Products will display correctly  
+**Result:** Products will display correctly
 
 ---
 
@@ -146,4 +155,3 @@ No errors!
 ---
 
 **Quick Tip:** The errors you're seeing are **good** - they mean your app is working and just waiting for data! 🚀
-

@@ -68,8 +68,12 @@ export const CartDrawer = () => {
           {cart.items.length === 0 ? (
             <div className="flex flex-col items-center justify-center h-full text-center">
               <ShoppingBag size={64} className="mb-4 text-gray-300 dark:text-neutral-600" />
-              <h3 className="mb-2 text-lg font-semibold text-gray-600 dark:text-neutral-300">Your cart is empty</h3>
-              <p className="mb-6 text-sm text-gray-500 dark:text-neutral-400">Add some delicious spices to get started!</p>
+              <h3 className="mb-2 text-lg font-semibold text-gray-600 dark:text-neutral-300">
+                Your cart is empty
+              </h3>
+              <p className="mb-6 text-sm text-gray-500 dark:text-neutral-400">
+                Add some delicious spices to get started!
+              </p>
               <Link
                 href="/products"
                 onClick={closeCart}
@@ -80,11 +84,8 @@ export const CartDrawer = () => {
             </div>
           ) : (
             <div className="space-y-4">
-              {cart.items.map(item => (
-                <CartItemComponent 
-                  key={`${item.productId}-${item.variantId}`} 
-                  item={item} 
-                />
+              {cart.items.map((item) => (
+                <CartItemComponent key={`${item.productId}-${item.variantId}`} item={item} />
               ))}
             </div>
           )}
@@ -106,8 +107,12 @@ export const CartDrawer = () => {
               <span className="text-lg font-bold text-gray-900 dark:text-neutral-100">Total</span>
               <span className="text-lg font-bold text-[#D32F2F]">{formatCurrency(cart.total)}</span>
             </div>
-            <p className="text-xs text-gray-500 dark:text-neutral-400 text-right mb-1">Inclusive of 5% GST</p>
-            <p className="text-xs text-gray-400 dark:text-neutral-500 text-right mb-4">Shipping calculated at checkout</p>
+            <p className="text-xs text-gray-500 dark:text-neutral-400 text-right mb-1">
+              Inclusive of 5% GST
+            </p>
+            <p className="text-xs text-gray-400 dark:text-neutral-500 text-right mb-4">
+              Shipping calculated at checkout
+            </p>
 
             {/* Checkout Button */}
             <Link href="/checkout">
@@ -147,4 +152,3 @@ export const CartDrawer = () => {
     </>
   );
 };
-

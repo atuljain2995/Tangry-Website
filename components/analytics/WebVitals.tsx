@@ -16,8 +16,7 @@ function beaconVital(metric: WebVitalsMetric) {
     id: metric.id,
     delta: metric.delta,
     navigationType:
-      (metric.attribution as Record<string, unknown> | undefined)
-        ?.navigationType ?? null,
+      (metric.attribution as Record<string, unknown> | undefined)?.navigationType ?? null,
   });
 
   // Use sendBeacon when available (survives page unload), fall back to fetch.
@@ -29,15 +28,17 @@ function beaconVital(metric: WebVitalsMetric) {
       body: payload,
       headers: { 'Content-Type': 'application/json' },
       keepalive: true,
-    }).catch(() => {/* non-critical */});
+    }).catch(() => {
+      /* non-critical */
+    });
   }
 }
 
 export function WebVitals() {
   useReportWebVitals((metric) => {
     const typed = metric as unknown as WebVitalsMetric;
-    reportWebVitals(typed);   // GA4
-    beaconVital(typed);       // first-party RUM store
+    reportWebVitals(typed); // GA4
+    beaconVital(typed); // first-party RUM store
   });
   return null;
 }

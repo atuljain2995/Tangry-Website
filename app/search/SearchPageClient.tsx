@@ -39,7 +39,7 @@ export function SearchPageClient({ query, products }: SearchPageClientProps) {
     startTransition(() => {
       router.replace(
         debouncedDraft ? `/search?q=${encodeURIComponent(debouncedDraft)}` : '/search',
-        { scroll: false }
+        { scroll: false },
       );
     });
   }, [debouncedDraft, urlQ, router]);
@@ -140,8 +140,12 @@ export function SearchPageClient({ query, products }: SearchPageClientProps) {
           <div
             className={`text-center py-16 max-w-md mx-auto transition-opacity ${isPending ? 'opacity-60' : ''}`}
           >
-            <p className="text-gray-700 text-lg font-medium mb-2">No matches for &ldquo;{query}&rdquo;</p>
-            <p className="text-gray-500 text-sm mb-6">Try another keyword or browse the full catalogue.</p>
+            <p className="text-gray-700 text-lg font-medium mb-2">
+              No matches for &ldquo;{query}&rdquo;
+            </p>
+            <p className="text-gray-500 text-sm mb-6">
+              Try another keyword or browse the full catalogue.
+            </p>
             <Link
               href="/products"
               className="inline-flex rounded-xl bg-orange-600 px-6 py-3 font-bold text-white hover:bg-orange-700 transition"
@@ -154,7 +158,8 @@ export function SearchPageClient({ query, products }: SearchPageClientProps) {
             <p
               className={`text-sm text-gray-500 mb-8 font-medium transition-opacity ${isPending ? 'opacity-60' : ''}`}
             >
-              {products.length} {products.length === 1 ? 'result' : 'results'} for &ldquo;{query}&rdquo;
+              {products.length} {products.length === 1 ? 'result' : 'results'} for &ldquo;{query}
+              &rdquo;
             </p>
             <div
               className={`grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8 transition-opacity ${isPending ? 'opacity-60' : ''}`}

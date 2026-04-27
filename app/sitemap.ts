@@ -1,8 +1,8 @@
-import { MetadataRoute } from "next";
-import { getAllProducts } from "@/lib/db/queries";
-import { PRODUCT_CATEGORIES } from "@/lib/data/products";
-import { blogPosts } from "@/lib/data/blog";
-import { getProductCategories, type DbProductCategory } from "@/lib/db/queries";
+import { MetadataRoute } from 'next';
+import { getAllProducts } from '@/lib/db/queries';
+import { PRODUCT_CATEGORIES } from '@/lib/data/products';
+import { blogPosts } from '@/lib/data/blog';
+import { getProductCategories, type DbProductCategory } from '@/lib/db/queries';
 
 function fallbackCategories(): DbProductCategory[] {
   return PRODUCT_CATEGORIES.map((category, index) => ({
@@ -15,7 +15,7 @@ function fallbackCategories(): DbProductCategory[] {
 }
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const baseUrl = "https://www.tangryspices.com";
+  const baseUrl = 'https://www.tangryspices.com';
 
   // Build time — only changes on deploy, not per request
   const buildTime = new Date();
@@ -25,55 +25,55 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     {
       url: baseUrl,
       lastModified: buildTime,
-      changeFrequency: "daily" as const,
+      changeFrequency: 'daily' as const,
       priority: 1,
     },
     {
       url: `${baseUrl}/products`,
       lastModified: buildTime,
-      changeFrequency: "daily" as const,
+      changeFrequency: 'daily' as const,
       priority: 0.9,
     },
     {
       url: `${baseUrl}/about`,
       lastModified: buildTime,
-      changeFrequency: "monthly" as const,
+      changeFrequency: 'monthly' as const,
       priority: 0.7,
     },
     {
       url: `${baseUrl}/about/founder`,
       lastModified: buildTime,
-      changeFrequency: "monthly" as const,
+      changeFrequency: 'monthly' as const,
       priority: 0.6,
     },
     {
       url: `${baseUrl}/wholesale`,
       lastModified: buildTime,
-      changeFrequency: "monthly" as const,
+      changeFrequency: 'monthly' as const,
       priority: 0.6,
     },
     {
       url: `${baseUrl}/contact`,
       lastModified: buildTime,
-      changeFrequency: "monthly" as const,
+      changeFrequency: 'monthly' as const,
       priority: 0.5,
     },
     {
       url: `${baseUrl}/track-order`,
       lastModified: buildTime,
-      changeFrequency: "monthly" as const,
+      changeFrequency: 'monthly' as const,
       priority: 0.5,
     },
     {
       url: `${baseUrl}/shipping-policy`,
       lastModified: buildTime,
-      changeFrequency: "monthly" as const,
+      changeFrequency: 'monthly' as const,
       priority: 0.5,
     },
     {
       url: `${baseUrl}/blog`,
       lastModified: buildTime,
-      changeFrequency: "weekly" as const,
+      changeFrequency: 'weekly' as const,
       priority: 0.6,
     },
   ];
@@ -81,7 +81,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const blogPages = blogPosts.map((post) => ({
     url: `${baseUrl}/blog/${post.slug}`,
     lastModified: new Date(post.updated),
-    changeFrequency: "monthly" as const,
+    changeFrequency: 'monthly' as const,
     priority: 0.6,
   }));
 
@@ -90,11 +90,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   try {
     allProducts = await getAllProducts();
   } catch {
-    console.warn(
-      "Failed to fetch products from database for sitemap, using fallback",
-    );
+    console.warn('Failed to fetch products from database for sitemap, using fallback');
     // If DB fails, import fallback
-    const { PRODUCTS_EXTENDED } = await import("@/lib/data/productsExtended");
+    const { PRODUCTS_EXTENDED } = await import('@/lib/data/productsExtended');
     allProducts = PRODUCTS_EXTENDED;
   }
 
@@ -102,7 +100,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const productPages = allProducts.map((product) => ({
     url: `${baseUrl}/products/${product.slug}`,
     lastModified: product.updatedAt || buildTime,
-    changeFrequency: "weekly" as const,
+    changeFrequency: 'weekly' as const,
     priority: product.isBestSeller || product.isFeatured ? 0.9 : 0.8,
   }));
 
@@ -111,7 +109,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const categoryPages = categories.map((category) => ({
     url: `${baseUrl}/categories/${category.slug}`,
     lastModified: buildTime,
-    changeFrequency: "weekly" as const,
+    changeFrequency: 'weekly' as const,
     priority: 0.7,
   }));
 

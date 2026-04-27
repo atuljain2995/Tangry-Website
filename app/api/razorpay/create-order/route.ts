@@ -5,7 +5,9 @@ import { computeTrustedOrderDraft } from '@/lib/orders/compute-trusted-order';
 const keyId = process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID;
 const keySecret = process.env.RAZORPAY_KEY_SECRET;
 
-function parseCartLines(body: { items?: unknown }): { productId: string; variantId: string; quantity: number }[] | null {
+function parseCartLines(body: {
+  items?: unknown;
+}): { productId: string; variantId: string; quantity: number }[] | null {
   const raw = body.items;
   if (!Array.isArray(raw) || raw.length === 0) return null;
   const lines: { productId: string; variantId: string; quantity: number }[] = [];

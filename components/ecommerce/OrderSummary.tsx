@@ -12,7 +12,10 @@ interface OrderSummaryProps {
   showShipping?: boolean;
 }
 
-export const OrderSummary = ({ showCouponField = true, showShipping = false }: OrderSummaryProps) => {
+export const OrderSummary = ({
+  showCouponField = true,
+  showShipping = false,
+}: OrderSummaryProps) => {
   const { cart, applyCoupon, removeCoupon } = useCart();
   const [couponCode, setCouponCode] = useState('');
   const [couponError, setCouponError] = useState('');
@@ -81,7 +84,7 @@ export const OrderSummary = ({ showCouponField = true, showShipping = false }: O
 
       {/* Cart Items */}
       <div className="space-y-3 mb-6 max-h-60 overflow-y-auto">
-        {cart.items.map(item => (
+        {cart.items.map((item) => (
           <div key={`${item.productId}-${item.variantId}`} className="flex space-x-3">
             <div className="w-16 h-16 bg-gray-200 rounded-md overflow-hidden flex-shrink-0 relative">
               {item.image ? (
@@ -99,9 +102,7 @@ export const OrderSummary = ({ showCouponField = true, showShipping = false }: O
               )}
             </div>
             <div className="flex-1 min-w-0">
-              <h3 className="text-sm font-semibold text-gray-900 truncate">
-                {item.productName}
-              </h3>
+              <h3 className="text-sm font-semibold text-gray-900 truncate">{item.productName}</h3>
               <p className="text-xs text-gray-500">{item.variantName}</p>
               <div className="flex justify-between items-center mt-1">
                 <span className="text-xs text-gray-600">Qty: {item.quantity}</span>
@@ -125,10 +126,7 @@ export const OrderSummary = ({ showCouponField = true, showShipping = false }: O
                   {cart.couponCode} Applied
                 </span>
               </div>
-              <button
-                onClick={handleRemoveCoupon}
-                className="text-red-600 hover:text-red-700"
-              >
+              <button onClick={handleRemoveCoupon} className="text-red-600 hover:text-red-700">
                 <Trash2 size={16} />
               </button>
             </div>
@@ -153,9 +151,7 @@ export const OrderSummary = ({ showCouponField = true, showShipping = false }: O
                   {isApplyingCoupon ? 'Applying...' : 'Apply'}
                 </button>
               </div>
-              {couponError && (
-                <p className="text-red-600 text-xs mt-1">{couponError}</p>
-              )}
+              {couponError && <p className="text-red-600 text-xs mt-1">{couponError}</p>}
             </div>
           )}
         </div>
@@ -192,7 +188,7 @@ export const OrderSummary = ({ showCouponField = true, showShipping = false }: O
           {formatCurrency(
             showShipping
               ? cart.total + calculateShipping(cart.subtotal - cart.discount)
-              : cart.total
+              : cart.total,
           )}
         </span>
       </div>
@@ -207,4 +203,3 @@ export const OrderSummary = ({ showCouponField = true, showShipping = false }: O
     </div>
   );
 };
-

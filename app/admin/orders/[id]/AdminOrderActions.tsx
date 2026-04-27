@@ -5,7 +5,15 @@ import { useRouter } from 'next/navigation';
 import { Loader2, Mail } from 'lucide-react';
 import { updateOrderStatus, setOrderTrackingNumber } from '@/lib/actions/orders';
 
-const STATUSES = ['pending', 'confirmed', 'processing', 'shipped', 'delivered', 'cancelled', 'refunded'] as const;
+const STATUSES = [
+  'pending',
+  'confirmed',
+  'processing',
+  'shipped',
+  'delivered',
+  'cancelled',
+  'refunded',
+] as const;
 
 type Props = {
   orderId: string;
@@ -14,7 +22,12 @@ type Props = {
   customerEmail: string | null;
 };
 
-export function AdminOrderActions({ orderId, currentStatus, currentTracking, customerEmail }: Props) {
+export function AdminOrderActions({
+  orderId,
+  currentStatus,
+  currentTracking,
+  customerEmail,
+}: Props) {
   const router = useRouter();
   const [status, setStatus] = useState(currentStatus);
   const [tracking, setTracking] = useState(currentTracking ?? '');
@@ -57,7 +70,9 @@ export function AdminOrderActions({ orderId, currentStatus, currentTracking, cus
       {message && (
         <div
           className={`rounded-lg border px-3 py-2 text-sm ${
-            message.type === 'ok' ? 'border-green-200 bg-green-50 text-green-800' : 'border-red-200 bg-red-50 text-red-800'
+            message.type === 'ok'
+              ? 'border-green-200 bg-green-50 text-green-800'
+              : 'border-red-200 bg-red-50 text-red-800'
           }`}
         >
           {message.text}
@@ -79,7 +94,10 @@ export function AdminOrderActions({ orderId, currentStatus, currentTracking, cus
             ))}
           </select>
           {savingStatus ? (
-            <Loader2 className="h-5 w-5 shrink-0 animate-spin text-orange-600" aria-label="Updating status" />
+            <Loader2
+              className="h-5 w-5 shrink-0 animate-spin text-orange-600"
+              aria-label="Updating status"
+            />
           ) : null}
         </div>
       </div>
@@ -98,11 +116,15 @@ export function AdminOrderActions({ orderId, currentStatus, currentTracking, cus
             disabled={savingTracking}
             className="inline-flex items-center justify-center gap-2 rounded-md bg-orange-600 px-4 py-2 text-sm font-medium text-white hover:bg-orange-700 disabled:opacity-50"
           >
-            {savingTracking ? <Loader2 className="h-4 w-4 shrink-0 animate-spin" aria-hidden /> : null}
+            {savingTracking ? (
+              <Loader2 className="h-4 w-4 shrink-0 animate-spin" aria-hidden />
+            ) : null}
             {savingTracking ? 'Saving…' : 'Save'}
           </button>
         </div>
-        <p className="text-xs text-gray-500">Saving a tracking number will set status to &quot;shipped&quot;.</p>
+        <p className="text-xs text-gray-500">
+          Saving a tracking number will set status to &quot;shipped&quot;.
+        </p>
       </form>
 
       {/* Resend confirmation email */}
@@ -131,7 +153,11 @@ export function AdminOrderActions({ orderId, currentStatus, currentTracking, cus
           disabled={sendingEmail || !customerEmail}
           className="inline-flex items-center gap-2 rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50"
         >
-          {sendingEmail ? <Loader2 className="h-4 w-4 animate-spin" /> : <Mail className="h-4 w-4" />}
+          {sendingEmail ? (
+            <Loader2 className="h-4 w-4 animate-spin" />
+          ) : (
+            <Mail className="h-4 w-4" />
+          )}
           {sendingEmail ? 'Sending…' : 'Resend Confirmation Email'}
         </button>
         {customerEmail && (

@@ -53,8 +53,7 @@ export async function toggleWishlistItem(productId: string): Promise<WishlistRes
   } else {
     newProductIds = [productId];
 
-    const { error } = await wishlists()
-      .insert({ user_id: profile.id, product_ids: newProductIds });
+    const { error } = await wishlists().insert({ user_id: profile.id, product_ids: newProductIds });
 
     if (error) return { success: false, error: 'Failed to create wishlist' };
   }

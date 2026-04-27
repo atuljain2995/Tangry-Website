@@ -56,7 +56,12 @@ export default function CheckoutPage() {
     );
   }
 
-  const handleShippingSubmit = (shipping: Address, billing: Address, _sameAsShipping: boolean, email: string) => {
+  const handleShippingSubmit = (
+    shipping: Address,
+    billing: Address,
+    _sameAsShipping: boolean,
+    email: string,
+  ) => {
     setShippingAddress(shipping);
     setBillingAddress(billing);
     setCustomerEmail(email);
@@ -123,7 +128,8 @@ export default function CheckoutPage() {
           alert('Invalid payment response. Please try again.');
           return;
         }
-        const RazorpayClass = (window as { Razorpay?: new (opts: object) => { open: () => void } }).Razorpay;
+        const RazorpayClass = (window as { Razorpay?: new (opts: object) => { open: () => void } })
+          .Razorpay;
         if (!RazorpayClass) {
           alert('Payment script not loaded. Please refresh and try again.');
           return;
@@ -134,7 +140,11 @@ export default function CheckoutPage() {
           amount: amountPaise,
           currency: 'INR',
           name: 'Tangry Spices',
-          handler: async (response: { razorpay_payment_id: string; razorpay_order_id: string; razorpay_signature: string }) => {
+          handler: async (response: {
+            razorpay_payment_id: string;
+            razorpay_order_id: string;
+            razorpay_signature: string;
+          }) => {
             const verifyRes = await fetch('/api/razorpay/verify', {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
@@ -185,9 +195,13 @@ export default function CheckoutPage() {
   };
 
   const steps = [
-    { id: 'shipping', name: 'Shipping', completed: currentStep === 'payment' || currentStep === 'confirmation' },
+    {
+      id: 'shipping',
+      name: 'Shipping',
+      completed: currentStep === 'payment' || currentStep === 'confirmation',
+    },
     { id: 'payment', name: 'Payment', completed: currentStep === 'confirmation' },
-    { id: 'confirmation', name: 'Confirmation', completed: false }
+    { id: 'confirmation', name: 'Confirmation', completed: false },
   ];
 
   return (
@@ -204,25 +218,29 @@ export default function CheckoutPage() {
             {steps.map((step, index) => (
               <div key={step.id} className="flex items-center">
                 <div className="flex flex-col items-center">
-                  <div className={`w-12 h-12 rounded-full flex items-center justify-center font-bold transition ${
-                    step.completed
-                      ? 'bg-green-600 text-white'
-                      : currentStep === step.id
-                      ? 'bg-[#D32F2F] text-white'
-                      : 'bg-gray-300 text-gray-600'
-                  }`}>
+                  <div
+                    className={`w-12 h-12 rounded-full flex items-center justify-center font-bold transition ${
+                      step.completed
+                        ? 'bg-green-600 text-white'
+                        : currentStep === step.id
+                          ? 'bg-[#D32F2F] text-white'
+                          : 'bg-gray-300 text-gray-600'
+                    }`}
+                  >
                     {step.completed ? <Check size={24} /> : index + 1}
                   </div>
-                  <span className={`text-sm mt-2 font-semibold ${
-                    currentStep === step.id ? 'text-[#D32F2F]' : 'text-gray-600'
-                  }`}>
+                  <span
+                    className={`text-sm mt-2 font-semibold ${
+                      currentStep === step.id ? 'text-[#D32F2F]' : 'text-gray-600'
+                    }`}
+                  >
                     {step.name}
                   </span>
                 </div>
                 {index < steps.length - 1 && (
-                  <div className={`w-24 h-1 mx-4 ${
-                    step.completed ? 'bg-green-600' : 'bg-gray-300'
-                  }`} />
+                  <div
+                    className={`w-24 h-1 mx-4 ${step.completed ? 'bg-green-600' : 'bg-gray-300'}`}
+                  />
                 )}
               </div>
             ))}
@@ -234,10 +252,7 @@ export default function CheckoutPage() {
           {/* Main Content */}
           <div className="lg:col-span-2">
             {currentStep === 'shipping' && (
-              <CheckoutForm
-                onSubmit={handleShippingSubmit}
-                onBack={() => router.push('/')}
-              />
+              <CheckoutForm onSubmit={handleShippingSubmit} onBack={() => router.push('/')} />
             )}
 
             {currentStep === 'payment' && (
@@ -253,10 +268,12 @@ export default function CheckoutPage() {
                 <div className="w-20 h-20 bg-green-600 rounded-full flex items-center justify-center mx-auto mb-6">
                   <Check size={48} className="text-white" />
                 </div>
-                <h1 className="text-3xl font-bold text-gray-900 mb-4">Order Placed Successfully!</h1>
+                <h1 className="text-3xl font-bold text-gray-900 mb-4">
+                  Order Placed Successfully!
+                </h1>
                 <p className="text-lg text-gray-600 mb-2">Thank you for your order</p>
                 <p className="text-2xl font-bold text-[#D32F2F] mb-8">Order #{orderNumber}</p>
-                
+
                 <div className="bg-white rounded-lg p-6 mb-8 text-left max-w-md mx-auto shadow-md">
                   <h3 className="font-bold text-gray-900 mb-4">What&apos;s Next?</h3>
                   <ul className="space-y-2 text-sm text-gray-700">
@@ -311,7 +328,10 @@ export default function CheckoutPage() {
           {/* Order Summary Sidebar */}
           {currentStep !== 'confirmation' && (
             <div className="lg:col-span-1">
-              <OrderSummary showCouponField={currentStep === 'shipping'} showShipping={currentStep === 'payment'} />
+              <OrderSummary
+                showCouponField={currentStep === 'shipping'}
+                showShipping={currentStep === 'payment'}
+              />
             </div>
           )}
         </div>
@@ -321,4 +341,3 @@ export default function CheckoutPage() {
     </main>
   );
 }
-

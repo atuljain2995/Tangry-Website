@@ -6,4 +6,3 @@ export { About } from './About';
 export { BuyOnline } from './BuyOnline';
 export { Recipes } from './Recipes';
 export { Newsletter } from './Newsletter';
-

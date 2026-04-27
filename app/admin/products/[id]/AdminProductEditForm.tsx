@@ -5,7 +5,12 @@ import { ArrowLeft, ExternalLink, ImagePlus, Loader2, Trash2, Upload } from 'luc
 import Link from 'next/link';
 import { AdminLink } from '@/components/admin/AdminLink';
 import { ProductCategorySelect } from '@/components/admin/ProductCategorySelect';
-import { updateProduct, updateProductImages, upsertProductVariants, type VariantInput } from '@/lib/actions/admin-products';
+import {
+  updateProduct,
+  updateProductImages,
+  upsertProductVariants,
+  type VariantInput,
+} from '@/lib/actions/admin-products';
 import type { DbProductCategory, ProductForAdmin } from '@/lib/db/queries';
 
 type VariantRow = VariantInput & { _key?: string };
@@ -39,28 +44,64 @@ export function AdminProductEditForm({
           weight: v.weight,
           is_available: v.is_available,
         }))
-      : [{ name: 'Default', sku: '', price: 0, compare_at_price: undefined, stock: 0, weight: 100, is_available: true }]
+      : [
+          {
+            name: 'Default',
+            sku: '',
+            price: 0,
+            compare_at_price: undefined,
+            stock: 0,
+            weight: 100,
+            is_available: true,
+          },
+        ],
   );
   const [imageRows, setImageRows] = useState(
     initialImages.length > 0
-      ? initialImages.map((img) => ({ id: img.id, url: img.url, alt_text: img.alt_text ?? '', previewKey: undefined as number | undefined }))
-      : [{ id: undefined as string | undefined, url: '', alt_text: '', previewKey: undefined as number | undefined }]
+      ? initialImages.map((img) => ({
+          id: img.id,
+          url: img.url,
+          alt_text: img.alt_text ?? '',
+          previewKey: undefined as number | undefined,
+        }))
+      : [
+          {
+            id: undefined as string | undefined,
+            url: '',
+            alt_text: '',
+            previewKey: undefined as number | undefined,
+          },
+        ],
   );
   const [saving, setSaving] = useState(false);
   const saveInFlightRef = useRef(false);
   const [message, setMessage] = useState<{ type: 'ok' | 'error'; text: string } | null>(null);
   const [uploadingRow, setUploadingRow] = useState<number | null>(null);
 
-  const setVariantRow = useCallback((index: number, field: keyof VariantRow, value: string | number | boolean | undefined) => {
-    setVariantRows((prev) => {
-      const next = [...prev];
-      next[index] = { ...next[index], [field]: value };
-      return next;
-    });
-  }, []);
+  const setVariantRow = useCallback(
+    (index: number, field: keyof VariantRow, value: string | number | boolean | undefined) => {
+      setVariantRows((prev) => {
+        const next = [...prev];
+        next[index] = { ...next[index], [field]: value };
+        return next;
+      });
+    },
+    [],
+  );
 
   const addVariantRow = useCallback(() => {
-    setVariantRows((prev) => [...prev, { name: '', sku: '', price: 0, compare_at_price: undefined, stock: 0, weight: 100, is_available: true }]);
+    setVariantRows((prev) => [
+      ...prev,
+      {
+        name: '',
+        sku: '',
+        price: 0,
+        compare_at_price: undefined,
+        stock: 0,
+        weight: 100,
+        is_available: true,
+      },
+    ]);
   }, []);
 
   const removeVariantRow = useCallback((index: number) => {
@@ -68,7 +109,10 @@ export function AdminProductEditForm({
   }, []);
 
   const addImageRow = useCallback(() => {
-    setImageRows((prev) => [...prev, { id: undefined, url: '', alt_text: '', previewKey: undefined }]);
+    setImageRows((prev) => [
+      ...prev,
+      { id: undefined, url: '', alt_text: '', previewKey: undefined },
+    ]);
   }, []);
 
   const removeImageRow = useCallback((index: number) => {
@@ -120,7 +164,7 @@ export function AdminProductEditForm({
         setUploadingRow(null);
       }
     },
-    []
+    [],
   );
 
   const handleSubmit = useCallback(
@@ -155,7 +199,9 @@ export function AdminProductEditForm({
           }));
         const imageResult = await updateProductImages(
           product.id,
-          imagesPayload.length > 0 ? imagesPayload : [{ url: '/images/logo-512.png', alt_text: 'Placeholder' }]
+          imagesPayload.length > 0
+            ? imagesPayload
+            : [{ url: '/images/logo-512.png', alt_text: 'Placeholder' }],
         );
         if (!imageResult.success) {
           setMessage({ type: 'error', text: imageResult.error });
@@ -198,7 +244,7 @@ export function AdminProductEditForm({
       isHeroProduct,
       imageRows,
       variantRows,
-    ]
+    ],
   );
 
   return (
@@ -221,318 +267,344 @@ export function AdminProductEditForm({
       {message && (
         <div
           className={`mb-4 rounded-lg border px-4 py-3 ${
-            message.type === 'ok' ? 'border-green-200 bg-green-50 text-green-800' : 'border-red-200 bg-red-50 text-red-800'
+            message.type === 'ok'
+              ? 'border-green-200 bg-green-50 text-green-800'
+              : 'border-red-200 bg-red-50 text-red-800'
           }`}
         >
           {message.text}
         </div>
       )}
 
-      <form
-        onSubmit={handleSubmit}
-        className="space-y-8 max-w-2xl"
-        aria-busy={saving}
-      >
+      <form onSubmit={handleSubmit} className="space-y-8 max-w-2xl" aria-busy={saving}>
         <fieldset
           disabled={saving}
           className="min-w-0 space-y-8 border-0 p-0 m-0 disabled:cursor-wait disabled:opacity-65"
         >
-        <section className="bg-white rounded-lg border border-gray-200 p-6 shadow-sm">
-          <h2 className="text-lg font-semibold text-gray-900 mb-4">Product details</h2>
-          <div className="space-y-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Name</label>
-              <input
-                type="text"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                className="w-full rounded border border-gray-300 px-3 py-2"
-                required
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
-              <textarea
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}
-                rows={4}
-                className="w-full rounded border border-gray-300 px-3 py-2"
-              />
-            </div>
-            <div>
-              <label htmlFor="product-category" className="block text-sm font-medium text-gray-700 mb-1">
-                Category
-              </label>
-              <ProductCategorySelect
-                id="product-category"
-                categories={categories}
-                value={categoryId}
-                onChange={setCategoryId}
-                disabled={saving}
-                legacyCategoryTitle={
-                  !product.category_id && product.category ? product.category : null
-                }
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Meta title</label>
-              <input
-                type="text"
-                value={metaTitle}
-                onChange={(e) => setMetaTitle(e.target.value)}
-                className="w-full rounded border border-gray-300 px-3 py-2"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Meta description</label>
-              <textarea
-                value={metaDescription}
-                onChange={(e) => setMetaDescription(e.target.value)}
-                rows={2}
-                className="w-full rounded border border-gray-300 px-3 py-2"
-              />
-            </div>
-            <div className="flex gap-6">
-              <label className="flex items-center gap-2">
+          <section className="bg-white rounded-lg border border-gray-200 p-6 shadow-sm">
+            <h2 className="text-lg font-semibold text-gray-900 mb-4">Product details</h2>
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Name</label>
                 <input
-                  type="checkbox"
-                  checked={isFeatured}
-                  onChange={(e) => setIsFeatured(e.target.checked)}
-                  className="rounded border-gray-300"
+                  type="text"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  className="w-full rounded border border-gray-300 px-3 py-2"
+                  required
                 />
-                <span className="text-sm text-gray-700">Featured</span>
-              </label>
-              <label className="flex items-center gap-2">
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
+                <textarea
+                  value={description}
+                  onChange={(e) => setDescription(e.target.value)}
+                  rows={4}
+                  className="w-full rounded border border-gray-300 px-3 py-2"
+                />
+              </div>
+              <div>
+                <label
+                  htmlFor="product-category"
+                  className="block text-sm font-medium text-gray-700 mb-1"
+                >
+                  Category
+                </label>
+                <ProductCategorySelect
+                  id="product-category"
+                  categories={categories}
+                  value={categoryId}
+                  onChange={setCategoryId}
+                  disabled={saving}
+                  legacyCategoryTitle={
+                    !product.category_id && product.category ? product.category : null
+                  }
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Meta title</label>
                 <input
-                  type="checkbox"
-                  checked={isNew}
-                  onChange={(e) => setIsNew(e.target.checked)}
-                  className="rounded border-gray-300"
+                  type="text"
+                  value={metaTitle}
+                  onChange={(e) => setMetaTitle(e.target.value)}
+                  className="w-full rounded border border-gray-300 px-3 py-2"
                 />
-                <span className="text-sm text-gray-700">New</span>
-              </label>
-              <label className="flex items-center gap-2">
-                <input
-                  type="checkbox"
-                  checked={isBestSeller}
-                  onChange={(e) => setIsBestSeller(e.target.checked)}
-                  className="rounded border-gray-300"
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Meta description
+                </label>
+                <textarea
+                  value={metaDescription}
+                  onChange={(e) => setMetaDescription(e.target.value)}
+                  rows={2}
+                  className="w-full rounded border border-gray-300 px-3 py-2"
                 />
-                <span className="text-sm text-gray-700">Best seller</span>
-              </label>
-              <label className="flex items-center gap-2">
-                <input
-                  type="checkbox"
-                  checked={isHeroProduct}
-                  onChange={(e) => setIsHeroProduct(e.target.checked)}
-                  className="rounded border-gray-300"
-                />
-                <span className="text-sm text-gray-700">Hero section</span>
-              </label>
+              </div>
+              <div className="flex gap-6">
+                <label className="flex items-center gap-2">
+                  <input
+                    type="checkbox"
+                    checked={isFeatured}
+                    onChange={(e) => setIsFeatured(e.target.checked)}
+                    className="rounded border-gray-300"
+                  />
+                  <span className="text-sm text-gray-700">Featured</span>
+                </label>
+                <label className="flex items-center gap-2">
+                  <input
+                    type="checkbox"
+                    checked={isNew}
+                    onChange={(e) => setIsNew(e.target.checked)}
+                    className="rounded border-gray-300"
+                  />
+                  <span className="text-sm text-gray-700">New</span>
+                </label>
+                <label className="flex items-center gap-2">
+                  <input
+                    type="checkbox"
+                    checked={isBestSeller}
+                    onChange={(e) => setIsBestSeller(e.target.checked)}
+                    className="rounded border-gray-300"
+                  />
+                  <span className="text-sm text-gray-700">Best seller</span>
+                </label>
+                <label className="flex items-center gap-2">
+                  <input
+                    type="checkbox"
+                    checked={isHeroProduct}
+                    onChange={(e) => setIsHeroProduct(e.target.checked)}
+                    className="rounded border-gray-300"
+                  />
+                  <span className="text-sm text-gray-700">Hero section</span>
+                </label>
+              </div>
             </div>
-          </div>
-        </section>
+          </section>
 
-        <section className="rounded-lg border border-gray-200 bg-white p-4 shadow-sm sm:p-6">
-          <h2 className="text-lg font-semibold text-gray-900 mb-1">Images</h2>
-          <p className="text-sm text-gray-500 mb-4">
-            Upload an image (JPEG, PNG, WebP, GIF, max 5MB) or paste a URL. First image is used as the main product image.
-          </p>
-          <div className="space-y-5">
-            {imageRows.map((row, index) => (
-              <div
-                key={row.id ?? index}
-                className="flex flex-col gap-4 rounded-xl border border-gray-200 bg-gray-50/50 p-4 sm:flex-row sm:items-start"
-              >
-                {/* Preview + actions */}
-                <div className="flex flex-shrink-0 flex-col gap-2 sm:flex-row sm:items-start">
-                  <div className="relative h-28 w-28 flex-shrink-0 overflow-hidden rounded-lg border border-gray-200 bg-white shadow-inner">
-                    {row.url ? (
-                      <>
-                        {/* eslint-disable-next-line @next/next/no-img-element */}
-                        <img
-                          key={row.previewKey ?? row.url}
-                          src={row.url + (row.previewKey ? `?t=${row.previewKey}` : '')}
-                          alt=""
-                          className="h-full w-full object-cover"
-                          onError={(e) => {
-                            (e.target as HTMLImageElement).src = '/images/logo-512.png';
-                          }}
-                        />
-                        {uploadingRow === index && (
-                          <div className="absolute inset-0 flex items-center justify-center bg-black/50">
-                            <span className="text-sm font-medium text-white">Uploading…</span>
-                          </div>
-                        )}
-                      </>
-                    ) : (
-                      <div className="flex h-full w-full items-center justify-center text-gray-400">
-                        <ImagePlus className="h-10 w-10" />
-                      </div>
-                    )}
+          <section className="rounded-lg border border-gray-200 bg-white p-4 shadow-sm sm:p-6">
+            <h2 className="text-lg font-semibold text-gray-900 mb-1">Images</h2>
+            <p className="text-sm text-gray-500 mb-4">
+              Upload an image (JPEG, PNG, WebP, GIF, max 5MB) or paste a URL. First image is used as
+              the main product image.
+            </p>
+            <div className="space-y-5">
+              {imageRows.map((row, index) => (
+                <div
+                  key={row.id ?? index}
+                  className="flex flex-col gap-4 rounded-xl border border-gray-200 bg-gray-50/50 p-4 sm:flex-row sm:items-start"
+                >
+                  {/* Preview + actions */}
+                  <div className="flex flex-shrink-0 flex-col gap-2 sm:flex-row sm:items-start">
+                    <div className="relative h-28 w-28 flex-shrink-0 overflow-hidden rounded-lg border border-gray-200 bg-white shadow-inner">
+                      {row.url ? (
+                        <>
+                          {/* eslint-disable-next-line @next/next/no-img-element */}
+                          <img
+                            key={row.previewKey ?? row.url}
+                            src={row.url + (row.previewKey ? `?t=${row.previewKey}` : '')}
+                            alt=""
+                            className="h-full w-full object-cover"
+                            onError={(e) => {
+                              (e.target as HTMLImageElement).src = '/images/logo-512.png';
+                            }}
+                          />
+                          {uploadingRow === index && (
+                            <div className="absolute inset-0 flex items-center justify-center bg-black/50">
+                              <span className="text-sm font-medium text-white">Uploading…</span>
+                            </div>
+                          )}
+                        </>
+                      ) : (
+                        <div className="flex h-full w-full items-center justify-center text-gray-400">
+                          <ImagePlus className="h-10 w-10" />
+                        </div>
+                      )}
+                    </div>
+                    <div className="flex min-h-[44px] flex-wrap items-center gap-2 sm:flex-col sm:items-stretch">
+                      <input
+                        id={`product-image-file-${index}`}
+                        type="file"
+                        accept="image/jpeg,image/png,image/webp,image/gif"
+                        className="sr-only"
+                        onChange={(e) => handleFileChange(index, e)}
+                        disabled={uploadingRow !== null}
+                      />
+                      <label
+                        htmlFor={`product-image-file-${index}`}
+                        className={`inline-flex min-h-[44px] cursor-pointer items-center justify-center gap-2 rounded-lg border border-orange-300 bg-orange-50 px-3 py-2 text-sm font-medium text-orange-700 transition-colors hover:bg-orange-100 disabled:pointer-events-none disabled:opacity-50 ${
+                          uploadingRow === index ? 'opacity-70' : ''
+                        }`}
+                      >
+                        <Upload className="h-4 w-4" />
+                        {uploadingRow === index ? 'Uploading…' : row.url ? 'Replace' : 'Upload'}
+                      </label>
+                      <button
+                        type="button"
+                        onClick={() => removeImageRow(index)}
+                        className="inline-flex min-h-[44px] items-center justify-center gap-2 rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm font-medium text-red-600 transition-colors hover:bg-red-50 disabled:opacity-50"
+                      >
+                        <Trash2 className="h-4 w-4" />
+                        Remove
+                      </button>
+                    </div>
                   </div>
-                  <div className="flex min-h-[44px] flex-wrap items-center gap-2 sm:flex-col sm:items-stretch">
-                    <input
-                      id={`product-image-file-${index}`}
-                      type="file"
-                      accept="image/jpeg,image/png,image/webp,image/gif"
-                      className="sr-only"
-                      onChange={(e) => handleFileChange(index, e)}
-                      disabled={uploadingRow !== null}
-                    />
-                    <label
-                      htmlFor={`product-image-file-${index}`}
-                      className={`inline-flex min-h-[44px] cursor-pointer items-center justify-center gap-2 rounded-lg border border-orange-300 bg-orange-50 px-3 py-2 text-sm font-medium text-orange-700 transition-colors hover:bg-orange-100 disabled:pointer-events-none disabled:opacity-50 ${
-                        uploadingRow === index ? 'opacity-70' : ''
-                      }`}
-                    >
-                      <Upload className="h-4 w-4" />
-                      {uploadingRow === index ? 'Uploading…' : row.url ? 'Replace' : 'Upload'}
+                  {/* URL + alt */}
+                  <div className="min-w-0 flex-1 space-y-2">
+                    <div>
+                      <label className="block text-xs font-medium text-gray-500 mb-0.5">
+                        Image URL
+                      </label>
+                      <input
+                        type="text"
+                        value={row.url}
+                        onChange={(e) => setImageRow(index, 'url', e.target.value)}
+                        placeholder="/products/filename.jpg"
+                        className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-orange-500 focus:ring-1 focus:ring-orange-500"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs font-medium text-gray-500 mb-0.5">
+                        Alt text (for accessibility)
+                      </label>
+                      <input
+                        type="text"
+                        value={row.alt_text}
+                        onChange={(e) => setImageRow(index, 'alt_text', e.target.value)}
+                        placeholder="e.g. Garam Masala packet"
+                        className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-orange-500 focus:ring-1 focus:ring-orange-500"
+                      />
+                    </div>
+                  </div>
+                </div>
+              ))}
+              <button
+                type="button"
+                onClick={addImageRow}
+                className="inline-flex min-h-[44px] items-center gap-2 rounded-lg border border-dashed border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-600 transition-colors hover:border-orange-400 hover:bg-orange-50/50 hover:text-orange-700"
+              >
+                <ImagePlus className="h-4 w-4" />
+                Add another image
+              </button>
+            </div>
+          </section>
+
+          <section className="bg-white rounded-lg border border-gray-200 p-6 shadow-sm">
+            <h2 className="text-lg font-semibold text-gray-900 mb-2">Variants</h2>
+            <p className="text-sm text-gray-500 mb-4">Price, SKU, stock, and weight per variant.</p>
+            <div className="space-y-4">
+              {variantRows.map((row, index) => (
+                <div key={row.id ?? index} className="rounded border border-gray-200 p-4 space-y-3">
+                  <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+                    <div>
+                      <label className="block text-xs font-medium text-gray-500">Name</label>
+                      <input
+                        type="text"
+                        value={row.name}
+                        onChange={(e) => setVariantRow(index, 'name', e.target.value)}
+                        className="mt-0.5 w-full rounded border border-gray-300 px-2 py-1.5 text-sm"
+                        placeholder="e.g. 50g"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs font-medium text-gray-500">SKU</label>
+                      <input
+                        type="text"
+                        value={row.sku}
+                        onChange={(e) => setVariantRow(index, 'sku', e.target.value)}
+                        className="mt-0.5 w-full rounded border border-gray-300 px-2 py-1.5 text-sm"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs font-medium text-gray-500">Price (₹)</label>
+                      <input
+                        type="number"
+                        step="0.01"
+                        min="0"
+                        value={row.price ?? ''}
+                        onChange={(e) =>
+                          setVariantRow(
+                            index,
+                            'price',
+                            e.target.value === '' ? 0 : parseFloat(e.target.value) || 0,
+                          )
+                        }
+                        className="mt-0.5 w-full rounded border border-gray-300 px-2 py-1.5 text-sm"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs font-medium text-gray-500">
+                        Compare at (₹)
+                      </label>
+                      <input
+                        type="number"
+                        step="0.01"
+                        min="0"
+                        value={row.compare_at_price ?? ''}
+                        onChange={(e) =>
+                          setVariantRow(
+                            index,
+                            'compare_at_price',
+                            e.target.value ? parseFloat(e.target.value) : undefined,
+                          )
+                        }
+                        className="mt-0.5 w-full rounded border border-gray-300 px-2 py-1.5 text-sm"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs font-medium text-gray-500">Stock</label>
+                      <input
+                        type="number"
+                        min="0"
+                        value={row.stock}
+                        onChange={(e) =>
+                          setVariantRow(index, 'stock', parseInt(e.target.value, 10) || 0)
+                        }
+                        className="mt-0.5 w-full rounded border border-gray-300 px-2 py-1.5 text-sm"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs font-medium text-gray-500">Weight (g)</label>
+                      <input
+                        type="number"
+                        min="0"
+                        value={row.weight}
+                        onChange={(e) =>
+                          setVariantRow(index, 'weight', parseInt(e.target.value, 10) || 100)
+                        }
+                        className="mt-0.5 w-full rounded border border-gray-300 px-2 py-1.5 text-sm"
+                      />
+                    </div>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <label className="flex items-center gap-2 text-sm text-gray-700">
+                      <input
+                        type="checkbox"
+                        checked={row.is_available}
+                        onChange={(e) => setVariantRow(index, 'is_available', e.target.checked)}
+                        className="rounded border-gray-300"
+                      />
+                      Available for sale
                     </label>
                     <button
                       type="button"
-                      onClick={() => removeImageRow(index)}
-                      className="inline-flex min-h-[44px] items-center justify-center gap-2 rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm font-medium text-red-600 transition-colors hover:bg-red-50 disabled:opacity-50"
+                      onClick={() => removeVariantRow(index)}
+                      className="text-sm text-red-600 hover:text-red-700"
                     >
-                      <Trash2 className="h-4 w-4" />
                       Remove
                     </button>
                   </div>
                 </div>
-                {/* URL + alt */}
-                <div className="min-w-0 flex-1 space-y-2">
-                  <div>
-                    <label className="block text-xs font-medium text-gray-500 mb-0.5">Image URL</label>
-                    <input
-                      type="text"
-                      value={row.url}
-                      onChange={(e) => setImageRow(index, 'url', e.target.value)}
-                      placeholder="/products/filename.jpg"
-                      className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-orange-500 focus:ring-1 focus:ring-orange-500"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-xs font-medium text-gray-500 mb-0.5">Alt text (for accessibility)</label>
-                    <input
-                      type="text"
-                      value={row.alt_text}
-                      onChange={(e) => setImageRow(index, 'alt_text', e.target.value)}
-                      placeholder="e.g. Garam Masala packet"
-                      className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-orange-500 focus:ring-1 focus:ring-orange-500"
-                    />
-                  </div>
-                </div>
-              </div>
-            ))}
-            <button
-              type="button"
-              onClick={addImageRow}
-              className="inline-flex min-h-[44px] items-center gap-2 rounded-lg border border-dashed border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-600 transition-colors hover:border-orange-400 hover:bg-orange-50/50 hover:text-orange-700"
-            >
-              <ImagePlus className="h-4 w-4" />
-              Add another image
-            </button>
-          </div>
-        </section>
-
-        <section className="bg-white rounded-lg border border-gray-200 p-6 shadow-sm">
-          <h2 className="text-lg font-semibold text-gray-900 mb-2">Variants</h2>
-          <p className="text-sm text-gray-500 mb-4">Price, SKU, stock, and weight per variant.</p>
-          <div className="space-y-4">
-            {variantRows.map((row, index) => (
-              <div key={row.id ?? index} className="rounded border border-gray-200 p-4 space-y-3">
-                <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-                  <div>
-                    <label className="block text-xs font-medium text-gray-500">Name</label>
-                    <input
-                      type="text"
-                      value={row.name}
-                      onChange={(e) => setVariantRow(index, 'name', e.target.value)}
-                      className="mt-0.5 w-full rounded border border-gray-300 px-2 py-1.5 text-sm"
-                      placeholder="e.g. 50g"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-xs font-medium text-gray-500">SKU</label>
-                    <input
-                      type="text"
-                      value={row.sku}
-                      onChange={(e) => setVariantRow(index, 'sku', e.target.value)}
-                      className="mt-0.5 w-full rounded border border-gray-300 px-2 py-1.5 text-sm"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-xs font-medium text-gray-500">Price (₹)</label>
-                    <input
-                      type="number"
-                      step="0.01"
-                      min="0"
-                      value={row.price ?? ''}
-                      onChange={(e) => setVariantRow(index, 'price', e.target.value === '' ? 0 : parseFloat(e.target.value) || 0)}
-                      className="mt-0.5 w-full rounded border border-gray-300 px-2 py-1.5 text-sm"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-xs font-medium text-gray-500">Compare at (₹)</label>
-                    <input
-                      type="number"
-                      step="0.01"
-                      min="0"
-                      value={row.compare_at_price ?? ''}
-                      onChange={(e) => setVariantRow(index, 'compare_at_price', e.target.value ? parseFloat(e.target.value) : undefined)}
-                      className="mt-0.5 w-full rounded border border-gray-300 px-2 py-1.5 text-sm"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-xs font-medium text-gray-500">Stock</label>
-                    <input
-                      type="number"
-                      min="0"
-                      value={row.stock}
-                      onChange={(e) => setVariantRow(index, 'stock', parseInt(e.target.value, 10) || 0)}
-                      className="mt-0.5 w-full rounded border border-gray-300 px-2 py-1.5 text-sm"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-xs font-medium text-gray-500">Weight (g)</label>
-                    <input
-                      type="number"
-                      min="0"
-                      value={row.weight}
-                      onChange={(e) => setVariantRow(index, 'weight', parseInt(e.target.value, 10) || 100)}
-                      className="mt-0.5 w-full rounded border border-gray-300 px-2 py-1.5 text-sm"
-                    />
-                  </div>
-                </div>
-                <div className="flex items-center justify-between">
-                  <label className="flex items-center gap-2 text-sm text-gray-700">
-                    <input
-                      type="checkbox"
-                      checked={row.is_available}
-                      onChange={(e) => setVariantRow(index, 'is_available', e.target.checked)}
-                      className="rounded border-gray-300"
-                    />
-                    Available for sale
-                  </label>
-                  <button
-                    type="button"
-                    onClick={() => removeVariantRow(index)}
-                    className="text-sm text-red-600 hover:text-red-700"
-                  >
-                    Remove
-                  </button>
-                </div>
-              </div>
-            ))}
-            <button
-              type="button"
-              onClick={addVariantRow}
-              className="text-sm font-medium text-orange-600 hover:text-orange-700"
-            >
-              + Add variant
-            </button>
-          </div>
-        </section>
+              ))}
+              <button
+                type="button"
+                onClick={addVariantRow}
+                className="text-sm font-medium text-orange-600 hover:text-orange-700"
+              >
+                + Add variant
+              </button>
+            </div>
+          </section>
         </fieldset>
 
         <div className="flex flex-col gap-3 border-t border-gray-200 pt-6 sm:flex-row sm:items-center sm:justify-between">

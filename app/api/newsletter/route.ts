@@ -6,8 +6,11 @@ const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 export async function POST(request: Request) {
   if (!isSupabaseConfigured) {
     return NextResponse.json(
-      { error: 'Subscriptions are temporarily unavailable. Please try again later or use the contact form.' },
-      { status: 503 }
+      {
+        error:
+          'Subscriptions are temporarily unavailable. Please try again later or use the contact form.',
+      },
+      { status: 503 },
     );
   }
 
@@ -20,7 +23,9 @@ export async function POST(request: Request) {
 
   const email =
     typeof body === 'object' && body !== null && 'email' in body
-      ? String((body as { email: unknown }).email ?? '').trim().toLowerCase()
+      ? String((body as { email: unknown }).email ?? '')
+          .trim()
+          .toLowerCase()
       : '';
 
   if (!email) {
@@ -47,7 +52,10 @@ export async function POST(request: Request) {
 
     if (updateErr) {
       console.error('Newsletter reactivate error:', updateErr);
-      return NextResponse.json({ error: 'Something went wrong. Please try again.' }, { status: 500 });
+      return NextResponse.json(
+        { error: 'Something went wrong. Please try again.' },
+        { status: 500 },
+      );
     }
 
     return NextResponse.json({ ok: true, alreadySubscribed: true });

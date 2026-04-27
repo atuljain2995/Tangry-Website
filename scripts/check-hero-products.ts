@@ -4,7 +4,7 @@ dotenv.config({ path: '.env.local' });
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+  process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
 );
 
 async function main() {
@@ -24,7 +24,9 @@ async function main() {
     const hero = p.is_hero_product ? 'HERO' : '  - ';
     const feat = p.is_featured ? 'Featured' : '';
     const best = p.is_best_seller ? 'BestSeller' : '';
-    console.log(`${hero}  |  ${(p.name || '').padEnd(30)}  |  ${(p.category || '').padEnd(12)}  |  ${feat} ${best}`);
+    console.log(
+      `${hero}  |  ${(p.name || '').padEnd(30)}  |  ${(p.category || '').padEnd(12)}  |  ${feat} ${best}`,
+    );
   }
   console.log('-'.repeat(80));
   // eslint-disable-next-line @typescript-eslint/no-explicit-any

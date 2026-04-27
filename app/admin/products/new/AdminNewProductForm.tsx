@@ -50,7 +50,9 @@ export function AdminNewProductForm({ categories }: { categories: DbProductCateg
       variant_name: variantName.trim() || undefined,
       variant_sku: variantSku.trim() || undefined,
       variant_price: parseFloat(variantPrice) || 0,
-      variant_compare_at_price: variantCompareAtPrice ? parseFloat(variantCompareAtPrice) : undefined,
+      variant_compare_at_price: variantCompareAtPrice
+        ? parseFloat(variantCompareAtPrice)
+        : undefined,
       variant_stock: parseInt(variantStock, 10) || 0,
       variant_weight: parseInt(variantWeight, 10) || 100,
     });
@@ -70,7 +72,9 @@ export function AdminNewProductForm({ categories }: { categories: DbProductCateg
       {message && (
         <div
           className={`rounded-lg border px-4 py-3 ${
-            message.type === 'ok' ? 'border-green-200 bg-green-50 text-green-800' : 'border-red-200 bg-red-50 text-red-800'
+            message.type === 'ok'
+              ? 'border-green-200 bg-green-50 text-green-800'
+              : 'border-red-200 bg-red-50 text-red-800'
           }`}
         >
           {message.text}
@@ -91,7 +95,9 @@ export function AdminNewProductForm({ categories }: { categories: DbProductCateg
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Slug (optional, auto from name)</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Slug (optional, auto from name)
+            </label>
             <input
               type="text"
               value={slug}
@@ -110,7 +116,10 @@ export function AdminNewProductForm({ categories }: { categories: DbProductCateg
             />
           </div>
           <div>
-            <label htmlFor="new-product-category" className="block text-sm font-medium text-gray-700 mb-1">
+            <label
+              htmlFor="new-product-category"
+              className="block text-sm font-medium text-gray-700 mb-1"
+            >
               Category
             </label>
             <ProductCategorySelect
@@ -141,19 +150,39 @@ export function AdminNewProductForm({ categories }: { categories: DbProductCateg
           </div>
           <div className="flex gap-6">
             <label className="flex items-center gap-2">
-              <input type="checkbox" checked={isFeatured} onChange={(e) => setIsFeatured(e.target.checked)} className="rounded border-gray-300" />
+              <input
+                type="checkbox"
+                checked={isFeatured}
+                onChange={(e) => setIsFeatured(e.target.checked)}
+                className="rounded border-gray-300"
+              />
               <span className="text-sm text-gray-700">Featured</span>
             </label>
             <label className="flex items-center gap-2">
-              <input type="checkbox" checked={isNew} onChange={(e) => setIsNew(e.target.checked)} className="rounded border-gray-300" />
+              <input
+                type="checkbox"
+                checked={isNew}
+                onChange={(e) => setIsNew(e.target.checked)}
+                className="rounded border-gray-300"
+              />
               <span className="text-sm text-gray-700">New</span>
             </label>
             <label className="flex items-center gap-2">
-              <input type="checkbox" checked={isBestSeller} onChange={(e) => setIsBestSeller(e.target.checked)} className="rounded border-gray-300" />
+              <input
+                type="checkbox"
+                checked={isBestSeller}
+                onChange={(e) => setIsBestSeller(e.target.checked)}
+                className="rounded border-gray-300"
+              />
               <span className="text-sm text-gray-700">Best seller</span>
             </label>
             <label className="flex items-center gap-2">
-              <input type="checkbox" checked={isHeroProduct} onChange={(e) => setIsHeroProduct(e.target.checked)} className="rounded border-gray-300" />
+              <input
+                type="checkbox"
+                checked={isHeroProduct}
+                onChange={(e) => setIsHeroProduct(e.target.checked)}
+                className="rounded border-gray-300"
+              />
               <span className="text-sm text-gray-700">Hero section</span>
             </label>
           </div>
@@ -163,7 +192,9 @@ export function AdminNewProductForm({ categories }: { categories: DbProductCateg
       <section className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
         <h2 className="text-lg font-semibold text-gray-900 mb-4">Image</h2>
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Image URL (optional)</label>
+          <label className="block text-sm font-medium text-gray-700 mb-1">
+            Image URL (optional)
+          </label>
           <input
             type="text"
             value={imageUrl}
@@ -212,7 +243,9 @@ export function AdminNewProductForm({ categories }: { categories: DbProductCateg
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Compare at price (₹)</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Compare at price (₹)
+              </label>
               <input
                 type="number"
                 step="0.01"
@@ -254,7 +287,9 @@ export function AdminNewProductForm({ categories }: { categories: DbProductCateg
           disabled={saving || isNavPending}
           className="inline-flex items-center justify-center gap-2 rounded bg-orange-600 px-4 py-2 text-white font-medium hover:bg-orange-700 disabled:opacity-50"
         >
-          {(saving || isNavPending) && <Loader2 className="h-4 w-4 shrink-0 animate-spin" aria-hidden />}
+          {(saving || isNavPending) && (
+            <Loader2 className="h-4 w-4 shrink-0 animate-spin" aria-hidden />
+          )}
           {saving ? 'Creating…' : isNavPending ? 'Opening editor…' : 'Create product'}
         </button>
         <AdminLink

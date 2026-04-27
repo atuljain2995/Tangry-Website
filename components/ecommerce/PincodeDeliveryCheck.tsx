@@ -53,7 +53,8 @@ export function PincodeDeliveryCheck() {
         Delivery estimate
       </div>
       <p className="mb-3 text-xs text-gray-600">
-        Enter your PIN code for an indicative delivery window (business days, order processing included).
+        Enter your PIN code for an indicative delivery window (business days, order processing
+        included).
       </p>
       <form onSubmit={check} className="flex flex-col gap-2 sm:flex-row sm:items-stretch">
         <label className="sr-only" htmlFor="product-pincode">

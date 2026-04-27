@@ -20,11 +20,13 @@ const NE_STATES = new Set(
     'nagaland',
     'sikkim',
     'tripura',
-  ].map((s) => s.toLowerCase())
+  ].map((s) => s.toLowerCase()),
 );
 
 const REMOTE_STATES = new Set(
-  ['jammu and kashmir', 'ladakh', 'andaman and nicobar islands', 'lakshadweep'].map((s) => s.toLowerCase())
+  ['jammu and kashmir', 'ladakh', 'andaman and nicobar islands', 'lakshadweep'].map((s) =>
+    s.toLowerCase(),
+  ),
 );
 
 /** Major hubs / well-connected states — typical shorter surface transit */
@@ -52,7 +54,7 @@ const FAST_STATES = new Set(
     'himachal pradesh',
     'uttarakhand',
     'puducherry',
-  ].map((s) => s.toLowerCase())
+  ].map((s) => s.toLowerCase()),
 );
 
 function zoneForState(state: string): 'fast' | 'medium' | 'slow' {
@@ -90,10 +92,9 @@ type PostalApiEntry = {
 /**
  * Resolve PIN code via India Post public API and map state to estimated delivery band.
  */
-export async function lookupPincodeDelivery(pincode: string): Promise<
-  | { ok: true; data: PincodeLookupResult }
-  | { ok: false; error: string }
-> {
+export async function lookupPincodeDelivery(
+  pincode: string,
+): Promise<{ ok: true; data: PincodeLookupResult } | { ok: false; error: string }> {
   const pc = pincode.trim();
   if (!validatePinCode(pc)) {
     return { ok: false, error: 'Enter a valid 6-digit PIN code' };
@@ -153,7 +154,7 @@ export function addBusinessDays(from: Date, days: number): Date {
 
 export function estimateDeliveryRangeFromPincode(
   minDays: number,
-  maxDays: number
+  maxDays: number,
 ): { min: Date; max: Date } {
   const today = new Date();
   return {

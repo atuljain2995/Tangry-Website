@@ -32,7 +32,7 @@ function isSupabaseStorageConfigured(): boolean {
 async function uploadToR2(
   buffer: Buffer,
   fileName: string,
-  contentType: string
+  contentType: string,
 ): Promise<string | null> {
   const accountId = process.env.R2_ACCOUNT_ID;
   const accessKeyId = process.env.R2_ACCESS_KEY_ID;
@@ -62,7 +62,7 @@ async function uploadToR2(
         Key: fileName,
         Body: buffer,
         ContentType: contentType,
-      })
+      }),
     );
     return `${publicBaseUrl}/${fileName}`;
   } catch (err) {
@@ -78,7 +78,7 @@ async function uploadToR2(
 async function uploadToSupabaseStorage(
   buffer: Buffer,
   fileName: string,
-  contentType: string
+  contentType: string,
 ): Promise<string | null> {
   if (!isSupabaseStorageConfigured()) {
     return null;
@@ -96,9 +96,7 @@ async function uploadToSupabaseStorage(
     return null;
   }
 
-  const { data: urlData } = supabaseAdmin.storage
-    .from(STORAGE_BUCKET)
-    .getPublicUrl(data.path);
+  const { data: urlData } = supabaseAdmin.storage.from(STORAGE_BUCKET).getPublicUrl(data.path);
   return urlData?.publicUrl ?? null;
 }
 
@@ -110,7 +108,7 @@ async function uploadToSupabaseStorage(
 export async function uploadProductImage(
   buffer: Buffer,
   fileName: string,
-  contentType: string
+  contentType: string,
 ): Promise<string | null> {
   if (isR2Configured()) {
     const url = await uploadToR2(buffer, fileName, contentType);

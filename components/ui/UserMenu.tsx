@@ -28,7 +28,10 @@ export function UserMenu() {
           title="Sign in or create account"
         >
           {loading ? (
-            <span className="block h-5 w-5 animate-pulse rounded-full bg-gray-300 dark:bg-neutral-600" aria-hidden />
+            <span
+              className="block h-5 w-5 animate-pulse rounded-full bg-gray-300 dark:bg-neutral-600"
+              aria-hidden
+            />
           ) : (
             <User className="w-5 h-5" />
           )}
@@ -119,7 +122,9 @@ export function UserMenu() {
                 )}
               </div>
               <div className="min-w-0 flex-1">
-                <p className="truncate text-sm font-medium text-gray-900 dark:text-neutral-100">{displayName}</p>
+                <p className="truncate text-sm font-medium text-gray-900 dark:text-neutral-100">
+                  {displayName}
+                </p>
                 <p className="truncate text-xs text-gray-500 dark:text-neutral-400">{user.email}</p>
               </div>
             </div>

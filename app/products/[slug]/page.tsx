@@ -1,15 +1,20 @@
-import { Metadata } from "next";
-import { notFound } from "next/navigation";
-import { StructuredData } from "@/components/seo/StructuredData";
-import { PRODUCT_CATEGORIES } from "@/lib/data/products";
-import { getBreadcrumbSchema, getProductSchema, getFAQSchema, getProductFAQs } from "@/lib/utils/schema";
-import { ProductPageClient } from "./ProductPageClient";
+import { Metadata } from 'next';
+import { notFound } from 'next/navigation';
+import { StructuredData } from '@/components/seo/StructuredData';
+import { PRODUCT_CATEGORIES } from '@/lib/data/products';
+import {
+  getBreadcrumbSchema,
+  getProductSchema,
+  getFAQSchema,
+  getProductFAQs,
+} from '@/lib/utils/schema';
+import { ProductPageClient } from './ProductPageClient';
 import {
   getProductBySlug,
   getRelatedProducts,
   getAllProducts,
   getProductReviews,
-} from "@/lib/db/queries";
+} from '@/lib/db/queries';
 
 interface PageProps {
   params: Promise<{ slug: string }>;
@@ -27,15 +32,13 @@ export async function generateStaticParams() {
 }
 
 // Generate metadata for SEO
-export async function generateMetadata({
-  params,
-}: PageProps): Promise<Metadata> {
+export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const resolvedParams = await params;
   const product = await getProductBySlug(resolvedParams.slug);
 
   if (!product) {
     return {
-      title: "Product Not Found",
+      title: 'Product Not Found',
     };
   }
 
@@ -72,11 +75,11 @@ export default async function ProductPage({ params }: PageProps) {
   );
   const categoryUrl = matchedCategory
     ? `https://www.tangryspices.com/categories/${matchedCategory.id}`
-    : "https://www.tangryspices.com/products";
+    : 'https://www.tangryspices.com/products';
 
   const breadcrumbs = [
-    { name: "Home", url: "https://www.tangryspices.com" },
-    { name: "Products", url: "https://www.tangryspices.com/products" },
+    { name: 'Home', url: 'https://www.tangryspices.com' },
+    { name: 'Products', url: 'https://www.tangryspices.com/products' },
     { name: product.category, url: categoryUrl },
     {
       name: product.name,
@@ -89,7 +92,11 @@ export default async function ProductPage({ params }: PageProps) {
   return (
     <>
       <StructuredData
-        data={[getProductSchema(product, reviews), getBreadcrumbSchema(breadcrumbs), getFAQSchema(productFAQs)]}
+        data={[
+          getProductSchema(product, reviews),
+          getBreadcrumbSchema(breadcrumbs),
+          getFAQSchema(productFAQs),
+        ]}
       />
       <ProductPageClient product={product} relatedProducts={relatedProducts} />
     </>

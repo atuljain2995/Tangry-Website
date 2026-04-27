@@ -17,6 +17,7 @@
 Click this link: https://supabase.com/dashboard/project/pmknwgwbwfyvrkfbrccu/sql/new
 
 Or:
+
 1. Go to: https://supabase.com/dashboard
 2. Click on your project: **pmknwgwbwfyvrkfbrccu**
 3. Click **SQL Editor** in left sidebar
@@ -105,6 +106,7 @@ npm run test-db
 ```
 
 **Expected Output:**
+
 ```
 🔍 Testing Supabase connection...
 
@@ -125,16 +127,19 @@ Test 3: Fetching single product...
 ## 🎉 Success! What's Next?
 
 Your website will now:
+
 - ✅ Load products from Supabase database
 - ✅ Save orders to database
 - ✅ Track inventory in real-time
 - ✅ Store user data securely
 
 ### View Your Data:
+
 - **Products**: https://supabase.com/dashboard/project/pmknwgwbwfyvrkfbrccu/editor/products
 - **Orders**: https://supabase.com/dashboard/project/pmknwgwbwfyvrkfbrccu/editor/orders
 
 ### Add More Products:
+
 1. Go to Table Editor → products
 2. Click **+ Insert row**
 3. Fill in product details
@@ -145,20 +150,24 @@ Your website will now:
 ## 🐛 Troubleshooting
 
 ### SQL Error: "syntax error at or near..."
+
 - **Fix**: Make sure you copied the ENTIRE file content
 - Check you're not missing the first few lines
 - Try copying again
 
 ### SQL Error: "relation already exists"
+
 - **Fix**: Tables already exist! Skip to Step 5 to test
 - Or drop tables first (ask if you need help)
 
 ### Still getting "fetch failed"
+
 - **Fix**: Check your internet connection
 - Make sure Supabase project is active
 - Try refreshing the dashboard
 
 ### Can't find SQL Editor
+
 ```
 Dashboard → Left Sidebar → SQL Editor
 (Icon looks like </> or "SQL")
@@ -208,6 +217,7 @@ Left Sidebar:
 ## Ready? Let's Do This! 🚀
 
 **Start now:**
+
 1. Open: https://supabase.com/dashboard/project/pmknwgwbwfyvrkfbrccu/sql/new
 2. Copy from `001_initial_schema.sql`
 3. Paste and Run
@@ -216,4 +226,3 @@ Left Sidebar:
 6. Run `npm run test-db`
 
 Let me know when you've completed this and I'll help you with the next steps!
-

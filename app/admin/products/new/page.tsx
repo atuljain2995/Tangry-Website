@@ -13,7 +13,9 @@ export default async function AdminNewProductPage() {
           ← Products
         </AdminLink>
         <h1 className="mt-1 text-2xl font-bold text-gray-900">Add product</h1>
-        <p className="mt-1 text-sm text-gray-500">Create a new product with at least one variant.</p>
+        <p className="mt-1 text-sm text-gray-500">
+          Create a new product with at least one variant.
+        </p>
       </div>
       <AdminNewProductForm categories={categories} />
     </div>

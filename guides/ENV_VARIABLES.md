@@ -5,6 +5,7 @@ Copy these variables to your `.env.local` file and replace with your actual valu
 ## Database Configuration
 
 ### Option A: Supabase (Recommended)
+
 ```env
 NEXT_PUBLIC_SUPABASE_URL=https://xxxxx.supabase.co
 NEXT_PUBLIC_SUPABASE_ANON_KEY=your_anon_key_here
@@ -12,6 +13,7 @@ SUPABASE_SERVICE_ROLE_KEY=your_service_role_key_here
 ```
 
 ### Option B: Direct PostgreSQL
+
 ```env
 DATABASE_URL=postgresql://username:password@host:5432/database
 ```
@@ -21,6 +23,7 @@ DATABASE_URL=postgresql://username:password@host:5432/database
 ## Payment Gateways
 
 ### Razorpay (India)
+
 ```env
 RAZORPAY_KEY_ID=rzp_test_xxxxxx
 RAZORPAY_KEY_SECRET=your_secret_here
@@ -28,6 +31,7 @@ NEXT_PUBLIC_RAZORPAY_KEY_ID=rzp_test_xxxxxx
 ```
 
 ### Stripe (International)
+
 ```env
 STRIPE_SECRET_KEY=sk_test_xxxxxx
 NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=pk_test_xxxxxx
@@ -39,12 +43,14 @@ STRIPE_WEBHOOK_SECRET=whsec_xxxxxx
 ## Authentication
 
 ### NextAuth
+
 ```env
 NEXTAUTH_SECRET=generate_random_string_here
 NEXTAUTH_URL=http://localhost:3000
 ```
 
 ### Google OAuth (Optional)
+
 ```env
 GOOGLE_CLIENT_ID=your_google_client_id
 GOOGLE_CLIENT_SECRET=your_google_client_secret
@@ -55,6 +61,7 @@ GOOGLE_CLIENT_SECRET=your_google_client_secret
 ## Email Service
 
 ### Resend (Recommended)
+
 ```env
 RESEND_API_KEY=re_xxxxxx
 # Optional: verified domain sender (defaults to Resend onboarding address)
@@ -64,11 +71,13 @@ ORDER_CONFIRMATION_FROM=Tangry Spices <orders@yourdomain.com>
 When `RESEND_API_KEY` is set, the app sends an **order confirmation** email to the customer after a successful **COD** or **verified Razorpay** checkout. Without `ORDER_CONFIRMATION_FROM`, a default Resend sender is used (may only deliver to your account email until you verify a domain).
 
 ### SendGrid (Alternative)
+
 ```env
 SENDGRID_API_KEY=SG.xxxxxx
 ```
 
 ### Brevo/Sendinblue (Alternative)
+
 ```env
 BREVO_API_KEY=your_api_key
 ```
@@ -143,6 +152,7 @@ NEXT_PUBLIC_DOMAIN=tangryspices.com
 ## Security Notes
 
 ⚠️ **Important:**
+
 - Never commit `.env.local` to version control
 - Use test keys for development
 - Use production keys only in production
@@ -166,10 +176,12 @@ console.log('GA ID:', process.env.NEXT_PUBLIC_GA_ID);
 ## Required vs Optional
 
 ### Required for Basic Functionality:
+
 - ✅ Database (Supabase OR PostgreSQL)
 - ✅ At least one payment gateway (Razorpay OR Stripe)
 
 ### Optional (Can add later):
+
 - ⭕ Authentication (for user accounts)
 - ⭕ Email service (for notifications)
 - ⭕ Analytics (for tracking)
@@ -193,4 +205,3 @@ RAZORPAY_KEY_SECRET=your_secret
 ```
 
 You can add other variables as you implement features!
-

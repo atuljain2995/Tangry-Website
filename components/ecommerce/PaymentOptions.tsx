@@ -22,7 +22,7 @@ export const PaymentOptions = ({ onSubmit, onBack, isProcessing = false }: Payme
       description: 'Razorpay - Credit/Debit Cards, UPI, Wallets',
       icon: CreditCard,
       available: true,
-      recommended: true
+      recommended: true,
     },
     {
       id: 'cod' as PaymentMethod,
@@ -30,8 +30,8 @@ export const PaymentOptions = ({ onSubmit, onBack, isProcessing = false }: Payme
       description: 'Pay when you receive the product',
       icon: Banknote,
       available: true,
-      recommended: false
-    }
+      recommended: false,
+    },
   ];
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -43,7 +43,7 @@ export const PaymentOptions = ({ onSubmit, onBack, isProcessing = false }: Payme
     <form onSubmit={handleSubmit} className="space-y-6">
       <div>
         <h2 className="text-2xl font-bold text-gray-900 mb-6">Select Payment Method</h2>
-        
+
         <div className="space-y-3">
           {paymentMethods.map((method) => (
             <button
@@ -58,9 +58,13 @@ export const PaymentOptions = ({ onSubmit, onBack, isProcessing = false }: Payme
               } ${!method.available ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
             >
               <div className="flex items-start space-x-4">
-                <div className={`p-3 rounded-full ${
-                  selectedMethod === method.id ? 'bg-[#D32F2F] text-white' : 'bg-gray-100 text-gray-600'
-                }`}>
+                <div
+                  className={`p-3 rounded-full ${
+                    selectedMethod === method.id
+                      ? 'bg-[#D32F2F] text-white'
+                      : 'bg-gray-100 text-gray-600'
+                  }`}
+                >
                   <method.icon size={24} />
                 </div>
                 <div className="flex-1">
@@ -80,11 +84,13 @@ export const PaymentOptions = ({ onSubmit, onBack, isProcessing = false }: Payme
                   <p className="text-sm text-gray-600 mt-1">{method.description}</p>
                 </div>
                 <div className="flex-shrink-0">
-                  <div className={`w-5 h-5 rounded-full border-2 ${
-                    selectedMethod === method.id
-                      ? 'border-[#D32F2F] bg-[#D32F2F]'
-                      : 'border-gray-300'
-                  } flex items-center justify-center`}>
+                  <div
+                    className={`w-5 h-5 rounded-full border-2 ${
+                      selectedMethod === method.id
+                        ? 'border-[#D32F2F] bg-[#D32F2F]'
+                        : 'border-gray-300'
+                    } flex items-center justify-center`}
+                  >
                     {selectedMethod === method.id && (
                       <div className="w-2.5 h-2.5 bg-white rounded-full" />
                     )}
@@ -148,4 +154,3 @@ export const PaymentOptions = ({ onSubmit, onBack, isProcessing = false }: Payme
     </form>
   );
 };
-

@@ -3,7 +3,10 @@
 import { revalidatePath } from 'next/cache';
 import { supabaseAdmin } from '@/lib/db/supabase';
 import { incrementCouponUsage, decrementVariantStock } from '@/lib/db/queries';
-import { computeTrustedOrderDraft, orderLinesFromCartItems } from '@/lib/orders/compute-trusted-order';
+import {
+  computeTrustedOrderDraft,
+  orderLinesFromCartItems,
+} from '@/lib/orders/compute-trusted-order';
 import { generateOrderNumber } from '@/lib/utils/database';
 import { sendOrderConfirmationEmail } from '@/lib/email/order-confirmation';
 import { getSessionUser } from '@/lib/auth/session';
@@ -25,7 +28,15 @@ export type CreateOrderResult =
   | { success: false; error: string };
 
 export async function createOrder(payload: CreateOrderPayload): Promise<CreateOrderResult> {
-  const { items, shippingAddress, billingAddress, paymentMethod, paymentId, userEmail, couponCode } = payload;
+  const {
+    items,
+    shippingAddress,
+    billingAddress,
+    paymentMethod,
+    paymentId,
+    userEmail,
+    couponCode,
+  } = payload;
 
   if (!items?.length) {
     return { success: false, error: 'Cart is empty' };
@@ -71,9 +82,10 @@ export async function createOrder(payload: CreateOrderPayload): Promise<CreateOr
     if (variant.stock < item.quantity) {
       return {
         success: false,
-        error: variant.stock === 0
-          ? `"${item.productName} – ${item.variantName}" is out of stock.`
-          : `Only ${variant.stock} units of "${item.productName} – ${item.variantName}" are available.`,
+        error:
+          variant.stock === 0
+            ? `"${item.productName} – ${item.variantName}" is out of stock.`
+            : `Only ${variant.stock} units of "${item.productName} – ${item.variantName}" are available.`,
       };
     }
   }
@@ -85,7 +97,10 @@ export async function createOrder(payload: CreateOrderPayload): Promise<CreateOr
     const ok = await decrementVariantStock(item.variantId, item.quantity);
     if (!ok) {
       // Stock changed between check and decrement — abort
-      return { success: false, error: `"${item.productName} – ${item.variantName}" just went out of stock. Please try again.` };
+      return {
+        success: false,
+        error: `"${item.productName} – ${item.variantName}" just went out of stock. Please try again.`,
+      };
     }
   }
 
@@ -93,26 +108,27 @@ export async function createOrder(payload: CreateOrderPayload): Promise<CreateOr
   const sessionUser = await getSessionUser().catch(() => null);
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const { error: orderError } = await (supabaseAdmin as any)
-    .from('orders')
-    .insert({
-      order_number: orderNumber,
-      user_id: sessionUser?.id ?? null,
-      user_email: userEmail.trim(),
-      items: orderItems,
-      subtotal,
-      discount,
-      tax,
-      shipping,
-      total,
-      currency: 'INR',
-      order_status: 'pending',
-      payment_status: paymentMethod === 'cod' || (paymentMethod === 'razorpay' && paymentId) ? 'completed' : 'pending',
-      payment_method: paymentMethod,
-      payment_id: paymentId ?? null,
-      shipping_address: shippingAddress,
-      billing_address: billingAddress,
-    });
+  const { error: orderError } = await (supabaseAdmin as any).from('orders').insert({
+    order_number: orderNumber,
+    user_id: sessionUser?.id ?? null,
+    user_email: userEmail.trim(),
+    items: orderItems,
+    subtotal,
+    discount,
+    tax,
+    shipping,
+    total,
+    currency: 'INR',
+    order_status: 'pending',
+    payment_status:
+      paymentMethod === 'cod' || (paymentMethod === 'razorpay' && paymentId)
+        ? 'completed'
+        : 'pending',
+    payment_method: paymentMethod,
+    payment_id: paymentId ?? null,
+    shipping_address: shippingAddress,
+    billing_address: billingAddress,
+  });
 
   if (orderError) {
     console.error('Order insert error:', orderError);
@@ -123,8 +139,7 @@ export async function createOrder(payload: CreateOrderPayload): Promise<CreateOr
     await incrementCouponUsage(couponId);
   }
 
-  const paymentCompleted =
-    paymentMethod === 'cod' || (paymentMethod === 'razorpay' && paymentId);
+  const paymentCompleted = paymentMethod === 'cod' || (paymentMethod === 'razorpay' && paymentId);
   if (paymentCompleted) {
     void sendOrderConfirmationEmail({
       to: userEmail.trim(),
@@ -143,11 +158,19 @@ export async function createOrder(payload: CreateOrderPayload): Promise<CreateOr
   return { success: true, orderNumber };
 }
 
-const VALID_ORDER_STATUSES = ['pending', 'confirmed', 'processing', 'shipped', 'delivered', 'cancelled', 'refunded'] as const;
+const VALID_ORDER_STATUSES = [
+  'pending',
+  'confirmed',
+  'processing',
+  'shipped',
+  'delivered',
+  'cancelled',
+  'refunded',
+] as const;
 
 export async function updateOrderStatus(
   orderId: string,
-  orderStatus: string
+  orderStatus: string,
 ): Promise<{ success: true } | { success: false; error: string }> {
   if (!VALID_ORDER_STATUSES.includes(orderStatus as (typeof VALID_ORDER_STATUSES)[number])) {
     return { success: false, error: 'Invalid status' };
@@ -169,7 +192,7 @@ export async function updateOrderStatus(
 
 export async function setOrderTrackingNumber(
   orderId: string,
-  trackingNumber: string | null
+  trackingNumber: string | null,
 ): Promise<{ success: true } | { success: false; error: string }> {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const { error } = await (supabaseAdmin as any)

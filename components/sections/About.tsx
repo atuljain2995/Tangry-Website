@@ -11,13 +11,14 @@ export const About = () => {
               <MapPin size={18} /> Jhotwara, Jaipur
             </div>
             <h2 className="text-4xl md:text-6xl font-black mb-6 leading-none">
-              ROOTED IN RAJASTHAN. <br/>
+              ROOTED IN RAJASTHAN. <br />
               <span className="text-gray-500">BUILT FOR EVERY KITCHEN.</span>
             </h2>
             <p className="text-gray-400 text-lg mb-8 leading-relaxed max-w-lg">
-              Tangry is crafted in <strong>Jhotwara, Jaipur</strong>. We blend masalas and ready-to-eat powders in
-              small batches, source ingredients from trusted partners across India, and pack under FSSAI
-              supervision—so what reaches your shelf matches what we serve at home.
+              Tangry is crafted in <strong>Jhotwara, Jaipur</strong>. We blend masalas and
+              ready-to-eat powders in small batches, source ingredients from trusted partners across
+              India, and pack under FSSAI supervision—so what reaches your shelf matches what we
+              serve at home.
             </p>
             <div className="grid grid-cols-2 gap-6">
               <div className="bg-gray-800 p-6 rounded-2xl border border-gray-700">
@@ -31,7 +32,7 @@ export const About = () => {
                 <p className="text-sm text-gray-300">FSSAI & ISO 22000.</p>
               </div>
             </div>
-            
+
             {/* Key Points */}
             <div className="mt-8 space-y-3">
               <div className="flex items-center gap-3">
@@ -44,11 +45,13 @@ export const About = () => {
               </div>
               <div className="flex items-center gap-3">
                 <CheckCircle className="text-orange-500 flex-shrink-0" size={20} />
-                <span className="text-gray-300 font-medium">No artificial colors or preservatives</span>
+                <span className="text-gray-300 font-medium">
+                  No artificial colors or preservatives
+                </span>
               </div>
             </div>
           </div>
-          
+
           {/* India Map Component */}
           <div className="relative flex justify-center items-center">
             <IndiaMap />

@@ -38,7 +38,9 @@ export const Testimonials = () => {
               className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 flex flex-col"
             >
               <Quote className="text-orange-200 mb-3" size={28} aria-hidden />
-              <p className="text-gray-700 font-medium leading-relaxed flex-1 mb-4">&ldquo;{t.quote}&rdquo;</p>
+              <p className="text-gray-700 font-medium leading-relaxed flex-1 mb-4">
+                &ldquo;{t.quote}&rdquo;
+              </p>
               <div className="flex items-center gap-1 text-orange-500 mb-2" aria-hidden>
                 {[...Array(5)].map((_, j) => (
                   <Star key={j} size={14} className="fill-orange-400 text-orange-400" />

@@ -1,6 +1,7 @@
 # 🔧 Fix: Product Variants Missing
 
 ## Problem
+
 The `product_variants` table doesn't exist in your database, causing product detail pages to crash.
 
 ## ✅ Quick Fix (3 minutes)
@@ -20,6 +21,7 @@ The `product_variants` table doesn't exist in your database, causing product det
 6. Wait for success message: ✅ "Success"
 
 You should see output like:
+
 ```
 product_variants    0
 product_images      5
@@ -40,6 +42,7 @@ This confirms the tables are created!
 5. Click **Run**
 
 6. You should see output like:
+
 ```
 Biryani Masala          3
 Paneer Tikka Masala Mix 2
@@ -70,18 +73,19 @@ This shows each product now has variants!
 ## What Gets Added
 
 ### Tables Created:
+
 - **`product_variants`** - Stores different sizes/weights for each product
 - **`product_images`** - Stores product image URLs
 
 ### Data Added:
 
-| Product | Variants | Price Range |
-|---------|----------|-------------|
-| Garam Masala | 50g, 100g, 200g | ₹45 - ₹165 |
-| Turmeric Powder | 50g, 100g, 200g, 500g | ₹30 - ₹245 |
-| Red Chilli Powder | 100g, 200g, 500g | ₹55 - ₹245 |
-| Paneer Tikka Masala | 50g, 100g | ₹65 - ₹120 |
-| Biryani Masala | 50g, 100g, 200g | ₹50 - ₹185 |
+| Product             | Variants              | Price Range |
+| ------------------- | --------------------- | ----------- |
+| Garam Masala        | 50g, 100g, 200g       | ₹45 - ₹165  |
+| Turmeric Powder     | 50g, 100g, 200g, 500g | ₹30 - ₹245  |
+| Red Chilli Powder   | 100g, 200g, 500g      | ₹55 - ₹245  |
+| Paneer Tikka Masala | 50g, 100g             | ₹65 - ₹120  |
+| Biryani Masala      | 50g, 100g, 200g       | ₹50 - ₹185  |
 
 **Total:** 18 product variants across 5 products
 
@@ -121,17 +125,19 @@ Once fixed, each product page will show:
 When adding new products, remember to also add:
 
 ### 1. Product Variants
+
 ```sql
 INSERT INTO product_variants (product_id, name, sku, price, stock, weight, is_available)
-VALUES 
+VALUES
   ('your-product-id', '50g', 'SKU-50', 45.00, 500, 50, true),
   ('your-product-id', '100g', 'SKU-100', 85.00, 400, 100, true);
 ```
 
 ### 2. Product Images
+
 ```sql
 INSERT INTO product_images (product_id, url, alt_text, display_order)
-VALUES 
+VALUES
   ('your-product-id', '/products/your-product.jpg', 'Your Product Name', 0);
 ```
 
@@ -140,20 +146,26 @@ VALUES
 ## Troubleshooting
 
 ### Error: "relation already exists"
+
 ✅ Good! This means the table is already created. Skip to Step 2.
 
 ### Error: "foreign key violation"
+
 ❌ Make sure products exist in the `products` table first.
 Run this to check:
+
 ```sql
 SELECT id, name, slug FROM products;
 ```
 
 ### Products still showing error after migration
+
 1. Check if variants were added:
+
 ```sql
 SELECT COUNT(*) FROM product_variants;
 ```
+
 Should return: 18
 
 2. Refresh your browser (Cmd+R or Ctrl+R)

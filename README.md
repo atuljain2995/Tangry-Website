@@ -26,7 +26,7 @@ A modern, high-performance e-commerce platform for authentic Indian spices. Buil
 
 ### Prerequisites
 
-- Node.js 18+ 
+- Node.js 18+
 - npm or yarn
 - Supabase account (free tier works!)
 
@@ -156,6 +156,7 @@ For production uploads, configure **Supabase Storage** or **Cloudflare R2** (see
 ## 🌟 Key Features
 
 ### E-Commerce
+
 - ✅ Product catalog with variants
 - ✅ Shopping cart with local storage
 - ✅ Multi-step checkout
@@ -163,6 +164,7 @@ For production uploads, configure **Supabase Storage** or **Cloudflare R2** (see
 - ✅ Razorpay + COD; Stripe UI without full gateway flow
 
 ### Marketing
+
 - ✅ SEO optimization (meta tags, structured data)
 - ✅ Blog for content marketing
 - ✅ Recipe section with spice usage
@@ -171,11 +173,13 @@ For production uploads, configure **Supabase Storage** or **Cloudflare R2** (see
 - ✅ Social media integration
 
 ### B2B
+
 - ✅ Wholesale inquiry page
 - ✅ Bulk order quotes
 - ✅ Corporate contact forms
 
 ### Analytics
+
 - ✅ Google Analytics 4 integration (when `NEXT_PUBLIC_GA_ID` is set)
 - ✅ Conversion tracking setup
 - ✅ Meta Pixel / Hotjar (when env IDs are set)
@@ -183,6 +187,7 @@ For production uploads, configure **Supabase Storage** or **Cloudflare R2** (see
 ## 📈 Marketing Strategy
 
 Low-budget marketing approach included:
+
 - **SEO:** Organic search optimization
 - **Content:** Blog posts and recipes
 - **Social Media:** Instagram, Facebook, Pinterest

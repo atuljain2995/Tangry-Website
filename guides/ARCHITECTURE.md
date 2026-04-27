@@ -43,11 +43,13 @@ everest-clone/
 ## 🏗️ Architecture Principles
 
 ### 1. **Component-Based Architecture**
+
 - **Separation of Concerns**: Each component has a single responsibility
 - **Reusability**: UI components can be used across multiple sections
 - **Maintainability**: Easy to locate and update specific features
 
 ### 2. **Feature-Based Organization**
+
 ```
 Layout Components  → Shared across pages (Header, Footer)
 Section Components → Page-specific features (Hero, Stats, etc.)
@@ -55,11 +57,13 @@ UI Components      → Atomic reusable elements (NavLink, Icons)
 ```
 
 ### 3. **Data Layer**
+
 - All data is centralized in `lib/data/`
 - Type-safe with TypeScript interfaces
 - Easy to migrate to API calls later
 
 ### 4. **Next.js App Router Best Practices**
+
 - Server Components by default
 - Client Components marked with `'use client'` (for interactivity)
 - Path aliases (`@/components`, `@/lib`) for clean imports
@@ -67,6 +71,7 @@ UI Components      → Atomic reusable elements (NavLink, Icons)
 ## 📦 Component Categories
 
 ### UI Components (`components/ui/`)
+
 **Purpose**: Reusable, atomic UI elements
 
 - `ChiliIcon.tsx` - Custom SVG logo icon
@@ -75,6 +80,7 @@ UI Components      → Atomic reusable elements (NavLink, Icons)
 **When to add**: Small, reusable elements used across multiple sections
 
 ### Layout Components (`components/layout/`)
+
 **Purpose**: Persistent layout elements
 
 - `Header.tsx` - Top bar + navigation (sticky)
@@ -84,6 +90,7 @@ UI Components      → Atomic reusable elements (NavLink, Icons)
 **When to add**: Components that appear on all/most pages
 
 ### Section Components (`components/sections/`)
+
 **Purpose**: Self-contained page sections
 
 - `Hero.tsx` - Hero carousel with auto-slide
@@ -116,6 +123,7 @@ export const FeaturedProducts = () => {
 ```
 
 **Use Client Components when you need:**
+
 - `useState`, `useEffect`, or other React hooks
 - Event handlers (`onClick`, `onChange`, etc.)
 - Browser APIs (`window`, `document`)
@@ -153,6 +161,7 @@ export default function Home() {
 ## 📋 Data Management
 
 ### Current Approach: Static Data
+
 ```typescript
 // lib/data/products.ts
 export const PRODUCT_CATEGORIES: ProductCategory[] = [
@@ -162,6 +171,7 @@ export const PRODUCT_CATEGORIES: ProductCategory[] = [
 ```
 
 ### Future: API Integration
+
 ```typescript
 // lib/api/products.ts
 export async function getProducts() {
@@ -178,6 +188,7 @@ const products = await getProducts(); // Server Component
 ### Adding a New Section
 
 1. **Create section component**:
+
    ```typescript
    // components/sections/NewSection.tsx
    export const NewSection = () => {
@@ -190,16 +201,18 @@ const products = await getProducts(); // Server Component
    ```
 
 2. **Export from index**:
+
    ```typescript
    // components/sections/index.ts
    export { NewSection } from './NewSection';
    ```
 
 3. **Add to page**:
+
    ```typescript
    // app/page.tsx
    import { NewSection } from '@/components/sections';
-   
+
    export default function Home() {
      return (
        <main>
@@ -213,16 +226,18 @@ const products = await getProducts(); // Server Component
 ### Adding a New Page
 
 1. **Create new route folder**:
+
    ```
    app/about/page.tsx
    ```
 
 2. **Reuse existing components**:
+
    ```typescript
    // app/about/page.tsx
    import { Header, Footer } from '@/components/layout';
    import { About } from '@/components/sections';
-   
+
    export default function AboutPage() {
      return (
        <main>
@@ -237,9 +252,10 @@ const products = await getProducts(); // Server Component
 ## 🎨 Styling Approach
 
 ### Tailwind CSS v4
+
 ```css
 /* globals.css */
-@import "tailwindcss";
+@import 'tailwindcss';
 
 /* Custom animations */
 @keyframes scroll {
@@ -248,6 +264,7 @@ const products = await getProducts(); // Server Component
 ```
 
 ### Component Styling
+
 - **Utility-first**: Use Tailwind classes directly
 - **Responsive**: Use `md:`, `lg:` prefixes
 - **Custom colors**: Use brand colors consistently
@@ -258,11 +275,13 @@ const products = await getProducts(); // Server Component
 ## 🔍 State Management
 
 ### Local State (Current)
+
 ```typescript
 const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 ```
 
 ### Future: Context API (if needed)
+
 ```typescript
 // contexts/AppContext.tsx
 export const AppProvider = ({ children }) => {
@@ -303,4 +322,3 @@ __tests__/
 - [Next.js App Router Documentation](https://nextjs.org/docs/app)
 - [Tailwind CSS v4](https://tailwindcss.com/)
 - [React Component Patterns](https://www.patterns.dev/react)
-

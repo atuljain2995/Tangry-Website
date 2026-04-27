@@ -16,10 +16,7 @@ export const COMPANY_INFO = {
   wholesaleEmail: 'tangryspices@gmail.com',
   address:
     'A7, Marg No A5, Khatipura Road, Kumawat Colony, Jhotwara, Jaipur 302012, Rajasthan, India',
-  certifications: [
-    'FSSAI Licensed (12225026001713)',
-    'ISO 22000 Certified',
-  ],
+  certifications: ['FSSAI Licensed (12225026001713)', 'ISO 22000 Certified'],
 } as const;
 
 /**
@@ -36,9 +33,8 @@ export const SOCIAL_LINKS = {
 } as const;
 
 export const NAVIGATION_ITEMS = [
-  { label: "Home", href: "/" },
-  { label: "About Us", href: "/about" },
-  { label: "Recipes", href: "#recipes" },
-  { label: "Contact", href: "/contact" },
+  { label: 'Home', href: '/' },
+  { label: 'About Us', href: '/about' },
+  { label: 'Recipes', href: '#recipes' },
+  { label: 'Contact', href: '/contact' },
 ];
-

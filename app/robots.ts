@@ -1,22 +1,10 @@
 import { MetadataRoute } from 'next';
 
 // Private paths blocked from all crawlers
-const privatePaths = [
-  '/api/',
-  '/account/',
-  '/checkout/',
-  '/admin/',
-  '/_next/',
-  '/private/',
-];
+const privatePaths = ['/api/', '/account/', '/checkout/', '/admin/', '/_next/', '/private/'];
 
 // Private paths blocked from all crawlers (less /_next/ for Googlebot)
-const googlePrivatePaths = [
-  '/api/',
-  '/account/',
-  '/checkout/',
-  '/admin/',
-];
+const googlePrivatePaths = ['/api/', '/account/', '/checkout/', '/admin/'];
 
 export default function robots(): MetadataRoute.Robots {
   const baseUrl = 'https://www.tangryspices.com';
@@ -59,4 +47,3 @@ export default function robots(): MetadataRoute.Robots {
     sitemap: `${baseUrl}/sitemap.xml`,
   };
 }
-

@@ -106,6 +106,7 @@ npm run test-db
 ```
 
 **Expected Output:**
+
 ```
 🔍 Testing Supabase connection...
 ✅ Test 1: Fetching products... Success! Found 5 products
@@ -115,6 +116,7 @@ npm run test-db
 ```
 
 **If you see errors:**
+
 - Check your service role key is correct
 - Make sure migrations ran successfully
 - Verify tables exist in Supabase dashboard
@@ -136,24 +138,32 @@ npm run dev
 ## Quick Troubleshooting
 
 ### Error: "Failed to fetch products"
-**Fix:** 
+
+**Fix:**
+
 1. Check service role key in `.env.local`
 2. Make sure it starts with `eyJ`
 3. No extra spaces or quotes around it
 
 ### Error: "relation 'products' does not exist"
+
 **Fix:**
+
 1. Run the migrations (Step 2)
 2. Check Table Editor to verify tables exist
 
 ### Error: "Invalid API key"
+
 **Fix:**
+
 1. Make sure you copied the **service_role** key, not the anon key
 2. Check there's no extra spaces in `.env.local`
 3. Restart dev server after changing `.env.local`
 
 ### Products don't show up on website
+
 **Fix:**
+
 1. Make sure seed migration ran: `002_seed_products.sql`
 2. Check in Supabase Table Editor → products → should have 5 rows
 3. Clear browser cache and refresh
@@ -179,12 +189,14 @@ Once connected, your website will:
 Right now your website works with **static data** from `lib/data/productsExtended.ts`. This is good for testing!
 
 **With Supabase connected:**
+
 - Products come from database
 - You can add/edit products in Supabase dashboard
 - Inventory updates automatically
 - Orders are saved permanently
 
 **Without Supabase (current):**
+
 - Products from static file
 - Cart uses browser localStorage only
 - Orders not saved
@@ -201,6 +213,7 @@ npm run test-db
 ```
 
 It will tell you exactly what's wrong:
+
 - Connection issues
 - Missing tables
 - Invalid credentials
@@ -217,19 +230,14 @@ import { createServerClient } from '@/lib/db/supabase';
 
 // Fetch products
 const supabase = createServerClient();
-const { data: products } = await supabase
-  .from('products')
-  .select('*')
-  .eq('is_active', true);
+const { data: products } = await supabase.from('products').select('*').eq('is_active', true);
 
 // Create an order
-const { data: order } = await supabase
-  .from('orders')
-  .insert({
-    user_id: userId,
-    total: 299.99,
-    status: 'pending'
-  });
+const { data: order } = await supabase.from('orders').insert({
+  user_id: userId,
+  total: 299.99,
+  status: 'pending',
+});
 ```
 
 All the helper functions are already set up in `lib/db/supabase.ts`!
@@ -252,4 +260,3 @@ Complete these in order:
 **Time needed:** ~10 minutes
 
 Let me know when you've completed Step 1 (getting the service role key) and I'll help you with the next steps!
-

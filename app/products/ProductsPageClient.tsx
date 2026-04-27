@@ -22,32 +22,40 @@ export function ProductsPageClient({ products, categories }: ProductsPageClientP
   const router = useRouter();
   const pathname = usePathname();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [sortBy, setSortBy] = useState<'newest' | 'price-low' | 'price-high' | 'popular'>('popular');
+  const [sortBy, setSortBy] = useState<'newest' | 'price-low' | 'price-high' | 'popular'>(
+    'popular',
+  );
 
   // Derive selected category from URL search params (single source of truth)
   const selectedCategoryId = useMemo<'all' | string>(() => {
     const categoryParam = searchParams.get('category');
     if (!categoryParam) return 'all';
     const match = categories.find(
-      (c) => c.slug === categoryParam || c.id === categoryParam || c.title.toLowerCase() === categoryParam.toLowerCase()
+      (c) =>
+        c.slug === categoryParam ||
+        c.id === categoryParam ||
+        c.title.toLowerCase() === categoryParam.toLowerCase(),
     );
     return match ? match.id : 'all';
   }, [searchParams, categories]);
 
   // Update URL when category filter changes
-  const handleCategoryChange = useCallback((categoryId: 'all' | string) => {
-    const cat = categories.find((c) => c.id === categoryId);
-    analytics.trackFilter('category', categoryId === 'all' ? 'all' : (cat?.title ?? categoryId));
-    const params = new URLSearchParams(searchParams.toString());
-    if (categoryId === 'all') {
-      params.delete('category');
-    } else {
+  const handleCategoryChange = useCallback(
+    (categoryId: 'all' | string) => {
       const cat = categories.find((c) => c.id === categoryId);
-      params.set('category', cat?.slug || categoryId);
-    }
-    const qs = params.toString();
-    router.replace(`${pathname}${qs ? `?${qs}` : ''}`, { scroll: false });
-  }, [searchParams, categories, router, pathname]);
+      analytics.trackFilter('category', categoryId === 'all' ? 'all' : (cat?.title ?? categoryId));
+      const params = new URLSearchParams(searchParams.toString());
+      if (categoryId === 'all') {
+        params.delete('category');
+      } else {
+        const cat = categories.find((c) => c.id === categoryId);
+        params.set('category', cat?.slug || categoryId);
+      }
+      const qs = params.toString();
+      router.replace(`${pathname}${qs ? `?${qs}` : ''}`, { scroll: false });
+    },
+    [searchParams, categories, router, pathname],
+  );
 
   // Filter by DB category id, with title fallback for legacy rows without category_id
   let filteredProducts =
@@ -154,13 +162,14 @@ export function ProductsPageClient({ products, categories }: ProductsPageClientP
 
         {/* Product Count */}
         <p className="text-sm text-gray-500 mb-8 font-medium">
-          Showing <span className="font-bold text-gray-900">{filteredProducts.length}</span> {filteredProducts.length === 1 ? 'product' : 'products'}
+          Showing <span className="font-bold text-gray-900">{filteredProducts.length}</span>{' '}
+          {filteredProducts.length === 1 ? 'product' : 'products'}
         </p>
 
         {/* Products Grid */}
         {filteredProducts.length > 0 ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
-            {filteredProducts.map(product => (
+            {filteredProducts.map((product) => (
               <ProductCard key={product.id} product={product} />
             ))}
           </div>

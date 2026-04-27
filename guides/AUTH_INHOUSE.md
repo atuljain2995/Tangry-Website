@@ -18,7 +18,7 @@ Session cookie: **`tangry_sid`** (httpOnly, 7 days). Middleware and server code 
 1. **Run migration**  
    In Supabase **SQL Editor**, run:
    - **`lib/db/migrations/005_inhouse_auth.sql`**  
-   This adds `password_hash` to `users` and creates the `sessions` table.
+     This adds `password_hash` to `users` and creates the `sessions` table.
 
 2. **Create first admin**
 

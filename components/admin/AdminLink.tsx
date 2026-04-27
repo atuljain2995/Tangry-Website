@@ -29,7 +29,12 @@ export type AdminLinkProps = Omit<ComponentProps<typeof Link>, 'children'> & {
   showPendingSpinner?: boolean;
 };
 
-export function AdminLink({ children, className, showPendingSpinner = true, ...props }: AdminLinkProps) {
+export function AdminLink({
+  children,
+  className,
+  showPendingSpinner = true,
+  ...props
+}: AdminLinkProps) {
   return (
     <Link {...props} className={className}>
       <LinkPendingContent showSpinner={showPendingSpinner}>{children}</LinkPendingContent>

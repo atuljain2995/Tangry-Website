@@ -21,7 +21,7 @@ export default function WholesalePage() {
     gstNumber: '',
     businessType: '',
     estimatedMonthlyVolume: '',
-    message: ''
+    message: '',
   });
 
   const [status, setStatus] = useState<'idle' | 'sending' | 'success' | 'error'>('idle');
@@ -56,23 +56,23 @@ export default function WholesalePage() {
     {
       icon: Package,
       title: 'Bulk Pricing',
-      description: 'Competitive wholesale rates for large orders'
+      description: 'Competitive wholesale rates for large orders',
     },
     {
       icon: TrendingUp,
       title: 'Consistent Supply',
-      description: 'Reliable inventory for your business needs'
+      description: 'Reliable inventory for your business needs',
     },
     {
       icon: Users,
       title: 'Dedicated Support',
-      description: 'Personal account manager for B2B clients'
+      description: 'Personal account manager for B2B clients',
     },
     {
       icon: Building2,
       title: 'Custom Packaging',
-      description: 'Private labeling options available'
-    }
+      description: 'Private labeling options available',
+    },
   ];
 
   return (
@@ -89,12 +89,12 @@ export default function WholesalePage() {
               Wholesale &amp; B2B — Tangry from Jaipur
             </h1>
             <p className="text-xl mb-8 opacity-90">
-              Bulk masalas, ready powders, and pickles from Tangry (FSSAI &amp; ISO 22000). Tell us your business
-              type and volumes — we&apos;ll send a quote.
+              Bulk masalas, ready powders, and pickles from Tangry (FSSAI &amp; ISO 22000). Tell us
+              your business type and volumes — we&apos;ll send a quote.
             </p>
             <div className="flex flex-col sm:flex-row gap-4">
-              <a 
-                href="#inquiry-form" 
+              <a
+                href="#inquiry-form"
                 className="bg-white text-[#D32F2F] px-8 py-4 rounded-full font-bold hover:bg-gray-100 transition text-center"
               >
                 Request a Quote
@@ -133,14 +133,12 @@ export default function WholesalePage() {
       {/* Who We Serve */}
       <section className="py-16 bg-gray-50">
         <div className="container mx-auto px-6">
-          <h2 className="text-4xl font-bold text-center text-gray-900 mb-12">
-            Who We Serve
-          </h2>
+          <h2 className="text-4xl font-bold text-center text-gray-900 mb-12">Who We Serve</h2>
           <div className="grid md:grid-cols-3 gap-8">
             {[
               { title: 'Restaurants & Hotels', desc: 'Bulk supplies for commercial kitchens' },
               { title: 'Retailers & Distributors', desc: 'Wholesale pricing for resellers' },
-              { title: 'Food Manufacturers', desc: 'Custom blends and packaging' }
+              { title: 'Food Manufacturers', desc: 'Custom blends and packaging' },
             ].map((segment, index) => (
               <div key={index} className="bg-white p-8 rounded-lg shadow-md">
                 <h3 className="font-bold text-2xl text-gray-900 mb-3">{segment.title}</h3>
@@ -175,7 +173,7 @@ export default function WholesalePage() {
                     type="text"
                     required
                     value={formData.companyName}
-                    onChange={(e) => setFormData({...formData, companyName: e.target.value})}
+                    onChange={(e) => setFormData({ ...formData, companyName: e.target.value })}
                     className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#D32F2F]"
                     placeholder="Your company name"
                   />
@@ -189,35 +187,31 @@ export default function WholesalePage() {
                     type="text"
                     required
                     value={formData.contactPerson}
-                    onChange={(e) => setFormData({...formData, contactPerson: e.target.value})}
+                    onChange={(e) => setFormData({ ...formData, contactPerson: e.target.value })}
                     className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#D32F2F]"
                     placeholder="Your name"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-2">
-                    Email *
-                  </label>
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">Email *</label>
                   <input
                     type="email"
                     required
                     value={formData.email}
-                    onChange={(e) => setFormData({...formData, email: e.target.value})}
+                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                     className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#D32F2F]"
                     placeholder="your@email.com"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-2">
-                    Phone *
-                  </label>
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">Phone *</label>
                   <input
                     type="tel"
                     required
                     value={formData.phone}
-                    onChange={(e) => setFormData({...formData, phone: e.target.value})}
+                    onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
                     className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#D32F2F]"
                     placeholder="10-digit number"
                   />
@@ -230,7 +224,7 @@ export default function WholesalePage() {
                   <input
                     type="text"
                     value={formData.gstNumber}
-                    onChange={(e) => setFormData({...formData, gstNumber: e.target.value})}
+                    onChange={(e) => setFormData({ ...formData, gstNumber: e.target.value })}
                     className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#D32F2F]"
                     placeholder="GSTIN"
                   />
@@ -243,7 +237,7 @@ export default function WholesalePage() {
                   <select
                     required
                     value={formData.businessType}
-                    onChange={(e) => setFormData({...formData, businessType: e.target.value})}
+                    onChange={(e) => setFormData({ ...formData, businessType: e.target.value })}
                     className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#D32F2F]"
                   >
                     <option value="">Select type</option>
@@ -261,7 +255,9 @@ export default function WholesalePage() {
                 </label>
                 <select
                   value={formData.estimatedMonthlyVolume}
-                  onChange={(e) => setFormData({...formData, estimatedMonthlyVolume: e.target.value})}
+                  onChange={(e) =>
+                    setFormData({ ...formData, estimatedMonthlyVolume: e.target.value })
+                  }
                   className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#D32F2F]"
                 >
                   <option value="">Select range</option>
@@ -279,18 +275,18 @@ export default function WholesalePage() {
                 <textarea
                   rows={4}
                   value={formData.message}
-                  onChange={(e) => setFormData({...formData, message: e.target.value})}
+                  onChange={(e) => setFormData({ ...formData, message: e.target.value })}
                   className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#D32F2F]"
                   placeholder="Tell us about your requirements..."
                 />
               </div>
 
               {status === 'success' && (
-                <p className="text-green-600 font-medium">Thank you for your interest! Our team will contact you within 24 hours.</p>
+                <p className="text-green-600 font-medium">
+                  Thank you for your interest! Our team will contact you within 24 hours.
+                </p>
               )}
-              {status === 'error' && (
-                <p className="text-red-600 text-sm">{errorMessage}</p>
-              )}
+              {status === 'error' && <p className="text-red-600 text-sm">{errorMessage}</p>}
 
               <button
                 type="submit"
@@ -309,7 +305,10 @@ export default function WholesalePage() {
         <div className="container mx-auto px-6 text-center">
           <h2 className="text-3xl font-bold mb-8">Get in Touch</h2>
           <div className="flex flex-col md:flex-row justify-center gap-8">
-            <a href={`tel:${COMPANY_INFO.phoneTel}`} className="flex items-center justify-center space-x-3">
+            <a
+              href={`tel:${COMPANY_INFO.phoneTel}`}
+              className="flex items-center justify-center space-x-3"
+            >
               <Phone size={24} />
               <span className="text-lg">{COMPANY_INFO.phone}</span>
             </a>
@@ -335,4 +334,3 @@ export default function WholesalePage() {
     </main>
   );
 }
-

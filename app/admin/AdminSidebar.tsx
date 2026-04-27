@@ -40,7 +40,9 @@ export function AdminSidebar({ open = false, onClose }: AdminSidebarProps) {
   const linkClass = (href: string) => {
     const isActive = href === '/admin' ? pathname === '/admin' : pathname.startsWith(href);
     return `flex min-h-[44px] items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors touch-manipulation ${
-      isActive ? 'bg-orange-50 text-orange-700' : 'text-gray-700 hover:bg-gray-100 hover:text-gray-900'
+      isActive
+        ? 'bg-orange-50 text-orange-700'
+        : 'text-gray-700 hover:bg-gray-100 hover:text-gray-900'
     }`;
   };
 
@@ -52,12 +54,7 @@ export function AdminSidebar({ open = false, onClose }: AdminSidebarProps) {
     >
       <nav className="flex h-full flex-col gap-0.5 overflow-y-auto p-3">
         {navItems.map(({ href, label, icon: Icon }) => (
-          <AdminLink
-            key={href}
-            href={href}
-            onClick={onClose}
-            className={linkClass(href)}
-          >
+          <AdminLink key={href} href={href} onClick={onClose} className={linkClass(href)}>
             <Icon className="h-5 w-5 flex-shrink-0" />
             {label}
           </AdminLink>

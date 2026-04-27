@@ -26,11 +26,11 @@ export const WhatsAppButton = () => {
       className="fixed bottom-6 right-6 z-40 bg-[#25D366] text-white rounded-full p-4 shadow-2xl hover:shadow-3xl transition-all duration-300 hover:scale-110 group"
       aria-label="Chat on WhatsApp"
     >
-      <MessageCircle 
-        size={28} 
+      <MessageCircle
+        size={28}
         className={`transition-transform duration-300 ${isHovered ? 'scale-110' : ''}`}
       />
-      
+
       {/* Tooltip */}
       <div className="absolute bottom-full right-0 mb-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
         <div className="rounded-lg bg-gray-900 px-3 py-2 text-sm whitespace-nowrap text-white shadow-lg dark:bg-neutral-800">
@@ -44,4 +44,3 @@ export const WhatsAppButton = () => {
     </a>
   );
 };
-

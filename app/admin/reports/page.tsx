@@ -23,7 +23,8 @@ export default async function AdminReportsPage() {
       <div>
         <h1 className="text-2xl font-bold text-gray-900">Reports</h1>
         <p className="mt-1 text-sm text-gray-500">
-          Revenue excludes cancelled and refunded orders. Top products use line items from the last 30 days.
+          Revenue excludes cancelled and refunded orders. Top products use line items from the last
+          30 days.
         </p>
       </div>
 

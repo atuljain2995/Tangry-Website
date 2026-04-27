@@ -17,7 +17,7 @@ They are linked by **user id**: `public.users.id` = Supabase Auth user id (`auth
 2. **Run the auth sync migration**  
    In Supabase **SQL Editor**, run:
    - **`lib/db/migrations/004_auth_sync_public_users.sql`**  
-   This adds a trigger so that when a user signs up in Supabase Auth, a row is created (or updated) in `public.users` with `id = auth user id`, `email`, `name`, and `role = 'customer'`.
+     This adds a trigger so that when a user signs up in Supabase Auth, a row is created (or updated) in `public.users` with `id = auth user id`, `email`, `name`, and `role = 'customer'`.
 
 3. **Make a user an admin**  
    In Supabase **SQL Editor**:

@@ -7,10 +7,7 @@ export default function GoogleAnalytics() {
 
   return (
     <>
-      <script
-        async
-        src={`https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`}
-      />
+      <script async src={`https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`} />
       <script
         id="google-analytics"
         dangerouslySetInnerHTML={{

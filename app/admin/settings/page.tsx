@@ -12,8 +12,9 @@ export default function AdminSettingsPage() {
       <div className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm space-y-4">
         <h2 className="text-lg font-semibold text-gray-900">Store contact (read-only)</h2>
         <p className="text-sm text-gray-600">
-          These values are defined in <code className="rounded bg-gray-100 px-1">lib/data/constants.ts</code>.
-          The registered legal name (<code className="rounded bg-gray-100 px-1">legalName</code>) appears on the
+          These values are defined in{' '}
+          <code className="rounded bg-gray-100 px-1">lib/data/constants.ts</code>. The registered
+          legal name (<code className="rounded bg-gray-100 px-1">legalName</code>) appears on the
           storefront footer only.
         </p>
         <dl className="grid gap-2 text-sm">
@@ -45,7 +46,8 @@ export default function AdminSettingsPage() {
           </div>
         </dl>
         <p className="pt-2 text-sm text-gray-500">
-          To change these, edit the constants file and redeploy. Editable settings (e.g. shipping threshold, store name) can be added later with a database-backed settings table.
+          To change these, edit the constants file and redeploy. Editable settings (e.g. shipping
+          threshold, store name) can be added later with a database-backed settings table.
         </p>
       </div>
     </div>

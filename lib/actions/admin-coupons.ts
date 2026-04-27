@@ -17,7 +17,7 @@ export type CouponInput = {
 };
 
 export async function createCoupon(
-  input: CouponInput
+  input: CouponInput,
 ): Promise<{ success: true; id: string } | { success: false; error: string }> {
   try {
     const code = input.code.trim().toUpperCase();
@@ -35,15 +35,27 @@ export async function createCoupon(
       valid_until: input.valid_until,
       is_active: input.is_active ?? true,
     };
-    const { data, error } = await (supabaseAdmin as unknown as { from: (t: string) => { insert: (v: unknown) => { select: (c: string) => { single: () => Promise<{ data: unknown; error: unknown }> } } } })
+    const { data, error } = await (
+      supabaseAdmin as unknown as {
+        from: (t: string) => {
+          insert: (v: unknown) => {
+            select: (c: string) => { single: () => Promise<{ data: unknown; error: unknown }> };
+          };
+        };
+      }
+    )
       .from('coupons')
       .insert(payload)
       .select('id')
       .single();
 
     if (error) {
-      if ((error as { code?: string }).code === '23505') return { success: false, error: 'A coupon with this code already exists' };
-      return { success: false, error: (error as { message?: string }).message ?? 'Failed to create coupon' };
+      if ((error as { code?: string }).code === '23505')
+        return { success: false, error: 'A coupon with this code already exists' };
+      return {
+        success: false,
+        error: (error as { message?: string }).message ?? 'Failed to create coupon',
+      };
     }
     revalidatePath('/admin/discounts');
     return { success: true, id: (data as { id: string }).id };
@@ -54,7 +66,7 @@ export async function createCoupon(
 
 export async function updateCoupon(
   id: string,
-  input: Partial<CouponInput>
+  input: Partial<CouponInput>,
 ): Promise<{ success: true } | { success: false; error: string }> {
   try {
     const payload: Record<string, unknown> = {};
@@ -69,11 +81,18 @@ export async function updateCoupon(
     if (input.valid_until !== undefined) payload.valid_until = input.valid_until;
     if (input.is_active !== undefined) payload.is_active = input.is_active;
 
-    const { error } = await (supabaseAdmin as unknown as { from: (t: string) => { update: (v: unknown) => { eq: (k: string, v: string) => Promise<{ error: unknown }> } } })
+    const { error } = await (
+      supabaseAdmin as unknown as {
+        from: (t: string) => {
+          update: (v: unknown) => { eq: (k: string, v: string) => Promise<{ error: unknown }> };
+        };
+      }
+    )
       .from('coupons')
       .update(payload)
       .eq('id', id);
-    if (error) return { success: false, error: (error as { message?: string }).message ?? 'Update failed' };
+    if (error)
+      return { success: false, error: (error as { message?: string }).message ?? 'Update failed' };
     revalidatePath('/admin/discounts');
     return { success: true };
   } catch (e) {
