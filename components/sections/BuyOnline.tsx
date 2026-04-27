@@ -17,7 +17,7 @@ export const BuyOnline = ({ links }: BuyOnlineProps) => {
         <div className="flex animate-scroll whitespace-nowrap">
           {[...Array(12)].map((_, i) => (
             <div key={i} className="inline-flex items-center mx-8">
-              <span className="text-2xl md:text-3xl font-bold text-[#D32F2F]">#TasteMeinBest</span>
+              <span className="text-2xl md:text-3xl font-bold text-[#D32F2F]">#HomeMadeNoPreservatives</span>
               <span className="text-2xl md:text-3xl font-bold text-gray-800 ml-2">Tangry</span>
             </div>
           ))}
