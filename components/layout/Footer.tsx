@@ -75,7 +75,7 @@ export const Footer = () => {
                 <Link href="/products">All Spices</Link>
               </li>
               <li className="hover:text-orange-600 cursor-pointer transition">
-                <Link href="/products">Gift Bundles</Link>
+                <Link href="/categories/pickles">Pickles</Link>
               </li>
               <li className="hover:text-orange-600 cursor-pointer transition">
                 <Link href="/wholesale">Corporate Orders</Link>

@@ -6,9 +6,6 @@ import { AuthProvider } from "@/lib/contexts/AuthContext";
 import { WishlistProvider } from "@/lib/contexts/WishlistContext";
 import { WhatsAppButton } from "@/components/ui/WhatsAppButton";
 import { Analytics as VercelAnalytics } from "@vercel/analytics/next";
-import { SpeedInsights } from "@vercel/speed-insights/next";
-import { WebVitals } from "@/components/analytics/WebVitals";
-import { PageViewTracker } from "@/components/analytics/PageViewTracker";
 import GoogleAnalytics from "@/components/analytics/GoogleAnalytics";
 import MicrosoftClarity from "@/components/analytics/MicrosoftClarity";
 
@@ -133,9 +130,6 @@ export default function RootLayout({
                 {children}
                 <WhatsAppButton />
                 <VercelAnalytics />
-                <SpeedInsights />
-                <WebVitals />
-                <PageViewTracker />
               </WishlistProvider>
             </AuthProvider>
           </CartProvider>

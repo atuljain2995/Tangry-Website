@@ -10,6 +10,7 @@ import { productImageAlt } from '@/lib/utils/product-image-alt';
 import { useCart } from '@/lib/contexts/CartContext';
 import { useWishlist } from '@/lib/contexts/WishlistContext';
 import { useAuth } from '@/lib/contexts/AuthContext';
+import { analytics } from '@/lib/analytics';
 
 interface ProductCardProps {
   product: ProductExtended;
@@ -42,6 +43,7 @@ export const ProductCard = ({ product }: ProductCardProps) => {
       price: selectedVariant.price,
       image: product.images[0] || '',
     });
+    analytics.trackAddToCart(product.id, product.name, 1, selectedVariant.price);
   };
 
   const handleIncrement = () => {

@@ -2,7 +2,7 @@ import { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { StructuredData } from "@/components/seo/StructuredData";
 import { PRODUCT_CATEGORIES } from "@/lib/data/products";
-import { getBreadcrumbSchema, getProductSchema } from "@/lib/utils/schema";
+import { getBreadcrumbSchema, getProductSchema, getFAQSchema, getProductFAQs } from "@/lib/utils/schema";
 import { ProductPageClient } from "./ProductPageClient";
 import {
   getProductBySlug,
@@ -84,10 +84,12 @@ export default async function ProductPage({ params }: PageProps) {
     },
   ];
 
+  const productFAQs = getProductFAQs(product);
+
   return (
     <>
       <StructuredData
-        data={[getProductSchema(product, reviews), getBreadcrumbSchema(breadcrumbs)]}
+        data={[getProductSchema(product, reviews), getBreadcrumbSchema(breadcrumbs), getFAQSchema(productFAQs)]}
       />
       <ProductPageClient product={product} relatedProducts={relatedProducts} />
     </>

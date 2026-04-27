@@ -238,26 +238,6 @@ export function getRecipeSchema(recipe: {
 }
 
 /**
- * Generate FAQ schema
- */
-export function getFAQSchema(
-  faqs: Array<{ question: string; answer: string }>,
-) {
-  return {
-    "@context": "https://schema.org",
-    "@type": "FAQPage",
-    mainEntity: faqs.map((faq) => ({
-      "@type": "Question",
-      name: faq.question,
-      acceptedAnswer: {
-        "@type": "Answer",
-        text: faq.answer,
-      },
-    })),
-  };
-}
-
-/**
  * Generate LocalBusiness schema — enriched for local SEO
  */
 export function getLocalBusinessSchema() {
@@ -333,7 +313,7 @@ export function getLocalBusinessSchema() {
     ],
     founder: {
       "@type": "Person",
-      name: "Atul Jain",
+      name: "Maya Jain",
     },
     legalName: COMPANY_INFO.legalName,
     taxID: "FSSAI 12225026001713",
@@ -375,4 +355,67 @@ export function getWebSiteSchema() {
       "query-input": "required name=search_term_string",
     },
   };
+}
+
+/**
+ * Generate FAQPage schema from question/answer pairs.
+ * Useful for AI citation even though Google dropped FAQ rich results
+ * for most commercial sites (Aug 2023).
+ */
+export function getFAQSchema(faqs: Array<{ question: string; answer: string }>) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: faqs.map((faq) => ({
+      "@type": "Question",
+      name: faq.question,
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: faq.answer,
+      },
+    })),
+  };
+}
+
+/**
+ * Build standard FAQ pairs for a product from its structured data.
+ */
+export function getProductFAQs(product: ProductExtended): Array<{ question: string; answer: string }> {
+  const faqs: Array<{ question: string; answer: string }> = [];
+
+  faqs.push({
+    question: `What is ${product.name} from Tangry Spices?`,
+    answer: product.description || `${product.name} is a premium spice product from Tangry Spices, Jaipur. FSSAI licensed, ISO 22000 certified.`,
+  });
+
+  if (product.usageInstructions) {
+    faqs.push({
+      question: `How to use ${product.name}?`,
+      answer: product.usageInstructions,
+    });
+  }
+
+  if (product.shelfLife) {
+    faqs.push({
+      question: `What is the shelf life of ${product.name}?`,
+      answer: `The shelf life of ${product.name} is ${product.shelfLife}. Store in a cool, dry place away from direct sunlight.`,
+    });
+  }
+
+  const variants = product.variants;
+  if (variants.length > 0) {
+    const sizes = variants.map(v => v.name).join(', ');
+    const prices = variants.map(v => `${v.name}: ₹${v.price}`).join(', ');
+    faqs.push({
+      question: `What sizes and prices does ${product.name} come in?`,
+      answer: `${product.name} is available in ${sizes}. Prices: ${prices}.`,
+    });
+  }
+
+  faqs.push({
+    question: `Is ${product.name} FSSAI certified?`,
+    answer: `Yes. All Tangry products are FSSAI licensed (12225026001713) and manufactured in an ISO 22000 certified facility in Jhotwara, Jaipur.`,
+  });
+
+  return faqs;
 }

@@ -35,45 +35,14 @@ export default function robots(): MetadataRoute.Robots {
         allow: '/',
         disallow: googlePrivatePaths,
       },
-      // AI search/citation crawlers. Training-only crawlers stay blocked below
-      // so this file aligns with Cloudflare's managed content signals.
-      {
-        userAgent: 'OAI-SearchBot',
-        allow: '/',
-        disallow: googlePrivatePaths,
-      },
-      {
-        userAgent: 'ChatGPT-User',
-        allow: '/',
-        disallow: googlePrivatePaths,
-      },
-      {
-        userAgent: 'PerplexityBot',
-        allow: '/',
-        disallow: googlePrivatePaths,
-      },
-      // ── Training-only crawlers ─────────────────────────────────────────
-      // Blocked: these only harvest training data, not search/citation value.
-      {
-        userAgent: 'GPTBot',
-        disallow: '/',
-      },
-      {
-        userAgent: 'ClaudeBot',
-        disallow: '/',
-      },
-      {
-        userAgent: 'Bytespider',
-        disallow: '/',
-      },
-      {
-        userAgent: 'Google-Extended',
-        disallow: '/',
-      },
-      {
-        userAgent: 'Applebot-Extended',
-        disallow: '/',
-      },
+      // ── AI / training crawlers ─────────────────────────────────────
+      // Cloudflare Managed Content prepends its own Disallow blocks for
+      // GPTBot, ClaudeBot, Bytespider, etc. Adding conflicting Allow here
+      // is ignored because crawlers use the *first* matching directive.
+      // Only list crawlers whose Cloudflare rule we do NOT want to override.
+      //
+      // NOTE: If you later disable Cloudflare Managed Content, re-add
+      // explicit Allow rules for OAI-SearchBot, ChatGPT-User, PerplexityBot.
       {
         userAgent: 'CCBot',
         disallow: '/',

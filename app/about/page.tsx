@@ -104,6 +104,12 @@ export default function AboutPage() {
               The name &quot;Tangry&quot; captures what we aim for — that sharp, authentic tang of
               real spices that makes every dish come alive. <em>Taste of Home.</em>
             </p>
+            <Link
+              href="/about/founder"
+              className="mt-6 inline-flex items-center gap-2 rounded-full bg-gray-900 px-5 py-2.5 text-sm font-bold text-white transition hover:bg-gray-800"
+            >
+              Meet the Founder — Maya Jain
+            </Link>
           </div>
         </div>
       </section>
