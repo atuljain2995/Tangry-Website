@@ -41,7 +41,7 @@ export async function generateMetadata({
 
   // Do not pass local image paths to OG (Next.js can validate and throw if file missing/invalid)
   return {
-    title: product.metaTitle || `${product.name} | Tangry Spices`,
+    title: product.metaTitle || product.name,
     description: product.metaDescription || product.description,
     keywords: product.keywords,
     alternates: { canonical: `/products/${resolvedParams.slug}` },

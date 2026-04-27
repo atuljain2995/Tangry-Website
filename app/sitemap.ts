@@ -1,6 +1,7 @@
 import { MetadataRoute } from "next";
 import { getAllProducts } from "@/lib/db/queries";
 import { PRODUCT_CATEGORIES } from "@/lib/data/products";
+import { blogPosts } from "@/lib/data/blog";
 import { getProductCategories, type DbProductCategory } from "@/lib/db/queries";
 
 function fallbackCategories(): DbProductCategory[] {
@@ -63,13 +64,26 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       changeFrequency: "monthly" as const,
       priority: 0.5,
     },
+    {
+      url: `${baseUrl}/blog`,
+      lastModified: buildTime,
+      changeFrequency: "weekly" as const,
+      priority: 0.6,
+    },
   ];
+
+  const blogPages = blogPosts.map((post) => ({
+    url: `${baseUrl}/blog/${post.slug}`,
+    lastModified: new Date(post.updated),
+    changeFrequency: "monthly" as const,
+    priority: 0.6,
+  }));
 
   // Fetch all products from database (not fallback) for complete sitemap coverage
   let allProducts = [];
   try {
     allProducts = await getAllProducts();
-  } catch (error) {
+  } catch {
     console.warn(
       "Failed to fetch products from database for sitemap, using fallback",
     );
@@ -95,5 +109,5 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.7,
   }));
 
-  return [...staticPages, ...categoryPages, ...productPages];
+  return [...staticPages, ...categoryPages, ...productPages, ...blogPages];
 }

@@ -63,7 +63,7 @@ export const ProductCard = ({ product }: ProductCardProps) => {
               alt={productImageAlt(product.name, selectedVariant.name)}
               fill
               className="object-contain p-4 mix-blend-multiply group-hover:scale-105 transition-transform duration-500"
-              sizes="(max-width: 640px) 90vw, (max-width: 1024px) 45vw, 25vw"
+              sizes="(max-width: 640px) 260px, (max-width: 1024px) 280px, 260px"
             />
           ) : (
             <div className="w-full h-full flex items-center justify-center text-gray-400 font-black text-2xl uppercase">

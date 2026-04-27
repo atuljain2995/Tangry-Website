@@ -3,7 +3,7 @@
 import { X } from 'lucide-react';
 import { NavLink } from '../ui/NavLink';
 import { ThemeToggle } from '@/components/theme/ThemeToggle';
-import { showBlogInNav, showRecipesInNav } from '@/lib/data/nav-flags';
+import { showRecipesInNav } from '@/lib/data/nav-flags';
 
 interface MobileMenuProps {
   isOpen: boolean;
@@ -28,9 +28,6 @@ export const MobileMenu = ({ isOpen, onClose }: MobileMenuProps) => {
       <NavLink href="/search" isMobile onClick={onClose}>Search</NavLink>
       {showRecipesInNav() && (
         <NavLink href="/recipes" isMobile onClick={onClose}>Recipes</NavLink>
-      )}
-      {showBlogInNav() && (
-        <NavLink href="/blog" isMobile onClick={onClose}>Blog</NavLink>
       )}
       <NavLink href="/wholesale" isMobile onClick={onClose}>Wholesale</NavLink>
       <NavLink href="/contact" isMobile onClick={onClose}>Contact</NavLink>

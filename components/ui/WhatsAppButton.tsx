@@ -3,6 +3,7 @@
 import { MessageCircle } from 'lucide-react';
 import { usePathname } from 'next/navigation';
 import { useState } from 'react';
+import { analytics } from '@/lib/analytics';
 
 export const WhatsAppButton = () => {
   const pathname = usePathname();
@@ -19,6 +20,7 @@ export const WhatsAppButton = () => {
       href={whatsappUrl}
       target="_blank"
       rel="noopener noreferrer"
+      onClick={() => analytics.trackWhatsAppClick(pathname || '/')}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
       className="fixed bottom-6 right-6 z-40 bg-[#25D366] text-white rounded-full p-4 shadow-2xl hover:shadow-3xl transition-all duration-300 hover:scale-110 group"

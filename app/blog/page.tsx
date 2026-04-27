@@ -1,93 +1,19 @@
 'use client';
 
 import { useState } from 'react';
+import Image from 'next/image';
+import Link from 'next/link';
 import { Header } from '@/components/layout/Header';
 import { MobileMenu } from '@/components/layout/MobileMenu';
 import { Footer } from '@/components/layout/Footer';
 import { CartDrawer } from '@/components/ecommerce/CartDrawer';
-import { Clock, User } from 'lucide-react';
-
-// Sample blog posts - Replace with CMS or database
-const blogPosts = [
-  {
-    id: 1,
-    slug: 'health-benefits-turmeric',
-    title: '10 Amazing Health Benefits of Turmeric',
-    excerpt: 'Discover how this golden spice can transform your health with its powerful anti-inflammatory and antioxidant properties.',
-    author: 'Dr. Priya Sharma',
-    date: '2024-12-01',
-    readTime: '5 min read',
-    category: 'Health',
-    image: '/blog/turmeric-health.jpg',
-    tags: ['health', 'turmeric', 'wellness']
-  },
-  {
-    id: 2,
-    slug: 'authentic-garam-masala-recipe',
-    title: 'How to Make Authentic Garam Masala at Home',
-    excerpt: 'Learn the secret recipe behind the perfect garam masala blend that will elevate all your dishes.',
-    author: 'Chef Ramesh Kumar',
-    date: '2024-11-28',
-    readTime: '7 min read',
-    category: 'Recipes',
-    image: '/blog/garam-masala.jpg',
-    tags: ['recipe', 'garam masala', 'spices']
-  },
-  {
-    id: 3,
-    slug: 'difference-kashmiri-chilli',
-    title: 'Kashmiri vs Regular Red Chilli: What\'s the Difference?',
-    excerpt: 'Understand the unique characteristics of different chilli varieties and when to use each one.',
-    author: 'Tangry Team',
-    date: '2024-11-25',
-    readTime: '4 min read',
-    category: 'Education',
-    image: '/blog/chilli-types.jpg',
-    tags: ['education', 'chilli', 'spices']
-  },
-  {
-    id: 4,
-    slug: 'spice-storage-tips',
-    title: '5 Essential Tips for Storing Spices to Maintain Freshness',
-    excerpt: 'Keep your spices fresh and flavorful for longer with these simple storage techniques.',
-    author: 'Tangry Team',
-    date: '2024-11-20',
-    readTime: '6 min read',
-    category: 'Tips',
-    image: '/blog/spice-storage.jpg',
-    tags: ['tips', 'storage', 'freshness']
-  },
-  {
-    id: 5,
-    slug: 'indian-spices-guide',
-    title: 'The Ultimate Guide to Indian Spices for Beginners',
-    excerpt: 'A comprehensive introduction to the most commonly used spices in Indian cooking.',
-    author: 'Neha Patel',
-    date: '2024-11-15',
-    readTime: '10 min read',
-    category: 'Education',
-    image: '/blog/spices-guide.jpg',
-    tags: ['education', 'beginners', 'indian cuisine']
-  },
-  {
-    id: 6,
-    slug: 'biryani-masala-secrets',
-    title: 'The Secret to Perfect Biryani Masala',
-    excerpt: 'Master the art of creating restaurant-quality biryani with the right spice blend.',
-    author: 'Chef Ramesh Kumar',
-    date: '2024-11-10',
-    readTime: '8 min read',
-    category: 'Recipes',
-    image: '/blog/biryani-secrets.jpg',
-    tags: ['recipe', 'biryani', 'masala']
-  }
-];
-
-const categories = ['All', 'Recipes', 'Health', 'Tips', 'Education'];
+import { Newsletter } from '@/components/sections/Newsletter';
+import { Clock, User, ArrowRight } from 'lucide-react';
+import { blogCategories, blogPosts } from '@/lib/data/blog';
 
 export default function BlogPage() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [selectedCategory, setSelectedCategory] = useState('All');
+  const [selectedCategory, setSelectedCategory] = useState<(typeof blogCategories)[number]>('All');
 
   const filteredPosts = selectedCategory === 'All' 
     ? blogPosts 
@@ -99,128 +25,144 @@ export default function BlogPage() {
       <MobileMenu isOpen={isMobileMenuOpen} onClose={() => setIsMobileMenuOpen(false)} />
       <CartDrawer />
 
-      {/* Hero Section */}
-      <section className="bg-gradient-to-r from-[#D32F2F] to-[#B71C1C] text-white py-16 mt-20">
-        <div className="container mx-auto px-6 text-center">
-          <h1 className="text-4xl md:text-5xl font-bold mb-4">Spice Stories & More</h1>
-          <p className="text-lg md:text-xl opacity-90">
-            Recipes, health tips, and everything about spices
+      {/* Hero Section — matches homepage section style */}
+      <section className="pt-32 pb-12 container mx-auto px-4">
+        <div className="text-center">
+          <p className="text-orange-700 font-bold uppercase tracking-wider text-sm mb-2">
+            From the kitchen
           </p>
+          <h1 className="text-4xl md:text-5xl font-black text-gray-900 uppercase italic tracking-tight mb-3">
+            Spice Stories
+          </h1>
+          <p className="text-gray-500 font-medium text-lg max-w-xl mx-auto">
+            Recipes, health tips, and everything about Indian spices.
+          </p>
+        </div>
+
+        {/* Category Filter — matches homepage filter pills */}
+        <div className="flex flex-wrap mt-8 gap-2 justify-center overflow-x-auto pb-2 no-scrollbar">
+          {blogCategories.map(category => (
+            <button
+              key={category}
+              onClick={() => setSelectedCategory(category)}
+              className={`px-5 py-2 rounded-full text-sm font-semibold transition capitalize border whitespace-nowrap cursor-pointer ${
+                selectedCategory === category
+                  ? 'bg-gray-900 text-white border-gray-900'
+                  : 'bg-white text-gray-700 border-gray-200 hover:border-gray-400'
+              }`}
+            >
+              {category}
+            </button>
+          ))}
         </div>
       </section>
 
-      <div className="container mx-auto px-6 py-12">
-        {/* Category Filter */}
-        <div className="mb-8">
-          <div className="flex flex-wrap gap-3 justify-center">
-            {categories.map(category => (
-              <button
-                key={category}
-                onClick={() => setSelectedCategory(category)}
-                className={`px-6 py-2 rounded-full font-semibold transition ${
-                  selectedCategory === category
-                    ? 'bg-[#D32F2F] text-white'
-                    : 'bg-white text-gray-700 border border-gray-300 hover:border-[#D32F2F]'
-                }`}
-              >
-                {category}
-              </button>
-            ))}
-          </div>
-        </div>
-
+      <div className="container mx-auto px-4 pb-16">
         {/* Featured Post */}
         {selectedCategory === 'All' && filteredPosts.length > 0 && (
-          <div className="mb-12">
-            <h2 className="text-2xl font-bold text-gray-900 mb-6">Featured Article</h2>
-            <article className="bg-white rounded-lg shadow-lg overflow-hidden group">
-              <div className="grid md:grid-cols-2 gap-0">
-                <div className="relative h-64 md:h-auto bg-gray-200">
-                  <div className="w-full h-full flex items-center justify-center text-gray-400">
-                    Featured Image
-                  </div>
+          <div className="mb-16">
+            <article className="group flex flex-col md:flex-row rounded-2xl border border-gray-100 bg-white shadow-sm transition-all duration-300 hover:shadow-lg p-3 gap-3">
+              {/* Image */}
+              <Link href={`/blog/${filteredPosts[0].slug}`} className="md:w-1/2 shrink-0">
+                <div className="relative h-64 md:h-80 rounded-xl overflow-hidden bg-gray-50">
+                  <Image
+                    src={filteredPosts[0].image}
+                    alt={filteredPosts[0].imageAlt}
+                    fill
+                    className="object-cover group-hover:scale-105 transition-transform duration-500"
+                    sizes="(max-width: 768px) 100vw, 50vw"
+                    priority
+                  />
                 </div>
-                <div className="p-8 flex flex-col justify-center">
-                  <span className="inline-block bg-[#D32F2F] text-white text-xs px-3 py-1 rounded-full font-bold uppercase mb-3 w-fit">
-                    {filteredPosts[0].category}
-                  </span>
-                  <h3 className="text-3xl font-bold text-gray-900 mb-4">
+              </Link>
+
+              {/* Content */}
+              <div className="px-3 md:px-5 py-4 flex flex-col justify-center flex-1">
+                <p className="text-orange-600 text-[11px] font-bold uppercase tracking-widest mb-2">
+                  {filteredPosts[0].category}
+                </p>
+                <Link href={`/blog/${filteredPosts[0].slug}`} className="group/link">
+                  <h2 className="text-2xl md:text-3xl font-black text-gray-900 mb-3 leading-tight group-hover/link:text-orange-700 transition-colors">
                     {filteredPosts[0].title}
-                  </h3>
-                  <p className="text-gray-600 mb-4 text-lg">{filteredPosts[0].excerpt}</p>
-                  <div className="flex items-center text-sm text-gray-500 space-x-4">
-                    <span className="flex items-center">
-                      <User size={16} className="mr-1" />
-                      {filteredPosts[0].author}
-                    </span>
-                    <span className="flex items-center">
-                      <Clock size={16} className="mr-1" />
-                      {filteredPosts[0].readTime}
-                    </span>
-                  </div>
+                  </h2>
+                </Link>
+                <p className="text-gray-500 mb-5 text-base leading-relaxed">{filteredPosts[0].excerpt}</p>
+                <div className="flex items-center gap-4 text-xs text-gray-400 mb-5">
+                  <span className="flex items-center gap-1">
+                    <User size={14} />
+                    {filteredPosts[0].author}
+                  </span>
+                  <span className="flex items-center gap-1">
+                    <Clock size={14} />
+                    {filteredPosts[0].readTime}
+                  </span>
                 </div>
+                <Link
+                  href={`/blog/${filteredPosts[0].slug}`}
+                  className="inline-flex items-center gap-2 w-fit rounded-full bg-gray-900 px-5 py-2.5 text-sm font-bold text-white transition hover:bg-gray-800"
+                >
+                  Read article <ArrowRight size={16} />
+                </Link>
               </div>
             </article>
           </div>
         )}
 
         {/* Blog Grid */}
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
           {filteredPosts.slice(selectedCategory === 'All' ? 1 : 0).map(post => (
-            <article key={post.id} className="bg-white rounded-lg shadow-md overflow-hidden group">
-              <div className="relative h-48 bg-gray-200">
-                <div className="w-full h-full flex items-center justify-center text-gray-400">
-                  Blog Image
+            <article key={post.slug} className="group flex flex-col rounded-2xl border border-gray-100 bg-white shadow-sm transition-all duration-300 hover:shadow-lg p-3">
+              {/* Image */}
+              <Link href={`/blog/${post.slug}`}>
+                <div className="relative h-52 rounded-xl overflow-hidden bg-gray-50">
+                  <Image
+                    src={post.image}
+                    alt={post.imageAlt}
+                    fill
+                    className="object-cover group-hover:scale-105 transition-transform duration-500"
+                    sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                  />
                 </div>
-                <span className="absolute top-4 left-4 bg-[#D32F2F] text-white text-xs px-3 py-1 rounded-full font-bold uppercase">
+              </Link>
+
+              {/* Content */}
+              <div className="px-3 pt-4 pb-3 flex-1 flex flex-col">
+                <p className="text-orange-600 text-[11px] font-bold uppercase tracking-widest mb-1.5">
                   {post.category}
-                </span>
-              </div>
-              <div className="p-6">
-                <h3 className="text-xl font-bold text-gray-900 mb-3 line-clamp-2">
-                  {post.title}
-                </h3>
-                <p className="text-gray-600 mb-4 text-sm line-clamp-3">{post.excerpt}</p>
-                <div className="flex items-center text-xs text-gray-500 mb-4">
-                  <span className="flex items-center mr-4">
-                    <User size={14} className="mr-1" />
-                    {post.author}
-                  </span>
-                  <span className="flex items-center">
-                    <Clock size={14} className="mr-1" />
-                    {post.readTime}
-                  </span>
-                </div>
-                <div className="flex flex-wrap gap-2">
-                  {post.tags.map(tag => (
-                    <span key={tag} className="text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded">
-                      #{tag}
+                </p>
+                <Link href={`/blog/${post.slug}`}>
+                  <h2 className="text-base font-bold text-gray-900 mb-2 line-clamp-2 leading-snug transition-colors group-hover:text-orange-700">
+                    {post.title}
+                  </h2>
+                </Link>
+                <p className="text-gray-500 mb-4 text-sm line-clamp-2 leading-relaxed">{post.excerpt}</p>
+
+                <div className="mt-auto flex items-center justify-between">
+                  <div className="flex items-center gap-3 text-[11px] text-gray-400">
+                    <span className="flex items-center gap-1">
+                      <User size={12} />
+                      {post.author}
                     </span>
-                  ))}
+                    <span className="flex items-center gap-1">
+                      <Clock size={12} />
+                      {post.readTime}
+                    </span>
+                  </div>
+                  <Link
+                    href={`/blog/${post.slug}`}
+                    className="text-xs font-bold text-orange-600 hover:text-orange-700 transition-colors flex items-center gap-0.5"
+                  >
+                    Read <ArrowRight size={12} />
+                  </Link>
                 </div>
               </div>
             </article>
           ))}
         </div>
-
-        {/* Newsletter CTA */}
-        <div className="mt-16 bg-gradient-to-r from-[#D32F2F] to-[#B71C1C] rounded-lg p-8 text-center text-white">
-          <h2 className="text-3xl font-bold mb-4">Stay Updated</h2>
-          <p className="text-lg mb-6 opacity-90">
-            Get the latest recipes, tips, and spice stories delivered to your inbox
-          </p>
-          <div className="flex max-w-md mx-auto">
-            <input
-              type="email"
-              placeholder="Enter your email"
-              className="flex-1 px-4 py-3 rounded-l-full text-gray-900 focus:outline-none"
-            />
-            <button className="bg-gray-900 text-white px-8 py-3 rounded-r-full font-bold hover:bg-gray-800 transition">
-              Subscribe
-            </button>
-          </div>
-        </div>
       </div>
+
+      {/* Reuse the real Newsletter component */}
+      <Newsletter />
 
       <Footer />
     </main>

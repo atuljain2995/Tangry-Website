@@ -226,4 +226,12 @@ export const analytics = {
       label: marketplace,
       custom_parameters: { link_url: url },
     }),
+
+  trackWhatsAppClick: (sourcePath: string) =>
+    trackEvent({
+      action: 'click_whatsapp',
+      category: 'lead_generation',
+      label: sourcePath,
+      custom_parameters: { source_path: sourcePath },
+    }),
 };

@@ -1,7 +1,7 @@
 import { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'Wholesale | Bulk Spices & Masalas — Tangry Spices',
+  title: 'Wholesale | Bulk Spices & Masalas',
   description:
     'Buy Tangry spices and masalas in bulk. Wholesale pricing for restaurants, hotels, caterers, and retailers. FSSAI licensed, ISO 22000 certified.',
   alternates: { canonical: '/wholesale' },

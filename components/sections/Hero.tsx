@@ -15,10 +15,12 @@ function PromoCard({
   product,
   className = '',
   sizes = '180px',
+  priority = false,
 }: {
   product: ProductExtended;
   className?: string;
   sizes?: string;
+  priority?: boolean;
 }) {
   const v = product.variants[0];
   const disc = v ? calculateDiscountPercentage(v.price, v.compareAtPrice) : 0;
@@ -50,6 +52,7 @@ function PromoCard({
           fill
           className="object-cover transition-transform duration-500 group-hover:scale-105"
           sizes={sizes}
+          priority={priority}
         />
       </div>
       <div className="text-center">
@@ -128,6 +131,9 @@ export const Hero = ({ products = [] }: HeroProps) => {
 
   return (
     <section className="relative overflow-hidden bg-[#FFF8F3] pb-14 pt-16 sm:pb-16 md:pb-20 md:pt-20 dark:bg-neutral-900">
+      <h1 className="sr-only">
+        Authentic Jaipur flavours from Tangry Spices
+      </h1>
       {/* Decorative blobs */}
       <div className="pointer-events-none absolute inset-0 opacity-20">
         <div className="absolute left-10 top-20 h-72 w-72 animate-pulse rounded-full bg-orange-400 blur-3xl"></div>
@@ -146,13 +152,13 @@ export const Hero = ({ products = [] }: HeroProps) => {
         </div>
 
         {/* Heading — centered */}
-        <h1 className="mb-4 text-center text-[2.25rem] font-black leading-[1.08] tracking-tight text-slate-900 dark:text-neutral-50 sm:text-5xl">
+        <div aria-hidden="true" className="mb-4 text-center text-[2.25rem] font-black leading-[1.08] tracking-tight text-slate-900 dark:text-neutral-50 sm:text-5xl">
           AUTHENTIC{' '}
           <span className="bg-gradient-to-r from-orange-500 to-red-600 bg-clip-text font-serif italic text-transparent">
             JAIPUR
           </span>{' '}
           FLAVOURS
-        </h1>
+        </div>
 
         {/* Description — centered */}
         <p className="mx-auto mb-7 max-w-sm text-center text-[15px] leading-relaxed text-slate-600 dark:text-neutral-300 sm:max-w-md sm:text-base">
@@ -203,7 +209,8 @@ export const Hero = ({ products = [] }: HeroProps) => {
             <PromoCard
               product={promo1}
               className="absolute left-0 top-0 z-10 w-[48%] -rotate-6"
-              sizes="(max-width: 640px) 44vw, 180px"
+              sizes="(max-width: 640px) 150px, 180px"
+              priority
             />
           ) : (
             <FallbackCard
@@ -218,7 +225,8 @@ export const Hero = ({ products = [] }: HeroProps) => {
             <PromoCard
               product={promo2}
               className="absolute right-0 top-10 z-20 w-[52%] rotate-3"
-              sizes="(max-width: 640px) 50vw, 200px"
+              sizes="(max-width: 640px) 170px, 200px"
+              priority
             />
           ) : (
             <FallbackCard
@@ -258,13 +266,13 @@ export const Hero = ({ products = [] }: HeroProps) => {
               TASTE OF HOME · NO PRESERVATIVES
             </div>
 
-            <h1 className="mb-6 text-7xl font-black leading-[1.1] tracking-tight text-slate-900 dark:text-neutral-50">
+            <div aria-hidden="true" className="mb-6 text-7xl font-black leading-[1.1] tracking-tight text-slate-900 dark:text-neutral-50">
               AUTHENTIC{' '}
               <span className="bg-gradient-to-r from-orange-500 to-red-600 bg-clip-text font-serif italic text-transparent">
                 JAIPUR
               </span>{' '}
               FLAVOURS
-            </h1>
+            </div>
 
             <p className="mb-8 text-lg leading-relaxed text-slate-600 dark:text-neutral-300">
               Masalas, ready-to-eat powders, and pickles from Tangry Spices—small-batch blends rooted
@@ -311,7 +319,8 @@ export const Hero = ({ products = [] }: HeroProps) => {
               <PromoCard
                 product={promo1}
                 className="absolute left-0 top-4 z-10 w-[42%] -rotate-6"
-                sizes="200px"
+                sizes="220px"
+                priority
               />
             ) : (
               <FallbackCard
@@ -326,7 +335,8 @@ export const Hero = ({ products = [] }: HeroProps) => {
               <PromoCard
                 product={promo2}
                 className="absolute right-0 top-16 z-20 w-[48%] rotate-3"
-                sizes="220px"
+                sizes="250px"
+                priority
               />
             ) : (
               <FallbackCard

@@ -1,7 +1,7 @@
 import { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'Contact Us | Tangry Spices, Jaipur',
+  title: 'Contact Us | Jaipur',
   description:
     'Get in touch with Tangry Spices. Reach us at our Jhotwara, Jaipur office for wholesale inquiries, product questions, or feedback.',
   alternates: { canonical: '/contact' },

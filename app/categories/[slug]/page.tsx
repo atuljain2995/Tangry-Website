@@ -45,7 +45,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const description = fallbackMeta?.description || `Browse ${category.title} from Tangry Spices.`;
 
   return {
-    title: `${category.title} | Tangry Spices`,
+    title: category.title,
     description,
     alternates: { canonical: `/categories/${category.slug}` },
     openGraph: {

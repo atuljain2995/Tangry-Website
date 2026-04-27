@@ -35,14 +35,8 @@ export default function robots(): MetadataRoute.Robots {
         allow: '/',
         disallow: googlePrivatePaths,
       },
-      // ── AI Search crawlers ─────────────────────────────────────────────
-      // Explicitly allowed so these bots index public content for AI search
-      // citations (ChatGPT web search, Claude, Perplexity, Bing Copilot).
-      {
-        userAgent: 'GPTBot',
-        allow: '/',
-        disallow: googlePrivatePaths,
-      },
+      // AI search/citation crawlers. Training-only crawlers stay blocked below
+      // so this file aligns with Cloudflare's managed content signals.
       {
         userAgent: 'OAI-SearchBot',
         allow: '/',
@@ -54,22 +48,32 @@ export default function robots(): MetadataRoute.Robots {
         disallow: googlePrivatePaths,
       },
       {
-        userAgent: 'ClaudeBot',
-        allow: '/',
-        disallow: googlePrivatePaths,
-      },
-      {
         userAgent: 'PerplexityBot',
-        allow: '/',
-        disallow: googlePrivatePaths,
-      },
-      {
-        userAgent: 'Bytespider',
         allow: '/',
         disallow: googlePrivatePaths,
       },
       // ── Training-only crawlers ─────────────────────────────────────────
       // Blocked: these only harvest training data, not search/citation value.
+      {
+        userAgent: 'GPTBot',
+        disallow: '/',
+      },
+      {
+        userAgent: 'ClaudeBot',
+        disallow: '/',
+      },
+      {
+        userAgent: 'Bytespider',
+        disallow: '/',
+      },
+      {
+        userAgent: 'Google-Extended',
+        disallow: '/',
+      },
+      {
+        userAgent: 'Applebot-Extended',
+        disallow: '/',
+      },
       {
         userAgent: 'CCBot',
         disallow: '/',

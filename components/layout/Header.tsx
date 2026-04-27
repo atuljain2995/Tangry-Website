@@ -8,7 +8,7 @@ import { NavLink } from '../ui/NavLink';
 import { CartIcon } from '../ecommerce/CartIcon';
 import { WishlistIcon } from '../ecommerce/WishlistIcon';
 import { UserMenu } from '../ui/UserMenu';
-import { showBlogInNav, showRecipesInNav, showThemeToggle } from '@/lib/data/nav-flags';
+import { showRecipesInNav, showThemeToggle } from '@/lib/data/nav-flags';
 import { ThemeToggle } from '@/components/theme/ThemeToggle';
 
 interface HeaderProps {
@@ -50,7 +50,6 @@ export const Header = ({ onMenuOpen }: HeaderProps) => {
           <div className="hidden md:flex items-center space-x-8 font-bold text-sm uppercase tracking-wide text-gray-600 dark:text-neutral-300 ml-8">
             <NavLink href="/products">Products</NavLink>
             {showRecipesInNav() && <NavLink href="/recipes">Recipes</NavLink>}
-            {showBlogInNav() && <NavLink href="/blog">Blog</NavLink>}
             <NavLink href="/wholesale">Wholesale</NavLink>
             <NavLink href="/about">About Us</NavLink>
           </div>

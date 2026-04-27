@@ -1,13 +1,10 @@
 /**
- * Hide Recipes / Blog in header when you have no real content yet.
- * Set NEXT_PUBLIC_SHOW_RECIPES_NAV=false or NEXT_PUBLIC_SHOW_BLOG_NAV=false in .env
+ * Hide Recipes in header when you have no real content yet.
+ * Blog stays visible because the site now has crawlable article pages.
+ * Set NEXT_PUBLIC_SHOW_RECIPES_NAV=false in .env to hide recipes.
  */
 export function showRecipesInNav(): boolean {
   return process.env.NEXT_PUBLIC_SHOW_RECIPES_NAV !== 'false';
-}
-
-export function showBlogInNav(): boolean {
-  return process.env.NEXT_PUBLIC_SHOW_BLOG_NAV !== 'false';
 }
 
 export function showThemeToggle(): boolean {
