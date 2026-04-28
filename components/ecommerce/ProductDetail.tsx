@@ -170,7 +170,6 @@ export const ProductDetail = ({ product }: ProductDetailProps) => {
 
   const breadcrumbItems = [
     { label: 'Products', href: '/products' },
-    ...(product.category ? [{ label: product.category }] : []),
     { label: product.name },
   ];
 
@@ -193,13 +192,15 @@ export const ProductDetail = ({ product }: ProductDetailProps) => {
                   <span className="text-gray-900 font-medium truncate" title={item.label}>
                     {item.label}
                   </span>
-                ) : (
+                ) : item.href ? (
                   <Link
-                    href={item.href!}
+                    href={item.href}
                     className="text-gray-400 hover:text-orange-600 transition-colors whitespace-nowrap"
                   >
                     {item.label}
                   </Link>
+                ) : (
+                  <span className="text-gray-400 whitespace-nowrap">{item.label}</span>
                 )}
               </li>
             );
