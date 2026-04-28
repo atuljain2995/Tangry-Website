@@ -11,7 +11,6 @@ import { ProductPageClient } from './ProductPageClient';
 import {
   getProductBySlug,
   getRelatedProducts,
-  getAllProducts,
   getProductReviews,
   getProductCategories,
 } from '@/lib/db/queries';
@@ -20,14 +19,13 @@ interface PageProps {
   params: Promise<{ slug: string }>;
 }
 
-export const revalidate = false;
+export const revalidate = 3600; // ISR: revalidate every hour instead of static generation
 
-// Generate static params for all products
+// Don't generate static params - render on-demand instead to avoid context issues during prerendering
 export async function generateStaticParams() {
-  const products = await getAllProducts();
-  return products.map((product) => ({
-    slug: product.slug,
-  }));
+  // Return empty array to prevent static prerendering
+  // Pages will be rendered on-first-request and then cached
+  return [];
 }
 
 // Generate metadata for SEO
