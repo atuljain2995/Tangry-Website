@@ -1,4 +1,5 @@
 import { COMPANY_INFO } from '@/lib/data/constants';
+import { RebuildRequestButton } from '@/components/admin/RebuildRequestButton';
 
 export const dynamic = 'force-dynamic';
 
@@ -48,6 +49,18 @@ export default function AdminSettingsPage() {
         <p className="pt-2 text-sm text-gray-500">
           To change these, edit the constants file and redeploy. Editable settings (e.g. shipping
           threshold, store name) can be added later with a database-backed settings table.
+        </p>
+      </div>
+
+      <div className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm space-y-3">
+        <h2 className="text-lg font-semibold text-gray-900">Deployment</h2>
+        <p className="text-sm text-gray-600">
+          Trigger a new Vercel deployment after important admin updates.
+        </p>
+        <RebuildRequestButton />
+        <p className="text-xs text-gray-500">
+          Requires <code className="rounded bg-gray-100 px-1">VERCEL_DEPLOY_HOOK_URL</code> in
+          environment variables.
         </p>
       </div>
     </div>

@@ -32,6 +32,54 @@ type ImageInput = {
   display_order?: number;
 };
 
+async function revalidateProductRelatedPaths(
+  productId?: string,
+  productSlug?: string,
+  categoryId?: string | null,
+) {
+  revalidatePath('/');
+  revalidatePath('/products');
+  revalidatePath('/admin');
+  revalidatePath('/admin/products');
+  revalidatePath('/sitemap.xml');
+
+  let resolvedSlug = productSlug;
+  let resolvedCategoryId = categoryId;
+
+  if (productId && (!resolvedSlug || resolvedCategoryId === undefined)) {
+    const { data: productRow } = await supabaseAdmin
+      .from('products')
+      .select('slug, category_id')
+      .eq('id', productId)
+      .single();
+
+    if (productRow && typeof productRow === 'object') {
+      if (!resolvedSlug && 'slug' in productRow) {
+        resolvedSlug = (productRow as { slug: string }).slug;
+      }
+      if (resolvedCategoryId === undefined && 'category_id' in productRow) {
+        resolvedCategoryId = (productRow as { category_id: string | null }).category_id;
+      }
+    }
+  }
+
+  if (resolvedSlug) {
+    revalidatePath(`/products/${resolvedSlug}`);
+  }
+
+  if (resolvedCategoryId) {
+    const { data: categoryRow } = await supabaseAdmin
+      .from('product_categories')
+      .select('slug')
+      .eq('id', resolvedCategoryId)
+      .maybeSingle();
+
+    if (categoryRow && typeof categoryRow === 'object' && 'slug' in categoryRow) {
+      revalidatePath(`/categories/${(categoryRow as { slug: string }).slug}`);
+    }
+  }
+}
+
 export async function updateProduct(
   productId: string,
   data: ProductUpdate,
@@ -59,6 +107,8 @@ export async function updateProduct(
       console.error('Admin updateProduct error:', error);
       return { success: false, error: (error as { message?: string })?.message ?? 'Update failed' };
     }
+
+    await revalidateProductRelatedPaths(productId, undefined, data.category_id);
     return { success: true };
   } catch (e) {
     const msg = e instanceof Error ? e.message : 'Unknown error';
@@ -125,16 +175,7 @@ export async function updateProductImages(
       await db.from('product_images').insert(insertPayloads);
     }
 
-    revalidatePath('/');
-    revalidatePath('/products');
-    const { data: productRow } = await supabaseAdmin
-      .from('products')
-      .select('slug')
-      .eq('id', productId)
-      .single();
-    if (productRow && typeof productRow === 'object' && 'slug' in productRow) {
-      revalidatePath(`/products/${(productRow as { slug: string }).slug}`);
-    }
+    await revalidateProductRelatedPaths(productId);
     return { success: true };
   } catch (e) {
     const msg = e instanceof Error ? e.message : 'Unknown error';
@@ -149,6 +190,7 @@ export type CreateProductInput = {
   category_id?: string | null;
   meta_title?: string | null;
   meta_description?: string | null;
+  keywords?: string[];
   is_featured?: boolean;
   is_new?: boolean;
   is_best_seller?: boolean;
@@ -191,7 +233,7 @@ export async function createProduct(
       tags: [],
       meta_title: metaTitle,
       meta_description: metaDesc,
-      keywords: [],
+      keywords: input.keywords ?? [],
       is_featured: input.is_featured ?? false,
       is_new: input.is_new ?? false,
       is_best_seller: input.is_best_seller ?? false,
@@ -269,10 +311,7 @@ export async function createProduct(
       // Product and image already created; admin can add variant from edit page
     }
 
-    revalidatePath('/');
-    revalidatePath('/products');
-    revalidatePath('/admin');
-    revalidatePath('/admin/products');
+    await revalidateProductRelatedPaths(productId, productSlug, input.category_id?.trim() || null);
     return { success: true, productId, slug: productSlug };
   } catch (e) {
     const msg = e instanceof Error ? e.message : 'Unknown error';
@@ -326,17 +365,7 @@ export async function upsertProductVariants(
       }
     }
 
-    revalidatePath('/');
-    revalidatePath('/products');
-    revalidatePath('/admin/products');
-    const { data: productRow } = await supabaseAdmin
-      .from('products')
-      .select('slug')
-      .eq('id', productId)
-      .single();
-    if (productRow && typeof productRow === 'object' && 'slug' in productRow) {
-      revalidatePath(`/products/${(productRow as { slug: string }).slug}`);
-    }
+    await revalidateProductRelatedPaths(productId);
     return { success: true };
   } catch (e) {
     const msg = e instanceof Error ? e.message : 'Unknown error';

@@ -1,9 +1,8 @@
 import { Metadata } from 'next';
 import { ProductsPageClient } from './ProductsPageClient';
 import { StructuredData } from '@/components/seo/StructuredData';
-import { PRODUCT_CATEGORIES } from '@/lib/data/products';
 import { getProductSchema } from '@/lib/utils/schema';
-import { getAllProducts, getProductCategories, type DbProductCategory } from '@/lib/db/queries';
+import { getAllProducts, getProductCategories } from '@/lib/db/queries';
 
 export const metadata: Metadata = {
   title: 'Shop Masalas, Powders & Pickles',
@@ -19,21 +18,10 @@ export const metadata: Metadata = {
   },
 };
 
-export const revalidate = 3600; // Revalidate every hour
-
-function fallbackCategories(): DbProductCategory[] {
-  return PRODUCT_CATEGORIES.map((c, i) => ({
-    id: c.id,
-    slug: c.id,
-    title: c.title,
-    chip_label: c.chipLabel ?? null,
-    sort_order: i,
-  }));
-}
+export const revalidate = false;
 
 export default async function ProductsPage() {
-  const [products, fromDb] = await Promise.all([getAllProducts(), getProductCategories()]);
-  const categories = fromDb.length > 0 ? fromDb : fallbackCategories();
+  const [products, categories] = await Promise.all([getAllProducts(), getProductCategories()]);
 
   return (
     <>

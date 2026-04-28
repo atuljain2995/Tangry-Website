@@ -5,6 +5,7 @@ import { ArrowLeft, ExternalLink, ImagePlus, Loader2, Trash2, Upload } from 'luc
 import Link from 'next/link';
 import { AdminLink } from '@/components/admin/AdminLink';
 import { ProductCategorySelect } from '@/components/admin/ProductCategorySelect';
+import { KeywordChipsInput } from '@/components/admin/KeywordChipsInput';
 import {
   updateProduct,
   updateProductImages,
@@ -28,6 +29,7 @@ export function AdminProductEditForm({
   const [categoryId, setCategoryId] = useState(product.category_id ?? '');
   const [metaTitle, setMetaTitle] = useState(product.meta_title ?? '');
   const [metaDescription, setMetaDescription] = useState(product.meta_description ?? '');
+  const [keywords, setKeywords] = useState<string[]>(product.keywords ?? []);
   const [isFeatured, setIsFeatured] = useState(product.is_featured ?? false);
   const [isNew, setIsNew] = useState(product.is_new ?? false);
   const [isBestSeller, setIsBestSeller] = useState(product.is_best_seller ?? false);
@@ -181,6 +183,7 @@ export function AdminProductEditForm({
           category_id: categoryId.trim() || null,
           meta_title: metaTitle || product.name,
           meta_description: metaDescription || description || '',
+          keywords,
           is_featured: isFeatured,
           is_new: isNew,
           is_best_seller: isBestSeller,
@@ -238,6 +241,7 @@ export function AdminProductEditForm({
       categoryId,
       metaTitle,
       metaDescription,
+      keywords,
       isFeatured,
       isNew,
       isBestSeller,
@@ -340,6 +344,18 @@ export function AdminProductEditForm({
                   rows={2}
                   className="w-full rounded border border-gray-300 px-3 py-2"
                 />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  SEO keywords
+                </label>
+                <KeywordChipsInput
+                  value={keywords}
+                  onChange={setKeywords}
+                  placeholder="Type keyword and press comma"
+                  disabled={saving}
+                />
+                <p className="mt-1 text-xs text-gray-500">Press comma to create each keyword chip.</p>
               </div>
               <div className="flex gap-6">
                 <label className="flex items-center gap-2">

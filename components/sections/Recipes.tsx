@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { ArrowRight, Clock, Utensils } from 'lucide-react';
-import { RECIPES } from '@/lib/data/products';
+import { RECIPES } from '@/lib/data/recipes';
 
 export const Recipes = () => {
   return (

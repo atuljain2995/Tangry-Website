@@ -30,7 +30,6 @@ import { ProductImage } from './ProductImage';
 import { PincodeDeliveryCheck } from './PincodeDeliveryCheck';
 import { productImageAlt } from '@/lib/utils/product-image-alt';
 import { analytics } from '@/lib/analytics';
-import { PRODUCT_CATEGORIES } from '@/lib/data/products';
 import Link from 'next/link';
 
 interface ProductDetailProps {
@@ -169,15 +168,9 @@ export const ProductDetail = ({ product }: ProductDetailProps) => {
     analytics.trackAddToCart(product.id, product.name, 1, selectedVariant.price);
   };
 
-  const breadcrumbCategory = product.category
-    ? PRODUCT_CATEGORIES.find((c) => c.title === product.category)
-    : null;
-
   const breadcrumbItems = [
     { label: 'Products', href: '/products' },
-    ...(breadcrumbCategory
-      ? [{ label: product.category, href: `/categories/${breadcrumbCategory.id}` }]
-      : []),
+    ...(product.category ? [{ label: product.category }] : []),
     { label: product.name },
   ];
 

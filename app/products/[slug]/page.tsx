@@ -1,7 +1,6 @@
 import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { StructuredData } from '@/components/seo/StructuredData';
-import { PRODUCT_CATEGORIES } from '@/lib/data/products';
 import {
   getBreadcrumbSchema,
   getProductSchema,
@@ -14,14 +13,14 @@ import {
   getRelatedProducts,
   getAllProducts,
   getProductReviews,
+  getProductCategories,
 } from '@/lib/db/queries';
 
 interface PageProps {
   params: Promise<{ slug: string }>;
 }
 
-// Use ISR: revalidate every 60s so admin changes show quickly without sacrificing performance
-export const revalidate = 60;
+export const revalidate = false;
 
 // Generate static params for all products
 export async function generateStaticParams() {
@@ -64,17 +63,19 @@ export default async function ProductPage({ params }: PageProps) {
     notFound();
   }
 
-  // Get related products (same category, exclude current) and reviews in parallel
-  const [relatedProducts, reviews] = await Promise.all([
+  // Get related products (same category, exclude current), reviews, and category map in parallel
+  const [relatedProducts, reviews, categories] = await Promise.all([
     getRelatedProducts(product.category, product.id, 4),
     getProductReviews(product.id),
+    getProductCategories(),
   ]);
 
-  const matchedCategory = PRODUCT_CATEGORIES.find(
-    (category) => category.title === product.category,
-  );
+  const matchedCategory = categories.find((category) => {
+    if (product.categoryId) return category.id === product.categoryId;
+    return category.title === product.category;
+  });
   const categoryUrl = matchedCategory
-    ? `https://www.tangryspices.com/categories/${matchedCategory.id}`
+    ? `https://www.tangryspices.com/categories/${matchedCategory.slug}`
     : 'https://www.tangryspices.com/products';
 
   const breadcrumbs = [

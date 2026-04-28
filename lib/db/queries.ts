@@ -5,12 +5,17 @@ import { ProductExtended } from '../types/database';
 
 const PLACEHOLDER_IMAGE = '/products/placeholder.png';
 
+function shouldFailBuildOnDbError(): boolean {
+  return process.env.FAIL_BUILD_ON_DB_ERROR === 'true';
+}
+
 /** Row from `product_categories` (public read) */
 export type DbProductCategory = {
   id: string;
   slug: string;
   title: string;
   chip_label: string | null;
+  description: string | null;
   sort_order: number;
 };
 
@@ -20,13 +25,16 @@ export type DbProductCategory = {
 export async function getProductCategories(): Promise<DbProductCategory[]> {
   const { data, error } = await supabase
     .from('product_categories')
-    .select('id, slug, title, chip_label, sort_order')
+    .select('id, slug, title, chip_label, description, sort_order')
     .order('sort_order', { ascending: true })
     .order('title', { ascending: true });
 
   if (error) {
     isSupabaseUnreachable(error);
     console.error('Error fetching product categories:', error);
+    if (shouldFailBuildOnDbError()) {
+      throw new Error(`Failed to fetch product categories: ${error.message}`);
+    }
     return [];
   }
   return (data as DbProductCategory[]) ?? [];
@@ -45,8 +53,11 @@ export async function getAllProducts(): Promise<ProductExtended[]> {
   if (productsError) {
     isSupabaseUnreachable(productsError);
     console.error('Error fetching products:', productsError);
-    // Throw so generateStaticParams / ISR keeps stale cache instead of wiping pages
-    throw new Error(`Failed to fetch products: ${productsError.message}`);
+    if (shouldFailBuildOnDbError()) {
+      throw new Error(`Failed to fetch products: ${productsError.message}`);
+    }
+    // Degrade gracefully when Supabase is temporarily unavailable.
+    return [];
   }
 
   if (!products || products.length === 0) return [];

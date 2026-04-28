@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { Loader2 } from 'lucide-react';
 import { AdminLink } from '@/components/admin/AdminLink';
 import { ProductCategorySelect } from '@/components/admin/ProductCategorySelect';
+import { KeywordChipsInput } from '@/components/admin/KeywordChipsInput';
 import { createProduct } from '@/lib/actions/admin-products';
 import type { DbProductCategory } from '@/lib/db/queries';
 
@@ -17,6 +18,7 @@ export function AdminNewProductForm({ categories }: { categories: DbProductCateg
   const [categoryId, setCategoryId] = useState('');
   const [metaTitle, setMetaTitle] = useState('');
   const [metaDescription, setMetaDescription] = useState('');
+  const [keywords, setKeywords] = useState<string[]>([]);
   const [isFeatured, setIsFeatured] = useState(false);
   const [isNew, setIsNew] = useState(false);
   const [isBestSeller, setIsBestSeller] = useState(false);
@@ -42,6 +44,7 @@ export function AdminNewProductForm({ categories }: { categories: DbProductCateg
       category_id: categoryId.trim() || undefined,
       meta_title: metaTitle.trim() || undefined,
       meta_description: metaDescription.trim() || undefined,
+      keywords,
       is_featured: isFeatured,
       is_new: isNew,
       is_best_seller: isBestSeller,
@@ -147,6 +150,16 @@ export function AdminNewProductForm({ categories }: { categories: DbProductCateg
               rows={2}
               className="w-full rounded border border-gray-300 px-3 py-2"
             />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">SEO keywords</label>
+            <KeywordChipsInput
+              value={keywords}
+              onChange={setKeywords}
+              placeholder="Type keyword and press comma"
+              disabled={saving}
+            />
+            <p className="mt-1 text-xs text-gray-500">Press comma to create each keyword chip.</p>
           </div>
           <div className="flex gap-6">
             <label className="flex items-center gap-2">

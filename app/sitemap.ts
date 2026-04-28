@@ -1,18 +1,8 @@
 import { MetadataRoute } from 'next';
-import { getAllProducts } from '@/lib/db/queries';
-import { PRODUCT_CATEGORIES } from '@/lib/data/products';
+import { getAllProducts, getProductCategories } from '@/lib/db/queries';
 import { blogPosts } from '@/lib/data/blog';
-import { getProductCategories, type DbProductCategory } from '@/lib/db/queries';
 
-function fallbackCategories(): DbProductCategory[] {
-  return PRODUCT_CATEGORIES.map((category, index) => ({
-    id: category.id,
-    slug: category.id,
-    title: category.title,
-    chip_label: category.chipLabel ?? null,
-    sort_order: index,
-  }));
-}
+export const revalidate = false;
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = 'https://www.tangryspices.com';
@@ -85,16 +75,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.6,
   }));
 
-  // Fetch all products from database (not fallback) for complete sitemap coverage
-  let allProducts = [];
-  try {
-    allProducts = await getAllProducts();
-  } catch {
-    console.warn('Failed to fetch products from database for sitemap, using fallback');
-    // If DB fails, import fallback
-    const { PRODUCTS_EXTENDED } = await import('@/lib/data/productsExtended');
-    allProducts = PRODUCTS_EXTENDED;
-  }
+  const [allProducts, categories] = await Promise.all([getAllProducts(), getProductCategories()]);
 
   // Product pages - now includes all 16+ products from database
   const productPages = allProducts.map((product) => ({
@@ -104,8 +85,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: product.isBestSeller || product.isFeatured ? 0.9 : 0.8,
   }));
 
-  const fromDb = await getProductCategories();
-  const categories = fromDb.length > 0 ? fromDb : fallbackCategories();
   const categoryPages = categories.map((category) => ({
     url: `${baseUrl}/categories/${category.slug}`,
     lastModified: buildTime,
