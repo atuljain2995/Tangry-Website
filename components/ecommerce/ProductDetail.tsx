@@ -34,11 +34,13 @@ import Link from 'next/link';
 
 interface ProductDetailProps {
   product: ProductExtended;
+  categoryUrl: string;
+  categoryLabel: string;
 }
 
 const PLACEHOLDER_IMAGE = '/images/logo-512.png';
 
-export const ProductDetail = ({ product }: ProductDetailProps) => {
+export const ProductDetail = ({ product, categoryUrl, categoryLabel }: ProductDetailProps) => {
   const [selectedVariantIndex, setSelectedVariantIndex] = useState(0);
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
   const { addToCart, cart, updateQuantity } = useCart();
@@ -170,6 +172,7 @@ export const ProductDetail = ({ product }: ProductDetailProps) => {
 
   const breadcrumbItems = [
     { label: 'Products', href: '/products' },
+    { label: categoryLabel, href: categoryUrl },
     { label: product.name },
   ];
 

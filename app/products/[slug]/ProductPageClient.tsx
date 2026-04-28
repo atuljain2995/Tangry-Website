@@ -14,9 +14,16 @@ import { analytics } from '@/lib/analytics';
 interface ProductPageClientProps {
   product: ProductExtended;
   relatedProducts: ProductExtended[];
+  categoryUrl: string;
+  categoryLabel: string;
 }
 
-export function ProductPageClient({ product, relatedProducts }: ProductPageClientProps) {
+export function ProductPageClient({
+  product,
+  relatedProducts,
+  categoryUrl,
+  categoryLabel,
+}: ProductPageClientProps) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   useEffect(() => {
@@ -33,7 +40,11 @@ export function ProductPageClient({ product, relatedProducts }: ProductPageClien
 
         {/* Spacing for fixed header */}
         <div className="pt-20">
-          <ProductDetail product={product} />
+          <ProductDetail
+            product={product}
+            categoryUrl={categoryUrl}
+            categoryLabel={categoryLabel}
+          />
         </div>
 
         <ProductReviews productId={product.id} />

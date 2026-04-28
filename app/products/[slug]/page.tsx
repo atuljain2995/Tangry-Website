@@ -97,7 +97,12 @@ export default async function ProductPage({ params }: PageProps) {
           getFAQSchema(productFAQs),
         ]}
       />
-      <ProductPageClient product={product} relatedProducts={relatedProducts} />
+      <ProductPageClient
+        product={product}
+        relatedProducts={relatedProducts}
+        categoryUrl={categoryUrl}
+        categoryLabel={product.category}
+      />
     </>
   );
 }
