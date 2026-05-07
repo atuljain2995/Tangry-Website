@@ -122,6 +122,9 @@ export const Footer = () => {
                 <Link href="/shipping-policy">Shipping Policy</Link>
               </li>
               <li className="hover:text-orange-600 transition">
+                <Link href="/privacy-policy">Privacy Policy</Link>
+              </li>
+              <li className="hover:text-orange-600 transition">
                 <Link href="/contact">Contact Us</Link>
               </li>
               <li className="hover:text-orange-600 cursor-pointer transition">
@@ -139,7 +142,13 @@ export const Footer = () => {
               href="/contact"
               className="transition hover:text-gray-900 dark:hover:text-neutral-100"
             >
-              Contact & policies
+              Contact
+            </Link>
+            <Link
+              href="/privacy-policy"
+              className="transition hover:text-gray-900 dark:hover:text-neutral-100"
+            >
+              Privacy Policy
             </Link>
           </div>
         </div>

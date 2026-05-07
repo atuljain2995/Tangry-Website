@@ -276,7 +276,7 @@ export default function AboutPage() {
             <div className="rounded-xl overflow-hidden shadow-lg border border-gray-200 dark:border-neutral-700 aspect-[4/3]">
               <iframe
                 title="Tangry Spices — Jhotwara, Jaipur"
-                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3830.2644173353583!2d75.75710867562384!3d26.935058359129464!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x396db375832d3cb3%3A0x120c439a534ae39d!2sJain%20Electricals!5e1!3m2!1sen!2sin!4v1776817059884!5m2!1sen!2sin"
+                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3830.2635341992973!2d75.75707387562377!3d26.93508435912847!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x396db378a613de67%3A0x81cd098ffce4ed62!2sTangry%20Spices!5e1!3m2!1sen!2sin!4v1778120344586!5m2!1sen!2sin"
                 width="100%"
                 height="100%"
                 style={{ border: 0 }}
@@ -334,7 +334,7 @@ export default function AboutPage() {
               </div>
 
               <a
-                href="https://www.google.com/maps?q=26.9124,75.7873"
+                href="https://www.google.com/maps?q=26.93508435912847,75.75707387562377"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex items-center gap-2 bg-orange-600 text-white font-bold py-3 px-6 rounded-full hover:bg-orange-700 transition w-fit"

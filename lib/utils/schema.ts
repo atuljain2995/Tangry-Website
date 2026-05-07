@@ -255,10 +255,10 @@ export function getLocalBusinessSchema() {
     address: orgPostalAddress,
     geo: {
       '@type': 'GeoCoordinates',
-      latitude: '26.935058',
-      longitude: '75.757109',
+      latitude: '26.93508435912847',
+      longitude: '75.75707387562377',
     },
-    hasMap: 'https://www.google.com/maps?q=26.935058,75.757109',
+    hasMap: 'https://www.google.com/maps?q=26.93508435912847,75.75707387562377',
     priceRange: '₹₹',
     servesCuisine: ['Indian', 'Rajasthani'],
     paymentAccepted: ['Cash', 'UPI', 'Credit Card', 'Debit Card', 'Net Banking'],
