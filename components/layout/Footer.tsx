@@ -119,6 +119,9 @@ export const Footer = () => {
                 <Link href="/track-order">Track Order</Link>
               </li>
               <li className="hover:text-orange-600 transition">
+                <Link href="/returns">Returns &amp; Refunds</Link>
+              </li>
+              <li className="hover:text-orange-600 transition">
                 <Link href="/shipping-policy">Shipping Policy</Link>
               </li>
               <li className="hover:text-orange-600 transition">

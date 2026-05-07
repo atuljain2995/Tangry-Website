@@ -17,7 +17,7 @@ export default function PrivacyPolicyPage() {
           <section>
             <p>
               This Privacy Policy explains how <strong>{COMPANY_INFO.legalName}</strong> (trading
-              as <strong>{COMPANY_INFO.brandName} Spices</strong>, &ldquo;we&rdquo;,
+              as <strong>{COMPANY_INFO.brandName}</strong>, &ldquo;we&rdquo;,
               &ldquo;us&rdquo;, &ldquo;our&rdquo;) collects, uses, and protects information about
               you when you visit{' '}
               <a href="https://www.tangryspices.com" className="text-orange-600 hover:underline">

@@ -2,10 +2,10 @@ export const HERO_PATTERN = `data:image/svg+xml,%3Csvg width='60' height='60' vi
 
 /**
  * Business details. `legalName` is shown on the public site in the footer only;
- * use `brandName` / “Tangry” everywhere else.
+ * `brandName` is the canonical public-facing name used everywhere (NAP standard).
  */
 export const COMPANY_INFO = {
-  brandName: 'Tangry',
+  brandName: 'Tangry Spices',
   tagline: 'Taste of Home',
   legalName: 'Maya Enterprises',
   /** Human-readable for UI */

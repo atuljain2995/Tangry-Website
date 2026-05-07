@@ -25,8 +25,8 @@ export function getOrganizationSchema() {
   return {
     '@context': 'https://schema.org',
     '@type': 'Organization',
-    name: 'Tangry',
-    alternateName: ['Tangry Spices'],
+    name: 'Tangry Spices',
+    alternateName: ['Tangry', 'Maya Enterprises'],
     url: 'https://www.tangryspices.com',
     logo: 'https://www.tangryspices.com/images/logo-512.png',
     description: `${COMPANY_INFO.brandName} — ${COMPANY_INFO.tagline}. Authentic spices and masalas from Jaipur, Rajasthan.`,
@@ -95,7 +95,7 @@ export function getProductSchema(product: ProductExtended, reviews: Review[] = [
         }))
       : undefined;
 
-  const brand = { '@type': 'Brand', name: 'Tangry' };
+  const brand = { '@type': 'Brand', name: 'Tangry Spices' };
 
   // Build per-variant Product + Offer objects
   const variantSchemas = product.variants.map((v) => {
@@ -109,7 +109,7 @@ export function getProductSchema(product: ProductExtended, reviews: Review[] = [
       priceCurrency: 'INR',
       price: Number.isFinite(price) ? price : 0,
       availability,
-      seller: { '@type': 'Organization', name: 'Tangry' },
+      seller: { '@type': 'Organization', name: 'Tangry Spices' },
     };
 
     // Emit priceValidUntil when a compare-at (sale) price is present
@@ -239,10 +239,10 @@ export function getRecipeSchema(recipe: {
 export function getLocalBusinessSchema() {
   return {
     '@context': 'https://schema.org',
-    '@type': ['LocalBusiness', 'FoodEstablishment'],
+    '@type': ['LocalBusiness', 'FoodStore'],
     '@id': 'https://www.tangryspices.com/#local-business',
-    name: 'Tangry',
-    alternateName: 'Tangry Spices',
+    name: 'Tangry Spices',
+    alternateName: 'Tangry',
     description:
       'Authentic spices, masalas, pickles, and condiments handcrafted in Jaipur, Rajasthan. FSSAI licensed and ISO 22000 certified.',
     image: [
@@ -404,4 +404,67 @@ export function getProductFAQs(
   });
 
   return faqs;
+}
+
+/**
+ * ItemList schema for the /products catalog page.
+ * Enables product list rich results and carousel in Google SERPs.
+ */
+export function getItemListSchema(products: ProductExtended[]) {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'ItemList',
+    name: 'Tangry Spices Product Catalog',
+    url: `${SITE_URL}/products`,
+    numberOfItems: products.length,
+    itemListElement: products.map((p, index) => ({
+      '@type': 'ListItem',
+      position: index + 1,
+      url: `${SITE_URL}/products/${p.slug}`,
+      name: p.name,
+    })),
+  };
+}
+
+/**
+ * Article (BlogPosting) schema for individual blog post pages.
+ * Enables Article rich results and Top Stories carousel eligibility.
+ */
+export function getBlogPostSchema(post: {
+  slug: string;
+  title: string;
+  excerpt: string;
+  author: string;
+  date: string;
+  updated: string;
+  image: string;
+  tags: string[];
+}) {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'BlogPosting',
+    headline: post.title,
+    description: post.excerpt,
+    image: `${SITE_URL}${post.image}`,
+    datePublished: post.date,
+    dateModified: post.updated,
+    author: {
+      '@type': 'Organization',
+      name: 'Tangry Spices',
+      url: SITE_URL,
+    },
+    publisher: {
+      '@type': 'Organization',
+      name: 'Tangry Spices',
+      logo: {
+        '@type': 'ImageObject',
+        url: `${SITE_URL}/images/logo-512.png`,
+      },
+    },
+    mainEntityOfPage: {
+      '@type': 'WebPage',
+      '@id': `${SITE_URL}/blog/${post.slug}`,
+    },
+    keywords: post.tags.join(', '),
+  };
 }

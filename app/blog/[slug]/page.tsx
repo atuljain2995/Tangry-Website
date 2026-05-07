@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { ArrowLeft, ArrowRight, Clock, User } from 'lucide-react';
 import { StructuredData } from '@/components/seo/StructuredData';
+import { getBlogPostSchema } from '@/lib/utils/schema';
 import { blogPosts, getBlogPost } from '@/lib/data/blog';
 import { BlogPostChrome } from './BlogPostChrome';
 
@@ -58,35 +59,11 @@ export default async function BlogPostPage({ params }: PageProps) {
     notFound();
   }
 
-  const articleSchema = {
-    '@context': 'https://schema.org',
-    '@type': 'BlogPosting',
-    headline: post.title,
-    description: post.excerpt,
-    image: `${SITE_URL}${post.image}`,
-    datePublished: post.date,
-    dateModified: post.updated,
-    author: {
-      '@type': 'Organization',
-      name: post.author,
-    },
-    publisher: {
-      '@type': 'Organization',
-      name: 'Tangry Spices',
-      logo: {
-        '@type': 'ImageObject',
-        url: `${SITE_URL}/images/logo-512.png`,
-      },
-    },
-    mainEntityOfPage: `${SITE_URL}/blog/${post.slug}`,
-    keywords: post.tags.join(', '),
-  };
-
   const relatedPosts = blogPosts.filter((item) => item.slug !== post.slug).slice(0, 3);
 
   return (
     <BlogPostChrome>
-      <StructuredData data={articleSchema} />
+      <StructuredData data={getBlogPostSchema(post)} />
 
       <article className="pt-20">
         {/* Full-width hero image */}

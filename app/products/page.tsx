@@ -1,7 +1,7 @@
 import { Metadata } from 'next';
 import { ProductsPageClient } from './ProductsPageClient';
 import { StructuredData } from '@/components/seo/StructuredData';
-import { getProductSchema } from '@/lib/utils/schema';
+import { getProductSchema, getItemListSchema } from '@/lib/utils/schema';
 import { getAllProducts, getProductCategories } from '@/lib/db/queries';
 
 export const metadata: Metadata = {
@@ -25,7 +25,7 @@ export default async function ProductsPage() {
 
   return (
     <>
-      <StructuredData data={products.map((product) => getProductSchema(product))} />
+      <StructuredData data={[getItemListSchema(products), ...products.map((product) => getProductSchema(product))]} />
       <ProductsPageClient products={products} categories={categories} />
     </>
   );

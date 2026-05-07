@@ -40,8 +40,12 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   }
 
   // Do not pass local image paths to OG (Next.js can validate and throw if file missing/invalid)
+  const primaryVariantName = product.variants?.[0]?.name ?? '';
+  const weightLabel = primaryVariantName ? ` (${primaryVariantName})` : '';
+  const generatedTitle = `Buy ${product.name}${weightLabel} Online – Tangry Spices, Jaipur`;
+
   return {
-    title: product.metaTitle || product.name,
+    title: product.metaTitle || generatedTitle,
     description: product.metaDescription || product.description,
     keywords: product.keywords,
     alternates: { canonical: `/products/${resolvedParams.slug}` },
