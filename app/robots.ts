@@ -23,16 +23,26 @@ export default function robots(): MetadataRoute.Robots {
         allow: '/',
         disallow: googlePrivatePaths,
       },
-      // ── AI / training crawlers ─────────────────────────────────────
-      // Cloudflare Managed Content prepends its own Disallow blocks for
-      // GPTBot, ClaudeBot, Bytespider, etc. Adding conflicting Allow here
-      // is ignored because crawlers use the *first* matching directive.
-      // Only list crawlers whose Cloudflare rule we do NOT want to override.
-      //
-      // NOTE: If you later disable Cloudflare Managed Content, re-add
-      // explicit Allow rules for OAI-SearchBot, ChatGPT-User, PerplexityBot.
+      // ── AI search crawlers (power AI Overviews / ChatGPT browsing) ──
+      // These crawlers serve real-time search answers, NOT training datasets.
+      // Allowing them makes the site visible in Google AI Overviews and ChatGPT.
+      {
+        userAgent: 'Google-Extended',
+        allow: '/',
+        disallow: googlePrivatePaths,
+      },
+      {
+        userAgent: 'GPTBot',
+        allow: '/',
+        disallow: privatePaths,
+      },
+      // ── AI training crawlers — keep blocked ─────────────────────────
       {
         userAgent: 'CCBot',
+        disallow: '/',
+      },
+      {
+        userAgent: 'Bytespider',
         disallow: '/',
       },
       {
