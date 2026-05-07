@@ -1,7 +1,7 @@
 import { MetadataRoute } from 'next';
 
 // Private paths blocked from all crawlers
-const privatePaths = ['/api/', '/account/', '/checkout/', '/admin/', '/_next/', '/private/'];
+const privatePaths = ['/api/', '/account/', '/checkout/', '/admin/', '/private/'];
 
 // Private paths blocked from all crawlers (less /_next/ for Googlebot)
 const googlePrivatePaths = ['/api/', '/account/', '/checkout/', '/admin/'];
