@@ -1,10 +1,5 @@
-'use client';
-
-import { useState } from 'react';
-import { Header } from '@/components/layout/Header';
-import { MobileMenu } from '@/components/layout/MobileMenu';
+import { PageShell } from '@/components/layout/PageShell';
 import { Footer } from '@/components/layout/Footer';
-import { CartDrawer } from '@/components/ecommerce/CartDrawer';
 import { TrustBadges } from '@/components/ui/TrustBadges';
 import { COMPANY_INFO } from '@/lib/data/constants';
 import { MapPin, Leaf, ShieldCheck, Award, Heart, Package, Users, Target } from 'lucide-react';
@@ -48,13 +43,8 @@ const milestones = [
 ];
 
 export default function AboutPage() {
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-
   return (
-    <main className="page-shell">
-      <Header onMenuOpen={() => setIsMobileMenuOpen(true)} />
-      <MobileMenu isOpen={isMobileMenuOpen} onClose={() => setIsMobileMenuOpen(false)} />
-      <CartDrawer />
+    <PageShell>
 
       {/* Hero Section */}
       <section className="relative bg-gray-900 text-white overflow-hidden">
@@ -383,6 +373,6 @@ export default function AboutPage() {
       </section>
 
       <Footer />
-    </main>
+    </PageShell>
   );
 }

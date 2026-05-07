@@ -1,21 +1,11 @@
-'use client';
-
-import { useState } from 'react';
 import Link from 'next/link';
-import { Header } from '@/components/layout/Header';
-import { MobileMenu } from '@/components/layout/MobileMenu';
+import { PageShell } from '@/components/layout/PageShell';
 import { Footer } from '@/components/layout/Footer';
-import { CartDrawer } from '@/components/ecommerce/CartDrawer';
 import { COMPANY_INFO } from '@/lib/data/constants';
 
 export default function ShippingPolicyPage() {
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-
   return (
-    <main className="page-shell">
-      <Header onMenuOpen={() => setIsMobileMenuOpen(true)} />
-      <MobileMenu isOpen={isMobileMenuOpen} onClose={() => setIsMobileMenuOpen(false)} />
-      <CartDrawer />
+    <PageShell>
 
       <article className="container mx-auto px-6 py-20 mt-20 max-w-3xl">
         <h1 className="text-4xl font-bold text-gray-900 mb-2">Shipping policy</h1>
@@ -99,6 +89,6 @@ export default function ShippingPolicyPage() {
       </article>
 
       <Footer />
-    </main>
+    </PageShell>
   );
 }

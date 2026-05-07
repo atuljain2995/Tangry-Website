@@ -1,11 +1,6 @@
-'use client';
-
-import { useState } from 'react';
 import Link from 'next/link';
-import { Header } from '@/components/layout/Header';
-import { MobileMenu } from '@/components/layout/MobileMenu';
+import { PageShell } from '@/components/layout/PageShell';
 import { Footer } from '@/components/layout/Footer';
-import { CartDrawer } from '@/components/ecommerce/CartDrawer';
 import { StructuredData } from '@/components/seo/StructuredData';
 import { ArrowLeft, MapPin, Award, Heart } from 'lucide-react';
 
@@ -66,14 +61,9 @@ const VALUES = [
 ];
 
 export default function FounderPage() {
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-
   return (
-    <main className="page-shell">
+    <PageShell>
       <StructuredData data={founderSchema} />
-      <Header onMenuOpen={() => setIsMobileMenuOpen(true)} />
-      <MobileMenu isOpen={isMobileMenuOpen} onClose={() => setIsMobileMenuOpen(false)} />
-      <CartDrawer />
 
       {/* Hero */}
       <section className="pt-32 pb-16 container mx-auto px-4">
@@ -203,6 +193,6 @@ export default function FounderPage() {
       </section>
 
       <Footer />
-    </main>
+    </PageShell>
   );
 }
