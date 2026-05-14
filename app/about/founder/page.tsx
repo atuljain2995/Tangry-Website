@@ -8,7 +8,8 @@ const founderSchema = {
   '@context': 'https://schema.org',
   '@type': 'Person',
   name: 'Maya Jain',
-  jobTitle: 'Founder',
+  url: 'https://www.tangryspices.com/about/founder',
+  jobTitle: 'Founder & CEO',
   worksFor: {
     '@type': 'Organization',
     name: 'Tangry Spices',
@@ -21,7 +22,27 @@ const founderSchema = {
     addressCountry: 'IN',
   },
   description:
-    'Maya Jain founded Tangry Spices to bring authentic, filler-free Rajasthani masalas to every Indian kitchen.',
+    'Maya Jain founded Tangry Spices to bring authentic, filler-free Rajasthani masalas to every Indian kitchen. She oversees sourcing, small-batch blending, and FSSAI-certified production at the Jhotwara facility.',
+  knowsAbout: [
+    'Spice blending',
+    'Rajasthani cuisine',
+    'Food safety and quality certification',
+    'Indian masala production',
+    'Small-batch food manufacturing',
+  ],
+  sameAs: [
+    'https://www.instagram.com/tangryspices',
+    'https://www.facebook.com/tangryspices',
+  ],
+  hasCredential: {
+    '@type': 'EducationalOccupationalCredential',
+    credentialCategory: 'Food Safety License',
+    name: 'FSSAI License 12225026001713',
+    recognizedBy: {
+      '@type': 'Organization',
+      name: 'Food Safety and Standards Authority of India',
+    },
+  },
 };
 
 const MILESTONES = [

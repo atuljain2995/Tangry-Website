@@ -438,6 +438,7 @@ export function getBlogPostSchema(post: {
   date: string;
   updated: string;
   image: string;
+  imageAlt: string;
   tags: string[];
 }) {
   return {
@@ -445,7 +446,13 @@ export function getBlogPostSchema(post: {
     '@type': 'BlogPosting',
     headline: post.title,
     description: post.excerpt,
-    image: `${SITE_URL}${post.image}`,
+    image: {
+      '@type': 'ImageObject',
+      url: `${SITE_URL}${post.image}`,
+      description: post.imageAlt,
+      width: 1200,
+      height: 630,
+    },
     datePublished: post.date,
     dateModified: post.updated,
     author: {

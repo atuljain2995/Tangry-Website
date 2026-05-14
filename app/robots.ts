@@ -38,10 +38,6 @@ export default function robots(): MetadataRoute.Robots {
       },
       // ── AI training crawlers — keep blocked ─────────────────────────
       {
-        userAgent: 'CCBot',
-        disallow: '/',
-      },
-      {
         userAgent: 'Bytespider',
         disallow: '/',
       },
