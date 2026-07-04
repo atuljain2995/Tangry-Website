@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Header } from '@/components/layout/Header';
 import { MobileMenu } from '@/components/layout/MobileMenu';
 import { Footer } from '@/components/layout/Footer';
@@ -9,7 +9,6 @@ import { ProductDetail } from '@/components/ecommerce/ProductDetail';
 import { ProductCard } from '@/components/ecommerce/ProductCard';
 import { ProductReviews } from '@/components/ecommerce/ProductReviews';
 import { ProductExtended } from '@/lib/types/database';
-import { analytics } from '@/lib/analytics';
 
 interface ProductPageClientProps {
   product: ProductExtended;
@@ -25,11 +24,6 @@ export function ProductPageClient({
   categoryLabel,
 }: ProductPageClientProps) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-
-  useEffect(() => {
-    const price = product.variants?.[0]?.price ?? 0;
-    analytics.trackProductView(product.id, product.name, price);
-  }, [product.id, product.name, product.variants]);
 
   return (
     <>

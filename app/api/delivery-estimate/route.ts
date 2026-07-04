@@ -21,6 +21,7 @@ export async function GET(request: NextRequest) {
 
   const { minDays, maxDays, district, state, areaName, pincode: pc } = result.data;
   const { min, max } = estimateDeliveryRangeFromPincode(minDays, maxDays);
+  const arriveBy = max.toLocaleDateString('en-IN', { month: 'short', day: 'numeric' });
 
   return NextResponse.json({
     pincode: pc,
@@ -30,5 +31,6 @@ export async function GET(request: NextRequest) {
     minDays,
     maxDays,
     deliveryText: formatDeliveryDate(min, max),
+    arriveBy,
   });
 }

@@ -11,6 +11,10 @@ export const WhatsAppButton = () => {
 
   if (pathname?.startsWith('/admin')) return null;
 
+  // Product detail pages render a mobile sticky buy bar at the bottom.
+  // Lift the chat button above it on mobile so it doesn't overlap "Buy Now".
+  const isProductDetail = !!pathname && pathname.startsWith('/products/') && pathname !== '/products';
+
   const whatsappNumber = '917733009952'; // +91 7733009952
   const message = encodeURIComponent('Hi! I have a question about Tangry Spices.');
   const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${message}`;
@@ -23,7 +27,9 @@ export const WhatsAppButton = () => {
       onClick={() => analytics.trackWhatsAppClick(pathname || '/')}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
-      className="fixed bottom-6 right-6 z-40 bg-[#25D366] text-white rounded-full p-4 shadow-2xl hover:shadow-3xl transition-all duration-300 hover:scale-110 group"
+      className={`fixed right-6 z-40 bg-[#25D366] text-white rounded-full p-4 shadow-2xl hover:shadow-3xl transition-all duration-300 hover:scale-110 group ${
+        isProductDetail ? 'bottom-24 md:bottom-6' : 'bottom-6'
+      }`}
       aria-label="Chat on WhatsApp"
     >
       <MessageCircle
