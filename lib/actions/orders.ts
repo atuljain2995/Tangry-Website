@@ -46,11 +46,16 @@ export async function createOrder(payload: CreateOrderPayload): Promise<CreateOr
   }
 
   try {
+    // Link order to logged-in user if available; also used to enforce
+    // first-order-only coupons at placement time.
+    const sessionUser = await getSessionUser().catch(() => null);
+
     const lines = orderLinesFromCartItems(items);
     const trusted = await computeTrustedOrderDraft({
       lines,
       couponCode,
       country: shippingAddress.country || 'IN',
+      userId: sessionUser?.id ?? null,
     });
     if (!trusted.ok) {
       return { success: false, error: trusted.error };
@@ -115,8 +120,6 @@ export async function createOrder(payload: CreateOrderPayload): Promise<CreateOr
     }
 
     // Link order to logged-in user if available
-    const sessionUser = await getSessionUser().catch(() => null);
-
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const { error: orderError } = await (supabaseAdmin as any).from('orders').insert({
       order_number: orderNumber,
@@ -203,7 +206,12 @@ export async function updateOrderStatus(
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const { error } = await (supabaseAdmin as any)
     .from('orders')
-    .update({ order_status: orderStatus, updated_at: new Date().toISOString() })
+    .update({
+      order_status: orderStatus,
+      updated_at: new Date().toISOString(),
+      // Stamp delivery time once so the review-request cron can fire 3–5 days later.
+      ...(orderStatus === 'delivered' ? { delivered_at: new Date().toISOString() } : {}),
+    })
     .eq('id', orderId);
   if (error) {
     console.error('updateOrderStatus error:', error);

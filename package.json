@@ -12,6 +12,7 @@
     "format": "prettier --write .",
     "test-db": "tsx scripts/test-db-connection.ts",
     "create-admin": "tsx scripts/create-admin.ts",
+    "check:images": "tsx scripts/check-product-images.ts",
     "prepare": "husky"
   },
   "dependencies": {

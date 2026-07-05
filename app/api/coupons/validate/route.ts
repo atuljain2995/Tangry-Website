@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { computeTrustedOrderDraft } from '@/lib/orders/compute-trusted-order';
+import { getSessionUser } from '@/lib/auth/session';
 
 function parseCouponValidatePayload(raw: unknown): {
   couponCode: string;
@@ -43,10 +44,12 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Invalid coupon request' }, { status: 400 });
     }
 
+    const sessionUser = await getSessionUser();
     const trusted = await computeTrustedOrderDraft({
       lines: parsed.lines,
       couponCode: parsed.couponCode,
       country: 'IN',
+      userId: sessionUser?.id ?? null,
     });
 
     if (!trusted.ok) {

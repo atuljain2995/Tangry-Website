@@ -312,6 +312,7 @@ interface DbCoupon {
   valid_from: string;
   valid_until: string;
   is_active: boolean;
+  first_order_only?: boolean | null;
 }
 
 /**
@@ -330,12 +331,38 @@ export async function getCouponByCode(code: string): Promise<DbCoupon | null> {
 }
 
 /**
+ * Count a user's existing orders that count toward "not a first order".
+ * Cancelled orders don't disqualify a customer from a first-order coupon.
+ */
+export async function countQualifyingUserOrders(userId: string): Promise<number> {
+  const { count, error } = await supabaseAdmin
+    .from('orders')
+    .select('id', { count: 'exact', head: true })
+    .eq('user_id', userId)
+    .neq('order_status', 'cancelled');
+
+  if (error) {
+    console.error('countQualifyingUserOrders error:', error);
+    // Fail closed for first-order coupons: treat as "has orders" so we don't
+    // hand a first-order discount to a returning customer on a transient error.
+    return 1;
+  }
+  return count ?? 0;
+}
+
+/**
  * Validate coupon and return discount amount for a given subtotal.
  * Returns { discount, couponId } or { error }.
+ *
+ * When `userId` is provided and the coupon is first-order-only, the discount is
+ * blocked for customers who already have a non-cancelled order. First-order-only
+ * coupons still validate for guests (no userId); the flag is re-checked at order
+ * placement once the customer is known.
  */
 export async function validateCouponAndGetDiscount(
   code: string,
   subtotal: number,
+  userId?: string | null,
 ): Promise<{ discount: number; couponId: string } | { error: string }> {
   const coupon = await getCouponByCode(code);
   if (!coupon) return { error: 'Invalid or expired coupon' };
@@ -348,6 +375,13 @@ export async function validateCouponAndGetDiscount(
 
   if (coupon.usage_limit != null && coupon.usage_count >= coupon.usage_limit) {
     return { error: 'Coupon usage limit reached' };
+  }
+
+  if (coupon.first_order_only && userId) {
+    const existingOrders = await countQualifyingUserOrders(userId);
+    if (existingOrders > 0) {
+      return { error: 'This code is valid on your first order only' };
+    }
   }
 
   const minOrder = coupon.min_order_value ?? 0;

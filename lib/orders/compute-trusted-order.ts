@@ -21,6 +21,7 @@ export async function computeTrustedOrderDraft(input: {
   lines: OrderLineInput[];
   couponCode?: string | null;
   country?: string;
+  userId?: string | null;
 }): Promise<{ ok: true; draft: TrustedOrderDraft } | { ok: false; error: string }> {
   const resolved = await resolveOrderLineItems(input.lines);
   if (!resolved.ok) return resolved;
@@ -31,7 +32,11 @@ export async function computeTrustedOrderDraft(input: {
   let discount = 0;
   let couponId: string | undefined;
   if (input.couponCode?.trim()) {
-    const couponResult = await validateCouponAndGetDiscount(input.couponCode.trim(), subtotal);
+    const couponResult = await validateCouponAndGetDiscount(
+      input.couponCode.trim(),
+      subtotal,
+      input.userId,
+    );
     if ('error' in couponResult) {
       return { ok: false, error: couponResult.error };
     }

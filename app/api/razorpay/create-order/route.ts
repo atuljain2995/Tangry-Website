@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import Razorpay from 'razorpay';
 import { computeTrustedOrderDraft } from '@/lib/orders/compute-trusted-order';
+import { getSessionUser } from '@/lib/auth/session';
 
 const keyId = process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID;
 const keySecret = process.env.RAZORPAY_KEY_SECRET;
@@ -43,10 +44,12 @@ export async function POST(request: NextRequest) {
     const couponCode = typeof body.couponCode === 'string' ? body.couponCode : null;
     const country = typeof body.country === 'string' ? body.country : 'IN';
 
+    const sessionUser = await getSessionUser();
     const trusted = await computeTrustedOrderDraft({
       lines,
       couponCode,
       country,
+      userId: sessionUser?.id ?? null,
     });
     if (!trusted.ok) {
       return NextResponse.json({ error: trusted.error }, { status: 400 });

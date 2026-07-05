@@ -150,7 +150,7 @@ export function ProductReviews({ productId }: ProductReviewsProps) {
   }
 
   return (
-    <section className="bg-white border-t border-gray-100 py-12">
+    <section id="reviews" className="scroll-mt-24 bg-white border-t border-gray-100 py-12">
       <div className="container mx-auto px-6 max-w-4xl">
         <h2 className="text-2xl font-bold text-gray-900 mb-8">Customer Reviews</h2>
 

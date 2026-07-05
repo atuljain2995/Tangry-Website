@@ -152,6 +152,16 @@ export const OrderSummary = ({
                 </button>
               </div>
               {couponError && <p className="text-red-600 text-xs mt-1">{couponError}</p>}
+              <button
+                type="button"
+                onClick={() => {
+                  setCouponCode('TANGRY10');
+                  setCouponError('');
+                }}
+                className="mt-2 text-xs text-gray-500 hover:text-[#D32F2F] transition"
+              >
+                First order? Use code <span className="font-semibold">TANGRY10</span> for 10% off
+              </button>
             </div>
           )}
         </div>

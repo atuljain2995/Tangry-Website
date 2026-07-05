@@ -155,20 +155,33 @@ export const ProductCard = ({ product }: ProductCardProps) => {
 
         {/* Rating */}
         <div className="flex items-center mb-4">
-          <div className="flex items-center">
-            {[...Array(5)].map((_, i) => (
-              <Star
-                key={i}
-                size={13}
-                className={
-                  i < Math.floor(product.rating) ? 'fill-amber-400 text-amber-400' : 'text-gray-200'
-                }
-              />
-            ))}
-          </div>
-          <span className="ml-1.5 text-xs text-gray-500 dark:text-neutral-400">
-            {product.rating} ({product.reviewCount})
-          </span>
+          {product.reviewCount > 0 ? (
+            <>
+              <div className="flex items-center">
+                {[...Array(5)].map((_, i) => (
+                  <Star
+                    key={i}
+                    size={13}
+                    className={
+                      i < Math.floor(product.rating)
+                        ? 'fill-amber-400 text-amber-400'
+                        : 'text-gray-200'
+                    }
+                  />
+                ))}
+              </div>
+              <span className="ml-1.5 text-xs text-gray-500 dark:text-neutral-400">
+                {product.rating} ({product.reviewCount})
+              </span>
+            </>
+          ) : (
+            <Link
+              href={`/products/${product.slug}#reviews`}
+              className="text-xs font-medium text-gray-400 hover:text-orange-600 dark:text-neutral-500"
+            >
+              Be the first to review
+            </Link>
+          )}
         </div>
 
         {/* Divider */}

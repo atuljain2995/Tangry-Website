@@ -6,6 +6,7 @@ import {
   computeTrustedOrderDraft,
   orderLinesFromCartItems,
 } from '@/lib/orders/compute-trusted-order';
+import { getSessionUser } from '@/lib/auth/session';
 import type { CreateOrderPayload } from '@/lib/actions/orders';
 import type { Address, CartItem } from '@/lib/types/database';
 
@@ -125,10 +126,12 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Invalid order payload' }, { status: 400 });
     }
 
+    const sessionUser = await getSessionUser().catch(() => null);
     const trusted = await computeTrustedOrderDraft({
       lines: orderLinesFromCartItems(payload.items),
       couponCode: payload.couponCode,
       country: payload.shippingAddress.country || 'IN',
+      userId: sessionUser?.id ?? null,
     });
     if (!trusted.ok) {
       return NextResponse.json({ error: trusted.error }, { status: 400 });

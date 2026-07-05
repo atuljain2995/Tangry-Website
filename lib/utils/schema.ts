@@ -427,6 +427,29 @@ export function getItemListSchema(products: ProductExtended[]) {
 }
 
 /**
+ * ItemList schema scoped to a single category listing page.
+ * Enables product list rich results and carousel for /categories/[slug].
+ */
+export function getCategoryItemListSchema(
+  category: { title: string; slug: string },
+  products: ProductExtended[],
+) {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'ItemList',
+    name: `${category.title} — Tangry Spices`,
+    url: `${SITE_URL}/categories/${category.slug}`,
+    numberOfItems: products.length,
+    itemListElement: products.map((p, index) => ({
+      '@type': 'ListItem',
+      position: index + 1,
+      url: `${SITE_URL}/products/${p.slug}`,
+      name: p.name,
+    })),
+  };
+}
+
+/**
  * Article (BlogPosting) schema for individual blog post pages.
  * Enables Article rich results and Top Stories carousel eligibility.
  */

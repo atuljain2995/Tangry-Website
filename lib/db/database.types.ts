@@ -168,6 +168,8 @@ export interface Database {
           notes: string | null;
           created_at: string;
           updated_at: string;
+          delivered_at: string | null;
+          review_request_sent_at: string | null;
         };
         Insert: {
           id?: string;
@@ -191,6 +193,8 @@ export interface Database {
           notes?: string | null;
           created_at?: string;
           updated_at?: string;
+          delivered_at?: string | null;
+          review_request_sent_at?: string | null;
         };
         Update: {
           id?: string;
@@ -214,6 +218,8 @@ export interface Database {
           notes?: string | null;
           created_at?: string;
           updated_at?: string;
+          delivered_at?: string | null;
+          review_request_sent_at?: string | null;
         };
       };
       addresses: {
@@ -328,6 +334,7 @@ export interface Database {
           applicable_categories: string[] | null;
           created_at: string;
           updated_at: string;
+          first_order_only: boolean;
         };
         Insert: {
           id?: string;
@@ -346,6 +353,7 @@ export interface Database {
           applicable_categories?: string[] | null;
           created_at?: string;
           updated_at?: string;
+          first_order_only?: boolean;
         };
         Update: {
           id?: string;
@@ -364,6 +372,7 @@ export interface Database {
           applicable_categories?: string[] | null;
           created_at?: string;
           updated_at?: string;
+          first_order_only?: boolean;
         };
       };
       email_subscribers: {
