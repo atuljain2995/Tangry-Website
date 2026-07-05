@@ -214,12 +214,15 @@ export default function CheckoutPage() {
       <div className="container mx-auto px-6 py-12 mt-20">
         {/* Progress Steps */}
         <div className="mb-12">
-          <div className="flex items-center justify-center space-x-4">
+          <div className="flex items-start w-full max-w-2xl mx-auto">
             {steps.map((step, index) => (
-              <div key={step.id} className="flex items-center">
-                <div className="flex flex-col items-center">
+              <div
+                key={step.id}
+                className={`flex items-start ${index < steps.length - 1 ? 'flex-1' : ''}`}
+              >
+                <div className="flex flex-col items-center flex-shrink-0">
                   <div
-                    className={`w-12 h-12 rounded-full flex items-center justify-center font-bold transition ${
+                    className={`w-10 h-10 sm:w-12 sm:h-12 rounded-full flex items-center justify-center font-bold text-sm sm:text-base transition ${
                       step.completed
                         ? 'bg-green-600 text-white'
                         : currentStep === step.id
@@ -227,10 +230,10 @@ export default function CheckoutPage() {
                           : 'bg-gray-300 text-gray-600'
                     }`}
                   >
-                    {step.completed ? <Check size={24} /> : index + 1}
+                    {step.completed ? <Check size={20} /> : index + 1}
                   </div>
                   <span
-                    className={`text-sm mt-2 font-semibold ${
+                    className={`text-xs sm:text-sm mt-2 font-semibold text-center ${
                       currentStep === step.id ? 'text-[#D32F2F]' : 'text-gray-600'
                     }`}
                   >
@@ -239,7 +242,9 @@ export default function CheckoutPage() {
                 </div>
                 {index < steps.length - 1 && (
                   <div
-                    className={`w-24 h-1 mx-4 ${step.completed ? 'bg-green-600' : 'bg-gray-300'}`}
+                    className={`flex-1 h-1 mx-2 sm:mx-4 mt-5 sm:mt-6 rounded ${
+                      step.completed ? 'bg-green-600' : 'bg-gray-300'
+                    }`}
                   />
                 )}
               </div>
