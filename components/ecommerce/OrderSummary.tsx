@@ -16,6 +16,8 @@ import {
 import { useState } from 'react';
 import { analytics } from '@/lib/analytics';
 import { ProductImage } from './ProductImage';
+import { FreeShippingUpsell, formatShippingLine } from './FreeShippingUpsell';
+import { FREE_SHIPPING_LABEL } from '@/lib/data/shipping';
 
 interface OrderSummaryProps {
   showCouponField?: boolean;
@@ -48,7 +50,10 @@ export const OrderSummary = ({
   const [isApplyingCoupon, setIsApplyingCoupon] = useState(false);
   const [mobileExpanded, setMobileExpanded] = useState(false);
 
-  const { subtotal, discount, shipping, grandTotal, itemCount } = getCheckoutTotals(cart);
+  const { subtotal, discount, afterDiscount, shipping, grandTotal, itemCount } =
+    getCheckoutTotals(cart);
+
+  const shippingLine = formatShippingLine(shipping, afterDiscount);
 
   const handleApplyCoupon = async () => {
     if (!couponCode.trim()) {
@@ -126,10 +131,15 @@ export const OrderSummary = ({
       <div className="flex justify-between text-sm">
         <span className="inline-flex items-center gap-1.5 text-gray-600">
           {compact && <Truck className="h-3.5 w-3.5 shrink-0" aria-hidden />}
-          Delivery (pan-India)
+          {shippingLine.label}
         </span>
-        <span className="font-medium text-gray-900">{formatCurrency(shipping)}</span>
+        <span className={`font-medium ${shippingLine.valueClassName ?? 'text-gray-900'}`}>
+          {shippingLine.value}
+        </span>
       </div>
+      {!compact && !shippingLine.valueClassName && (
+        <p className="text-xs text-gray-500">{FREE_SHIPPING_LABEL}</p>
+      )}
     </div>
   );
 
@@ -330,9 +340,10 @@ export const OrderSummary = ({
               Order summary
             </p>
             <p className="text-lg font-bold text-gray-900">{formatCurrency(grandTotal)}</p>
-            <p className="text-xs text-gray-500">
-              {itemCount} {itemCount === 1 ? 'item' : 'items'} · incl. {formatCurrency(shipping)} delivery
-            </p>
+            <FreeShippingUpsell
+              orderValueAfterDiscount={afterDiscount}
+              variant="compact"
+            />
           </div>
           <div className="flex shrink-0 flex-col items-center gap-0.5">
             {mobileExpanded ? (
@@ -364,6 +375,11 @@ export const OrderSummary = ({
 
             <div className="px-4 py-3">
               <SectionLabel icon={Receipt}>Bill details</SectionLabel>
+              <FreeShippingUpsell
+                orderValueAfterDiscount={afterDiscount}
+                variant="banner"
+                className="mb-3"
+              />
               {priceBreakdown({ compact: true })}
             </div>
 
@@ -379,6 +395,11 @@ export const OrderSummary = ({
   return (
     <div className="sticky top-24 rounded-2xl border border-orange-100 bg-white p-5 shadow-sm lg:p-6">
       <h2 className="mb-4 text-lg font-bold text-gray-900">Order summary</h2>
+      <FreeShippingUpsell
+        orderValueAfterDiscount={afterDiscount}
+        variant="banner"
+        className="mb-4"
+      />
       {itemsList('desktop')}
       {couponSection('desktop')}
       <div className="mb-4 border-b border-orange-100 pb-4">{priceBreakdown({ compact: false })}</div>

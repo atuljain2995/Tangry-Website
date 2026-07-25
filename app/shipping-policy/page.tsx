@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { PageShell } from '@/components/layout/PageShell';
 import { Footer } from '@/components/layout/Footer';
 import { COMPANY_INFO } from '@/lib/data/constants';
+import { FREE_SHIPPING_LABEL, SHIPPING } from '@/lib/data/shipping';
 
 export default function ShippingPolicyPage() {
   return (
@@ -42,8 +43,10 @@ export default function ShippingPolicyPage() {
           <section>
             <h2 className="text-xl font-bold text-gray-900 mb-2">Fees</h2>
             <p>
-              Shipping charges, if any, are shown at checkout before you pay. Any applicable taxes
-              are calculated based on your shipping address and displayed with your order total.
+              {FREE_SHIPPING_LABEL}. For smaller orders, a flat{' '}
+              {`₹${SHIPPING.flatRateIn}`} delivery fee applies across India. Shipping charges are
+              shown at checkout before you pay. Any applicable taxes are calculated based on your
+              shipping address and displayed with your order total.
             </p>
           </section>
 

@@ -2,10 +2,11 @@
 
 import { formatCurrency } from '@/lib/utils/database';
 import { Loader2 } from 'lucide-react';
+import { FreeShippingUpsell } from './FreeShippingUpsell';
 
 interface CheckoutMobileBarProps {
   grandTotal: number;
-  itemCount: number;
+  afterDiscount: number;
   step: 'shipping' | 'payment';
   isProcessing?: boolean;
   formId: string;
@@ -14,7 +15,7 @@ interface CheckoutMobileBarProps {
 
 export function CheckoutMobileBar({
   grandTotal,
-  itemCount,
+  afterDiscount,
   step,
   isProcessing = false,
   formId,
@@ -30,9 +31,7 @@ export function CheckoutMobileBar({
           <p className="text-xl font-bold text-gray-900 leading-tight">
             {formatCurrency(grandTotal)}
           </p>
-          <p className="text-xs text-gray-500">
-            {itemCount} {itemCount === 1 ? 'item' : 'items'} · incl. shipping & GST
-          </p>
+          <FreeShippingUpsell orderValueAfterDiscount={afterDiscount} variant="compact" />
         </div>
         <button
           type="submit"

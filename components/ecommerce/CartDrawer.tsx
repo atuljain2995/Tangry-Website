@@ -7,12 +7,14 @@ import { CartItemComponent } from './CartItem';
 import { formatCurrency } from '@/lib/utils/database';
 import { getCheckoutTotals } from '@/lib/utils/checkout-totals';
 import { buildWhatsAppOrderUrl } from '@/lib/utils/whatsapp-order';
+import { FreeShippingUpsell, formatShippingLine } from './FreeShippingUpsell';
 import Link from 'next/link';
 
 export const CartDrawer = () => {
   const { cart, isCartOpen, closeCart, cartItemCount } = useCart();
   const whatsappOrderUrl = buildWhatsAppOrderUrl(cart);
-  const { subtotal, discount, shipping, grandTotal } = getCheckoutTotals(cart);
+  const { subtotal, discount, afterDiscount, shipping, grandTotal } = getCheckoutTotals(cart);
+  const shippingLine = formatShippingLine(shipping, afterDiscount);
 
   useEffect(() => {
     if (!isCartOpen) return;
@@ -96,6 +98,13 @@ export const CartDrawer = () => {
         {/* Footer - Cart Summary */}
         {cart.items.length > 0 && (
           <div className="border-t border-gray-200 bg-gray-50 p-4 dark:border-neutral-700 dark:bg-neutral-900/80">
+            <FreeShippingUpsell
+              orderValueAfterDiscount={afterDiscount}
+              variant="banner"
+              onShopClick={closeCart}
+              className="mb-3"
+            />
+
             {/* Price breakdown */}
             <div className="mb-3 space-y-1.5 text-sm">
               <div className="flex justify-between text-gray-600 dark:text-neutral-400">
@@ -109,8 +118,8 @@ export const CartDrawer = () => {
                 </div>
               )}
               <div className="flex justify-between text-gray-600 dark:text-neutral-400">
-                <span>Shipping</span>
-                <span>{formatCurrency(shipping)}</span>
+                <span>{shippingLine.label}</span>
+                <span className={shippingLine.valueClassName}>{shippingLine.value}</span>
               </div>
             </div>
 

@@ -1,6 +1,7 @@
 'use client';
 
 import { Shield, Truck, RefreshCcw, Lock, Award, Leaf } from 'lucide-react';
+import { FREE_SHIPPING_LABEL } from '@/lib/data/shipping';
 
 interface TrustBadgesProps {
   variant?: 'horizontal' | 'grid';
@@ -17,7 +18,7 @@ export const TrustBadges = ({ variant = 'horizontal', className = '' }: TrustBad
     {
       icon: Truck,
       title: 'Pan India Delivery',
-      description: 'Flat ₹80 shipping',
+      description: FREE_SHIPPING_LABEL,
     },
     {
       icon: RefreshCcw,

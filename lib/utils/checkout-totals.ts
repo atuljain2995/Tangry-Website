@@ -4,6 +4,7 @@ import { calculateShipping } from '@/lib/utils/database';
 export type CheckoutTotals = {
   subtotal: number;
   discount: number;
+  afterDiscount: number;
   shipping: number;
   grandTotal: number;
   itemCount: number;
@@ -18,5 +19,5 @@ export function getCheckoutTotals(cart: Cart, country = 'IN'): CheckoutTotals {
   const grandTotal = afterDiscount + shipping;
   const itemCount = cart.items.reduce((sum, i) => sum + i.quantity, 0);
 
-  return { subtotal, discount, shipping, grandTotal, itemCount };
+  return { subtotal, discount, afterDiscount, shipping, grandTotal, itemCount };
 }

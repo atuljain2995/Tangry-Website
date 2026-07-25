@@ -2,6 +2,9 @@
 
 import { useEffect, useState } from 'react';
 import { Truck, Loader2 } from 'lucide-react';
+import { FREE_SHIPPING_LABEL, SHIPPING } from '@/lib/data/shipping';
+
+const SHIPPING_HINT = `${FREE_SHIPPING_LABEL} · otherwise ₹${SHIPPING.flatRateIn} flat rate`;
 
 type DeliveryHint = {
   minDays: number;
@@ -52,7 +55,7 @@ export function CheckoutDeliveryHint({ pincode }: { pincode?: string }) {
   if (normalizedPin.length !== 6) {
     return (
       <p className="mt-3 text-xs text-gray-500">
-        Enter PIN code above for delivery estimate · ₹80 shipping across India
+        {SHIPPING_HINT}
       </p>
     );
   }
@@ -69,7 +72,7 @@ export function CheckoutDeliveryHint({ pincode }: { pincode?: string }) {
   if (!displayHint) {
     return (
       <p className="mt-3 text-xs text-gray-500">
-        Enter PIN code above for delivery estimate · ₹80 shipping across India
+        {SHIPPING_HINT}
       </p>
     );
   }
@@ -85,6 +88,7 @@ export function CheckoutDeliveryHint({ pincode }: { pincode?: string }) {
           By {displayHint.arriveBy}
           {displayHint.areaLabel ? ` · ${displayHint.areaLabel}` : ''}
         </p>
+        <p className="mt-1 text-green-700/80">{FREE_SHIPPING_LABEL}</p>
       </div>
     </div>
   );

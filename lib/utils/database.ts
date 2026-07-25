@@ -1,6 +1,7 @@
 // Database utility functions and helpers
 
 import { Cart, CartItem } from '../types/database';
+import { SHIPPING } from '@/lib/data/shipping';
 
 /**
  * Calculate cart totals
@@ -38,11 +39,12 @@ export function calculateShipping(
   country: string = 'IN',
   state?: string,
 ): number {
-  void subtotal;
   void state;
-  // Domestic shipping — flat ₹80 across India
   if (country === 'IN') {
-    return 80;
+    if (subtotal >= SHIPPING.freeThresholdIn) {
+      return 0;
+    }
+    return SHIPPING.flatRateIn;
   }
 
   // International shipping (weight-based calculation would be better)

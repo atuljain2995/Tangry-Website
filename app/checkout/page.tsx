@@ -344,7 +344,7 @@ export default function CheckoutPage() {
       {currentStep !== 'confirmation' && (
         <CheckoutMobileBar
           grandTotal={totals.grandTotal}
-          itemCount={totals.itemCount}
+          afterDiscount={totals.afterDiscount}
           step={currentStep}
           isProcessing={isProcessing}
           formId={currentStep === 'shipping' ? SHIPPING_FORM_ID : PAYMENT_FORM_ID}
