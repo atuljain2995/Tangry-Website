@@ -4,7 +4,8 @@ import { NextResponse } from 'next/server';
 export async function GET() {
   const profile = await getSessionUser();
   if (!profile) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    // No session is normal for guests — avoid 401 noise in the browser console.
+    return NextResponse.json(null);
   }
   return NextResponse.json({
     id: profile.id,

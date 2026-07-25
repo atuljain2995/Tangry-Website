@@ -5,12 +5,14 @@ import { X, ShoppingBag, ArrowRight, MessageCircle } from 'lucide-react';
 import { useCart } from '@/lib/contexts/CartContext';
 import { CartItemComponent } from './CartItem';
 import { formatCurrency } from '@/lib/utils/database';
+import { getCheckoutTotals } from '@/lib/utils/checkout-totals';
 import { buildWhatsAppOrderUrl } from '@/lib/utils/whatsapp-order';
 import Link from 'next/link';
 
 export const CartDrawer = () => {
   const { cart, isCartOpen, closeCart, cartItemCount } = useCart();
   const whatsappOrderUrl = buildWhatsAppOrderUrl(cart);
+  const { subtotal, discount, shipping, grandTotal } = getCheckoutTotals(cart);
 
   useEffect(() => {
     if (!isCartOpen) return;
@@ -94,24 +96,31 @@ export const CartDrawer = () => {
         {/* Footer - Cart Summary */}
         {cart.items.length > 0 && (
           <div className="border-t border-gray-200 bg-gray-50 p-4 dark:border-neutral-700 dark:bg-neutral-900/80">
-            {/* Discount */}
-            {cart.discount > 0 && (
-              <div className="flex justify-between mb-2 text-sm">
-                <span className="text-green-600">Discount</span>
-                <span className="font-medium text-green-600">-{formatCurrency(cart.discount)}</span>
+            {/* Price breakdown */}
+            <div className="mb-3 space-y-1.5 text-sm">
+              <div className="flex justify-between text-gray-600 dark:text-neutral-400">
+                <span>Subtotal</span>
+                <span>{formatCurrency(subtotal)}</span>
               </div>
-            )}
+              {discount > 0 && (
+                <div className="flex justify-between text-green-600">
+                  <span>Discount</span>
+                  <span>-{formatCurrency(discount)}</span>
+                </div>
+              )}
+              <div className="flex justify-between text-gray-600 dark:text-neutral-400">
+                <span>Shipping</span>
+                <span>{formatCurrency(shipping)}</span>
+              </div>
+            </div>
 
             {/* Total */}
             <div className="mb-1 flex justify-between">
               <span className="text-lg font-bold text-gray-900 dark:text-neutral-100">Total</span>
-              <span className="text-lg font-bold text-[#D32F2F]">{formatCurrency(cart.total)}</span>
+              <span className="text-lg font-bold text-[#D32F2F]">{formatCurrency(grandTotal)}</span>
             </div>
-            <p className="text-xs text-gray-500 dark:text-neutral-400 text-right mb-1">
-              Inclusive of 5% GST
-            </p>
-            <p className="text-xs text-gray-400 dark:text-neutral-500 text-right mb-4">
-              Shipping calculated at checkout
+            <p className="mb-4 text-right text-xs text-gray-500 dark:text-neutral-400">
+              Inclusive of 5% GST · pan-India delivery
             </p>
 
             {/* Checkout Button */}

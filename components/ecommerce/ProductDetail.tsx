@@ -43,7 +43,7 @@ export const ProductDetail = ({ product, categoryUrl, categoryLabel }: ProductDe
   const router = useRouter();
   const [selectedVariantIndex, setSelectedVariantIndex] = useState(0);
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
-  const { addToCart, cart, updateQuantity, openCart } = useCart();
+  const { addToCart, addToCartSync, cart, updateQuantity, openCart } = useCart();
   const { isWishlisted: checkWishlisted, toggle: toggleWishlist } = useWishlist();
   const { user } = useAuth();
 
@@ -174,7 +174,7 @@ export const ProductDetail = ({ product, categoryUrl, categoryLabel }: ProductDe
 
   const handleBuyNow = () => {
     if (quantityInCart === 0) {
-      addToCart(buildCartItem());
+      addToCartSync(buildCartItem());
       analytics.trackAddToCart(product.id, product.name, 1, selectedVariant.price);
     }
     router.push('/checkout');

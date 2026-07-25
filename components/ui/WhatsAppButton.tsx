@@ -9,7 +9,7 @@ export const WhatsAppButton = () => {
   const pathname = usePathname();
   const [isHovered, setIsHovered] = useState(false);
 
-  if (pathname?.startsWith('/admin')) return null;
+  if (pathname?.startsWith('/admin') || pathname?.startsWith('/checkout')) return null;
 
   // Product detail pages render a mobile sticky buy bar at the bottom.
   // Lift the chat button above it on mobile so it doesn't overlap "Buy Now".

@@ -3,56 +3,73 @@
 import { useState } from 'react';
 import Script from 'next/script';
 import { useRouter } from 'next/navigation';
-import { Header } from '@/components/layout/Header';
-import { MobileMenu } from '@/components/layout/MobileMenu';
-import { Footer } from '@/components/layout/Footer';
-import { CartDrawer } from '@/components/ecommerce/CartDrawer';
+import Link from 'next/link';
+import { CheckoutHeader } from '@/components/layout/CheckoutHeader';
 import { CheckoutForm } from '@/components/ecommerce/CheckoutForm';
 import { PaymentOptions } from '@/components/ecommerce/PaymentOptions';
 import { OrderSummary } from '@/components/ecommerce/OrderSummary';
+import { CheckoutStepper } from '@/components/ecommerce/CheckoutStepper';
+import { CheckoutMobileBar } from '@/components/ecommerce/CheckoutMobileBar';
+import { CheckoutTrustStrip } from '@/components/ecommerce/CheckoutTrustStrip';
 import { useCart } from '@/lib/contexts/CartContext';
 import { useAuth } from '@/lib/contexts/AuthContext';
 import { Address, PaymentMethod } from '@/lib/types/database';
 import { createOrder } from '@/lib/actions/orders';
-import { Check } from 'lucide-react';
-import Link from 'next/link';
+import { getCheckoutTotals } from '@/lib/utils/checkout-totals';
+import { Check, Loader2, Truck } from 'lucide-react';
 import { analytics } from '@/lib/analytics';
 
 type CheckoutStep = 'shipping' | 'payment' | 'confirmation';
 
+const SHIPPING_FORM_ID = 'checkout-shipping-form';
+const PAYMENT_FORM_ID = 'checkout-payment-form';
+
 export default function CheckoutPage() {
   const router = useRouter();
-  const { cart, clearCart } = useCart();
+  const { cart, clearCart, isCartHydrated } = useCart();
   const { user } = useAuth();
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [currentStep, setCurrentStep] = useState<CheckoutStep>('shipping');
   const [shippingAddress, setShippingAddress] = useState<Address | null>(null);
   const [billingAddress, setBillingAddress] = useState<Address | null>(null);
   const [customerEmail, setCustomerEmail] = useState<string>('');
   const [isProcessing, setIsProcessing] = useState(false);
   const [orderNumber, setOrderNumber] = useState<string>('');
+  const [checkoutError, setCheckoutError] = useState<string | null>(null);
 
-  // Redirect if cart is empty
+  const totals = getCheckoutTotals(cart);
+
+  const reportCheckoutError = (message: string) => {
+    setCheckoutError(message);
+    setIsProcessing(false);
+  };
+
+  if (!isCartHydrated) {
+    return (
+      <div className="min-h-screen bg-[#FFF8F3]">
+        <CheckoutHeader />
+        <div className="container mx-auto px-4 py-20 text-center">
+          <Loader2 className="mx-auto h-10 w-10 animate-spin text-[#D32F2F]" aria-hidden />
+          <p className="mt-4 text-gray-600">Loading your cart…</p>
+        </div>
+      </div>
+    );
+  }
+
   if (cart.items.length === 0 && currentStep !== 'confirmation') {
     return (
-      <main className="page-shell">
-        <Header onMenuOpen={() => setIsMobileMenuOpen(true)} />
-        <MobileMenu isOpen={isMobileMenuOpen} onClose={() => setIsMobileMenuOpen(false)} />
-        <CartDrawer />
-
-        <div className="container mx-auto px-6 py-20 text-center">
-          <h1 className="text-3xl font-bold text-gray-900 mb-4">Your Cart is Empty</h1>
-          <p className="text-gray-600 mb-8">Add some products before checkout</p>
+      <div className="min-h-screen bg-[#FFF8F3]">
+        <CheckoutHeader />
+        <div className="container mx-auto px-4 py-20 text-center">
+          <h1 className="mb-4 text-3xl font-bold text-gray-900">Your cart is empty</h1>
+          <p className="mb-8 text-gray-600">Add some masalas before checkout</p>
           <Link
             href="/products"
-            className="inline-block bg-[#D32F2F] text-white px-8 py-3 rounded-full font-semibold hover:bg-[#B71C1C] transition"
+            className="inline-block rounded-2xl bg-[#D32F2F] px-8 py-3 font-semibold text-white transition hover:bg-[#B71C1C]"
           >
-            Browse Products
+            Browse products
           </Link>
         </div>
-
-        <Footer />
-      </main>
+      </div>
     );
   }
 
@@ -65,8 +82,9 @@ export default function CheckoutPage() {
     setShippingAddress(shipping);
     setBillingAddress(billing);
     setCustomerEmail(email);
+    setCheckoutError(null);
     setCurrentStep('payment');
-    analytics.trackBeginCheckout(cart.total, cart.items.length);
+    analytics.trackBeginCheckout(totals.grandTotal, totals.itemCount);
   };
 
   const createOrderPayload = () => ({
@@ -79,6 +97,7 @@ export default function CheckoutPage() {
 
   const handlePaymentSubmit = async (paymentMethod: PaymentMethod) => {
     if (!shippingAddress || !billingAddress) return;
+    setCheckoutError(null);
     setIsProcessing(true);
 
     try {
@@ -89,11 +108,11 @@ export default function CheckoutPage() {
         });
         if (!result.success) {
           analytics.trackCheckoutError('cod', result.error || 'order_failed');
-          alert(result.error || 'Failed to place order.');
+          reportCheckoutError(result.error || 'Failed to place order. Please try again.');
           return;
         }
         setOrderNumber(result.orderNumber);
-        analytics.trackPurchase(result.orderNumber, cart.total, cart.items.length);
+        analytics.trackPurchase(result.orderNumber, totals.grandTotal, totals.itemCount);
         clearCart();
         setCurrentStep('confirmation');
         return;
@@ -116,7 +135,7 @@ export default function CheckoutPage() {
         const createData = await createRes.json();
         if (!createRes.ok) {
           analytics.trackCheckoutError('razorpay', createData.error || 'create_order_failed');
-          alert(createData.error || 'Could not start payment.');
+          reportCheckoutError(createData.error || 'Could not start payment. Please try again.');
           return;
         }
         const { orderId, keyId, amountPaise } = createData as {
@@ -125,13 +144,15 @@ export default function CheckoutPage() {
           amountPaise: number;
         };
         if (!orderId || !keyId || typeof amountPaise !== 'number') {
-          alert('Invalid payment response. Please try again.');
+          reportCheckoutError('Invalid payment response. Please try again.');
           return;
         }
         const RazorpayClass = (window as { Razorpay?: new (opts: object) => { open: () => void } })
           .Razorpay;
         if (!RazorpayClass) {
-          alert('Payment script not loaded. Please refresh and try again.');
+          reportCheckoutError(
+            'Payment gateway is still loading. Please wait a moment and try again.',
+          );
           return;
         }
         const rzp = new (RazorpayClass as new (opts: object) => { open: () => void })({
@@ -158,191 +179,178 @@ export default function CheckoutPage() {
             const verifyData = await verifyRes.json();
             if (!verifyRes.ok) {
               analytics.trackCheckoutError('razorpay', verifyData.error || 'verify_failed');
-              alert(verifyData.error || 'Payment verification failed.');
+              reportCheckoutError(
+                verifyData.error ||
+                  'Payment verification failed. Contact support if you were charged.',
+              );
               return;
             }
+            setCheckoutError(null);
             setOrderNumber(verifyData.orderNumber);
-            analytics.trackPurchase(verifyData.orderNumber, cart.total, cart.items.length);
+            analytics.trackPurchase(verifyData.orderNumber, totals.grandTotal, totals.itemCount);
             clearCart();
             setCurrentStep('confirmation');
           },
           modal: { ondismiss: () => setIsProcessing(false) },
         });
+        setIsProcessing(false);
         rzp.open();
         return;
       }
 
-      // Stripe / bank_transfer: create order with payment_status pending
       const result = await createOrder({
         ...createOrderPayload(),
         paymentMethod,
       });
       if (!result.success) {
-        alert(result.error || 'Failed to place order.');
+        reportCheckoutError(result.error || 'Failed to place order. Please try again.');
         return;
       }
       setOrderNumber(result.orderNumber);
-      analytics.trackPurchase(result.orderNumber, cart.total, cart.items.length);
+      analytics.trackPurchase(result.orderNumber, totals.grandTotal, totals.itemCount);
       clearCart();
       setCurrentStep('confirmation');
     } catch (error) {
       console.error('Payment error:', error);
       analytics.trackCheckoutError('unknown', 'exception');
-      alert('Payment failed. Please try again.');
+      reportCheckoutError('Payment failed. Please try again.');
     } finally {
-      setIsProcessing(false);
+      if (paymentMethod !== 'razorpay') {
+        setIsProcessing(false);
+      }
     }
   };
 
-  const steps = [
-    {
-      id: 'shipping',
-      name: 'Shipping',
-      completed: currentStep === 'payment' || currentStep === 'confirmation',
-    },
-    { id: 'payment', name: 'Payment', completed: currentStep === 'confirmation' },
-    { id: 'confirmation', name: 'Confirmation', completed: false },
-  ];
+  const mobileCta =
+    currentStep === 'shipping' ? 'Continue' : isProcessing ? 'Processing…' : 'Pay now';
 
   return (
-    <main className="page-shell">
-      <Script src="https://checkout.razorpay.com/v1/checkout.js" strategy="lazyOnload" />
-      <Header onMenuOpen={() => setIsMobileMenuOpen(true)} />
-      <MobileMenu isOpen={isMobileMenuOpen} onClose={() => setIsMobileMenuOpen(false)} />
-      <CartDrawer />
+    <div className="min-h-screen bg-[#FFF8F3]">
+      <CheckoutHeader itemCount={totals.itemCount} />
+      <Script src="https://checkout.razorpay.com/v1/checkout.js" strategy="afterInteractive" />
 
-      <div className="container mx-auto px-6 py-12 mt-20">
-        {/* Progress Steps */}
-        <div className="mb-12">
-          <div className="flex items-start w-full max-w-2xl mx-auto">
-            {steps.map((step, index) => (
-              <div
-                key={step.id}
-                className={`flex items-start ${index < steps.length - 1 ? 'flex-1' : ''}`}
+      <div className="container mx-auto px-4 py-6 pb-28 lg:pb-10 lg:py-8">
+        {currentStep === 'confirmation' ? (
+          <div className="mx-auto max-w-lg py-8 text-center">
+            <div className="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-green-600 shadow-lg">
+              <Check size={44} className="text-white" aria-hidden />
+            </div>
+            <h1 className="mb-2 text-2xl font-bold text-gray-900 sm:text-3xl">
+              Order confirmed. Taste of home is on the way.
+            </h1>
+            <p className="mb-1 text-gray-600">Thank you for choosing Tangry Spices</p>
+            <p className="mb-6 text-xl font-bold text-[#D32F2F]">Order #{orderNumber}</p>
+
+            <div className="mb-6 rounded-2xl border border-orange-100 bg-white p-5 text-left shadow-sm">
+              <div className="mb-3 flex items-center gap-2 text-sm font-semibold text-gray-900">
+                <Truck className="h-4 w-4 text-[#D32F2F]" aria-hidden />
+                What happens next
+              </div>
+              <ul className="space-y-2.5 text-sm text-gray-700">
+                <li className="flex gap-2">
+                  <span className="text-green-600">✓</span>
+                  Confirmation email on its way
+                </li>
+                <li className="flex gap-2">
+                  <span className="text-green-600">✓</span>
+                  Freshly packed in Jaipur
+                </li>
+                <li className="flex gap-2">
+                  <span className="text-green-600">✓</span>
+                  Tracking details when your order ships
+                </li>
+              </ul>
+            </div>
+
+            {!user && (
+              <div className="mb-6 rounded-2xl border border-orange-200 bg-orange-50 p-5 text-left">
+                <h3 className="mb-1 font-bold text-gray-900">Create an account</h3>
+                <p className="mb-3 text-sm text-gray-600">
+                  Track orders, save addresses, and checkout faster next time.
+                </p>
+                <Link
+                  href="/signup"
+                  className="inline-block rounded-2xl bg-[#D32F2F] px-6 py-2 text-sm font-semibold text-white transition hover:bg-[#B71C1C]"
+                >
+                  Sign up free
+                </Link>
+              </div>
+            )}
+
+            <div className="flex flex-col gap-3 sm:flex-row sm:justify-center">
+              <Link
+                href="/products"
+                className="rounded-2xl border-2 border-gray-200 px-8 py-3 font-semibold text-gray-700 transition hover:border-gray-300"
               >
-                <div className="flex flex-col items-center flex-shrink-0">
-                  <div
-                    className={`w-10 h-10 sm:w-12 sm:h-12 rounded-full flex items-center justify-center font-bold text-sm sm:text-base transition ${
-                      step.completed
-                        ? 'bg-green-600 text-white'
-                        : currentStep === step.id
-                          ? 'bg-[#D32F2F] text-white'
-                          : 'bg-gray-300 text-gray-600'
-                    }`}
-                  >
-                    {step.completed ? <Check size={20} /> : index + 1}
-                  </div>
-                  <span
-                    className={`text-xs sm:text-sm mt-2 font-semibold text-center ${
-                      currentStep === step.id ? 'text-[#D32F2F]' : 'text-gray-600'
-                    }`}
-                  >
-                    {step.name}
-                  </span>
-                </div>
-                {index < steps.length - 1 && (
-                  <div
-                    className={`flex-1 h-1 mx-2 sm:mx-4 mt-5 sm:mt-6 rounded ${
-                      step.completed ? 'bg-green-600' : 'bg-gray-300'
-                    }`}
+                Shop more masalas
+              </Link>
+              <Link
+                href={user ? '/account/orders' : '/track-order'}
+                className="rounded-2xl bg-[#D32F2F] px-8 py-3 font-bold text-white shadow-lg transition hover:bg-[#B71C1C]"
+              >
+                Track order
+              </Link>
+            </div>
+
+            <CheckoutTrustStrip compact />
+          </div>
+        ) : (
+          <>
+            <CheckoutStepper currentStep={currentStep} />
+
+            <div className="mb-4 lg:hidden">
+              <OrderSummary
+                showCouponField={currentStep === 'shipping'}
+                collapsibleOnMobile
+              />
+            </div>
+
+            <div className="grid gap-6 lg:grid-cols-3 lg:gap-8">
+              <div className="lg:col-span-2">
+                {currentStep === 'shipping' && (
+                  <CheckoutForm
+                    formId={SHIPPING_FORM_ID}
+                    onSubmit={handleShippingSubmit}
+                    onBack={() => router.push('/products')}
+                  />
+                )}
+
+                {currentStep === 'payment' && (
+                  <PaymentOptions
+                    formId={PAYMENT_FORM_ID}
+                    onSubmit={handlePaymentSubmit}
+                    onBack={() => {
+                      setCheckoutError(null);
+                      setCurrentStep('shipping');
+                    }}
+                    isProcessing={isProcessing}
+                    error={checkoutError}
+                    onDismissError={() => setCheckoutError(null)}
                   />
                 )}
               </div>
-            ))}
-          </div>
-        </div>
 
-        {/* Checkout Content */}
-        <div className="grid lg:grid-cols-3 gap-8">
-          {/* Main Content */}
-          <div className="lg:col-span-2">
-            {currentStep === 'shipping' && (
-              <CheckoutForm onSubmit={handleShippingSubmit} onBack={() => router.push('/')} />
-            )}
-
-            {currentStep === 'payment' && (
-              <PaymentOptions
-                onSubmit={handlePaymentSubmit}
-                onBack={() => setCurrentStep('shipping')}
-                isProcessing={isProcessing}
-              />
-            )}
-
-            {currentStep === 'confirmation' && (
-              <div className="text-center py-12">
-                <div className="w-20 h-20 bg-green-600 rounded-full flex items-center justify-center mx-auto mb-6">
-                  <Check size={48} className="text-white" />
-                </div>
-                <h1 className="text-3xl font-bold text-gray-900 mb-4">
-                  Order Placed Successfully!
-                </h1>
-                <p className="text-lg text-gray-600 mb-2">Thank you for your order</p>
-                <p className="text-2xl font-bold text-[#D32F2F] mb-8">Order #{orderNumber}</p>
-
-                <div className="bg-white rounded-lg p-6 mb-8 text-left max-w-md mx-auto shadow-md">
-                  <h3 className="font-bold text-gray-900 mb-4">What&apos;s Next?</h3>
-                  <ul className="space-y-2 text-sm text-gray-700">
-                    <li className="flex items-start">
-                      <span className="text-green-600 mr-2">✓</span>
-                      Order confirmation email sent
-                    </li>
-                    <li className="flex items-start">
-                      <span className="text-green-600 mr-2">✓</span>
-                      Your order is being prepared
-                    </li>
-                    <li className="flex items-start">
-                      <span className="text-green-600 mr-2">✓</span>
-                      You&apos;ll receive tracking information soon
-                    </li>
-                  </ul>
-                </div>
-
-                {!user && (
-                  <div className="bg-orange-50 border border-orange-200 rounded-lg p-5 mb-8 max-w-md mx-auto text-left">
-                    <h3 className="font-bold text-gray-900 mb-1">Create an account</h3>
-                    <p className="text-sm text-gray-600 mb-3">
-                      Sign up to track your orders, save addresses, and checkout faster next time.
-                    </p>
-                    <Link
-                      href="/signup"
-                      className="inline-block px-6 py-2 bg-[#D32F2F] text-white text-sm rounded-full font-semibold hover:bg-[#B71C1C] transition"
-                    >
-                      Create Account
-                    </Link>
-                  </div>
-                )}
-
-                <div className="flex flex-col sm:flex-row justify-center space-y-4 sm:space-y-0 sm:space-x-4">
-                  <Link
-                    href="/products"
-                    className="px-8 py-3 border-2 border-gray-300 text-gray-700 rounded-full font-semibold hover:border-gray-400 transition"
-                  >
-                    Continue Shopping
-                  </Link>
-                  <Link
-                    href={user ? '/account/orders' : '/track-order'}
-                    className="px-8 py-3 bg-[#D32F2F] text-white rounded-full font-bold hover:bg-[#B71C1C] transition shadow-lg"
-                  >
-                    Track Order
-                  </Link>
+              <div className="hidden lg:col-span-1 lg:block">
+                <OrderSummary showCouponField={currentStep === 'shipping'} />
+                <div className="mt-4">
+                  <CheckoutTrustStrip />
                 </div>
               </div>
-            )}
-          </div>
-
-          {/* Order Summary Sidebar */}
-          {currentStep !== 'confirmation' && (
-            <div className="lg:col-span-1">
-              <OrderSummary
-                showCouponField={currentStep === 'shipping'}
-                showShipping={currentStep === 'payment'}
-              />
             </div>
-          )}
-        </div>
+          </>
+        )}
       </div>
 
-      <Footer />
-    </main>
+      {currentStep !== 'confirmation' && (
+        <CheckoutMobileBar
+          grandTotal={totals.grandTotal}
+          itemCount={totals.itemCount}
+          step={currentStep}
+          isProcessing={isProcessing}
+          formId={currentStep === 'shipping' ? SHIPPING_FORM_ID : PAYMENT_FORM_ID}
+          ctaLabel={mobileCta}
+        />
+      )}
+    </div>
   );
 }

@@ -6,7 +6,11 @@ import { calculateCartTotals } from '../utils/database';
 
 interface CartContextType {
   cart: Cart;
+  /** False until localStorage has been read on the client. */
+  isCartHydrated: boolean;
   addToCart: (item: CartItem) => void;
+  /** Adds item and writes to localStorage immediately (for Buy Now navigation). */
+  addToCartSync: (item: CartItem) => void;
   removeFromCart: (productId: string, variantId: string) => void;
   updateQuantity: (productId: string, variantId: string, quantity: number) => void;
   clearCart: () => void;
@@ -25,6 +29,15 @@ const CART_STORAGE_KEY = 'tangry_cart';
 /** SSR-safe: same value on server and client to avoid hydration mismatch (fixes hard-refresh break). */
 function getSSRSafeInitialCart(): Cart {
   return createEmptyCart();
+}
+
+function persistCart(cart: Cart): void {
+  if (typeof window === 'undefined') return;
+  try {
+    localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(cart));
+  } catch (error) {
+    console.error('Error saving cart to storage:', error);
+  }
 }
 
 function loadCartFromStorage(): Cart | null {
@@ -85,62 +98,79 @@ function generateCartId(): string {
   return `cart_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
 }
 
+function mergeCartItem(currentCart: Cart, item: CartItem): Cart {
+  const existingItemIndex = currentCart.items.findIndex(
+    (i) => i.productId === item.productId && i.variantId === item.variantId,
+  );
+
+  let newItems: CartItem[];
+  if (existingItemIndex >= 0) {
+    newItems = [...currentCart.items];
+    newItems[existingItemIndex] = {
+      ...newItems[existingItemIndex],
+      quantity: newItems[existingItemIndex].quantity + item.quantity,
+    };
+  } else {
+    newItems = [...currentCart.items, item];
+  }
+
+  return {
+    ...currentCart,
+    items: newItems,
+    couponCode: undefined,
+    discount: 0,
+    updatedAt: new Date(),
+  };
+}
+
 export function CartProvider({ children }: { children: ReactNode }) {
   const [cart, setCart] = useState<Cart>(getSSRSafeInitialCart);
+  const [isCartHydrated, setIsCartHydrated] = useState(false);
   const [isCartOpen, setIsCartOpen] = useState(false);
-  const hasHydrated = useRef(false);
+  const isCartHydratedRef = useRef(false);
 
-  // After mount, load cart from localStorage (avoids hydration mismatch on hard refresh)
+  // Load persisted cart once on the client; gate checkout until this completes.
   useEffect(() => {
     const stored = loadCartFromStorage();
     if (stored) {
-      const normalized = normalizeStoredCart(stored);
       queueMicrotask(() => {
-        setCart(() => calculateCartTotals(normalized, 0));
+        setCart(calculateCartTotals(normalizeStoredCart(stored), 0));
       });
     }
-    hasHydrated.current = true;
+    queueMicrotask(() => {
+      isCartHydratedRef.current = true;
+      setIsCartHydrated(true);
+    });
   }, []);
 
-  // Save cart to localStorage when it changes (only after we've run hydration so we don't overwrite with empty)
-  useEffect(() => {
-    if (!hasHydrated.current || typeof window === 'undefined') return;
-    localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(cart));
-  }, [cart]);
+  const commitCart = (nextCart: Cart, persistImmediately = false) => {
+    const totals = calculateCartTotals(nextCart, 0);
+    if (persistImmediately || isCartHydratedRef.current) {
+      persistCart(totals);
+    }
+    setCart(totals);
+  };
 
   const updateCart = (updater: (cart: Cart) => Cart) => {
     setCart((currentCart) => {
-      const newCart = updater(currentCart);
-      return calculateCartTotals(newCart, 0);
+      const next = calculateCartTotals(updater(currentCart), 0);
+      if (isCartHydratedRef.current) {
+        persistCart(next);
+      }
+      return next;
     });
   };
 
   const addToCart = (item: CartItem) => {
-    updateCart((currentCart) => {
-      const existingItemIndex = currentCart.items.findIndex(
-        (i) => i.productId === item.productId && i.variantId === item.variantId,
-      );
+    updateCart((currentCart) => mergeCartItem(currentCart, item));
+  };
 
-      let newItems: CartItem[];
-      if (existingItemIndex >= 0) {
-        // Update existing item quantity
-        newItems = [...currentCart.items];
-        newItems[existingItemIndex] = {
-          ...newItems[existingItemIndex],
-          quantity: newItems[existingItemIndex].quantity + item.quantity,
-        };
-      } else {
-        // Add new item
-        newItems = [...currentCart.items, item];
-      }
-
-      return {
-        ...currentCart,
-        items: newItems,
-        couponCode: undefined,
-        discount: 0,
-        updatedAt: new Date(),
-      };
+  const addToCartSync = (item: CartItem) => {
+    setCart((currentCart) => {
+      const next = calculateCartTotals(mergeCartItem(currentCart, item), 0);
+      persistCart(next);
+      isCartHydratedRef.current = true;
+      return next;
     });
   };
 
@@ -174,7 +204,8 @@ export function CartProvider({ children }: { children: ReactNode }) {
   };
 
   const clearCart = () => {
-    setCart(createEmptyCart());
+    const empty = createEmptyCart();
+    commitCart(empty, true);
   };
 
   const applyCoupon = (code: string, discount: number) => {
@@ -204,7 +235,9 @@ export function CartProvider({ children }: { children: ReactNode }) {
     <CartContext.Provider
       value={{
         cart,
+        isCartHydrated,
         addToCart,
+        addToCartSync,
         removeFromCart,
         updateQuantity,
         clearCart,
@@ -228,7 +261,9 @@ export function useCart() {
     if (typeof window === 'undefined') {
       return {
         cart: createEmptyCart(),
+        isCartHydrated: false,
         addToCart: () => {},
+        addToCartSync: () => {},
         removeFromCart: () => {},
         updateQuantity: () => {},
         clearCart: () => {},

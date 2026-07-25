@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { User, LogOut, LayoutDashboard, ShoppingBag, ChevronDown } from 'lucide-react';
 import { useAuth } from '@/lib/contexts/AuthContext';
@@ -9,6 +9,12 @@ import { analytics } from '@/lib/analytics';
 export function UserMenu() {
   const { user, profile, loading, signOut } = useAuth();
   const [open, setOpen] = useState(false);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- client-only mount gate
+    setMounted(true);
+  }, []);
 
   const handleToggle = () => {
     setOpen((prev) => !prev);
@@ -27,7 +33,7 @@ export function UserMenu() {
           aria-label="Account menu — Sign in or Sign up"
           title="Sign in or create account"
         >
-          {loading ? (
+          {mounted && loading ? (
             <span
               className="block h-5 w-5 animate-pulse rounded-full bg-gray-300 dark:bg-neutral-600"
               aria-hidden
