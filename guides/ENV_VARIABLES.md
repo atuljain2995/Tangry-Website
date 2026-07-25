@@ -68,7 +68,34 @@ RESEND_API_KEY=re_xxxxxx
 ORDER_CONFIRMATION_FROM=Tangry Spices <orders@yourdomain.com>
 ```
 
-When `RESEND_API_KEY` is set, the app sends an **order confirmation** email to the customer after a successful **COD** or **verified Razorpay** checkout. Without `ORDER_CONFIRMATION_FROM`, a default Resend sender is used (may only deliver to your account email until you verify a domain).
+When `RESEND_API_KEY` is set, the app sends:
+
+- **Order confirmation** — after successful **COD** or **verified Razorpay** checkout
+- **Review request** — 3–5 days after delivery via the daily cron at `/api/cron/review-requests`
+
+Without `ORDER_CONFIRMATION_FROM`, a default Resend sender is used (may only deliver to your account email until you verify a domain).
+
+---
+
+## Scheduled jobs (Vercel Cron)
+
+### Review request emails
+
+```env
+# Required for /api/cron/review-requests (Vercel sends this as Authorization: Bearer …)
+CRON_SECRET=generate_a_long_random_string_here
+```
+
+Configure in **Vercel → Project → Settings → Environment Variables**. Vercel Cron automatically attaches `CRON_SECRET` as a Bearer token when calling the cron path defined in `vercel.json`.
+
+Requires migration **017_order_review_requests.sql** and `RESEND_API_KEY` above. Without `CRON_SECRET`, the endpoint returns 401 and no review emails are sent.
+
+Manual test (local or staging):
+
+```bash
+curl -H "Authorization: Bearer YOUR_CRON_SECRET" \
+  "https://www.tangryspices.com/api/cron/review-requests"
+```
 
 ### SendGrid (Alternative)
 
@@ -112,11 +139,14 @@ NEXT_PUBLIC_TANGRY_FLIPKART_URL=https://www.flipkart.com/...
 
 ---
 
-## Navigation (hide Recipes / Blog if content not ready)
+## Navigation (hide Recipes until content is ready)
 
 ```env
-# Set to false to hide the link from header + mobile menu (pages still exist if visited directly)
-NEXT_PUBLIC_SHOW_RECIPES_NAV=false
+# Recipes are hidden from header + mobile menu by default (placeholder content).
+# Set to true when real Tangry-linked recipes and images are published.
+NEXT_PUBLIC_SHOW_RECIPES_NAV=true
+
+# Set to false to hide the blog link (pages still exist if visited directly)
 NEXT_PUBLIC_SHOW_BLOG_NAV=false
 ```
 
@@ -178,14 +208,18 @@ console.log('GA ID:', process.env.NEXT_PUBLIC_GA_ID);
 ### Required for Basic Functionality:
 
 - ✅ Database (Supabase OR PostgreSQL)
-- ✅ At least one payment gateway (Razorpay OR Stripe)
+- ✅ Razorpay keys (for online payments) — COD works without keys
+
+### Recommended for Production:
+
+- ✅ `CRON_SECRET` — review-request cron (see Scheduled jobs above)
+- ✅ `RESEND_API_KEY` — order confirmation + review request emails
 
 ### Optional (Can add later):
 
-- ⭕ Authentication (for user accounts)
-- ⭕ Email service (for notifications)
-- ⭕ Analytics (for tracking)
-- ⭕ WhatsApp (for support)
+- ⭕ Analytics (GA4, Clarity, Meta Pixel)
+- ⭕ WhatsApp number override
+- ⭕ Cloudflare R2 / Supabase Storage for admin uploads
 
 ---
 

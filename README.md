@@ -13,7 +13,7 @@ A modern, high-performance e-commerce platform for authentic Indian spices. Buil
 - 🎨 **Modern UI** - Bold, energetic design with smooth animations
 - 📱 **Fully Responsive** - Works perfectly on all devices
 - 🔍 **SEO Optimized** - Structured data, sitemaps, meta tags
-- 💳 **Payments** - **Razorpay** and **COD** implemented end-to-end; Stripe appears in checkout UI but full Stripe Checkout is not wired (orders can be created as payment pending for other methods)
+- 💳 **Payments** - **Razorpay** and **COD** implemented end-to-end
 - 🔐 **Auth** - In-house session auth with roles (`customer`, `retailer`, `admin`); customer `/login` and `/signup`; admin routes protected via `requireAdmin()`
 - 🛠️ **Admin portal** - Dashboard, orders, products (create/edit + variants), customers, discounts, inquiries, settings, sales reports, low-stock inventory
 - 📊 **Analytics** - Google Analytics 4, Meta Pixel, Hotjar (loaded when real IDs are set in env)
@@ -90,7 +90,7 @@ All detailed documentation is in the **[`/guides`](./guides)** folder:
 - **Styling:** Tailwind CSS 4
 - **Database:** PostgreSQL (via Supabase)
 - **Authentication:** In-house session auth (see `lib/auth/`)
-- **Payments:** Razorpay (live/test keys) + COD; Stripe placeholder in UI
+- **Payments:** Razorpay (live/test keys) + COD
 - **Analytics:** Google Analytics 4 (optional env IDs)
 - **Hosting:** Vercel (recommended)
 
@@ -161,7 +161,7 @@ For production uploads, configure **Supabase Storage** or **Cloudflare R2** (see
 - ✅ Shopping cart with local storage
 - ✅ Multi-step checkout
 - ✅ Order management (store + admin)
-- ✅ Razorpay + COD; Stripe UI without full gateway flow
+- ✅ Razorpay + COD
 
 ### Marketing
 

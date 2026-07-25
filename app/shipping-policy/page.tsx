@@ -9,9 +9,7 @@ export default function ShippingPolicyPage() {
 
       <article className="container mx-auto px-6 py-20 mt-20 max-w-3xl">
         <h1 className="text-4xl font-bold text-gray-900 mb-2">Shipping policy</h1>
-        <p className="text-sm text-gray-500 mb-10">
-          Last updated for customers shopping on this site
-        </p>
+        <p className="text-sm text-gray-500 mb-10">Last updated: 25 July 2026</p>
 
         <div className="prose prose-gray max-w-none space-y-8 text-gray-700">
           <section>

@@ -76,6 +76,6 @@ Session cookie: **`tangry_sid`** (httpOnly, 7 days). Middleware and server code 
 - **`lib/auth/user.ts`** – getCurrentUserProfile(), requireAdmin() (use getSessionUser).
 - **`lib/actions/auth.ts`** – signIn, signUp, signOut (bcrypt + session).
 - **`app/api/auth/me/route.ts`** – GET returns current profile from session.
-- **`middleware.ts`** – Protects `/admin` by requiring `tangry_sid` cookie.
+- **`proxy.ts`** – Protects `/admin` by requiring `tangry_sid` cookie.
 
 Supabase is still used for **data** (products, orders, etc.); only **auth** is in-house.

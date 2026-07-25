@@ -19,6 +19,28 @@ if (!supabaseUrl || !supabaseAnonKey) {
 
 const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
+type ProductRow = {
+  id: string;
+  name: string;
+  slug: string;
+  images: string[] | null;
+};
+
+type ProductImageRow = {
+  product_id: string;
+  url: string;
+  alt_text: string | null;
+};
+
+type ProductSummary = {
+  name: string;
+  slug: string;
+  productImagesCount?: number;
+  legacyImagesCount?: number;
+  images?: ProductImageRow[];
+  legacyImages?: string[];
+};
+
 async function checkProductImages() {
   console.log('🔍 Checking products for missing images...\n');
   console.log('Products without real images will fallback to logo-512.png\n');
@@ -46,8 +68,8 @@ async function checkProductImages() {
     }
 
     // Group images by product_id
-    const imagesByProductId = new Map<string, any[]>();
-    productImages?.forEach((img) => {
+    const imagesByProductId = new Map<string, ProductImageRow[]>();
+    (productImages as ProductImageRow[] | null)?.forEach((img) => {
       const existing = imagesByProductId.get(img.product_id) || [];
       existing.push(img);
       imagesByProductId.set(img.product_id, existing);
@@ -57,13 +79,13 @@ async function checkProductImages() {
     console.log(`🖼️  Total product images in product_images table: ${productImages?.length || 0}\n`);
 
     // Find products with missing images
-    const productsWithoutImages: any[] = [];
-    const productsWithImages: any[] = [];
-    const productsWithLogoFallback: any[] = [];
+    const productsWithoutImages: ProductSummary[] = [];
+    const productsWithImages: ProductSummary[] = [];
+    const productsWithLogoFallback: ProductSummary[] = [];
 
-    products?.forEach((product) => {
+    (products as ProductRow[] | null)?.forEach((product) => {
       const productImagesCount = imagesByProductId.get(product.id)?.length || 0;
-      const legacyImages = product.images as string[] | null;
+      const legacyImages = product.images;
       const legacyImagesCount = legacyImages?.length || 0;
 
       // Check if any images contain logo-512.png
@@ -96,9 +118,9 @@ async function checkProductImages() {
     });
 
     // Report
-    console.log('=' .repeat(60));
+    console.log('='.repeat(60));
     console.log('PRODUCTS WITHOUT ANY IMAGES (will use logo-512.png fallback):');
-    console.log('=' .repeat(60));
+    console.log('='.repeat(60));
     if (productsWithoutImages.length === 0) {
       console.log('✅ None! All products have at least one image.');
     } else {
@@ -108,9 +130,9 @@ async function checkProductImages() {
     }
 
     console.log('\n');
-    console.log('=' .repeat(60));
+    console.log('='.repeat(60));
     console.log('PRODUCTS EXPLICITLY USING logo-512.png:');
-    console.log('=' .repeat(60));
+    console.log('='.repeat(60));
     if (productsWithLogoFallback.length === 0) {
       console.log('✅ None found.');
     } else {
@@ -118,27 +140,29 @@ async function checkProductImages() {
         console.log(`${i + 1}. ${p.name} (/${p.slug})`);
         console.log(`   - product_images entries: ${p.productImagesCount}`);
         console.log(`   - legacy images column: ${p.legacyImagesCount}`);
-        if (p.images.length > 0) {
-          console.log(`   - URLs: ${p.images.map((img: any) => img.url).join(', ')}`);
+        if (p.images && p.images.length > 0) {
+          console.log(`   - URLs: ${p.images.map((img) => img.url).join(', ')}`);
         }
-        if (p.legacyImages.length > 0) {
+        if (p.legacyImages && p.legacyImages.length > 0) {
           console.log(`   - Legacy URLs: ${p.legacyImages.join(', ')}`);
         }
       });
     }
 
     console.log('\n');
-    console.log('=' .repeat(60));
+    console.log('='.repeat(60));
     console.log('PRODUCTS WITH REAL IMAGES:');
-    console.log('=' .repeat(60));
+    console.log('='.repeat(60));
     productsWithImages.forEach((p, i) => {
-      console.log(`${i + 1}. ${p.name} - ${p.productImagesCount} images (legacy: ${p.legacyImagesCount})`);
+      console.log(
+        `${i + 1}. ${p.name} - ${p.productImagesCount} images (legacy: ${p.legacyImagesCount})`,
+      );
     });
 
     console.log('\n');
-    console.log('=' .repeat(60));
+    console.log('='.repeat(60));
     console.log('SUMMARY:');
-    console.log('=' .repeat(60));
+    console.log('='.repeat(60));
     console.log(`✅ Products with real images: ${productsWithImages.length}`);
     console.log(`⚠️  Products without any images: ${productsWithoutImages.length}`);
     console.log(`❌ Products with logo-512.png: ${productsWithLogoFallback.length}`);
@@ -152,7 +176,6 @@ async function checkProductImages() {
     } else {
       console.log('\n🎉 All products have real images. No logo-512.png fallback issues!');
     }
-
   } catch (err) {
     console.error('❌ Error:', err);
     process.exit(1);

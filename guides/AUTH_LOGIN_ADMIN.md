@@ -36,7 +36,7 @@ They are linked by **user id**: `public.users.id` = Supabase Auth user id (`auth
   - `/signup` – create account (name optional); trigger syncs to `public.users`.
   - `/account` – profile (email, name, role); requires login.
   - `/account/orders` – placeholder “My orders”; requires login.
-  - `/admin/*` – **protected**: must be logged in (middleware) and `role = 'admin'` (admin layout), otherwise redirect to `/login` or `/`.
+  - `/admin/*` – **protected**: must be logged in (proxy) and `role = 'admin'` (admin layout), otherwise redirect to `/login` or `/`.
 
 ---
 

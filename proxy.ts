@@ -2,7 +2,7 @@ import { NextResponse, type NextRequest } from 'next/server';
 
 const SESSION_COOKIE = 'tangry_sid';
 
-export async function middleware(request: NextRequest) {
+export async function proxy(request: NextRequest) {
   // Protect /admin: require session cookie (full validation in admin layout)
   if (request.nextUrl.pathname.startsWith('/admin')) {
     const sessionCookie = request.cookies.get(SESSION_COOKIE);
