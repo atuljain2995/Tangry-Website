@@ -7,6 +7,7 @@ import { formatCurrency } from '@/lib/utils/database';
 import { analytics } from '@/lib/analytics';
 import { ProductImage } from './ProductImage';
 import { productImageAlt } from '@/lib/utils/product-image-alt';
+import { formatCartItemSubtitle } from '@/lib/utils/cart-display';
 
 interface CartItemProps {
   item: CartItem;
@@ -31,6 +32,7 @@ export const CartItemComponent = ({ item }: CartItemProps) => {
   };
 
   const itemTotal = item.price * item.quantity;
+  const subtitle = formatCartItemSubtitle(item);
 
   return (
     <div className="flex space-x-3 rounded-lg border border-gray-200 bg-white p-3 transition hover:shadow-md dark:border-neutral-700 dark:bg-neutral-800/80">
@@ -56,7 +58,9 @@ export const CartItemComponent = ({ item }: CartItemProps) => {
         <h3 className="mb-1 truncate text-sm font-semibold text-gray-900 dark:text-neutral-100">
           {item.productName}
         </h3>
-        <p className="mb-2 text-xs text-gray-500 dark:text-neutral-400">{item.variantName}</p>
+        {subtitle && (
+          <p className="mb-2 text-xs text-gray-500 dark:text-neutral-400">{subtitle}</p>
+        )}
 
         <div className="flex items-center justify-between">
           {/* Quantity Controls */}

@@ -12,12 +12,16 @@ import {
   ShoppingBag,
   Receipt,
   Sparkles,
+  Minus,
+  Plus,
 } from 'lucide-react';
 import { useState } from 'react';
 import { analytics } from '@/lib/analytics';
+import { CartItem } from '@/lib/types/database';
 import { ProductImage } from './ProductImage';
 import { FreeShippingUpsell, formatShippingLine } from './FreeShippingUpsell';
 import { FREE_SHIPPING_LABEL } from '@/lib/data/shipping';
+import { formatCartItemSubtitle } from '@/lib/utils/cart-display';
 
 interface OrderSummaryProps {
   showCouponField?: boolean;
@@ -36,6 +40,111 @@ function SectionLabel({
     <div className="mb-3 flex items-center gap-2">
       <Icon className="h-4 w-4 text-[#D32F2F]" aria-hidden />
       <h3 className="text-xs font-bold uppercase tracking-wider text-gray-500">{children}</h3>
+    </div>
+  );
+}
+
+function OrderSummaryLineItem({
+  item,
+  variant,
+}: {
+  item: CartItem;
+  variant: 'desktop' | 'mobile';
+}) {
+  const { updateQuantity, removeFromCart } = useCart();
+  const lineTotal = item.price * item.quantity;
+  const subtitle = formatCartItemSubtitle(item);
+
+  const handleIncrease = () => {
+    updateQuantity(item.productId, item.variantId, item.quantity + 1);
+  };
+
+  const handleDecrease = () => {
+    if (item.quantity > 1) {
+      updateQuantity(item.productId, item.variantId, item.quantity - 1);
+    }
+  };
+
+  const handleRemove = () => {
+    analytics.trackRemoveFromCart(item.productId, item.productName, item.quantity, item.price);
+    removeFromCart(item.productId, item.variantId);
+  };
+
+  return (
+    <div
+      className={
+        variant === 'mobile'
+          ? 'rounded-xl border border-orange-100/80 bg-[#FFFCFA] p-3'
+          : 'py-3 first:pt-0 last:pb-0'
+      }
+    >
+      <div className="flex gap-3">
+        <div className="relative h-12 w-12 shrink-0 overflow-hidden rounded-lg bg-orange-50">
+          {item.image ? (
+            <ProductImage
+              src={item.image}
+              alt={item.productName}
+              fill
+              className="object-cover"
+              sizes="48px"
+            />
+          ) : (
+            <div className="flex h-full w-full items-center justify-center text-[10px] text-gray-400">
+              No image
+            </div>
+          )}
+        </div>
+
+        <div className="min-w-0 flex-1 space-y-1.5">
+          {/* Name + line total — primary scan line */}
+          <div className="flex items-start justify-between gap-3">
+            <h3 className="line-clamp-2 text-sm font-semibold leading-snug text-gray-900">
+              {item.productName}
+            </h3>
+            <span className="shrink-0 text-sm font-bold tabular-nums text-gray-900">
+              {formatCurrency(lineTotal)}
+            </span>
+          </div>
+
+          {subtitle && <p className="text-xs text-gray-500">{subtitle}</p>}
+
+          {/* Actions: qty left, remove right */}
+          <div className="flex items-center justify-between gap-2 pt-0.5">
+            <div className="flex items-center gap-2">
+              <span className="text-xs font-medium text-gray-500">Qty</span>
+              <div className="inline-flex items-center overflow-hidden rounded-lg border border-orange-200 bg-white">
+                <button
+                  type="button"
+                  onClick={handleDecrease}
+                  disabled={item.quantity <= 1}
+                  className="px-2 py-1 text-gray-600 transition hover:bg-orange-50 disabled:cursor-not-allowed disabled:opacity-40"
+                  aria-label="Decrease quantity"
+                >
+                  <Minus size={13} />
+                </button>
+                <span className="min-w-[1.75rem] border-x border-orange-200 py-1 text-center text-xs font-semibold tabular-nums text-gray-900">
+                  {item.quantity}
+                </span>
+                <button
+                  type="button"
+                  onClick={handleIncrease}
+                  className="px-2 py-1 text-gray-600 transition hover:bg-orange-50"
+                  aria-label="Increase quantity"
+                >
+                  <Plus size={13} />
+                </button>
+              </div>
+            </div>
+            <button
+              type="button"
+              onClick={handleRemove}
+              className="text-xs font-medium text-gray-400 underline-offset-2 transition hover:text-red-600 hover:underline"
+            >
+              Remove
+            </button>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
@@ -215,66 +324,17 @@ export const OrderSummary = ({
     <div
       className={
         variant === 'mobile'
-          ? 'space-y-2.5'
-          : 'mb-5 max-h-52 space-y-3 overflow-y-auto'
+          ? 'space-y-2'
+          : 'mb-4 max-h-64 divide-y divide-orange-100/80 overflow-y-auto pr-1'
       }
     >
-      {cart.items.map((item) => {
-        const lineTotal = item.price * item.quantity;
-        return (
-          <div
-            key={`${item.productId}-${item.variantId}`}
-            className={
-              variant === 'mobile'
-                ? 'flex gap-3 rounded-xl border border-orange-100/80 bg-[#FFFCFA] p-3'
-                : 'flex gap-3'
-            }
-          >
-            <div
-              className={`relative shrink-0 overflow-hidden rounded-xl bg-orange-50 ${
-                variant === 'mobile' ? 'h-16 w-16' : 'h-14 w-14'
-              }`}
-            >
-              {item.image ? (
-                <ProductImage
-                  src={item.image}
-                  alt={item.productName}
-                  fill
-                  className="object-cover"
-                  sizes={variant === 'mobile' ? '64px' : '56px'}
-                />
-              ) : (
-                <div className="flex h-full w-full items-center justify-center text-[10px] text-gray-400">
-                  No image
-                </div>
-              )}
-              {variant === 'mobile' && item.quantity > 1 && (
-                <span className="absolute bottom-0 right-0 rounded-tl-lg bg-gray-900/80 px-1.5 py-0.5 text-[10px] font-bold text-white">
-                  ×{item.quantity}
-                </span>
-              )}
-            </div>
-            <div className="min-w-0 flex-1">
-              <h3 className="line-clamp-2 text-sm font-semibold leading-snug text-gray-900">
-                {item.productName}
-              </h3>
-              <p className="mt-0.5 text-xs text-gray-500">{item.variantName}</p>
-              <div className="mt-1.5 flex items-end justify-between gap-2">
-                {variant === 'mobile' ? (
-                  <p className="text-xs text-gray-500">
-                    {formatCurrency(item.price)} × {item.quantity}
-                  </p>
-                ) : (
-                  <span className="text-xs text-gray-500">Qty {item.quantity}</span>
-                )}
-                <span className="shrink-0 text-sm font-bold text-gray-900">
-                  {formatCurrency(lineTotal)}
-                </span>
-              </div>
-            </div>
-          </div>
-        );
-      })}
+      {cart.items.map((item) => (
+        <OrderSummaryLineItem
+          key={`${item.productId}-${item.variantId}`}
+          item={item}
+          variant={variant}
+        />
+      ))}
     </div>
   );
 

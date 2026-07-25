@@ -1,9 +1,13 @@
 'use client';
 
 import { useState } from 'react';
-import { CreditCard, Banknote, Loader2 } from 'lucide-react';
+import { Banknote, Loader2, ShieldCheck } from 'lucide-react';
 import { PaymentMethod } from '@/lib/types/database';
-import { CheckoutTrustStrip } from './CheckoutTrustStrip';
+import {
+  PaymentBrandIcon,
+  PaymentLogoStrip,
+  type PaymentBrandId,
+} from './PaymentBrandLogos';
 
 interface PaymentOptionsProps {
   onSubmit: (paymentMethod: PaymentMethod) => void;
@@ -26,21 +30,29 @@ export const PaymentOptions = ({
 
   const submitLabel = selectedMethod === 'razorpay' ? 'Pay securely' : 'Place order (COD)';
 
-  const paymentMethods = [
+  const paymentMethods: {
+    id: PaymentMethod;
+    name: string;
+    description: string;
+    brands: PaymentBrandId[];
+    icon: typeof Banknote;
+    available: boolean;
+    recommended: boolean;
+  }[] = [
     {
-      id: 'razorpay' as PaymentMethod,
-      name: 'UPI · Cards · Wallets',
-      description: 'GPay, PhonePe, Paytm, credit/debit cards',
-      badges: ['UPI', 'GPay', 'PhonePe'],
-      icon: CreditCard,
+      id: 'razorpay',
+      name: 'Pay online',
+      description: 'UPI, cards & wallets — instant confirmation',
+      brands: ['upi', 'gpay', 'phonepe', 'paytm', 'visa', 'mastercard', 'rupay'],
+      icon: ShieldCheck,
       available: true,
       recommended: true,
     },
     {
-      id: 'cod' as PaymentMethod,
+      id: 'cod',
       name: 'Cash on Delivery',
       description: 'Pay when your masalas arrive · ₹0 extra',
-      badges: ['COD'],
+      brands: ['cod'],
       icon: Banknote,
       available: true,
       recommended: false,
@@ -77,7 +89,12 @@ export const PaymentOptions = ({
 
       <div className="rounded-2xl border border-orange-100 bg-white p-5 shadow-sm sm:p-6">
         <h2 className="mb-1 text-xl font-bold text-gray-900">How would you like to pay?</h2>
-        <p className="mb-5 text-sm text-gray-500">UPI is the fastest way to checkout in India</p>
+        <p className="mb-4 text-sm text-gray-500">UPI is the fastest way to checkout in India</p>
+
+        <PaymentLogoStrip
+          brands={['upi', 'gpay', 'phonepe', 'paytm', 'visa', 'mastercard', 'rupay']}
+          className="mb-5"
+        />
 
         <div className="space-y-3">
           {paymentMethods.map((method) => (
@@ -112,16 +129,6 @@ export const PaymentOptions = ({
                     )}
                   </div>
                   <p className="mt-0.5 text-sm text-gray-600">{method.description}</p>
-                  <div className="mt-2 flex flex-wrap gap-1.5">
-                    {method.badges.map((badge) => (
-                      <span
-                        key={badge}
-                        className="rounded-md border border-gray-200 bg-white px-2 py-0.5 text-[10px] font-bold uppercase text-gray-600"
-                      >
-                        {badge}
-                      </span>
-                    ))}
-                  </div>
                 </div>
                 <div
                   className={`mt-1 flex h-5 w-5 shrink-0 items-center justify-center rounded-full border-2 ${
@@ -138,9 +145,14 @@ export const PaymentOptions = ({
             </button>
           ))}
         </div>
-      </div>
 
-      <CheckoutTrustStrip />
+        <div className="mt-4 flex items-center gap-2 rounded-xl bg-[#F8FAFC] px-3 py-2.5 text-xs text-gray-600">
+          <PaymentBrandIcon brand="razorpay" size="sm" />
+          <span>
+            Payments processed securely by <span className="font-semibold text-[#072654]">Razorpay</span>
+          </span>
+        </div>
+      </div>
 
       <div className="flex items-start gap-2 rounded-2xl border border-orange-100 bg-white px-4 py-3">
         <input

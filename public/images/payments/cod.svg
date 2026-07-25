@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" fill="none">
+  <rect width="48" height="48" rx="8" fill="#ECFDF5"/>
+  <rect x="10" y="14" width="28" height="18" rx="3" fill="#059669"/>
+  <circle cx="24" cy="23" r="4" fill="#ECFDF5"/>
+  <text x="24" y="40" text-anchor="middle" font-family="system-ui,sans-serif" font-size="8" font-weight="700" fill="#047857">COD</text>
+</svg>
