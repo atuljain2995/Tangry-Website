@@ -2,6 +2,13 @@
  * Google Analytics 4 utilities for Next.js
  */
 
+import { CartItem } from '@/lib/types/database';
+import {
+  cartItemsToGa4,
+  ga4ItemsValue,
+  productToGa4Item,
+} from '@/lib/utils/analytics-items';
+
 declare global {
   interface Window {
     gtag: (...args: unknown[]) => void;
@@ -106,54 +113,85 @@ export const analytics = {
     }),
 
   // Ecommerce
-  trackProductView: (productId: string, productName: string, price: number) => {
+  trackProductView: (
+    productId: string,
+    productName: string,
+    variantId: string,
+    variantName: string,
+    price: number,
+  ) => {
     if (!isAnalyticsEnabled()) return;
+    const items = [productToGa4Item({ productId, productName, variantId, variantName, price })];
     gtag('event', 'view_item', {
       currency: 'INR',
-      value: price,
-      items: [{ item_id: productId, item_name: productName, price }],
+      value: ga4ItemsValue(items),
+      items,
     });
   },
 
-  trackAddToCart: (productId: string, productName: string, quantity: number, price: number) => {
+  trackAddToCart: (
+    productId: string,
+    productName: string,
+    variantId: string,
+    variantName: string,
+    quantity: number,
+    price: number,
+  ) => {
     if (!isAnalyticsEnabled()) return;
+    const items = [
+      productToGa4Item({ productId, productName, variantId, variantName, price, quantity }),
+    ];
     gtag('event', 'add_to_cart', {
       currency: 'INR',
-      value: price * quantity,
-      items: [{ item_id: productId, item_name: productName, quantity, price }],
+      value: ga4ItemsValue(items),
+      items,
     });
   },
 
-  trackBeginCheckout: (total: number, itemCount: number) => {
+  trackBeginCheckout: (cartItems: CartItem[], total: number, couponCode?: string) => {
     if (!isAnalyticsEnabled()) return;
+    const items = cartItemsToGa4(cartItems);
     gtag('event', 'begin_checkout', {
       currency: 'INR',
       value: total,
-      items: [{ item_id: 'checkout', item_name: 'Checkout', quantity: itemCount, price: total }],
+      coupon: couponCode,
+      items,
     });
   },
 
-  trackPurchase: (orderId: string, total: number, items: number) => {
+  trackPurchase: (
+    orderId: string,
+    cartItems: CartItem[],
+    total: number,
+    couponCode?: string,
+  ) => {
     if (!isAnalyticsEnabled()) return;
+    const items = cartItemsToGa4(cartItems);
     gtag('event', 'purchase', {
       transaction_id: orderId,
       currency: 'INR',
       value: total,
-      items: [{ item_id: orderId, item_name: 'Order', quantity: items, price: total }],
+      coupon: couponCode,
+      items,
     });
   },
 
   trackRemoveFromCart: (
     productId: string,
     productName: string,
+    variantId: string,
+    variantName: string,
     quantity: number,
     price: number,
   ) => {
     if (!isAnalyticsEnabled()) return;
+    const items = [
+      productToGa4Item({ productId, productName, variantId, variantName, price, quantity }),
+    ];
     gtag('event', 'remove_from_cart', {
       currency: 'INR',
-      value: price * quantity,
-      items: [{ item_id: productId, item_name: productName, quantity, price }],
+      value: ga4ItemsValue(items),
+      items,
     });
   },
 

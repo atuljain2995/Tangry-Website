@@ -7,6 +7,8 @@ import { WishlistProvider } from '@/lib/contexts/WishlistContext';
 import { WhatsAppButton } from '@/components/ui/WhatsAppButton';
 import { Analytics as VercelAnalytics } from '@vercel/analytics/next';
 import GoogleAnalytics from '@/components/analytics/GoogleAnalytics';
+import { PageViewTracker } from '@/components/analytics/PageViewTracker';
+import { WebVitals } from '@/components/analytics/WebVitals';
 import MicrosoftClarity from '@/components/analytics/MicrosoftClarity';
 
 import { getOrganizationSchema, getLocalBusinessSchema } from '@/lib/utils/schema';
@@ -108,6 +110,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             <AuthProvider>
               <WishlistProvider>
                 {children}
+                <PageViewTracker />
+                <WebVitals />
                 <WhatsAppButton />
                 <VercelAnalytics />
               </WishlistProvider>

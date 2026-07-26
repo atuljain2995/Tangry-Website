@@ -49,12 +49,18 @@ export const ProductDetail = ({ product, categoryUrl, categoryLabel }: ProductDe
 
   const isWishlisted = checkWishlisted(product.id);
 
-  // Fire view_item once per product so GA4 can calculate funnel conversion rates
+  // Fire view_item when product or selected variant changes
   useEffect(() => {
-    const v = product.variants[0];
-    analytics.trackProductView(product.id, product.name, v?.price ?? 0);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [product.id]);
+    const variant = product.variants?.[selectedVariantIndex];
+    if (!variant) return;
+    analytics.trackProductView(
+      product.id,
+      product.name,
+      variant.id,
+      variant.name,
+      variant.price,
+    );
+  }, [product.id, product.name, product.variants, selectedVariantIndex]);
 
   // Find quantity of this variant already in cart
   const cartItem = cart.items.find(
@@ -167,7 +173,14 @@ export const ProductDetail = ({ product, categoryUrl, categoryLabel }: ProductDe
 
   const handleAddToCart = () => {
     addToCart(buildCartItem());
-    analytics.trackAddToCart(product.id, product.name, 1, selectedVariant.price);
+    analytics.trackAddToCart(
+      product.id,
+      product.name,
+      selectedVariant.id,
+      selectedVariant.name,
+      1,
+      selectedVariant.price,
+    );
     // Give immediate feedback that the item was added
     openCart();
   };
@@ -175,7 +188,14 @@ export const ProductDetail = ({ product, categoryUrl, categoryLabel }: ProductDe
   const handleBuyNow = () => {
     if (quantityInCart === 0) {
       addToCartSync(buildCartItem());
-      analytics.trackAddToCart(product.id, product.name, 1, selectedVariant.price);
+      analytics.trackAddToCart(
+      product.id,
+      product.name,
+      selectedVariant.id,
+      selectedVariant.name,
+      1,
+      selectedVariant.price,
+    );
     }
     router.push('/checkout');
   };

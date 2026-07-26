@@ -84,7 +84,7 @@ export default function CheckoutPage() {
     setCustomerEmail(email);
     setCheckoutError(null);
     setCurrentStep('payment');
-    analytics.trackBeginCheckout(totals.grandTotal, totals.itemCount);
+    analytics.trackBeginCheckout(cart.items, totals.grandTotal, cart.couponCode);
   };
 
   const createOrderPayload = () => ({
@@ -100,6 +100,10 @@ export default function CheckoutPage() {
     setCheckoutError(null);
     setIsProcessing(true);
 
+    const checkoutItems = [...cart.items];
+    const checkoutTotal = totals.grandTotal;
+    const checkoutCoupon = cart.couponCode;
+
     try {
       if (paymentMethod === 'cod') {
         const result = await createOrder({
@@ -112,7 +116,12 @@ export default function CheckoutPage() {
           return;
         }
         setOrderNumber(result.orderNumber);
-        analytics.trackPurchase(result.orderNumber, totals.grandTotal, totals.itemCount);
+        analytics.trackPurchase(
+          result.orderNumber,
+          checkoutItems,
+          checkoutTotal,
+          checkoutCoupon,
+        );
         clearCart();
         setCurrentStep('confirmation');
         return;
@@ -187,7 +196,12 @@ export default function CheckoutPage() {
             }
             setCheckoutError(null);
             setOrderNumber(verifyData.orderNumber);
-            analytics.trackPurchase(verifyData.orderNumber, totals.grandTotal, totals.itemCount);
+            analytics.trackPurchase(
+              verifyData.orderNumber,
+              checkoutItems,
+              checkoutTotal,
+              checkoutCoupon,
+            );
             clearCart();
             setCurrentStep('confirmation');
           },
@@ -207,7 +221,12 @@ export default function CheckoutPage() {
         return;
       }
       setOrderNumber(result.orderNumber);
-      analytics.trackPurchase(result.orderNumber, totals.grandTotal, totals.itemCount);
+      analytics.trackPurchase(
+        result.orderNumber,
+        checkoutItems,
+        checkoutTotal,
+        checkoutCoupon,
+      );
       clearCart();
       setCurrentStep('confirmation');
     } catch (error) {

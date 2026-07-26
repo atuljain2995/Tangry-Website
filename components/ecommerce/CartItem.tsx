@@ -27,7 +27,14 @@ export const CartItemComponent = ({ item }: CartItemProps) => {
   };
 
   const handleRemove = () => {
-    analytics.trackRemoveFromCart(item.productId, item.productName, item.quantity, item.price);
+    analytics.trackRemoveFromCart(
+      item.productId,
+      item.productName,
+      item.variantId,
+      item.variantName,
+      item.quantity,
+      item.price,
+    );
     removeFromCart(item.productId, item.variantId);
   };
 

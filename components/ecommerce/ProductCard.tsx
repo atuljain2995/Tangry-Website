@@ -46,7 +46,14 @@ export const ProductCard = ({ product }: ProductCardProps) => {
       price: selectedVariant.price,
       image: product.images[0] || '',
     });
-    analytics.trackAddToCart(product.id, product.name, 1, selectedVariant.price);
+    analytics.trackAddToCart(
+      product.id,
+      product.name,
+      selectedVariant.id,
+      selectedVariant.name,
+      1,
+      selectedVariant.price,
+    );
   };
 
   const handleIncrement = () => {
