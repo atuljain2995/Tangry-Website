@@ -29,6 +29,16 @@ export async function generateStaticParams() {
 }
 
 // Generate metadata for SEO
+function buildProductTitle(product: NonNullable<Awaited<ReturnType<typeof getProductBySlug>>>): string {
+  if (product.metaTitle) {
+    const base = product.metaTitle.replace(/\s\|\sTangry Spices$/i, '').replace(/\s\|\sTangry$/i, '').trim();
+    return `${base} | Tangry Spices`;
+  }
+  const primaryVariantName = product.variants?.[0]?.name ?? '';
+  const weightLabel = primaryVariantName ? ` (${primaryVariantName})` : '';
+  return `Buy ${product.name}${weightLabel} Online – Tangry Spices, Jaipur`;
+}
+
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const resolvedParams = await params;
   const product = await getProductBySlug(resolvedParams.slug);
@@ -39,19 +49,17 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     };
   }
 
-  // Do not pass local image paths to OG (Next.js can validate and throw if file missing/invalid)
-  const primaryVariantName = product.variants?.[0]?.name ?? '';
-  const weightLabel = primaryVariantName ? ` (${primaryVariantName})` : '';
-  const generatedTitle = `Buy ${product.name}${weightLabel} Online – Tangry Spices, Jaipur`;
+  const pageTitle = buildProductTitle(product);
+  const description = product.metaDescription || product.description;
 
   return {
-    title: product.metaTitle || generatedTitle,
-    description: product.metaDescription || product.description,
+    title: { absolute: pageTitle },
+    description,
     keywords: product.keywords,
     alternates: { canonical: `/products/${resolvedParams.slug}` },
     openGraph: {
-      title: product.name,
-      description: product.description,
+      title: pageTitle,
+      description,
       url: `https://www.tangryspices.com/products/${resolvedParams.slug}`,
     },
   };

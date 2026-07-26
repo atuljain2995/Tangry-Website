@@ -1,7 +1,15 @@
+export type BlogSection = {
+  heading: string;
+  body: string[];
+  links?: Array<{ label: string; href: string }>;
+};
+
 export type BlogPost = {
   slug: string;
   title: string;
   excerpt: string;
+  /** Overrides excerpt in meta description when set (150–160 chars ideal). */
+  seoDescription?: string;
   author: string;
   authorRole: string;
   date: string;
@@ -12,7 +20,10 @@ export type BlogPost = {
   imageAlt: string;
   tags: string[];
   productLinks: Array<{ label: string; href: string }>;
-  sections: Array<{ heading: string; body: string[] }>;
+  sections: BlogSection[];
+  faqs?: Array<{ question: string; answer: string }>;
+  midArticleCta?: { label: string; href: string };
+  endArticleCtas?: Array<{ label: string; href: string }>;
 };
 
 export const blogPosts: BlogPost[] = [
@@ -102,23 +113,68 @@ export const blogPosts: BlogPost[] = [
     slug: 'difference-kashmiri-chilli',
     title: 'Kashmiri Chilli vs Regular Red Chilli: What to Use When',
     excerpt:
-      'Understand color, heat, and flavor differences so you can choose the right chilli for gravies, snacks, and marinades.',
+      'Kashmiri vs regular red chilli — color, heat, and when to use each in gravies, tandoori, pav bhaji, and pickles.',
+    seoDescription:
+      'Kashmiri vs regular red chilli — color, heat & when to use each. Shop authentic red chilli powder at Tangry Spices, Jaipur. FSSAI licensed.',
     author: 'Tangry Team',
     authorRole: 'Spice sourcing team',
     date: '2026-04-23',
-    updated: '2026-04-27',
+    updated: '2026-07-26',
     readTime: '4 min read',
     category: 'Education',
     image: '/images/categories/spices.png',
     imageAlt: 'Tangry spice blends for color and flavor in Indian cooking',
-    tags: ['chilli', 'education', 'spice guide'],
-    productLinks: [{ label: 'Browse Masalas', href: '/categories/spices-masalas' }],
+    tags: ['kashmiri chilli', 'red chilli', 'education', 'spice guide'],
+    productLinks: [
+      { label: 'Shop Red Chilli Powder', href: '/products/red-chilli-powder' },
+      { label: 'Browse All Masalas', href: '/products' },
+      { label: 'Pav Bhaji Masala', href: '/products/pav-bhaji-masala' },
+    ],
+    midArticleCta: {
+      label: 'Shop Red Chilli Powder',
+      href: '/products/red-chilli-powder',
+    },
+    endArticleCtas: [
+      { label: 'Shop Red Chilli Powder', href: '/products/red-chilli-powder' },
+      { label: 'Browse All Products', href: '/products' },
+    ],
+    faqs: [
+      {
+        question: 'What is the difference between Kashmiri chilli and regular red chilli?',
+        answer:
+          'Kashmiri chilli is prized for deep red color and milder heat. Regular red chilli adds sharper spice. Many Indian gravies and marinades use a blend of both for color plus controlled heat.',
+      },
+      {
+        question: 'When should I use Kashmiri chilli powder?',
+        answer:
+          'Use Kashmiri-style chilli for color-forward dishes: paneer gravies, tandoori marinades, pav bhaji, butter chicken, and bright red chutneys where you want red color without overwhelming heat.',
+      },
+      {
+        question: 'Can I substitute regular red chilli for Kashmiri chilli?',
+        answer:
+          'You can substitute in a pinch, but regular red chilli is usually hotter. Start with half the quantity and add more only after tasting, or blend both types for balanced color and heat.',
+      },
+      {
+        question: 'Which Tangry product works for Kashmiri-style cooking?',
+        answer:
+          'Tangry Red Chilli Powder is ground for everyday Indian cooking and works in gravies, snacks, and marinades. Browse masalas and essentials at tangryspices.com/products.',
+      },
+      {
+        question: 'How should I store chilli powder?',
+        answer:
+          'Keep chilli powder in an airtight jar away from stove heat and moisture. Use a dry spoon and finish opened packs within a few months for the best aroma and color.',
+      },
+    ],
     sections: [
       {
         heading: 'The simple difference',
         body: [
           'Kashmiri chilli is usually chosen for bright red color and milder heat. Regular red chilli is chosen when the dish needs more sharpness and spice.',
           'For hotel gravies, tandoori marinades, and street-food snacks, many cooks use a blend so the dish gets both color and controlled heat.',
+        ],
+        links: [
+          { label: 'Red Chilli Powder', href: '/products/red-chilli-powder' },
+          { label: 'All masalas', href: '/categories/spices-masalas' },
         ],
       },
       {
@@ -127,6 +183,11 @@ export const blogPosts: BlogPost[] = [
           'Use Kashmiri chilli for color-forward dishes like paneer gravies, tandoori marinades, pav bhaji, and bright red chutneys.',
           'Use hotter red chilli when the recipe needs a clear spicy kick, such as pickles, chutneys, and snack masalas.',
         ],
+        links: [
+          { label: 'Pav Bhaji Masala', href: '/products/pav-bhaji-masala' },
+          { label: 'Sweet Lemon Pickle', href: '/products/sweet-lemon-pickle' },
+          { label: 'Indian spices guide', href: '/blog/indian-spices-guide' },
+        ],
       },
       {
         heading: 'Buying tip',
@@ -134,6 +195,7 @@ export const blogPosts: BlogPost[] = [
           'Do not judge chilli only by color. Aroma, freshness, grind quality, and heat level all affect the final dish.',
           'If you cook for customers, test a small batch first and document the quantity that gives the right color and heat.',
         ],
+        links: [{ label: 'Shop Tangry Spices', href: '/products' }],
       },
     ],
   },
@@ -195,6 +257,9 @@ export const blogPosts: BlogPost[] = [
     tags: ['beginners', 'indian cuisine', 'spice box'],
     productLinks: [
       { label: 'Shop All Products', href: '/products' },
+      { label: 'Dabeli Masala', href: '/products/dabeli-masala' },
+      { label: 'Gun Powder Podi', href: '/products/gun-powder-podi-masala' },
+      { label: 'Chaas Masala', href: '/products/chaas-masala' },
       { label: 'Browse Essentials', href: '/categories/essentials' },
     ],
     sections: [

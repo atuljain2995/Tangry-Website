@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { ArrowLeft, ArrowRight, Clock, User } from 'lucide-react';
 import { StructuredData } from '@/components/seo/StructuredData';
-import { getBlogPostSchema } from '@/lib/utils/schema';
+import { getBlogPostSchema, getFAQSchema } from '@/lib/utils/schema';
 import { blogPosts, getBlogPost } from '@/lib/data/blog';
 import { BlogPostChrome } from './BlogPostChrome';
 
@@ -30,11 +30,11 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
   return {
     title: post.title,
-    description: post.excerpt,
+    description: post.seoDescription || post.excerpt,
     alternates: { canonical: `/blog/${post.slug}` },
     openGraph: {
       title: post.title,
-      description: post.excerpt,
+      description: post.seoDescription || post.excerpt,
       url: `${SITE_URL}/blog/${post.slug}`,
       type: 'article',
       publishedTime: post.date,
@@ -45,7 +45,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     twitter: {
       card: 'summary_large_image',
       title: post.title,
-      description: post.excerpt,
+      description: post.seoDescription || post.excerpt,
       images: [`${SITE_URL}${post.image}`],
     },
   };
@@ -60,10 +60,14 @@ export default async function BlogPostPage({ params }: PageProps) {
   }
 
   const relatedPosts = blogPosts.filter((item) => item.slug !== post.slug).slice(0, 3);
+  const structuredData = [
+    getBlogPostSchema(post),
+    ...(post.faqs?.length ? [getFAQSchema(post.faqs)] : []),
+  ];
 
   return (
     <BlogPostChrome>
-      <StructuredData data={getBlogPostSchema(post)} />
+      <StructuredData data={structuredData} />
 
       <article className="pt-20">
         {/* Full-width hero image */}
@@ -132,7 +136,7 @@ export default async function BlogPostPage({ params }: PageProps) {
 
             {/* Sections */}
             <div className="space-y-10">
-              {post.sections.map((section) => (
+              {post.sections.map((section, sectionIndex) => (
                 <section key={section.heading}>
                   <h2 className="text-xl md:text-2xl font-bold text-gray-900 mb-4 dark:text-neutral-100">
                     {section.heading}
@@ -147,9 +151,54 @@ export default async function BlogPostPage({ params }: PageProps) {
                       </p>
                     ))}
                   </div>
+                  {section.links && section.links.length > 0 && (
+                    <div className="mt-5 flex flex-wrap gap-2">
+                      {section.links.map((link) => (
+                        <Link
+                          key={link.href}
+                          href={link.href}
+                          className="inline-flex items-center gap-1 rounded-full border border-orange-200 bg-orange-50 px-4 py-2 text-sm font-semibold text-orange-800 transition hover:border-orange-300 hover:bg-orange-100 dark:border-orange-900 dark:bg-orange-950/40 dark:text-orange-200"
+                        >
+                          {link.label}
+                          <ArrowRight size={14} aria-hidden />
+                        </Link>
+                      ))}
+                    </div>
+                  )}
+                  {sectionIndex === 0 && post.midArticleCta && (
+                    <div className="mt-8">
+                      <Link
+                        href={post.midArticleCta.href}
+                        className="inline-flex items-center gap-2 rounded-2xl bg-[#D32F2F] px-6 py-3 text-sm font-bold text-white shadow-md transition hover:bg-[#B71C1C]"
+                      >
+                        {post.midArticleCta.label}
+                        <ArrowRight size={16} aria-hidden />
+                      </Link>
+                    </div>
+                  )}
                 </section>
               ))}
             </div>
+
+            {post.endArticleCtas && post.endArticleCtas.length > 0 && (
+              <div className="mt-12 rounded-2xl border border-orange-100 bg-[#FFF8F3] p-6 dark:border-neutral-800 dark:bg-neutral-900">
+                <p className="mb-4 text-sm font-bold uppercase tracking-widest text-orange-600">
+                  Shop Tangry
+                </p>
+                <div className="flex flex-wrap gap-3">
+                  {post.endArticleCtas.map((cta) => (
+                    <Link
+                      key={cta.href}
+                      href={cta.href}
+                      className="inline-flex items-center gap-2 rounded-xl bg-gray-900 px-5 py-3 text-sm font-bold text-white transition hover:bg-gray-800"
+                    >
+                      {cta.label}
+                      <ArrowRight size={14} aria-hidden />
+                    </Link>
+                  ))}
+                </div>
+              </div>
+            )}
 
             {/* Tags */}
             <div className="mt-12 pt-8 border-t border-gray-100 dark:border-neutral-800">

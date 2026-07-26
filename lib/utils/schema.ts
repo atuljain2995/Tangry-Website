@@ -457,6 +457,7 @@ export function getBlogPostSchema(post: {
   slug: string;
   title: string;
   excerpt: string;
+  seoDescription?: string;
   author: string;
   date: string;
   updated: string;
@@ -468,7 +469,7 @@ export function getBlogPostSchema(post: {
     '@context': 'https://schema.org',
     '@type': 'BlogPosting',
     headline: post.title,
-    description: post.excerpt,
+    description: post.seoDescription || post.excerpt,
     image: {
       '@type': 'ImageObject',
       url: `${SITE_URL}${post.image}`,

@@ -28,6 +28,7 @@ const CATEGORY_GUIDES: Record<
     uses: string[];
     buyingTip: string;
     wholesaleAngle: string;
+    featuredProducts?: Array<{ slug: string; label: string }>;
   }
 > = {
   'spices-masalas': {
@@ -42,6 +43,11 @@ const CATEGORY_GUIDES: Record<
       'If you are buying for a commercial kitchen, start with 100 g or 200 g packs for tasting, then move to bulk pricing once the recipe is finalized.',
     wholesaleAngle:
       'Restaurants, hotels, caterers, and retailers can request repeat-supply pricing for high-rotation masalas.',
+    featuredProducts: [
+      { slug: 'dabeli-masala', label: 'Dabeli Masala' },
+      { slug: 'pav-bhaji-masala', label: 'Pav Bhaji Masala' },
+      { slug: 'red-chilli-powder', label: 'Red Chilli Powder' },
+    ],
   },
   'ready-to-eat': {
     intro:
@@ -55,6 +61,11 @@ const CATEGORY_GUIDES: Record<
       'For families, start with one finishing spice and one snack masala. For food outlets, compare usage per day before selecting pack size.',
     wholesaleAngle:
       'Cloud kitchens and quick-service counters can standardize taste with repeatable ready-powder batches.',
+    featuredProducts: [
+      { slug: 'gun-powder-podi-masala', label: 'Gun Powder Podi' },
+      { slug: 'chaas-masala', label: 'Chaas Masala' },
+      { slug: 'vada-pav-chutney', label: 'Vada Pav Chutney' },
+    ],
   },
   essentials: {
     intro:
@@ -68,6 +79,10 @@ const CATEGORY_GUIDES: Record<
       'Buy smaller packs if your monthly usage is low. High-volume kitchens should buy larger packs only when storage is dry and airtight.',
     wholesaleAngle:
       'Retailers and commercial kitchens can request steady supply of essentials for monthly rotation.',
+    featuredProducts: [
+      { slug: 'turmeric-powder', label: 'Turmeric Powder' },
+      { slug: 'red-chilli-powder', label: 'Red Chilli Powder' },
+    ],
   },
   pickles: {
     intro:
@@ -81,6 +96,11 @@ const CATEGORY_GUIDES: Record<
       'Choose sweet mango or lemon for family-friendly meals. Choose green chilli when you want a bolder pickle for spice-loving customers.',
     wholesaleAngle:
       'Hotels, restaurants, and retailers can ask for pickle supply for thalis, breakfast counters, grocery shelves, and gifting packs.',
+    featuredProducts: [
+      { slug: 'sweet-lemon-pickle', label: 'Sweet Lemon Pickle' },
+      { slug: 'sweet-mango-relish', label: 'Sweet Mango Relish' },
+      { slug: 'green-chilli-pickle', label: 'Green Chilli Pickle' },
+    ],
   },
 };
 
@@ -191,6 +211,24 @@ export function CategoryPageClient({ category, products }: CategoryPageClientPro
                 <p className="mb-5 text-sm leading-7 text-gray-600 dark:text-neutral-300">
                   {guide.wholesaleAngle}
                 </p>
+                {guide.featuredProducts && guide.featuredProducts.length > 0 && (
+                  <div className="mb-5">
+                    <h3 className="mb-3 text-lg font-bold text-gray-900 dark:text-neutral-100">
+                      Popular in this category
+                    </h3>
+                    <div className="flex flex-col gap-2">
+                      {guide.featuredProducts.map((item) => (
+                        <Link
+                          key={item.slug}
+                          href={`/products/${item.slug}`}
+                          className="rounded-lg border border-orange-100 bg-orange-50 px-4 py-2.5 text-sm font-semibold text-orange-900 transition hover:border-orange-200 hover:bg-orange-100 dark:border-orange-900/50 dark:bg-orange-950/30 dark:text-orange-100"
+                        >
+                          {item.label}
+                        </Link>
+                      ))}
+                    </div>
+                  </div>
+                )}
                 <div className="flex flex-col gap-3">
                   <Link
                     href="/wholesale"
