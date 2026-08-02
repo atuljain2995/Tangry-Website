@@ -8,6 +8,7 @@ import {
   PaymentLogoStrip,
   type PaymentBrandId,
 } from './PaymentBrandLogos';
+import { CodEmailOtpVerification } from './CodEmailOtpVerification';
 
 interface PaymentOptionsProps {
   onSubmit: (paymentMethod: PaymentMethod) => void;
@@ -16,6 +17,11 @@ interface PaymentOptionsProps {
   error?: string | null;
   onDismissError?: () => void;
   formId?: string;
+  /** Guest checkout: require OTP before COD */
+  requireCodOtp?: boolean;
+  customerEmail?: string;
+  codOtpVerified?: boolean;
+  onCodOtpVerifiedChange?: (verified: boolean) => void;
 }
 
 export const PaymentOptions = ({
@@ -25,8 +31,15 @@ export const PaymentOptions = ({
   error = null,
   onDismissError,
   formId = 'checkout-payment-form',
+  requireCodOtp = false,
+  customerEmail = '',
+  codOtpVerified = false,
+  onCodOtpVerifiedChange,
 }: PaymentOptionsProps) => {
   const [selectedMethod, setSelectedMethod] = useState<PaymentMethod>('razorpay');
+
+  const codBlocked =
+    selectedMethod === 'cod' && requireCodOtp && !codOtpVerified;
 
   const submitLabel = selectedMethod === 'razorpay' ? 'Pay securely' : 'Place order (COD)';
 
@@ -61,6 +74,7 @@ export const PaymentOptions = ({
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    if (codBlocked) return;
     onSubmit(selectedMethod);
   };
 
@@ -146,6 +160,18 @@ export const PaymentOptions = ({
           ))}
         </div>
 
+        {selectedMethod === 'cod' && requireCodOtp && customerEmail && onCodOtpVerifiedChange && (
+          <div className="mt-4">
+            <CodEmailOtpVerification
+              key={customerEmail}
+              email={customerEmail}
+              verified={codOtpVerified}
+              onVerifiedChange={onCodOtpVerifiedChange}
+              disabled={isProcessing}
+            />
+          </div>
+        )}
+
         <div className="mt-4 flex items-center gap-2 rounded-xl bg-[#F8FAFC] px-3 py-2.5 text-xs text-gray-600">
           <PaymentBrandIcon brand="razorpay" size="sm" />
           <span>
@@ -180,7 +206,7 @@ export const PaymentOptions = ({
         </button>
         <button
           type="submit"
-          disabled={isProcessing}
+          disabled={isProcessing || codBlocked}
           className="inline-flex items-center gap-2 rounded-2xl bg-[#D32F2F] px-8 py-3 font-bold text-white shadow-lg transition hover:bg-[#B71C1C] disabled:opacity-50"
         >
           {isProcessing ? (

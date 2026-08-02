@@ -10,6 +10,14 @@ import {
 import { generateOrderNumber } from '@/lib/utils/database';
 import { sendOrderConfirmationEmail } from '@/lib/email/order-confirmation';
 import { getSessionUser } from '@/lib/auth/session';
+import {
+  clearVerifiedCodEmailCookie,
+} from '@/lib/otp/cod-verification';
+import {
+  isGuestCodEmailVerified,
+  touchCheckoutEmailTrusted,
+} from '@/lib/otp/trusted-checkout-email';
+import { normalizeEmail } from '@/lib/email/normalize';
 import type { Address, CartItem, PaymentMethod } from '@/lib/types/database';
 
 export type CreateOrderPayload = {
@@ -49,6 +57,21 @@ export async function createOrder(payload: CreateOrderPayload): Promise<CreateOr
     // Link order to logged-in user if available; also used to enforce
     // first-order-only coupons at placement time.
     const sessionUser = await getSessionUser().catch(() => null);
+
+    if (paymentMethod === 'cod' && !sessionUser) {
+      const orderEmail = normalizeEmail(userEmail);
+      if (!orderEmail) {
+        return { success: false, error: 'A valid email is required for COD.' };
+      }
+      const verified = await isGuestCodEmailVerified(orderEmail);
+      if (!verified) {
+        return {
+          success: false,
+          error: 'Please verify your email with the code we sent before placing a COD order.',
+        };
+      }
+      await touchCheckoutEmailTrusted(orderEmail);
+    }
 
     const lines = orderLinesFromCartItems(items);
     const trusted = await computeTrustedOrderDraft({
@@ -150,6 +173,10 @@ export async function createOrder(payload: CreateOrderPayload): Promise<CreateOr
 
     if (couponId) {
       await incrementCouponUsage(couponId);
+    }
+
+    if (paymentMethod === 'cod' && !sessionUser) {
+      await clearVerifiedCodEmailCookie();
     }
 
     const paymentCompleted = paymentMethod === 'cod' || (paymentMethod === 'razorpay' && paymentId);

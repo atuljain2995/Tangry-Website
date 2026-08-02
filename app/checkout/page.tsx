@@ -78,6 +78,7 @@ export default function CheckoutPage() {
   const [orderNumber, setOrderNumber] = useState<string>('');
   const [confirmedSummary, setConfirmedSummary] = useState<ConfirmedOrderSummary | null>(null);
   const [checkoutError, setCheckoutError] = useState<string | null>(null);
+  const [codOtpVerified, setCodOtpVerified] = useState(false);
 
   const totals = getCheckoutTotals(cart);
 
@@ -125,6 +126,7 @@ export default function CheckoutPage() {
     setShippingAddress(shipping);
     setBillingAddress(billing);
     setCustomerEmail(email);
+    setCodOtpVerified(false);
     setCheckoutError(null);
     setCurrentStep('payment');
     analytics.trackBeginCheckout(cart.items, totals.grandTotal, cart.couponCode);
@@ -149,6 +151,10 @@ export default function CheckoutPage() {
 
     try {
       if (paymentMethod === 'cod') {
+        if (!user && !codOtpVerified) {
+          reportCheckoutError('Please verify your email before placing a COD order.');
+          return;
+        }
         const result = await createOrder({
           ...createOrderPayload(),
           paymentMethod: 'cod',
@@ -457,11 +463,16 @@ export default function CheckoutPage() {
                     onSubmit={handlePaymentSubmit}
                     onBack={() => {
                       setCheckoutError(null);
+                      setCodOtpVerified(false);
                       setCurrentStep('shipping');
                     }}
                     isProcessing={isProcessing}
                     error={checkoutError}
                     onDismissError={() => setCheckoutError(null)}
+                    requireCodOtp={!user}
+                    customerEmail={customerEmail}
+                    codOtpVerified={codOtpVerified}
+                    onCodOtpVerifiedChange={setCodOtpVerified}
                   />
                 )}
               </div>
