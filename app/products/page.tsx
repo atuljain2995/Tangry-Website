@@ -1,18 +1,19 @@
 import { Metadata } from 'next';
 import { ProductsPageClient } from './ProductsPageClient';
 import { StructuredData } from '@/components/seo/StructuredData';
-import { getProductSchema, getItemListSchema } from '@/lib/utils/schema';
+import { getProductSchema, getItemListSchema, getBreadcrumbSchema } from '@/lib/utils/schema';
 import { getAllProducts, getProductCategories } from '@/lib/db/queries';
 
+const PRODUCTS_DESCRIPTION =
+  'Buy masala online from Tangry Spices, Jaipur. Shop Rajasthani dabeli masala, pav bhaji, gun powder podi, turmeric, pickles & more. FSSAI licensed. Free shipping ₹500+.';
+
 export const metadata: Metadata = {
-  title: 'Shop Masalas, Powders & Pickles',
-  description:
-    'Browse Tangry’s Jaipur-made masalas (dabeli, pav bhaji), ready-to-eat powders (gun powder, vada pav chutney), essentials, and pickles — FSSAI & ISO 22000.',
+  title: 'Buy Masala Online — Rajasthani Spices from Jaipur',
+  description: PRODUCTS_DESCRIPTION,
   alternates: { canonical: '/products' },
   openGraph: {
-    title: 'Shop Tangry Spices — Masalas, Powders & Pickles',
-    description:
-      'Authentic Rajasthani masalas and spices from Jaipur. FSSAI licensed, ISO 22000 certified.',
+    title: 'Buy Masala Online — Rajasthani Spices | Tangry Spices',
+    description: PRODUCTS_DESCRIPTION,
     url: 'https://www.tangryspices.com/products',
     type: 'website',
   },
@@ -25,7 +26,16 @@ export default async function ProductsPage() {
 
   return (
     <>
-      <StructuredData data={[getItemListSchema(products), ...products.map((product) => getProductSchema(product))]} />
+      <StructuredData
+        data={[
+          getBreadcrumbSchema([
+            { name: 'Home', url: 'https://www.tangryspices.com' },
+            { name: 'Products', url: 'https://www.tangryspices.com/products' },
+          ]),
+          getItemListSchema(products),
+          ...products.map((product) => getProductSchema(product)),
+        ]}
+      />
       <ProductsPageClient products={products} categories={categories} />
     </>
   );

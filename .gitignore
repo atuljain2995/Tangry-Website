@@ -43,3 +43,6 @@ next-env.d.ts
 
 # analytics-mcp
 ga4-key.json
+
+# database exports (contain user/order data)
+/backups/

@@ -1,7 +1,8 @@
 'use client';
 
-import { useState, useMemo, useCallback } from 'react';
-import { useSearchParams, useRouter, usePathname } from 'next/navigation';
+import { useState, useMemo } from 'react';
+import Link from 'next/link';
+import { useSearchParams } from 'next/navigation';
 import { ChevronDown, Package, Zap } from 'lucide-react';
 import { Header } from '@/components/layout/Header';
 import { MobileMenu } from '@/components/layout/MobileMenu';
@@ -19,8 +20,6 @@ interface ProductsPageClientProps {
 
 export function ProductsPageClient({ products, categories }: ProductsPageClientProps) {
   const searchParams = useSearchParams();
-  const router = useRouter();
-  const pathname = usePathname();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [sortBy, setSortBy] = useState<'newest' | 'price-low' | 'price-high' | 'popular'>(
     'popular',
@@ -38,24 +37,6 @@ export function ProductsPageClient({ products, categories }: ProductsPageClientP
     );
     return match ? match.id : 'all';
   }, [searchParams, categories]);
-
-  // Update URL when category filter changes
-  const handleCategoryChange = useCallback(
-    (categoryId: 'all' | string) => {
-      const cat = categories.find((c) => c.id === categoryId);
-      analytics.trackFilter('category', categoryId === 'all' ? 'all' : (cat?.title ?? categoryId));
-      const params = new URLSearchParams(searchParams.toString());
-      if (categoryId === 'all') {
-        params.delete('category');
-      } else {
-        const cat = categories.find((c) => c.id === categoryId);
-        params.set('category', cat?.slug || categoryId);
-      }
-      const qs = params.toString();
-      router.replace(`${pathname}${qs ? `?${qs}` : ''}`, { scroll: false });
-    },
-    [searchParams, categories, router, pathname],
-  );
 
   // Filter by DB category id, with title fallback for legacy rows without category_id
   let filteredProducts =
@@ -88,18 +69,50 @@ export function ProductsPageClient({ products, categories }: ProductsPageClientP
       <MobileMenu isOpen={isMobileMenuOpen} onClose={() => setIsMobileMenuOpen(false)} />
       <CartDrawer />
 
-      {/* Hero Banner */}
+      {/* Hero + SEO intro */}
       <section className="bg-[#FFF8F3] pt-32 pb-12 dark:bg-neutral-900">
-        <div className="container mx-auto px-4 text-center">
+        <div className="container mx-auto max-w-4xl px-4 text-center">
           <div className="inline-flex items-center gap-2 bg-orange-100 text-orange-700 px-4 py-1.5 rounded-full font-bold text-xs uppercase tracking-wider mb-6 animate-pulse">
-            <Zap className="w-3 h-3 fill-current" /> Premium Collection
+            <Zap className="w-3 h-3 fill-current" /> FSSAI Licensed · ISO 22000
           </div>
-          <h1 className="mb-4 text-5xl font-black tracking-tight text-gray-900 uppercase italic md:text-7xl dark:text-neutral-100">
-            Shop Tangry
+          <h1 className="mb-6 text-4xl font-black tracking-tight text-gray-900 md:text-5xl dark:text-neutral-100">
+            Shop Authentic Rajasthani Masalas Online
           </h1>
-          <p className="mx-auto max-w-2xl text-xl font-medium text-gray-600 dark:text-neutral-300">
-            Masalas, ready powders, and essentials from Tangry, Jaipur. FSSAI licensed · ISO 22000.
-          </p>
+          <div className="mx-auto max-w-3xl space-y-4 text-left text-base leading-7 text-gray-600 md:text-center md:text-lg dark:text-neutral-300">
+            <p>
+              Tangry Spices brings authentic{' '}
+              <strong className="font-semibold text-gray-800 dark:text-neutral-100">
+                Rajasthani masalas
+              </strong>
+              , ready powders, and pickles from our kitchen in Jhotwara,{' '}
+              <strong className="font-semibold text-gray-800 dark:text-neutral-100">
+                Jaipur
+              </strong>
+              . Whether you want to{' '}
+              <strong className="font-semibold text-gray-800 dark:text-neutral-100">
+                buy masala online
+              </strong>{' '}
+              for everyday cooking or stock a café, cloud kitchen, or hotel, our blends are packed
+              for reliable flavour — dabeli masala, pav bhaji masala, gun powder podi, turmeric,
+              and homestyle pickles.
+            </p>
+            <p>
+              Browse by category:{' '}
+              {categories.map((category, index) => (
+                <span key={category.id}>
+                  <Link
+                    href={`/categories/${category.slug}`}
+                    className="font-semibold text-orange-700 underline-offset-2 hover:underline dark:text-orange-400"
+                  >
+                    {category.title}
+                  </Link>
+                  {index < categories.length - 1 ? ', ' : '. '}
+                </span>
+              ))}
+              Every order above ₹500 ships free across India. From home cooks to restaurants,
+              Tangry helps you cook with the taste of home.
+            </p>
+          </div>
         </div>
       </section>
 
@@ -107,35 +120,38 @@ export function ProductsPageClient({ products, categories }: ProductsPageClientP
         {/* Filters and Sorting */}
         <div className="mb-12 space-y-4">
           {/* Category Filter — scrollable strip */}
-          <div className="w-full overflow-x-auto no-scrollbar">
+          <nav
+            aria-label="Filter products by category"
+            className="w-full overflow-x-auto no-scrollbar"
+          >
             <div className="flex gap-2 w-max min-w-full">
-              <button
-                type="button"
-                onClick={() => handleCategoryChange('all')}
-                className={`px-5 py-2 rounded-full text-sm font-semibold transition capitalize border whitespace-nowrap cursor-pointer ${
+              <Link
+                href="/products"
+                onClick={() => analytics.trackFilter('category', 'all')}
+                className={`px-5 py-2 rounded-full text-sm font-semibold transition capitalize border whitespace-nowrap ${
                   selectedCategoryId === 'all'
                     ? 'bg-gray-900 text-white border-gray-900'
                     : 'bg-white text-gray-700 border-gray-200 hover:border-gray-400'
                 }`}
               >
                 All
-              </button>
+              </Link>
               {categories.map((category) => (
-                <button
-                  type="button"
+                <Link
                   key={category.id}
-                  onClick={() => handleCategoryChange(category.id)}
-                  className={`px-5 py-2 rounded-full text-sm font-semibold transition capitalize border whitespace-nowrap cursor-pointer ${
+                  href={`/products?category=${category.slug}`}
+                  onClick={() => analytics.trackFilter('category', category.title)}
+                  className={`px-5 py-2 rounded-full text-sm font-semibold transition capitalize border whitespace-nowrap ${
                     selectedCategoryId === category.id
                       ? 'bg-gray-900 text-white border-gray-900'
                       : 'bg-white text-gray-700 border-gray-200 hover:border-gray-400'
                   }`}
                 >
                   {category.chip_label || category.title}
-                </button>
+                </Link>
               ))}
             </div>
-          </div>
+          </nav>
 
           {/* Sort */}
           <div className="relative self-start">

@@ -18,6 +18,7 @@ Everything you need to set up and configure the database:
 - **[SUPABASE_SETUP_GUIDE.md](./SUPABASE_SETUP_GUIDE.md)** - Detailed Supabase setup
 - **[QUICK_START_SUPABASE.md](./QUICK_START_SUPABASE.md)** - Quick 3-step Supabase setup
 - **[RUN_MIGRATIONS_NOW.md](./RUN_MIGRATIONS_NOW.md)** - How to run database migrations
+- **[MIGRATE_TO_NEW_SUPABASE.md](./MIGRATE_TO_NEW_SUPABASE.md)** - Export data and move to a new Supabase project
 - **[DATABASE_INTEGRATION_COMPLETE.md](./DATABASE_INTEGRATION_COMPLETE.md)** - Database integration summary
 
 ## 🏗️ Architecture & Development

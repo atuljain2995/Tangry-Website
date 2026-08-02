@@ -11,6 +11,8 @@
     "lint": "eslint",
     "format": "prettier --write .",
     "test-db": "tsx scripts/test-db-connection.ts",
+    "export-db": "tsx scripts/export-database.ts",
+    "import-db": "tsx scripts/import-database.ts",
     "create-admin": "tsx scripts/create-admin.ts",
     "check:images": "tsx scripts/check-product-images.ts",
     "prepare": "husky"
