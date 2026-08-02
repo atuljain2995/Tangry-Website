@@ -34,6 +34,7 @@ export function AdminProductEditForm({
   const [isNew, setIsNew] = useState(product.is_new ?? false);
   const [isBestSeller, setIsBestSeller] = useState(product.is_best_seller ?? false);
   const [isHeroProduct, setIsHeroProduct] = useState(product.is_hero_product ?? false);
+  const [discountEnabled, setDiscountEnabled] = useState(product.discount_enabled ?? false);
   const [variantRows, setVariantRows] = useState<VariantRow[]>(
     initialVariants.length > 0
       ? initialVariants.map((v) => ({
@@ -188,6 +189,7 @@ export function AdminProductEditForm({
           is_new: isNew,
           is_best_seller: isBestSeller,
           is_hero_product: isHeroProduct,
+          discount_enabled: discountEnabled,
         });
         if (!productResult.success) {
           setMessage({ type: 'error', text: productResult.error });
@@ -394,7 +396,22 @@ export function AdminProductEditForm({
                   />
                   <span className="text-sm text-gray-700">Hero section</span>
                 </label>
+                <label className="flex items-center gap-2">
+                  <input
+                    type="checkbox"
+                    checked={discountEnabled}
+                    onChange={(e) => setDiscountEnabled(e.target.checked)}
+                    className="rounded border-gray-300"
+                  />
+                  <span className="text-sm text-gray-700">Show discount on storefront</span>
+                </label>
               </div>
+              {discountEnabled && (
+                <p className="text-xs text-gray-500">
+                  When enabled, compare-at (MRP) and % OFF badges appear for variants where compare-at
+                  is higher than the selling price.
+                </p>
+              )}
             </div>
           </section>
 
@@ -550,7 +567,7 @@ export function AdminProductEditForm({
                     </div>
                     <div>
                       <label className="block text-xs font-medium text-gray-500">
-                        Compare at (₹)
+                        Compare at / MRP (₹)
                       </label>
                       <input
                         type="number"

@@ -17,6 +17,7 @@ import { ProductExtended } from '@/lib/types/database';
 import {
   formatCurrency,
   calculateDiscountPercentage,
+  getDisplayCompareAtPrice,
   getStockStatus,
   calculateSavings,
 } from '@/lib/utils/database';
@@ -115,11 +116,16 @@ export const ProductDetail = ({ product, categoryUrl, categoryLabel }: ProductDe
   }
 
   const selectedVariant = product.variants[selectedVariantIndex];
-  const discountPercentage = calculateDiscountPercentage(
+  const displayCompareAt = getDisplayCompareAtPrice(
     selectedVariant.price,
     selectedVariant.compareAtPrice,
+    product.discountEnabled,
   );
-  const savings = calculateSavings(selectedVariant.price, selectedVariant.compareAtPrice);
+  const discountPercentage = calculateDiscountPercentage(
+    selectedVariant.price,
+    displayCompareAt,
+  );
+  const savings = calculateSavings(selectedVariant.price, displayCompareAt);
   const stockStatus = getStockStatus(selectedVariant.stock);
   const parseTextBlocks = (text: string) =>
     text
@@ -426,11 +432,11 @@ export const ProductDetail = ({ product, categoryUrl, categoryLabel }: ProductDe
 
           {/* MRP + Savings + Stock */}
           <div className="flex items-center justify-between mb-1">
-            {selectedVariant.compareAtPrice ? (
+            {displayCompareAt ? (
               <span className="text-sm text-gray-500">
                 M.R.P.:{' '}
                 <span className="line-through">
-                  {formatCurrency(selectedVariant.compareAtPrice)}
+                  {formatCurrency(displayCompareAt)}
                 </span>
               </span>
             ) : (
@@ -665,9 +671,9 @@ export const ProductDetail = ({ product, categoryUrl, categoryLabel }: ProductDe
           <span className="text-lg font-bold text-gray-900">
             {formatCurrency(selectedVariant.price)}
           </span>
-          {selectedVariant.compareAtPrice ? (
+          {displayCompareAt ? (
             <span className="text-xs text-gray-400 line-through">
-              {formatCurrency(selectedVariant.compareAtPrice)}
+              {formatCurrency(displayCompareAt)}
             </span>
           ) : null}
         </div>

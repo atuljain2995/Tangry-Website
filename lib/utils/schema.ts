@@ -1,6 +1,7 @@
 // Structured data (JSON-LD) generators for SEO
 
 import { ProductExtended, Review } from '../types/database';
+import { getDisplayCompareAtPrice } from './database';
 import { COMPANY_INFO, SOCIAL_LINKS } from '../data/constants';
 
 const SITE_URL = 'https://www.tangryspices.com';
@@ -112,8 +113,13 @@ export function getProductSchema(product: ProductExtended, reviews: Review[] = [
       seller: { '@type': 'Organization', name: 'Tangry Spices' },
     };
 
-    // Emit priceValidUntil when a compare-at (sale) price is present
-    if (v.compareAtPrice && v.compareAtPrice > price) {
+    // Emit priceValidUntil when an admin-enabled sale compare-at price is present
+    const displayCompareAt = getDisplayCompareAtPrice(
+      price,
+      v.compareAtPrice,
+      product.discountEnabled,
+    );
+    if (displayCompareAt) {
       offer.priceValidUntil = new Date(Date.now() + 365 * 24 * 60 * 60 * 1000)
         .toISOString()
         .split('T')[0];

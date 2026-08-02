@@ -4,7 +4,7 @@ import { Sparkles, ArrowRight, Zap, Star, ShieldCheck } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { ProductExtended } from '@/lib/types/database';
-import { formatCurrency, calculateDiscountPercentage } from '@/lib/utils/database';
+import { formatCurrency, calculateDiscountPercentage, getDisplayCompareAtPrice } from '@/lib/utils/database';
 
 interface HeroProps {
   products?: ProductExtended[];
@@ -23,7 +23,10 @@ function PromoCard({
   priority?: boolean;
 }) {
   const v = product.variants[0];
-  const disc = v ? calculateDiscountPercentage(v.price, v.compareAtPrice) : 0;
+  const displayCompareAt = v
+    ? getDisplayCompareAtPrice(v.price, v.compareAtPrice, product.discountEnabled)
+    : undefined;
+  const disc = v ? calculateDiscountPercentage(v.price, displayCompareAt) : 0;
 
   return (
     <Link
@@ -65,9 +68,9 @@ function PromoCard({
         {v && (
           <div className="mt-1 text-base font-black text-slate-900 dark:text-neutral-50 sm:mt-2 sm:text-lg lg:text-xl">
             {formatCurrency(v.price)}
-            {v.compareAtPrice && (
+            {displayCompareAt && (
               <span className="ml-1.5 text-xs font-normal text-slate-400 line-through dark:text-neutral-500 sm:text-sm">
-                {formatCurrency(v.compareAtPrice)}
+                {formatCurrency(displayCompareAt)}
               </span>
             )}
           </div>

@@ -23,6 +23,7 @@ export function AdminNewProductForm({ categories }: { categories: DbProductCateg
   const [isNew, setIsNew] = useState(false);
   const [isBestSeller, setIsBestSeller] = useState(false);
   const [isHeroProduct, setIsHeroProduct] = useState(false);
+  const [discountEnabled, setDiscountEnabled] = useState(false);
   const [imageUrl, setImageUrl] = useState('');
   const [variantName, setVariantName] = useState('Default');
   const [variantSku, setVariantSku] = useState('');
@@ -49,6 +50,7 @@ export function AdminNewProductForm({ categories }: { categories: DbProductCateg
       is_new: isNew,
       is_best_seller: isBestSeller,
       is_hero_product: isHeroProduct,
+      discount_enabled: discountEnabled,
       image_url: imageUrl.trim() || undefined,
       variant_name: variantName.trim() || undefined,
       variant_sku: variantSku.trim() || undefined,
@@ -197,6 +199,15 @@ export function AdminNewProductForm({ categories }: { categories: DbProductCateg
                 className="rounded border-gray-300"
               />
               <span className="text-sm text-gray-700">Hero section</span>
+            </label>
+            <label className="flex items-center gap-2">
+              <input
+                type="checkbox"
+                checked={discountEnabled}
+                onChange={(e) => setDiscountEnabled(e.target.checked)}
+                className="rounded border-gray-300"
+              />
+              <span className="text-sm text-gray-700">Show discount on storefront</span>
             </label>
           </div>
         </div>

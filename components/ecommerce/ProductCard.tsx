@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { Star, Plus, Minus, Heart } from 'lucide-react';
 import { ProductExtended } from '@/lib/types/database';
-import { formatCurrency, calculateDiscountPercentage } from '@/lib/utils/database';
+import { formatCurrency, calculateDiscountPercentage, getDisplayCompareAtPrice } from '@/lib/utils/database';
 import Link from 'next/link';
 import { ProductImage } from './ProductImage';
 import { productImageAlt } from '@/lib/utils/product-image-alt';
@@ -24,9 +24,14 @@ export const ProductCard = ({ product }: ProductCardProps) => {
   const { isWishlisted, toggle: toggleWishlist } = useWishlist();
   const { user } = useAuth();
   const selectedVariant = product.variants[selectedVariantIndex];
-  const discountPercentage = calculateDiscountPercentage(
+  const displayCompareAt = getDisplayCompareAtPrice(
     selectedVariant.price,
     selectedVariant.compareAtPrice,
+    product.discountEnabled,
+  );
+  const discountPercentage = calculateDiscountPercentage(
+    selectedVariant.price,
+    displayCompareAt,
   );
   const imageSrc = product.images[0] || PLACEHOLDER_IMAGE;
 
@@ -200,10 +205,9 @@ export const ProductCard = ({ product }: ProductCardProps) => {
             <span className="text-xl font-black text-gray-900 dark:text-neutral-100">
               {formatCurrency(selectedVariant.price)}
             </span>
-            {selectedVariant.compareAtPrice &&
-              selectedVariant.compareAtPrice > selectedVariant.price && (
+            {displayCompareAt && (
                 <span className="text-sm text-gray-400 line-through dark:text-neutral-500">
-                  {formatCurrency(selectedVariant.compareAtPrice)}
+                  {formatCurrency(displayCompareAt)}
                 </span>
               )}
           </div>

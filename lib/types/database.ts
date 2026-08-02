@@ -63,6 +63,8 @@ export interface ProductExtended {
   isNew: boolean;
   isBestSeller: boolean;
   isHeroProduct: boolean;
+  /** When true, storefront shows compare-at MRP and discount badges */
+  discountEnabled: boolean;
   rating: number;
   reviewCount: number;
   minOrderQuantity: number; // For B2B

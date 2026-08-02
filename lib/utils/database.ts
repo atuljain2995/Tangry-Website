@@ -152,6 +152,17 @@ export function calculateDiscountPercentage(price: number, compareAtPrice?: numb
   return Math.round(((compareAtPrice - price) / compareAtPrice) * 100);
 }
 
+/** Compare-at MRP shown on storefront only when admin enabled discounts for the product. */
+export function getDisplayCompareAtPrice(
+  price: number,
+  compareAtPrice: number | undefined,
+  discountEnabled: boolean,
+): number | undefined {
+  if (!discountEnabled) return undefined;
+  if (!compareAtPrice || compareAtPrice <= price) return undefined;
+  return compareAtPrice;
+}
+
 /**
  * Validate Indian PIN code
  */
