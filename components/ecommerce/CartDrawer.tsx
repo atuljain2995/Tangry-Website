@@ -8,6 +8,8 @@ import { formatCurrency } from '@/lib/utils/database';
 import { getCheckoutTotals } from '@/lib/utils/checkout-totals';
 import { buildWhatsAppOrderUrl } from '@/lib/utils/whatsapp-order';
 import { FreeShippingUpsell, formatShippingLine } from './FreeShippingUpsell';
+import { CartTopupSuggestions } from './CartTopupSuggestions';
+import { getFreeShippingStatus } from '@/lib/utils/shipping-offers';
 import Link from 'next/link';
 
 export const CartDrawer = () => {
@@ -15,6 +17,7 @@ export const CartDrawer = () => {
   const whatsappOrderUrl = buildWhatsAppOrderUrl(cart);
   const { subtotal, discount, afterDiscount, shipping, grandTotal } = getCheckoutTotals(cart);
   const shippingLine = formatShippingLine(shipping, afterDiscount);
+  const shippingStatus = getFreeShippingStatus(afterDiscount);
 
   useEffect(() => {
     if (!isCartOpen) return;
@@ -104,6 +107,12 @@ export const CartDrawer = () => {
               onShopClick={closeCart}
               className="mb-3"
             />
+
+            {!shippingStatus.qualifies && (
+              <CartTopupSuggestions
+                excludeVariantIds={cart.items.map((i) => i.variantId)}
+              />
+            )}
 
             {/* Price breakdown */}
             <div className="mb-3 space-y-1.5 text-sm">

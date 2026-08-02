@@ -36,8 +36,9 @@ export async function POST(req: NextRequest) {
   }
 
   // ── Validate numeric value ──────────────────────────────────────────────────
-  const numValue = Number(value);
-  if (!Number.isFinite(numValue) || numValue < 0) {
+  // Clamp tiny negative floating-point noise (seen on CLS deltas) to 0 instead of rejecting.
+  const numValue = Math.max(0, Number(value));
+  if (!Number.isFinite(numValue)) {
     return NextResponse.json({ error: 'Invalid value' }, { status: 400 });
   }
 

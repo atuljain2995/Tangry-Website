@@ -165,7 +165,20 @@ export async function createOrder(payload: CreateOrderPayload): Promise<CreateOr
           quantity: i.quantity,
           price: i.price,
         })),
-      }).catch((err) => console.error('Order confirmation email:', err));
+      })
+        .then(async (result) => {
+          if (result.ok) return;
+          // Flag on the order itself so admins reviewing the order see the delivery failure
+          // even though the checkout flow already completed successfully for the customer.
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          await (supabaseAdmin as any)
+            .from('orders')
+            .update({
+              notes: `[auto] Confirmation email failed to send: ${result.error ?? 'unknown error'}`,
+            })
+            .eq('order_number', orderNumber);
+        })
+        .catch((err) => console.error('Order confirmation email:', err));
     }
 
     return { success: true, orderNumber };
@@ -184,6 +197,63 @@ export async function createOrder(payload: CreateOrderPayload): Promise<CreateOr
       error: 'We could not complete your order due to a technical issue. Please try again.',
     };
   }
+}
+
+/**
+ * Link guest-checkout orders to the currently signed-in user.
+ * Only claims orders that are still unowned (user_id is null) AND were placed with the
+ * same email as the signed-in account — the client only supplies order numbers, never
+ * an email, so this cannot be used to claim someone else's order by guessing a number.
+ */
+export async function claimGuestOrders(
+  orderNumbers: string[],
+): Promise<{ success: true; claimed: string[] } | { success: false; error: string }> {
+  const sessionUser = await getSessionUser().catch(() => null);
+  if (!sessionUser) {
+    return { success: false, error: 'Not signed in' };
+  }
+
+  const numbers = [...new Set(orderNumbers)].filter((n) => typeof n === 'string' && n.trim()).slice(0, 20);
+  if (!numbers.length) {
+    return { success: true, claimed: [] };
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const { data: candidates, error: fetchError } = await (supabaseAdmin as any)
+    .from('orders')
+    .select('id, order_number, user_email')
+    .in('order_number', numbers)
+    .is('user_id', null);
+
+  if (fetchError) {
+    console.error('claimGuestOrders fetch error:', fetchError);
+    return { success: false, error: 'Could not link previous orders' };
+  }
+
+  const targetEmail = sessionUser.email.trim().toLowerCase();
+  const matches = ((candidates ?? []) as { id: string; order_number: string; user_email: string }[]).filter(
+    (o) => o.user_email?.trim().toLowerCase() === targetEmail,
+  );
+
+  if (!matches.length) {
+    return { success: true, claimed: [] };
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const { error: updateError } = await (supabaseAdmin as any)
+    .from('orders')
+    .update({ user_id: sessionUser.id })
+    .in(
+      'id',
+      matches.map((m) => m.id),
+    );
+
+  if (updateError) {
+    console.error('claimGuestOrders update error:', updateError);
+    return { success: false, error: 'Could not link previous orders' };
+  }
+
+  return { success: true, claimed: matches.map((m) => m.order_number) };
 }
 
 const VALID_ORDER_STATUSES = [

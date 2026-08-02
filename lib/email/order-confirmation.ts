@@ -37,10 +37,15 @@ function formatMoney(amount: number, currency: string): string {
  * Sends a plain order confirmation via [Resend](https://resend.com) when `RESEND_API_KEY` is set.
  * Set `ORDER_CONFIRMATION_FROM` to a verified sender (e.g. `Tangry <orders@yourdomain.com>`).
  * Without a verified domain, Resend may only deliver to your account email when using their default sandbox from address.
+ *
+ * Retries once on transient failure. Returns a result instead of throwing so the caller
+ * (createOrder) can flag the order for admin follow-up when delivery ultimately fails.
  */
-export async function sendOrderConfirmationEmail(input: SendOrderConfirmationInput): Promise<void> {
+export async function sendOrderConfirmationEmail(
+  input: SendOrderConfirmationInput,
+): Promise<{ ok: boolean; error?: string }> {
   const apiKey = process.env.RESEND_API_KEY;
-  if (!apiKey || !input.to?.trim()) return;
+  if (!apiKey || !input.to?.trim()) return { ok: false, error: 'Email not configured' };
 
   const from =
     process.env.ORDER_CONFIRMATION_FROM?.trim() || 'Tangry Spices <onboarding@resend.dev>';
@@ -65,23 +70,38 @@ export async function sendOrderConfirmationEmail(input: SendOrderConfirmationInp
 <p style="color:#666;font-size:14px">We will send updates when your order ships.</p>
 </body></html>`;
 
-  const res = await fetch('https://api.resend.com/emails', {
-    method: 'POST',
-    headers: {
-      Authorization: `Bearer ${apiKey}`,
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-      from,
-      to: [input.to.trim()],
-      cc: ['tangryspices@gmail.com'],
-      subject,
-      html,
-    }),
-  });
+  const attempt = async (): Promise<{ ok: boolean; error?: string }> => {
+    try {
+      const res = await fetch('https://api.resend.com/emails', {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${apiKey}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          from,
+          to: [input.to.trim()],
+          cc: ['tangryspices@gmail.com'],
+          subject,
+          html,
+        }),
+      });
+      if (res.ok) return { ok: true };
+      const text = await res.text();
+      return { ok: false, error: `${res.status} ${text}`.slice(0, 300) };
+    } catch (err) {
+      return { ok: false, error: err instanceof Error ? err.message : 'Network error' };
+    }
+  };
 
-  if (!res.ok) {
-    const text = await res.text();
-    console.error('Resend order email failed:', res.status, text);
+  const first = await attempt();
+  if (first.ok) return first;
+
+  console.error('Resend order email failed (attempt 1):', first.error);
+  const retry = await attempt();
+  if (!retry.ok) {
+    console.error('Resend order email failed (retry):', retry.error);
   }
+  return retry;
 }
+

@@ -106,7 +106,7 @@ export function PaymentBrandIcon({
       height={height}
       aria-hidden
       className="object-contain object-center"
-      style={{ height, width: 'auto', maxWidth: asset.maxWidth * scale }}
+      style={{ height: 'auto', width: 'auto', maxHeight: height, maxWidth: asset.maxWidth * scale }}
       unoptimized
     />
   );

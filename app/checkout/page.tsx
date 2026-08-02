@@ -1,7 +1,6 @@
 'use client';
 
 import { useState } from 'react';
-import Script from 'next/script';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { CheckoutHeader } from '@/components/layout/CheckoutHeader';
@@ -13,16 +12,59 @@ import { CheckoutMobileBar } from '@/components/ecommerce/CheckoutMobileBar';
 import { CheckoutTrustStrip } from '@/components/ecommerce/CheckoutTrustStrip';
 import { useCart } from '@/lib/contexts/CartContext';
 import { useAuth } from '@/lib/contexts/AuthContext';
-import { Address, PaymentMethod } from '@/lib/types/database';
+import { Address, CartItem, PaymentMethod } from '@/lib/types/database';
 import { createOrder } from '@/lib/actions/orders';
 import { getCheckoutTotals } from '@/lib/utils/checkout-totals';
-import { Check, Loader2, Truck } from 'lucide-react';
+import { rememberGuestOrder, rememberGuestCheckoutInfo } from '@/lib/utils/guest-orders';
+import { formatCurrency } from '@/lib/utils/database';
+import { Check, Loader2, MapPin, Truck } from 'lucide-react';
 import { analytics } from '@/lib/analytics';
 
 type CheckoutStep = 'shipping' | 'payment' | 'confirmation';
 
 const SHIPPING_FORM_ID = 'checkout-shipping-form';
 const PAYMENT_FORM_ID = 'checkout-payment-form';
+
+type ConfirmedOrderSummary = {
+  items: CartItem[];
+  total: number;
+  address: Address;
+  paymentMethod: PaymentMethod;
+};
+
+const PAYMENT_METHOD_LABELS: Record<PaymentMethod, string> = {
+  cod: 'Cash on Delivery',
+  razorpay: 'Paid online',
+  stripe: 'Paid online',
+  bank_transfer: 'Bank transfer',
+};
+
+/** Injects the Razorpay checkout script only when the customer actually picks "Pay online",
+ * instead of preloading ~15 JS chunks on every checkout visit regardless of payment method. */
+function loadRazorpayScript(): Promise<boolean> {
+  return new Promise((resolve) => {
+    if (typeof window === 'undefined') {
+      resolve(false);
+      return;
+    }
+    if ((window as { Razorpay?: unknown }).Razorpay) {
+      resolve(true);
+      return;
+    }
+    const existing = document.getElementById('razorpay-checkout-js') as HTMLScriptElement | null;
+    if (existing) {
+      existing.addEventListener('load', () => resolve(true));
+      existing.addEventListener('error', () => resolve(false));
+      return;
+    }
+    const script = document.createElement('script');
+    script.id = 'razorpay-checkout-js';
+    script.src = 'https://checkout.razorpay.com/v1/checkout.js';
+    script.onload = () => resolve(true);
+    script.onerror = () => resolve(false);
+    document.body.appendChild(script);
+  });
+}
 
 export default function CheckoutPage() {
   const router = useRouter();
@@ -34,6 +76,7 @@ export default function CheckoutPage() {
   const [customerEmail, setCustomerEmail] = useState<string>('');
   const [isProcessing, setIsProcessing] = useState(false);
   const [orderNumber, setOrderNumber] = useState<string>('');
+  const [confirmedSummary, setConfirmedSummary] = useState<ConfirmedOrderSummary | null>(null);
   const [checkoutError, setCheckoutError] = useState<string | null>(null);
 
   const totals = getCheckoutTotals(cart);
@@ -116,6 +159,16 @@ export default function CheckoutPage() {
           return;
         }
         setOrderNumber(result.orderNumber);
+        if (!user) {
+          rememberGuestOrder(result.orderNumber, customerEmail);
+          rememberGuestCheckoutInfo({ email: customerEmail, ...shippingAddress });
+        }
+        setConfirmedSummary({
+          items: checkoutItems,
+          total: checkoutTotal,
+          address: shippingAddress,
+          paymentMethod: 'cod',
+        });
         analytics.trackPurchase(
           result.orderNumber,
           checkoutItems,
@@ -128,6 +181,12 @@ export default function CheckoutPage() {
       }
 
       if (paymentMethod === 'razorpay') {
+        const scriptLoaded = await loadRazorpayScript();
+        if (!scriptLoaded) {
+          reportCheckoutError('Could not load the payment gateway. Please try again.');
+          return;
+        }
+
         const createRes = await fetch('/api/razorpay/create-order', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -196,6 +255,16 @@ export default function CheckoutPage() {
             }
             setCheckoutError(null);
             setOrderNumber(verifyData.orderNumber);
+            if (!user) {
+              rememberGuestOrder(verifyData.orderNumber, customerEmail);
+              rememberGuestCheckoutInfo({ email: customerEmail, ...shippingAddress });
+            }
+            setConfirmedSummary({
+              items: checkoutItems,
+              total: checkoutTotal,
+              address: shippingAddress,
+              paymentMethod: 'razorpay',
+            });
             analytics.trackPurchase(
               verifyData.orderNumber,
               checkoutItems,
@@ -221,6 +290,16 @@ export default function CheckoutPage() {
         return;
       }
       setOrderNumber(result.orderNumber);
+      if (!user) {
+        rememberGuestOrder(result.orderNumber, customerEmail);
+        rememberGuestCheckoutInfo({ email: customerEmail, ...shippingAddress });
+      }
+      setConfirmedSummary({
+        items: checkoutItems,
+        total: checkoutTotal,
+        address: shippingAddress,
+        paymentMethod,
+      });
       analytics.trackPurchase(
         result.orderNumber,
         checkoutItems,
@@ -246,7 +325,6 @@ export default function CheckoutPage() {
   return (
     <div className="min-h-screen bg-[#FFF8F3]">
       <CheckoutHeader itemCount={totals.itemCount} />
-      <Script src="https://checkout.razorpay.com/v1/checkout.js" strategy="afterInteractive" />
 
       <div className="container mx-auto px-4 py-6 pb-28 lg:pb-10 lg:py-8">
         {currentStep === 'confirmation' ? (
@@ -259,6 +337,45 @@ export default function CheckoutPage() {
             </h1>
             <p className="mb-1 text-gray-600">Thank you for choosing Tangry Spices</p>
             <p className="mb-6 text-xl font-bold text-[#D32F2F]">Order #{orderNumber}</p>
+
+            {confirmedSummary && (
+              <div className="mb-6 rounded-2xl border border-orange-100 bg-white p-5 text-left shadow-sm">
+                <div className="mb-3 flex items-center justify-between text-sm font-semibold text-gray-900">
+                  <span>Order summary</span>
+                  <span className="font-normal text-gray-500">
+                    {PAYMENT_METHOD_LABELS[confirmedSummary.paymentMethod]}
+                  </span>
+                </div>
+                <ul className="mb-3 space-y-2 divide-y divide-gray-100">
+                  {confirmedSummary.items.map((item) => (
+                    <li
+                      key={`${item.productId}-${item.variantId}`}
+                      className="flex items-center justify-between gap-3 pt-2 text-sm first:pt-0"
+                    >
+                      <span className="text-gray-700">
+                        {item.productName}
+                        {item.variantName ? ` (${item.variantName})` : ''} × {item.quantity}
+                      </span>
+                      <span className="shrink-0 font-medium text-gray-900">
+                        {formatCurrency(item.price * item.quantity)}
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+                <div className="mb-4 flex items-center justify-between border-t border-gray-100 pt-3 text-base font-bold text-gray-900">
+                  <span>Total</span>
+                  <span>{formatCurrency(confirmedSummary.total)}</span>
+                </div>
+                <div className="flex items-start gap-2 border-t border-gray-100 pt-3 text-sm text-gray-600">
+                  <MapPin className="mt-0.5 h-4 w-4 shrink-0 text-[#D32F2F]" aria-hidden />
+                  <span>
+                    {confirmedSummary.address.fullName} · {confirmedSummary.address.addressLine1},{' '}
+                    {confirmedSummary.address.city}, {confirmedSummary.address.state} –{' '}
+                    {confirmedSummary.address.postalCode}
+                  </span>
+                </div>
+              </div>
+            )}
 
             <div className="mb-6 rounded-2xl border border-orange-100 bg-white p-5 text-left shadow-sm">
               <div className="mb-3 flex items-center gap-2 text-sm font-semibold text-gray-900">

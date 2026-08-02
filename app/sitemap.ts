@@ -1,6 +1,7 @@
 import { MetadataRoute } from 'next';
 import { getAllProducts, getProductCategories } from '@/lib/db/queries';
 import { blogPosts } from '@/lib/data/blog';
+import { showRecipesInNav } from '@/lib/data/nav-flags';
 
 export const revalidate = false;
 
@@ -66,12 +67,17 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       changeFrequency: 'weekly' as const,
       priority: 0.6,
     },
-    {
-      url: `${baseUrl}/recipes`,
-      lastModified: buildTime,
-      changeFrequency: 'monthly' as const,
-      priority: 0.6,
-    },
+    // Recipes page has no internal links while hidden from nav, so keep it out of the sitemap too
+    ...(showRecipesInNav()
+      ? [
+          {
+            url: `${baseUrl}/recipes`,
+            lastModified: buildTime,
+            changeFrequency: 'monthly' as const,
+            priority: 0.6,
+          },
+        ]
+      : []),
     {
       url: `${baseUrl}/privacy-policy`,
       lastModified: buildTime,

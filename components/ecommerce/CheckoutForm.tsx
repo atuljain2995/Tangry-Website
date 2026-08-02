@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { Address } from '@/lib/types/database';
 import { validatePinCode } from '@/lib/utils/database';
 import { useAuth } from '@/lib/contexts/AuthContext';
+import { getGuestCheckoutInfo } from '@/lib/utils/guest-orders';
 import { CheckoutDeliveryHint } from './CheckoutDeliveryHint';
 import { MapPin, Pencil } from 'lucide-react';
 
@@ -118,6 +119,30 @@ export const CheckoutForm = ({
       .finally(() => setLoadingAddresses(false));
   }, [user, applyAddress]);
   /* eslint-enable react-hooks/set-state-in-effect */
+
+  // Returning guest (no account): prefill from the last checkout remembered on this
+  // device instead of asking them to retype an address they've already given us.
+  useEffect(() => {
+    if (user) return;
+    const remembered = getGuestCheckoutInfo();
+    if (!remembered) return;
+    /* eslint-disable react-hooks/set-state-in-effect -- hydrate form from localStorage after mount */
+    setEmail(remembered.email);
+    setShippingAddress({
+      fullName: remembered.fullName,
+      phone: remembered.phone,
+      addressLine1: remembered.addressLine1,
+      addressLine2: remembered.addressLine2 || '',
+      city: remembered.city,
+      state: remembered.state,
+      postalCode: remembered.postalCode,
+      country: remembered.country || 'IN',
+      type: 'shipping',
+      isDefault: false,
+    });
+    setExpressMode(true);
+    /* eslint-enable react-hooks/set-state-in-effect */
+  }, [user]);
 
   // Restore saved PIN after mount (avoids SSR hydration mismatch)
   useEffect(() => {

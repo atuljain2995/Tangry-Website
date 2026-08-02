@@ -1,6 +1,8 @@
 'use client';
 
 import React, { createContext, useCallback, useContext, useEffect, useState } from 'react';
+import { claimGuestOrders } from '@/lib/actions/orders';
+import { getGuestOrders, removeGuestOrders } from '@/lib/utils/guest-orders';
 
 export type AuthProfile = {
   id: string;
@@ -25,12 +27,27 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [profile, setProfile] = useState<AuthProfile | null>(null);
   const [loading, setLoading] = useState(true);
 
+  // Link any locally-remembered guest-checkout orders to this account, once signed in.
+  const claimGuestOrdersOnLogin = useCallback(async () => {
+    const stored = getGuestOrders();
+    if (!stored.length) return;
+    try {
+      const result = await claimGuestOrders(stored.map((o) => o.orderNumber));
+      if (result.success) {
+        removeGuestOrders(result.claimed);
+      }
+    } catch {
+      // best-effort; left in localStorage to retry on next sign-in
+    }
+  }, []);
+
   const fetchProfile = useCallback(async () => {
     try {
       const res = await fetch('/api/auth/me', { credentials: 'include' });
       if (res.ok) {
         const data = await res.json();
         setProfile(data);
+        void claimGuestOrdersOnLogin();
       } else {
         setProfile(null);
       }
@@ -39,7 +56,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [claimGuestOrdersOnLogin]);
 
   useEffect(() => {
     fetchProfile();

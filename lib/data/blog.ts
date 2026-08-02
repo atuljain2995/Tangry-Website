@@ -111,11 +111,11 @@ export const blogPosts: BlogPost[] = [
   },
   {
     slug: 'difference-kashmiri-chilli',
-    title: 'Kashmiri Chilli vs Regular Red Chilli: What to Use When',
+    title: 'Kashmiri Chilli vs Red Chilli: Difference, Heat & Uses',
     excerpt:
       'Kashmiri vs regular red chilli — color, heat, and when to use each in gravies, tandoori, pav bhaji, and pickles.',
     seoDescription:
-      'Kashmiri vs regular red chilli — color, heat & when to use each. Shop authentic red chilli powder at Tangry Spices, Jaipur. FSSAI licensed.',
+      "What's the difference between Kashmiri chilli and red chilli? Compare color, heat & best uses for gravies, tandoori, pav bhaji & pickles. Order online.",
     author: 'Tangry Team',
     authorRole: 'Spice sourcing team',
     date: '2026-04-23',
@@ -325,6 +325,231 @@ export const blogPosts: BlogPost[] = [
           'After dum or final cooking, rest biryani for a few minutes before serving. This helps aroma settle and makes the rice taste more balanced.',
           'For service counters, keep the biryani covered so aroma stays in the vessel instead of escaping before the customer receives it.',
         ],
+      },
+    ],
+  },
+  {
+    slug: 'pav-bhaji-masala-recipe',
+    title: 'Pav Bhaji Masala Recipe: How to Get That Mumbai Street-Stall Taste at Home',
+    excerpt:
+      'A step-by-step pav bhaji recipe with tips on masala quantity, butter, mashing, and the toppings that make it taste like a street-stall bhaji.',
+    seoDescription:
+      'Pav bhaji masala recipe with proper masala quantity, butter, and mashing tips. Get the same rich, buttery street-stall taste at home. Order online.',
+    author: 'Tangry Team',
+    authorRole: 'Recipe and product team',
+    date: '2026-08-02',
+    updated: '2026-08-02',
+    readTime: '7 min read',
+    category: 'Recipes',
+    image: '/images/categories/spices.png',
+    imageAlt: 'Tangry pav bhaji masala for rich, buttery Mumbai-style bhaji',
+    tags: ['pav bhaji', 'pav bhaji masala', 'recipes', 'street food'],
+    productLinks: [
+      { label: 'Shop Pav Bhaji Masala', href: '/products/pav-bhaji-masala' },
+      { label: 'Browse Spices & Masalas', href: '/categories/spices-masalas' },
+    ],
+    midArticleCta: {
+      label: 'Shop Pav Bhaji Masala',
+      href: '/products/pav-bhaji-masala',
+    },
+    endArticleCtas: [
+      { label: 'Shop Pav Bhaji Masala', href: '/products/pav-bhaji-masala' },
+      { label: 'Browse All Products', href: '/products' },
+    ],
+    sections: [
+      {
+        heading: 'What actually makes street-stall bhaji taste different',
+        body: [
+          'Most home versions taste thin because the vegetables are boiled and mashed but never cooked down long enough on the tawa with butter and masala. Street vendors mash and fry the mixture on high heat for several minutes so the vegetables break down into a thick, glossy base rather than a watery curry.',
+          'The other difference is layering: butter goes in twice, once while sauteing onion, tomato, and masala, and again just before serving so the aroma is fresh when the plate reaches the table.',
+        ],
+        links: [{ label: 'Shop Pav Bhaji Masala', href: '/products/pav-bhaji-masala' }],
+      },
+      {
+        heading: 'Simple method for 4 servings',
+        body: [
+          'Boil potato, cauliflower, peas, and capsicum until soft. In a separate pan, saute finely chopped onion in butter until soft, add ginger-garlic paste, then tomato and cook until it turns pulpy.',
+          'Add 1.5 to 2 tablespoons of pav bhaji masala along with red chilli powder for color, then add the boiled vegetables with a little water. Mash everything together on medium-high heat for 8-10 minutes, pressing with the back of a spoon until the mixture thickens. Finish with a spoon of butter, a squeeze of lemon, and chopped coriander.',
+        ],
+      },
+      {
+        heading: 'Getting the masala quantity right',
+        body: [
+          'Too much masala makes bhaji taste dusty and bitter; too little leaves it flat. Start with 1.5 tablespoons for 4 servings, taste after mashing, and add more only in small increments.',
+          'For dhabas and cloud kitchens, write down the exact masala-to-vegetable ratio per kilogram so every batch tastes the same regardless of who is cooking that shift. Toast pav in butter on the same tawa for the classic street-stall aroma.',
+        ],
+      },
+    ],
+    faqs: [
+      {
+        question: 'How much pav bhaji masala should I use for 4 people?',
+        answer:
+          'Start with 1.5 to 2 tablespoons for a mix of potato, cauliflower, peas, and capsicum serving 4 people, then taste and adjust in small amounts after mashing.',
+      },
+      {
+        question: 'Why does my homemade bhaji taste thin compared to street-stall bhaji?',
+        answer:
+          'Street vendors mash and fry the vegetable mixture with butter on high heat for several minutes so it thickens and turns glossy. Boiling and mashing without that extra frying time leaves the bhaji watery.',
+      },
+      {
+        question: 'Can I make pav bhaji less spicy for kids?',
+        answer:
+          'Yes. Reduce the masala slightly and skip extra red chilli powder, then add a little more butter to round out the flavor without heat.',
+      },
+      {
+        question: 'Which Tangry product should I use for pav bhaji?',
+        answer:
+          'Tangry Pav Bhaji Masala is blended for a rich, red, restaurant-style base. Browse it along with other masalas at tangryspices.com/products.',
+      },
+    ],
+  },
+  {
+    slug: 'kutchi-dabeli-recipe',
+    title: 'Kutchi Dabeli Recipe: How to Make Authentic Dabeli at Home',
+    excerpt:
+      'A simple dabeli recipe covering the potato filling, dabeli masala quantity, and the sweet, tangy, crunchy toppings that make it authentic.',
+    seoDescription:
+      'Authentic Kutchi dabeli recipe: potato filling, dabeli masala quantity, chutneys, and crunchy toppings explained step by step. Order dabeli masala online.',
+    author: 'Tangry Team',
+    authorRole: 'Recipe and product team',
+    date: '2026-08-02',
+    updated: '2026-08-02',
+    readTime: '6 min read',
+    category: 'Recipes',
+    image: '/images/categories/spices.png',
+    imageAlt: 'Tangry dabeli masala for authentic Kutchi-style stuffed buns',
+    tags: ['dabeli', 'dabeli masala', 'recipes', 'street food'],
+    productLinks: [
+      { label: 'Shop Dabeli Masala', href: '/products/dabeli-masala' },
+      { label: 'Browse Spices & Masalas', href: '/categories/spices-masalas' },
+    ],
+    midArticleCta: {
+      label: 'Shop Dabeli Masala',
+      href: '/products/dabeli-masala',
+    },
+    endArticleCtas: [
+      { label: 'Shop Dabeli Masala', href: '/products/dabeli-masala' },
+      { label: 'Browse All Products', href: '/products' },
+    ],
+    sections: [
+      {
+        heading: 'What goes into authentic dabeli',
+        body: [
+          'Dabeli is built from three parts: a spiced, slightly sweet potato filling, a soft pav toasted in butter, and a crunchy, tangy topping of pomegranate, sev, and roasted peanuts. Getting the balance between sweet, tangy, and spicy right is what separates authentic Kutchi dabeli from a generic aloo sandwich.',
+          'The potato filling gets its distinct flavor from dabeli masala, tamarind-date chutney, and a garlic chutney, layered rather than mixed into one flat taste.',
+        ],
+        links: [{ label: 'Shop Dabeli Masala', href: '/products/dabeli-masala' }],
+      },
+      {
+        heading: 'Simple method for 4-6 pav',
+        body: [
+          'Boil and mash 3-4 medium potatoes. In a pan, heat a little oil, add 2 tablespoons of dabeli masala, a pinch of salt, and the mashed potato, then mix well and cook for 3-4 minutes until the masala coats the potato evenly.',
+          'Slit pav and spread tamarind-date chutney on one side and garlic chutney on the other. Fill with the potato mixture, top with sev, roasted peanuts, pomegranate seeds, and chopped coriander, then toast the stuffed pav in butter on a tawa until golden on both sides.',
+        ],
+      },
+      {
+        heading: 'Tips for the right texture and taste',
+        body: [
+          'The potato filling should be soft but not wet; drain boiled potatoes well before mashing so the filling holds its shape inside the pav. Toast the pav just before serving so the outside stays crisp while the filling stays soft.',
+          'Food stalls and cafes should keep the potato filling and chutneys prepped separately and assemble on order, since dabeli loses its crunch and toasted texture if it sits fully assembled for too long.',
+        ],
+      },
+    ],
+    faqs: [
+      {
+        question: 'How much dabeli masala should I use for 4 potatoes?',
+        answer:
+          'Use about 2 tablespoons of dabeli masala for 3-4 medium boiled and mashed potatoes, then taste and adjust after mixing.',
+      },
+      {
+        question: 'What toppings go on authentic dabeli?',
+        answer:
+          'Classic toppings are sev, roasted peanuts, pomegranate seeds, and chopped coriander, along with tamarind-date chutney and garlic chutney spread on the pav.',
+      },
+      {
+        question: 'Can dabeli be made ahead for a party or stall?',
+        answer:
+          'Prepare the potato filling and chutneys ahead of time, but toast the pav and add crunchy toppings just before serving so the texture stays fresh.',
+      },
+      {
+        question: 'Which Tangry product should I use for dabeli?',
+        answer:
+          'Tangry Dabeli Masala is blended for the classic sweet-tangy-spicy Kutchi flavor. Browse it along with other masalas at tangryspices.com/products.',
+      },
+    ],
+  },
+  {
+    slug: 'what-is-jeeravan-masala',
+    title: "What Is Jeeravan Masala? Jodhpur's Famous Spice Mix Explained",
+    excerpt:
+      'Jeeravan masala explained: where it comes from, what it tastes like, and how to use this Marwari spice blend on poha, chaat, and everyday snacks.',
+    seoDescription:
+      'What is jeeravan masala? Learn its Marwari origins, flavor profile, and how to use it on poha, sandwiches, chaat, and snacks. Order online from Jaipur.',
+    author: 'Tangry Team',
+    authorRole: 'Spice sourcing team',
+    date: '2026-08-02',
+    updated: '2026-08-02',
+    readTime: '5 min read',
+    category: 'Education',
+    image: '/images/categories/ready-to-eat.png',
+    imageAlt: 'Tangry Jain jeeravan masala, a Marwari finishing spice for poha and snacks',
+    tags: ['jeeravan masala', 'rajasthani spices', 'education', 'poha'],
+    productLinks: [
+      { label: 'Shop Jain Jeeravan Masala', href: '/products/jain-jeeravan-masala' },
+      { label: 'Browse Ready to Eat', href: '/categories/ready-to-eat' },
+    ],
+    midArticleCta: {
+      label: 'Shop Jain Jeeravan Masala',
+      href: '/products/jain-jeeravan-masala',
+    },
+    endArticleCtas: [
+      { label: 'Shop Jain Jeeravan Masala', href: '/products/jain-jeeravan-masala' },
+      { label: 'Browse All Products', href: '/products' },
+    ],
+    sections: [
+      {
+        heading: 'A Marwari finishing spice, not a curry masala',
+        body: [
+          'Jeeravan masala comes from the Marwar region around Jodhpur, where it started as a finishing spice sprinkled over poha, kachori, and samosa rather than a base masala cooked into a gravy. It gets its name from jeera (cumin), though the blend typically includes several other roasted spices for a warm, slightly tangy, layered flavor.',
+          'Unlike garam masala or pav bhaji masala, jeeravan is meant to be added at the very end, directly on the plate, so its aroma stays sharp instead of cooking off in oil or gravy.',
+        ],
+        links: [{ label: 'Shop Jain Jeeravan Masala', href: '/products/jain-jeeravan-masala' }],
+      },
+      {
+        heading: 'Everyday ways to use it',
+        body: [
+          'Sprinkle jeeravan masala over poha, upma, or bhel just before serving for an instant flavor lift without any extra cooking. It also works well dusted over roasted or fried snacks like kachori, samosa, and namkeen, and stirred into curd or raita for a quick tangy side.',
+          'Because it is a Jain-style blend, it works for households and food stalls that avoid onion and garlic in their spice mixes while still wanting a bold, layered flavor.',
+        ],
+      },
+      {
+        heading: 'Buying and storing tips',
+        body: [
+          'Good jeeravan masala should smell roasted and tangy, not flat or dusty. Since it is used as a finishing sprinkle rather than a bulk cooking ingredient, a smaller pack usually lasts a home kitchen for months if kept airtight.',
+          'Chaat counters and snack stalls that use it daily should keep a small shaker jar near the serving station and refill it from a sealed main pack to protect aroma between refills.',
+        ],
+      },
+    ],
+    faqs: [
+      {
+        question: 'What is jeeravan masala used for?',
+        answer:
+          'Jeeravan masala is a finishing spice sprinkled over poha, upma, bhel, kachori, samosa, and curd or raita, rather than cooked into a gravy like garam masala.',
+      },
+      {
+        question: 'Where does jeeravan masala originate from?',
+        answer:
+          'Jeeravan masala originates from the Marwar region around Jodhpur, Rajasthan, where it is traditionally sprinkled on breakfast dishes like poha and snacks.',
+      },
+      {
+        question: 'Is jeeravan masala spicy?',
+        answer:
+          'It has a warm, tangy, layered flavor rather than sharp heat, though the exact spice level can vary slightly by brand and blend.',
+      },
+      {
+        question: 'Which Tangry product should I buy for jeeravan masala?',
+        answer:
+          'Tangry Jain Jeeravan Masala is an MP-and-Marwar-style blend made in Jaipur, good for poha, snacks, and chaat. Browse it at tangryspices.com/products.',
       },
     ],
   },
