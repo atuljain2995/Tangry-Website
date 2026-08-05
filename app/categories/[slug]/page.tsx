@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { StructuredData } from '@/components/seo/StructuredData';
 import { CategoryPageClient } from './CategoryPageClient';
-import { getProductSchema, getCategoryItemListSchema } from '@/lib/utils/schema';
+import { getCategoryItemListSchema } from '@/lib/utils/schema';
 import { getAllProducts, getProductCategories } from '@/lib/db/queries';
 
 interface PageProps {
@@ -62,7 +62,6 @@ export default async function CategoryPage({ params }: PageProps) {
             { title: category.title, slug: category.slug },
             filteredProducts,
           ),
-          ...filteredProducts.map((product) => getProductSchema(product)),
         ]}
       />
       <CategoryPageClient
