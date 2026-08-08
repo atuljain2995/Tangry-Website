@@ -54,7 +54,23 @@ export function getRecipeSchema(recipe: Recipe) {
       name: `Step ${inst.step}`,
       text: inst.text,
       url: `${SITE_URL}/recipes/${recipe.slug}#step-${inst.step}`,
+      ...(inst.image ? { image: toAbsoluteUrl(inst.image) } : {}),
     })),
+    ...(recipe.nutrition
+      ? {
+          nutrition: {
+            '@type': 'NutritionInformation',
+            ...(recipe.nutrition.calories ? { calories: recipe.nutrition.calories } : {}),
+            ...(recipe.nutrition.carbohydrates
+              ? { carbohydrateContent: recipe.nutrition.carbohydrates }
+              : {}),
+            ...(recipe.nutrition.protein ? { proteinContent: recipe.nutrition.protein } : {}),
+            ...(recipe.nutrition.fat ? { fatContent: recipe.nutrition.fat } : {}),
+            ...(recipe.nutrition.fiber ? { fiberContent: recipe.nutrition.fiber } : {}),
+            ...(recipe.nutrition.sodium ? { sodiumContent: recipe.nutrition.sodium } : {}),
+          },
+        }
+      : {}),
   };
 }
 

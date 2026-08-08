@@ -1,6 +1,28 @@
 export interface RecipeInstruction {
   step: number;
   text: string;
+  /** Optional stage heading, e.g. "Prepare Potatoes". Consecutive steps sharing a group render under one heading. */
+  group?: string;
+  /** Optional in-process photo. Added incrementally as real shots become available. */
+  image?: string;
+  imageAlt?: string;
+}
+
+export interface RecipeIngredientGroup {
+  title?: string;
+  items: string[];
+}
+
+/** Per-serving values. Only render when supplied by a real source — never estimated in code. */
+export interface RecipeNutrition {
+  calories?: string;
+  carbohydrates?: string;
+  protein?: string;
+  fat?: string;
+  fiber?: string;
+  sodium?: string;
+  /** Where the figures came from, shown to the user for transparency. */
+  source?: string;
 }
 
 export interface Recipe {
@@ -25,8 +47,13 @@ export interface Recipe {
   updated: string;
   featured: boolean;
   ingredients: string[];
+  /** Optional grouped view. Falls back to the flat `ingredients` list when absent. */
+  ingredientGroups?: RecipeIngredientGroup[];
   instructions: RecipeInstruction[];
   tips: string[];
+  servingSuggestions?: string;
+  storage?: string;
+  nutrition?: RecipeNutrition;
   productLink: { label: string; href: string };
 }
 
@@ -73,22 +100,27 @@ export const recipes: Recipe[] = [
     instructions: [
       {
         step: 1,
+        group: 'Prepare the potatoes',
         text: 'Peel the potatoes and slice them into even, thin strips (around 1 cm thick). To prevent browning and reduce excess sugar, submerge the cut potatoes in cold water and rinse for 5 minutes. Pat completely dry with a lint-free kitchen towel — any residual surface moisture will prevent the fries from becoming crispy.',
       },
       {
         step: 2,
+        group: 'First fry',
         text: 'Heat frying oil in a deep pan or kadai to 160°C (medium heat). Fry the potato strips in small batches for 5–6 minutes. At this step, the goal is to fully cook the internal potato starch without coloring the outside. Remove with a slotted spoon and drain on paper towels.',
       },
       {
         step: 3,
+        group: 'Second fry',
         text: 'Raise the oil temperature to 180°C (high heat). Return the par-cooked potatoes to the hot oil and flash-fry for 3–4 minutes until they turn a deep golden-brown and acquire a crisp crust. Drain immediately.',
       },
       {
         step: 4,
+        group: 'Season and serve',
         text: 'While the fries are piping hot, transfer them into a large metal mixing bowl. Immediately sprinkle Tangry Peri Peri Masala and a pinch of salt. Toss vigorously so the hot steam and oil draw out the full aroma of the spice layer.',
       },
       {
         step: 5,
+        group: 'Season and serve',
         text: 'Drizzle a squeeze of fresh lime juice and scatter the chopped green coriander. Give it one final toss and serve immediately while hot and crispy.',
       },
     ],
@@ -97,6 +129,10 @@ export const recipes: Recipe[] = [
       'Always season when wet or hot: Masalas will only stick to fries if there is active moisture or surface oil. If they cool down, the spices will fall to the bottom of the bowl.',
       'Our Peri Peri spice blend is also incredible over boiled sweet corn, roasted paneer, or home-popped popcorn.',
     ],
+    servingSuggestions:
+      'Serve immediately while hot and crisp, with tomato ketchup, mayonnaise, or a garlic-yoghurt dip. They also work as a side with burgers, wraps and sandwiches. Top with grated cheese while hot for a loaded version.',
+    storage:
+      'Best eaten fresh — seasoned fries soften within minutes as they cool. Reheat leftovers in an air fryer or oven at 200°C for 4–5 minutes to bring back the crunch. Avoid the microwave, which makes them limp.',
     productLink: { label: 'Buy Tangry Peri Peri Masala', href: '/products/peri-peri-masala' },
   },
   {
@@ -177,6 +213,10 @@ export const recipes: Recipe[] = [
       'The Batter Test: If the batter is too thin, it will run off the potato ball and create oily tails. If too thick, the wrap will taste doughy. It should hold cleanly in place when you dip your finger.',
       'Our dry garlic chutney powder is also great for sprinkling over plain butter-toast, fried pakoras, or dahi vada.',
     ],
+    servingSuggestions:
+      'Serve hot with fried green chillies and a cup of cutting chai. Vada pav is traditionally eaten by hand, straight away, while the vada is still crisp.',
+    storage:
+      'Assembled vada pav does not keep — the pav turns soggy. Shaped, un-fried potato balls can be refrigerated for 2 days or frozen for a month, then fried straight from cold. The dry chutney keeps for months in an airtight jar.',
     productLink: { label: 'Buy Tangry Vada Pav Chutney', href: '/products/vada-pav-chutney' },
   },
   {
@@ -254,6 +294,10 @@ export const recipes: Recipe[] = [
       'Garnish variety: Stalls in Gujarat often add a drop of spicy garlic water ("lehsun paani") to the potato mix for extra bite. You can recreate this by blending 1 tsp of our Vada Pav Chutney with a little warm water.',
       'Pre-prep for parties: The spiced potato paste and sweet tamarind chutney can be made a day in advance. Warm the potato mix, toast the buns, and assemble live.',
     ],
+    servingSuggestions:
+      'Serve immediately while the sev is still crunchy, with masala chai or a cold drink. For a party, set out the filling, chutneys and toppings separately and let people assemble their own.',
+    storage:
+      'The spiced potato filling refrigerates well for 2 days in an airtight container — warm it through before assembling. Always toast the pav and add sev fresh, or the texture is lost.',
     productLink: { label: 'Buy Tangry Dabeli Masala', href: '/products/dabeli-masala' },
   },
   {
@@ -317,6 +361,10 @@ export const recipes: Recipe[] = [
       'After a heavy meal: A glass of chaas after lunch is the standard Indian way to finish a rich meal — it is light, cooling, and far easier than a fizzy drink.',
       'Our Chaas Masala is versatile — dust it over watermelon salad, raita, sliced cucumber, or fresh lemonade.',
     ],
+    servingSuggestions:
+      'Serve chilled in tall glasses, ideally right after a heavy lunch. Pairs especially well with parathas, biryani, or any rich Rajasthani meal.',
+    storage:
+      'Chaas is best within minutes of whisking. It will keep refrigerated for up to a day, but the curd and water separate — whisk again before pouring. Do not freeze.',
     productLink: { label: 'Buy Tangry Chaas Masala', href: '/products/chaas-masala' },
   },
   {
@@ -396,6 +444,10 @@ export const recipes: Recipe[] = [
       'Check poha thickness: Never use thin (paper) poha — it turns to mush in the colander. Always buy medium or thick poha flakes.',
       'Jeeravan also works on potato chips, roasted papad, cucumber slices, and plain khichdi.',
     ],
+    servingSuggestions:
+      'Serve hot with masala chai, a wedge of lemon and extra sev on the side. In Indore this is a breakfast dish, but it works equally well as an evening snack.',
+    storage:
+      'Poha is best eaten immediately — it dries out and hardens on standing. If reheating, sprinkle a little water and warm covered on low heat, then add the jeeravan and sev fresh.',
     productLink: { label: 'Buy Tangry Jain Jeeravan Masala', href: '/products/jain-jeeravan-masala' },
   },
   {
@@ -457,6 +509,10 @@ export const recipes: Recipe[] = [
       'Dosa version: Spread a thin ladle of batter to make a crispy dosa. Drizzle ghee on top, and scatter 1 tsp of Tangry Gun Powder over the wet batter. Fold and roll — no side chutneys needed.',
       'Our Gun Powder contains premium split pulses — avoid storing the jar in damp cupboards to maintain its signature crunch.',
     ],
+    servingSuggestions:
+      'Serve hot with filter coffee. Podi idli travels well, so it is a reliable lunchbox filler — pack a little extra podi on the side.',
+    storage:
+      'Best served straight after tossing. Plain idlis refrigerate for 2 days and are actually better for this recipe once cold and firm. Keep the podi in an airtight jar away from damp, or it loses its crunch.',
     productLink: { label: 'Buy Tangry Gun Powder (Podi Masala)', href: '/products/gun-powder-podi-masala' },
   },
   {
@@ -541,6 +597,10 @@ export const recipes: Recipe[] = [
       'Double Butter: Adding butter once with onions and again during the final simmer incorporates the dairy fats into the vegetable fibers, resulting in a silkier mouthfeel.',
       'Tangry Pav Bhaji Masala is also superb for seasoning spiced vegetable tawa pulao, masala khichdi, or cheesy bread-rolls.',
     ],
+    servingSuggestions:
+      'Serve hot with butter-toasted pav, finely chopped raw onion, a lemon wedge and an extra pat of butter on the bhaji. A glass of chaas alongside cuts the richness.',
+    storage:
+      'Bhaji refrigerates well for 3 days and genuinely tastes better the next day as the spices settle. Reheat with a splash of water and a little butter. Freezes for up to a month. Toast pav fresh each time.',
     productLink: { label: 'Buy Tangry Pav Bhaji Masala', href: '/products/pav-bhaji-masala' },
   },
   {
@@ -613,6 +673,10 @@ export const recipes: Recipe[] = [
       'Travel snack value: Achar-paratha is the legendary Indian travel meal. Pack ghee-cooked parathas and a jar of sweet lemon pickle in a lunchbox — they stay soft and delicious for up to 24 hours without turning stale.',
       'Our Sweet Lemon Pickle is also wonderful alongside simple yellow dal-rice, khichdi, or stuffed aloo parathas.',
     ],
+    servingSuggestions:
+      'Serve hot off the tawa with sweet lemon pickle, thick curd and a cup of chai. Also excellent alongside simple dal-rice or khichdi.',
+    storage:
+      'Parathas stay soft for 6–8 hours wrapped in foil or a cloth-lined box, which is what makes them a classic travel meal. Dough refrigerates for 2 days. Reheat on a hot tawa, never the microwave.',
     productLink: { label: 'Buy Tangry Sweet Lemon Pickle', href: '/products/sweet-lemon-pickle' },
   },
 ];
