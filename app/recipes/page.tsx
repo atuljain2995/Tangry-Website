@@ -6,8 +6,33 @@ import { recipes } from '@/lib/data/recipes';
 
 const SITE_URL = 'https://www.tangryspices.com';
 
+const RECIPES_TITLE = 'Indian Recipes with Tangry Spices — Quick, Authentic Home Cooking';
+const RECIPES_DESCRIPTION =
+  'Easy Indian recipes using Tangry masalas and spices — pav bhaji, dabeli, chaas, podi idli, peri peri fries, poha, and more. Step-by-step, tested at home.';
+const RECIPES_OG_IMAGE = `${SITE_URL}/images/recipes/pav-bhaji.jpg`;
+
 export const metadata: Metadata = {
   alternates: { canonical: '/recipes' },
+  openGraph: {
+    title: RECIPES_TITLE,
+    description: RECIPES_DESCRIPTION,
+    url: `${SITE_URL}/recipes`,
+    type: 'website',
+    images: [
+      {
+        url: RECIPES_OG_IMAGE,
+        width: 1200,
+        height: 669,
+        alt: 'Mumbai pav bhaji made with Tangry Pav Bhaji Masala',
+      },
+    ],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: RECIPES_TITLE,
+    description: RECIPES_DESCRIPTION,
+    images: [RECIPES_OG_IMAGE],
+  },
 };
 
 export default function RecipesPage() {

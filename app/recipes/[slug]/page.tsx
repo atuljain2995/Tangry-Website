@@ -41,7 +41,20 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       type: 'article',
       publishedTime: recipe.date,
       modifiedTime: recipe.updated,
-      images: [{ url: `${SITE_URL}${recipe.image}`, alt: recipe.imageAlt }],
+      images: [
+        {
+          url: `${SITE_URL}${recipe.image}`,
+          width: 1200,
+          height: 669,
+          alt: recipe.imageAlt,
+        },
+      ],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: recipe.title,
+      description: recipe.seoDescription,
+      images: [`${SITE_URL}${recipe.image}`],
     },
   };
 }
