@@ -407,6 +407,58 @@ export interface Database {
           unsubscribed_at?: string | null;
         };
       };
+      recipe_ratings: {
+        Row: {
+          id: string;
+          recipe_slug: string;
+          user_id: string | null;
+          user_name: string;
+          rating: number;
+          comment: string | null;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          recipe_slug: string;
+          user_id?: string | null;
+          user_name: string;
+          rating: number;
+          comment?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          id?: string;
+          recipe_slug?: string;
+          user_id?: string | null;
+          user_name?: string;
+          rating?: number;
+          comment?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+      };
+      recipe_rating_totals: {
+        Row: {
+          recipe_slug: string;
+          rating_avg: number;
+          rating_count: number;
+          updated_at: string;
+        };
+        Insert: {
+          recipe_slug: string;
+          rating_avg?: number;
+          rating_count?: number;
+          updated_at?: string;
+        };
+        Update: {
+          recipe_slug?: string;
+          rating_avg?: number;
+          rating_count?: number;
+          updated_at?: string;
+        };
+      };
     };
     Views: {
       [_ in never]: never;

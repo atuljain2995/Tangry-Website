@@ -8,13 +8,16 @@ import { getRecipeSchema, getBreadcrumbSchema } from '@/lib/utils/schema';
 import { RecipeCard } from '@/components/recipes/RecipeCard';
 import { RecipeIngredients, PrintRecipeButton } from '@/components/recipes/RecipeIngredients';
 import { RecipeToc, RecipeShare, type TocItem } from '@/components/recipes/RecipeToc';
+import { RecipeRating } from '@/components/recipes/RecipeRating';
+import { getRecipeRating } from '@/lib/db/recipe-ratings';
 import { recipes, getRecipe } from '@/lib/data/recipes';
 
 const SITE_URL = 'https://www.tangryspices.com';
 
 type PageProps = { params: Promise<{ slug: string }> };
 
-export const revalidate = 86400;
+// Ratings change independently of the content, so refresh more often than daily.
+export const revalidate = 3600;
 
 export function generateStaticParams() {
   return recipes.map((r) => ({ slug: r.slug }));
@@ -65,6 +68,7 @@ export default async function RecipePage({ params }: PageProps) {
   const otherRecipes = recipes.filter((r) => r.slug !== recipe.slug).slice(0, 3);
   const updated = new Date(recipe.updated);
   const pageUrl = `${SITE_URL}/recipes/${recipe.slug}`;
+  const rating = await getRecipeRating(recipe.slug);
 
   const toc: TocItem[] = [
     { id: 'about', label: `About this recipe` },
@@ -72,6 +76,7 @@ export default async function RecipePage({ params }: PageProps) {
     ...(recipe.tips.length ? [{ id: 'tips', label: 'Expert tips' }] : []),
     ...(recipe.servingSuggestions ? [{ id: 'serving', label: 'Serving suggestions' }] : []),
     ...(recipe.storage ? [{ id: 'storage', label: 'Storage & reheating' }] : []),
+    { id: 'ratings', label: 'Ratings' },
     { id: 'more-recipes', label: 'More recipes' },
   ];
 
@@ -84,7 +89,7 @@ export default async function RecipePage({ params }: PageProps) {
             { name: 'Recipes', url: `${SITE_URL}/recipes` },
             { name: recipe.title, url: pageUrl },
           ]),
-          getRecipeSchema(recipe),
+          getRecipeSchema(recipe, rating),
         ]}
       />
       <div className="min-h-screen bg-neutral-50 pt-20 print:pt-0 print:bg-white">
@@ -317,6 +322,8 @@ export default async function RecipePage({ params }: PageProps) {
               {recipe.productLink.label}
             </Link>
           </div>
+
+          <RecipeRating slug={recipe.slug} />
 
           {otherRecipes.length > 0 && (
             <section id="more-recipes" className="scroll-mt-24 print:hidden">

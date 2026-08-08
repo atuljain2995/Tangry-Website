@@ -29,7 +29,7 @@ export function getRecipeListSchema(list: Recipe[]) {
   };
 }
 
-export function getRecipeSchema(recipe: Recipe) {
+export function getRecipeSchema(recipe: Recipe, rating?: { average: number; count: number } | null) {
   const totalTime = recipe.prepTime + recipe.cookTime;
   return {
     '@context': 'https://schema.org',
@@ -56,6 +56,17 @@ export function getRecipeSchema(recipe: Recipe) {
       url: `${SITE_URL}/recipes/${recipe.slug}#step-${inst.step}`,
       ...(inst.image ? { image: toAbsoluteUrl(inst.image) } : {}),
     })),
+    ...(rating && rating.count > 0
+      ? {
+          aggregateRating: {
+            '@type': 'AggregateRating',
+            ratingValue: rating.average,
+            ratingCount: rating.count,
+            bestRating: 5,
+            worstRating: 1,
+          },
+        }
+      : {}),
     ...(recipe.nutrition
       ? {
           nutrition: {

@@ -40,6 +40,10 @@ Run these in **Supabase SQL Editor** in this order:
 
 20. **018_seed_reviews.sql** – _(optional)_ Sample review rows. **Only run with real, permitted customer feedback** — edit before publishing.
 
+## Recipes
+
+21. **027_recipe_ratings.sql** – `recipe_ratings` + `recipe_rating_totals` with an aggregate trigger. Powers ratings on `/recipes/[slug]`. Kept separate from `reviews` on purpose: a product rating is not a recipe rating.
+
 ---
 
 Then run `npm run test-db` to verify.

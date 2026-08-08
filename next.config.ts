@@ -1,3 +1,4 @@
+// import { withPayload } from '@payloadcms/next/withPayload'; // disabled until PAYLOAD_DATABASE_URL is configured
 import type { NextConfig } from 'next';
 
 // Shared script allowlist for CSP (script-src and script-src-elem must stay in sync)
@@ -99,4 +100,4 @@ const nextConfig: NextConfig = {
   },
 };
 
-export default nextConfig;
+export default nextConfig; // use `withPayload(nextConfig)` once Payload DB is configured
