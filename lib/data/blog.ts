@@ -111,11 +111,12 @@ export const blogPosts: BlogPost[] = [
   },
   {
     slug: 'difference-kashmiri-chilli',
-    title: 'Kashmiri Chilli vs Red Chilli: Difference, Heat & Uses',
+    title: 'Kashmiri Chilli vs Red Chilli — Colour, Heat & When to Use Which',
     excerpt:
       'Kashmiri vs regular red chilli — color, heat, and when to use each in gravies, tandoori, pav bhaji, and pickles.',
     seoDescription:
-      "What's the difference between Kashmiri chilli and red chilli? Compare color, heat & best uses for gravies, tandoori, pav bhaji & pickles. Order online.",
+      'Kashmiri chilli = deep red colour, mild heat. Regular red chilli = sharp spice. Compare both for gravies, tandoori, pav bhaji & pickles. Tangry guide.',
+
     author: 'Tangry Team',
     authorRole: 'Spice sourcing team',
     date: '2026-04-23',
@@ -480,11 +481,12 @@ export const blogPosts: BlogPost[] = [
   },
   {
     slug: 'what-is-jeeravan-masala',
-    title: "What Is Jeeravan Masala? Jodhpur's Famous Spice Mix Explained",
+    title: 'What Is Jeeravan Masala (Jiraban)? The Marwari Spice Explained',
     excerpt:
       'Jeeravan masala explained: where it comes from, what it tastes like, and how to use this Marwari spice blend on poha, chaat, and everyday snacks.',
     seoDescription:
-      'What is jeeravan masala? Learn its Marwari origins, flavor profile, and how to use it on poha, sandwiches, chaat, and snacks. Order online from Jaipur.',
+      'Jeeravan (also called jiraban) is a Marwari finishing spice from Jodhpur — sprinkled over poha, chaat & snacks, not cooked in. Origins, flavour & uses.',
+
     author: 'Tangry Team',
     authorRole: 'Spice sourcing team',
     date: '2026-08-02',
