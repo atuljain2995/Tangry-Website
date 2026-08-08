@@ -11,7 +11,7 @@ import { PageViewTracker } from '@/components/analytics/PageViewTracker';
 import { WebVitals } from '@/components/analytics/WebVitals';
 import MicrosoftClarity from '@/components/analytics/MicrosoftClarity';
 
-import { getOrganizationSchema, getLocalBusinessSchema } from '@/lib/utils/schema';
+import { getOrganizationSchema, getLocalBusinessSchema, getWebsiteSchema } from '@/lib/utils/schema';
 import NextTopLoader from 'nextjs-toploader';
 
 const poppins = Poppins({
@@ -97,7 +97,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
-            __html: JSON.stringify([getOrganizationSchema(), getLocalBusinessSchema()]),
+            __html: JSON.stringify([getWebsiteSchema(), getOrganizationSchema(), getLocalBusinessSchema()]),
           }}
         />
       </head>
