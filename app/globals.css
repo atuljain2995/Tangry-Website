@@ -61,3 +61,17 @@
 .animate-marquee::after {
   content: attr(data-content);
 }
+
+/* Recipes are printed often; strip nav, footer and floating widgets. */
+@media print {
+  header,
+  footer,
+  nav,
+  [aria-label='Chat on WhatsApp'] {
+    display: none !important;
+  }
+
+  body {
+    background: #fff;
+  }
+}

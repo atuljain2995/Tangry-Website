@@ -1,6 +1,7 @@
 // Structured data (JSON-LD) generators for SEO
 
 import { ProductExtended, Review } from '../types/database';
+import type { Recipe } from '../data/recipes';
 import { getDisplayCompareAtPrice } from './database';
 import { COMPANY_INFO, SOCIAL_LINKS } from '../data/constants';
 
@@ -13,6 +14,50 @@ function toAbsoluteUrl(url: string): string {
 /**
  * Generate Organization schema
  */
+export function getRecipeListSchema(list: Recipe[]) {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'ItemList',
+    name: 'Recipes with Tangry Spices',
+    numberOfItems: list.length,
+    itemListElement: list.map((recipe, index) => ({
+      '@type': 'ListItem',
+      position: index + 1,
+      name: recipe.title,
+      url: `${SITE_URL}/recipes/${recipe.slug}`,
+    })),
+  };
+}
+
+export function getRecipeSchema(recipe: Recipe) {
+  const totalTime = recipe.prepTime + recipe.cookTime;
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'Recipe',
+    name: recipe.title,
+    description: recipe.seoDescription,
+    image: [toAbsoluteUrl(recipe.image)],
+    author: { '@type': 'Organization', name: 'Tangry Spices', url: SITE_URL },
+    datePublished: recipe.date,
+    dateModified: recipe.updated,
+    prepTime: `PT${recipe.prepTime}M`,
+    cookTime: recipe.cookTime > 0 ? `PT${recipe.cookTime}M` : undefined,
+    totalTime: `PT${totalTime}M`,
+    recipeYield: `${recipe.servings} servings`,
+    recipeCategory: recipe.category,
+    recipeCuisine: recipe.cuisine,
+    keywords: recipe.keywords.join(', '),
+    recipeIngredient: recipe.ingredients,
+    recipeInstructions: recipe.instructions.map((inst) => ({
+      '@type': 'HowToStep',
+      position: inst.step,
+      name: `Step ${inst.step}`,
+      text: inst.text,
+      url: `${SITE_URL}/recipes/${recipe.slug}#step-${inst.step}`,
+    })),
+  };
+}
+
 const orgPostalAddress = {
   '@type': 'PostalAddress' as const,
   streetAddress: 'A7, Marg No A5, Khatipura Road, Kumawat Colony, Jhotwara',
@@ -209,48 +254,6 @@ export function getBreadcrumbSchema(items: Array<{ name: string; url: string }>)
       name: item.name,
       item: item.url,
     })),
-  };
-}
-
-/**
- * Generate Recipe schema
- */
-export function getRecipeSchema(recipe: {
-  name: string;
-  description: string;
-  image: string;
-  prepTime: string;
-  cookTime: string;
-  totalTime: string;
-  servings: number;
-  ingredients: string[];
-  instructions: string[];
-  category: string;
-  cuisine: string;
-}) {
-  return {
-    '@context': 'https://schema.org',
-    '@type': 'Recipe',
-    name: recipe.name,
-    description: recipe.description,
-    image: recipe.image,
-    author: {
-      '@type': 'Organization',
-      name: 'Tangry Spices',
-    },
-    prepTime: recipe.prepTime,
-    cookTime: recipe.cookTime,
-    totalTime: recipe.totalTime,
-    recipeYield: recipe.servings,
-    recipeIngredient: recipe.ingredients,
-    recipeInstructions: recipe.instructions.map((instruction, index) => ({
-      '@type': 'HowToStep',
-      position: index + 1,
-      text: instruction,
-    })),
-    recipeCategory: recipe.category,
-    recipeCuisine: recipe.cuisine,
-    keywords: [recipe.category, recipe.cuisine, 'Indian cooking', 'spices'],
   };
 }
 

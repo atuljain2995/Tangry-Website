@@ -1,6 +1,7 @@
 import { MetadataRoute } from 'next';
 import { getAllProducts, getProductCategories } from '@/lib/db/queries';
 import { blogPosts } from '@/lib/data/blog';
+import { recipes } from '@/lib/data/recipes';
 import { showRecipesInNav } from '@/lib/data/nav-flags';
 
 export const revalidate = false;
@@ -93,6 +94,16 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.6,
   }));
 
+  const recipePages = [
+    { url: `${baseUrl}/recipes`, lastModified: buildTime, changeFrequency: 'weekly' as const, priority: 0.7 },
+    ...recipes.map((recipe) => ({
+      url: `${baseUrl}/recipes/${recipe.slug}`,
+      lastModified: new Date(recipe.updated),
+      changeFrequency: 'monthly' as const,
+      priority: 0.7,
+    })),
+  ];
+
   const [allProducts, categories] = await Promise.all([getAllProducts(), getProductCategories()]);
 
   // Product pages - now includes all 16+ products from database
@@ -110,5 +121,5 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.7,
   }));
 
-  return [...staticPages, ...categoryPages, ...productPages, ...blogPages];
+  return [...staticPages, ...categoryPages, ...productPages, ...blogPages, ...recipePages];
 }

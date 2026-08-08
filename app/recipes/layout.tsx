@@ -1,12 +1,12 @@
 import { Metadata } from 'next';
+import { RecipesChrome } from './RecipesChrome';
 
 export const metadata: Metadata = {
-  title: 'Recipes | Cook Authentic Indian Dishes with Tangry Spices',
+  title: 'Indian Recipes with Tangry Spices — Quick, Authentic Home Cooking',
   description:
-    'Explore easy Indian recipes — paneer butter masala, dal tadka, biryani, and more. Step-by-step instructions using Tangry masalas and spice blends.',
-  robots: { index: false, follow: false },
+    'Easy Indian recipes using Tangry masalas and spices — pav bhaji, dabeli, chaas, podi idli, peri peri fries, poha, and more. Step-by-step, tested at home.',
 };
 
 export default function RecipesLayout({ children }: { children: React.ReactNode }) {
-  return children;
+  return <RecipesChrome>{children}</RecipesChrome>;
 }
