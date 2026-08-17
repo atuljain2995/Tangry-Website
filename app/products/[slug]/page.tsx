@@ -8,6 +8,8 @@ import {
   getProductFAQs,
 } from '@/lib/utils/schema';
 import { ProductPageClient } from './ProductPageClient';
+import { getRecipesForProduct } from '@/lib/data/recipes';
+import { showRecipesInNav } from '@/lib/data/nav-flags';
 import {
   getProductBySlug,
   getRelatedProducts,
@@ -99,6 +101,7 @@ export default async function ProductPage({ params }: PageProps) {
   ];
 
   const productFAQs = getProductFAQs(product);
+  const relatedRecipes = showRecipesInNav() ? getRecipesForProduct(resolvedParams.slug) : [];
 
   return (
     <>
@@ -112,6 +115,7 @@ export default async function ProductPage({ params }: PageProps) {
       <ProductPageClient
         product={product}
         relatedProducts={relatedProducts}
+        relatedRecipes={relatedRecipes}
         categoryUrl={categoryUrl}
         categoryLabel={product.category}
       />

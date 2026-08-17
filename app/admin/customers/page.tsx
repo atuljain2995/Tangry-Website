@@ -1,4 +1,4 @@
-import { getUsersForAdmin } from '@/lib/db/queries';
+import { getUsersForAdmin, ADMIN_LIST_LIMIT } from '@/lib/db/queries';
 
 export const dynamic = 'force-dynamic';
 
@@ -31,7 +31,10 @@ export default async function AdminCustomersPage() {
     <div className="space-y-6">
       <div>
         <h1 className="text-2xl font-bold text-gray-900">Customers</h1>
-        <p className="mt-1 text-sm text-gray-500">Registered users and their roles</p>
+        <p className="mt-1 text-sm text-gray-500">
+          Registered users and their roles · showing {users.length}
+          {users.length === ADMIN_LIST_LIMIT && ' (capped — more exist)'}
+        </p>
       </div>
 
       <div className="rounded-lg border border-gray-200 bg-white shadow-sm">

@@ -183,9 +183,11 @@ export const blogPosts: BlogPost[] = [
         body: [
           'Use Kashmiri chilli for color-forward dishes like paneer gravies, tandoori marinades, pav bhaji, and bright red chutneys.',
           'Use hotter red chilli when the recipe needs a clear spicy kick, such as pickles, chutneys, and snack masalas.',
+          'Snack seasonings lean on the hotter type too. A chilli-garlic peri peri masala is built for sprinkling over fries, corn, and popcorn rather than cooking into a gravy.',
         ],
         links: [
           { label: 'Pav Bhaji Masala', href: '/products/pav-bhaji-masala' },
+          { label: 'Peri Peri Masala', href: '/products/peri-peri-masala' },
           { label: 'Sweet Lemon Pickle', href: '/products/sweet-lemon-pickle' },
           { label: 'Indian spices guide', href: '/blog/indian-spices-guide' },
         ],
@@ -261,6 +263,7 @@ export const blogPosts: BlogPost[] = [
       { label: 'Dabeli Masala', href: '/products/dabeli-masala' },
       { label: 'Gun Powder Podi', href: '/products/gun-powder-podi-masala' },
       { label: 'Chaas Masala', href: '/products/chaas-masala' },
+      { label: 'Peri Peri Masala', href: '/products/peri-peri-masala' },
       { label: 'Browse Essentials', href: '/categories/essentials' },
     ],
     sections: [
@@ -283,6 +286,11 @@ export const blogPosts: BlogPost[] = [
         body: [
           'A finishing powder such as jeeravan, chaas masala, or gun powder can quickly lift snacks, curd, rice, poha, and tiffin meals.',
           'These are especially useful for homemakers, students, small food counters, and quick-service kitchens.',
+          'If your household eats more fried snacks than tiffin, a chilli-garlic peri peri masala fills the same slot — sprinkled hot over fries, corn, popcorn, or grilled paneer.',
+        ],
+        links: [
+          { label: 'Peri Peri Masala', href: '/products/peri-peri-masala' },
+          { label: 'Jain Jeeravan Masala', href: '/products/jain-jeeravan-masala' },
         ],
       },
     ],

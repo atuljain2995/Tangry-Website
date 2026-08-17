@@ -684,3 +684,9 @@ export const recipes: Recipe[] = [
 export function getRecipe(slug: string): Recipe | undefined {
   return recipes.find((r) => r.slug === slug);
 }
+
+/** Reverse of `productLink` — the recipes that call for a given product. */
+export function getRecipesForProduct(productSlug: string): Recipe[] {
+  const href = `/products/${productSlug}`;
+  return recipes.filter((r) => r.productLink.href === href);
+}

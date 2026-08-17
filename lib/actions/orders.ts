@@ -10,6 +10,7 @@ import {
 import { generateOrderNumber } from '@/lib/utils/database';
 import { sendOrderConfirmationEmail } from '@/lib/email/order-confirmation';
 import { getSessionUser } from '@/lib/auth/session';
+import { requireAdmin } from '@/lib/auth/user';
 import {
   clearVerifiedCodEmailCookie,
 } from '@/lib/otp/cod-verification';
@@ -297,6 +298,10 @@ export async function updateOrderStatus(
   orderId: string,
   orderStatus: string,
 ): Promise<{ success: true } | { success: false; error: string }> {
+  // Server actions are public endpoints, so every admin mutation must re-check the role.
+  if (!(await requireAdmin())) {
+    return { success: false, error: 'Not authorised' };
+  }
   if (!VALID_ORDER_STATUSES.includes(orderStatus as (typeof VALID_ORDER_STATUSES)[number])) {
     return { success: false, error: 'Invalid status' };
   }
@@ -324,6 +329,9 @@ export async function setOrderTrackingNumber(
   orderId: string,
   trackingNumber: string | null,
 ): Promise<{ success: true } | { success: false; error: string }> {
+  if (!(await requireAdmin())) {
+    return { success: false, error: 'Not authorised' };
+  }
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const { error } = await (supabaseAdmin as any)
     .from('orders')
@@ -341,4 +349,81 @@ export async function setOrderTrackingNumber(
   revalidatePath('/admin/orders');
   revalidatePath(`/admin/orders/${orderId}`);
   return { success: true };
+}
+
+export async function bulkUpdateOrderStatus(
+  orderIds: string[],
+  orderStatus: string,
+): Promise<{ success: true; updated: number } | { success: false; error: string }> {
+  if (!(await requireAdmin())) {
+    return { success: false, error: 'Not authorised' };
+  }
+  if (!VALID_ORDER_STATUSES.includes(orderStatus as (typeof VALID_ORDER_STATUSES)[number])) {
+    return { success: false, error: 'Invalid status' };
+  }
+  const ids = orderIds.filter((id) => typeof id === 'string' && id.trim());
+  if (ids.length === 0) return { success: false, error: 'No orders selected' };
+  if (ids.length > 100) return { success: false, error: 'Select 100 orders or fewer' };
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const { error } = await (supabaseAdmin as any)
+    .from('orders')
+    .update({
+      order_status: orderStatus,
+      updated_at: new Date().toISOString(),
+      ...(orderStatus === 'delivered' ? { delivered_at: new Date().toISOString() } : {}),
+    })
+    .in('id', ids);
+
+  if (error) {
+    console.error('bulkUpdateOrderStatus error:', error);
+    return { success: false, error: (error as { message?: string })?.message ?? 'Update failed' };
+  }
+  revalidatePath('/admin');
+  revalidatePath('/admin/orders');
+  return { success: true, updated: ids.length };
+}
+
+export async function deleteOrder(
+  orderId: string,
+): Promise<{ success: true } | { success: false; error: string }> {
+  if (!(await requireAdmin())) {
+    return { success: false, error: 'Not authorised' };
+  }
+  if (!orderId?.trim()) return { success: false, error: 'Order id is required' };
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const { error } = await (supabaseAdmin as any).from('orders').delete().eq('id', orderId);
+  if (error) {
+    console.error('deleteOrder error:', error);
+    return { success: false, error: (error as { message?: string })?.message ?? 'Delete failed' };
+  }
+  revalidatePath('/admin');
+  revalidatePath('/admin/orders');
+  return { success: true };
+}
+
+export async function bulkDeleteOrders(
+  orderIds: string[],
+): Promise<{ success: true; deleted: number } | { success: false; error: string }> {
+  if (!(await requireAdmin())) {
+    return { success: false, error: 'Not authorised' };
+  }
+  const ids = orderIds.filter((id) => typeof id === 'string' && id.trim());
+  if (ids.length === 0) return { success: false, error: 'No orders selected' };
+  if (ids.length > 100) return { success: false, error: 'Select 100 orders or fewer' };
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const { error, count } = await (supabaseAdmin as any)
+    .from('orders')
+    .delete({ count: 'exact' })
+    .in('id', ids);
+
+  if (error) {
+    console.error('bulkDeleteOrders error:', error);
+    return { success: false, error: (error as { message?: string })?.message ?? 'Delete failed' };
+  }
+  revalidatePath('/admin');
+  revalidatePath('/admin/orders');
+  return { success: true, deleted: count ?? ids.length };
 }

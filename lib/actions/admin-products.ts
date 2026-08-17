@@ -2,6 +2,7 @@
 
 import { revalidatePath } from 'next/cache';
 import { supabaseAdmin } from '@/lib/db/supabase';
+import { requireAdmin } from '@/lib/auth/user';
 import type { Database } from '@/lib/db/database.types';
 
 function slugify(name: string): string {
@@ -85,6 +86,8 @@ export async function updateProduct(
   productId: string,
   data: ProductUpdate,
 ): Promise<{ success: true } | { success: false; error: string }> {
+  // Server actions are public endpoints; the admin layout guard does not cover them.
+  if (!(await requireAdmin())) return { success: false, error: 'Not authorised' };
   try {
     const payload: Database['public']['Tables']['products']['Update'] = {
       updated_at: new Date().toISOString(),
@@ -122,6 +125,7 @@ export async function updateProductImages(
   productId: string,
   images: ImageInput[],
 ): Promise<{ success: true } | { success: false; error: string }> {
+  if (!(await requireAdmin())) return { success: false, error: 'Not authorised' };
   try {
     const existingIds = images.filter((img) => img.id).map((img) => img.id as string);
     const toInsert = images.filter((img) => !img.id && img.url.trim() !== '');
@@ -210,6 +214,7 @@ export type CreateProductInput = {
 export async function createProduct(
   input: CreateProductInput,
 ): Promise<{ success: true; productId: string; slug: string } | { success: false; error: string }> {
+  if (!(await requireAdmin())) return { success: false, error: 'Not authorised' };
   try {
     const slug = (input.slug?.trim() || slugify(input.name)).toLowerCase();
     if (!slug) return { success: false, error: 'Slug is required' };
@@ -338,6 +343,7 @@ export async function upsertProductVariants(
   productId: string,
   variants: VariantInput[],
 ): Promise<{ success: true } | { success: false; error: string }> {
+  if (!(await requireAdmin())) return { success: false, error: 'Not authorised' };
   try {
     const vTable = supabaseAdmin.from('product_variants');
 

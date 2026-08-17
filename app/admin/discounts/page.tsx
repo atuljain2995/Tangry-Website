@@ -1,6 +1,6 @@
 import { AdminLink } from '@/components/admin/AdminLink';
 import { Plus } from 'lucide-react';
-import { getCouponsForAdmin } from '@/lib/db/queries';
+import { getCouponsForAdmin, ADMIN_LIST_LIMIT } from '@/lib/db/queries';
 
 export const dynamic = 'force-dynamic';
 
@@ -20,7 +20,10 @@ export default async function AdminDiscountsPage() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold text-gray-900">Discounts</h1>
-          <p className="mt-1 text-sm text-gray-500">Coupon codes for your store</p>
+          <p className="mt-1 text-sm text-gray-500">
+            Coupon codes for your store · showing {coupons.length}
+            {coupons.length === ADMIN_LIST_LIMIT && ' (capped — more exist)'}
+          </p>
         </div>
         <AdminLink
           href="/admin/discounts/new"

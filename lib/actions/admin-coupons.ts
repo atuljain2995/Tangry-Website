@@ -2,6 +2,7 @@
 
 import { revalidatePath } from 'next/cache';
 import { supabaseAdmin } from '@/lib/db/supabase';
+import { requireAdmin } from '@/lib/auth/user';
 
 export type CouponInput = {
   code: string;
@@ -19,6 +20,8 @@ export type CouponInput = {
 export async function createCoupon(
   input: CouponInput,
 ): Promise<{ success: true; id: string } | { success: false; error: string }> {
+  // Server actions are public endpoints; the admin layout guard does not cover them.
+  if (!(await requireAdmin())) return { success: false, error: 'Not authorised' };
   try {
     const code = input.code.trim().toUpperCase();
     if (!code) return { success: false, error: 'Code is required' };
@@ -68,6 +71,7 @@ export async function updateCoupon(
   id: string,
   input: Partial<CouponInput>,
 ): Promise<{ success: true } | { success: false; error: string }> {
+  if (!(await requireAdmin())) return { success: false, error: 'Not authorised' };
   try {
     const payload: Record<string, unknown> = {};
     if (input.code !== undefined) payload.code = input.code.trim().toUpperCase();

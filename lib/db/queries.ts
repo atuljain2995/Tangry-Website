@@ -859,6 +859,9 @@ export async function getOrdersTotalToday(): Promise<number> {
   return total;
 }
 
+/** Default cap for admin list pages. Pages surface a notice when a result hits this. */
+export const ADMIN_LIST_LIMIT = 200;
+
 export type AdminUserRow = {
   id: string;
   email: string;
@@ -867,11 +870,12 @@ export type AdminUserRow = {
   created_at: string;
 };
 
-export async function getUsersForAdmin(): Promise<AdminUserRow[]> {
+export async function getUsersForAdmin(limit = ADMIN_LIST_LIMIT): Promise<AdminUserRow[]> {
   const { data, error } = await supabaseAdmin
     .from('users')
     .select('id, email, name, role, created_at')
-    .order('created_at', { ascending: false });
+    .order('created_at', { ascending: false })
+    .limit(limit);
 
   if (error) {
     isSupabaseUnreachable(error);
@@ -897,13 +901,14 @@ export type AdminCouponRow = {
   created_at: string;
 };
 
-export async function getCouponsForAdmin(): Promise<AdminCouponRow[]> {
+export async function getCouponsForAdmin(limit = ADMIN_LIST_LIMIT): Promise<AdminCouponRow[]> {
   const { data, error } = await supabaseAdmin
     .from('coupons')
     .select(
       'id, code, description, discount_type, discount_value, min_order_value, max_discount, usage_limit, usage_count, valid_from, valid_until, is_active, created_at',
     )
-    .order('created_at', { ascending: false });
+    .order('created_at', { ascending: false })
+    .limit(limit);
 
   if (error) {
     isSupabaseUnreachable(error);
@@ -936,13 +941,16 @@ export type AdminInquiryRow = {
   created_at: string;
 };
 
-export async function getContactInquiriesForAdmin(): Promise<AdminInquiryRow[]> {
+export async function getContactInquiriesForAdmin(
+  limit = ADMIN_LIST_LIMIT,
+): Promise<AdminInquiryRow[]> {
   const { data, error } = await (
     supabaseAdmin as unknown as { from: (t: string) => ReturnType<typeof supabaseAdmin.from> }
   )
     .from('contact_inquiries')
     .select('id, name, email, phone, subject, message, created_at')
-    .order('created_at', { ascending: false });
+    .order('created_at', { ascending: false })
+    .limit(limit);
 
   if (error) {
     isSupabaseUnreachable(error as { message?: string });

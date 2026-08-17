@@ -1,4 +1,4 @@
-import { getContactInquiriesForAdmin } from '@/lib/db/queries';
+import { getContactInquiriesForAdmin, ADMIN_LIST_LIMIT } from '@/lib/db/queries';
 
 export const dynamic = 'force-dynamic';
 
@@ -19,7 +19,10 @@ export default async function AdminInquiriesPage() {
     <div className="space-y-6">
       <div>
         <h1 className="text-2xl font-bold text-gray-900">Inquiries</h1>
-        <p className="mt-1 text-sm text-gray-500">Contact form submissions</p>
+        <p className="mt-1 text-sm text-gray-500">
+          Contact form submissions · showing {inquiries.length}
+          {inquiries.length === ADMIN_LIST_LIMIT && ' (capped — more exist)'}
+        </p>
       </div>
 
       <div className="rounded-lg border border-gray-200 bg-white shadow-sm">
