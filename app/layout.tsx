@@ -32,7 +32,7 @@ export const metadata = {
     template: '%s | Tangry Spices',
   },
   description:
-    'Tangry — Taste of Home. Masalas, ready powders, and pickles from Jhotwara, Jaipur. FSSAI licensed, ISO 22000. Shop dabeli masala, pav bhaji, gun powder, turmeric & more.',
+    'Tangry — Taste of Home. Masalas, ready powders & pickles from Jaipur. FSSAI licensed, ISO 22000. Shop dabeli masala, pav bhaji, turmeric & more.',
   keywords: [
     'tangry spices jaipur',
     'rajasthani masala online',
