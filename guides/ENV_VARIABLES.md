@@ -137,6 +137,22 @@ Until you have official brand storefront URLs, the site uses search links for â€
 NEXT_PUBLIC_TANGRY_FLIPKART_URL=https://www.flipkart.com/...
 ```
 
+### Flipkart Seller API (admin `/admin/flipkart`)
+
+Register a **self-access** application in the [Flipkart Seller APIs Developer Admin portal](https://seller.flipkart.com/api-docs/FMSAPI.html) (not the regular seller dashboard). Use **client credentials** for your own seller account.
+
+```env
+# Server-only â€” never expose in NEXT_PUBLIC_* 
+FLIPKART_APP_ID=your_application_id
+FLIPKART_APP_SECRET=your_application_secret
+# Optional: sandbox or alternate host (default https://api.flipkart.net)
+FLIPKART_API_BASE_URL=https://api.flipkart.net
+# Optional public store link (falls back to NEXT_PUBLIC_TANGRY_FLIPKART_URL)
+FLIPKART_STOREFRONT_URL=https://www.flipkart.com/...
+```
+
+Access tokens are fetched automatically and cached in memory for ~1 hour between requests. Redeploy after changing credentials.
+
 ---
 
 ## Navigation (hide Recipes until content is ready)

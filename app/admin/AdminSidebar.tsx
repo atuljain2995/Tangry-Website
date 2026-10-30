@@ -14,11 +14,13 @@ import {
   BarChart3,
   Warehouse,
   Gauge,
+  ShoppingBag,
 } from 'lucide-react';
 
 const navItems = [
   { href: '/admin', label: 'Dashboard', icon: LayoutDashboard },
   { href: '/admin/orders', label: 'Orders', icon: ShoppingCart },
+  { href: '/admin/flipkart', label: 'Flipkart', icon: ShoppingBag },
   { href: '/admin/reports', label: 'Reports', icon: BarChart3 },
   { href: '/admin/performance', label: 'Performance', icon: Gauge },
   { href: '/admin/inventory', label: 'Inventory', icon: Warehouse },
