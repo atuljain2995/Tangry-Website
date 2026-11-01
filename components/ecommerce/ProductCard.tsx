@@ -147,7 +147,7 @@ export const ProductCard = ({ product }: ProductCardProps) => {
         </Link>
 
         {/* Variant Selector (single size shown as a static chip so the pack size is always visible) */}
-        {product.variants.length === 1 && (
+        {product.variants.length === 1 && /^\d+(\.\d+)? (g|kg)$/.test(product.variants[0].name) && (
           <div className="mb-3">
             <span className="inline-block px-2.5 py-1 text-[11px] font-semibold rounded-lg border border-gray-200 text-gray-600 dark:border-neutral-600 dark:text-neutral-400">
               {product.variants[0].name}

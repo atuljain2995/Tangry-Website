@@ -657,13 +657,18 @@ export async function getProductByIdForAdmin(productId: string): Promise<Product
 /**
  * Transform database product to ProductExtended type
  */
-// Admin-entered names vary ("50 gram", "100g", "1 Kg"); show one consistent format
-function formatVariantName(name: string): string {
-  const m = name.match(/^\s*(\d+(?:\.\d+)?)\s*(g|gm|gms|gram|grams|kg|kgs)\.?\s*$/i);
-  if (!m) return name;
-  const grams = Number(m[1]) * (/^kg/i.test(m[2]) ? 1000 : 1);
-  return grams >= 1000 ? `${grams / 1000} kg` : `${grams} g`;
+// Admin-entered names vary ("50 gram", "100g", "50", "Default"); show one consistent format
+function formatVariantName(name: string, weightGrams: number | null, isBundle: boolean): string {
+  const fmt = (g: number) => (g >= 1000 ? `${g / 1000} kg` : `${g} g`);
+  const m = name.match(/^\s*(\d+(?:\.\d+)?)\s*(g|gm|gms|gram|grams|kg|kgs)?\.?\s*$/i);
+  if (m) return fmt(Number(m[1]) * (m[2] && /^kg/i.test(m[2]) ? 1000 : 1));
+  if (/^\s*default\s*$/i.test(name) && !isBundle && weightGrams && weightGrams > 0) {
+    return fmt(weightGrams);
+  }
+  return name;
 }
+
+const BUNDLE_NAME = /\b(pack|hamper|combo|gift)\b/i;
 
 function transformProduct(dbProduct: DbProduct): ProductExtended {
   return {
@@ -678,7 +683,7 @@ function transformProduct(dbProduct: DbProduct): ProductExtended {
         .sort((a, b) => (a.weight || 0) - (b.weight || 0))
         .map((v) => ({
           id: v.id,
-          name: formatVariantName(v.name),
+          name: formatVariantName(v.name, v.weight, BUNDLE_NAME.test(dbProduct.name)),
           sku: v.sku,
           price: v.price,
           compareAtPrice: v.compare_at_price,

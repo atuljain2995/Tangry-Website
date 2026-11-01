@@ -513,7 +513,7 @@ export const ProductDetail = ({ product, categoryUrl, categoryLabel }: ProductDe
           </div>
 
           {/* Variant / Weight Selector */}
-          {product.variants.length === 1 && (
+          {product.variants.length === 1 && /^\d+(\.\d+)? (g|kg)$/.test(selectedVariant.name) && (
             <div className="mb-6">
               <p className="text-sm font-bold text-gray-900 uppercase tracking-wide mb-3">Weight</p>
               <span className="inline-block px-5 py-2 rounded-full text-sm font-semibold border-2 border-gray-900 bg-gray-900 text-white">
