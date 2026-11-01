@@ -36,6 +36,7 @@ export interface ProductVariant {
   stock: number;
   weight: number; // in grams
   isAvailable: boolean;
+  isDefault?: boolean;
 }
 
 export interface ProductExtended {
@@ -54,6 +55,11 @@ export interface ProductExtended {
   nutritionalInfo?: Record<string, string>;
   usageInstructions?: string;
   shelfLife?: string;
+  isBundle?: boolean;
+  noPreservatives?: boolean;
+  isVegetarian?: boolean;
+  storageInstructions?: string;
+  countryOfOrigin?: string;
   certifications?: string[]; // e.g., ["ISO", "FSSAI", "Organic"]
   tags: string[];
   metaTitle: string;

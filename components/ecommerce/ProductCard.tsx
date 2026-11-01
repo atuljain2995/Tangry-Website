@@ -19,7 +19,9 @@ interface ProductCardProps {
 const PLACEHOLDER_IMAGE = '/images/logo-512.png';
 
 export const ProductCard = ({ product }: ProductCardProps) => {
-  const [selectedVariantIndex, setSelectedVariantIndex] = useState(0);
+  const [selectedVariantIndex, setSelectedVariantIndex] = useState(() =>
+    Math.max(0, product.variants.findIndex((v) => v.isDefault)),
+  );
   const { addToCart, cart, updateQuantity } = useCart();
   const { isWishlisted, toggle: toggleWishlist } = useWishlist();
   const { user } = useAuth();
@@ -147,7 +149,7 @@ export const ProductCard = ({ product }: ProductCardProps) => {
         </Link>
 
         {/* Variant Selector (single size shown as a static chip so the pack size is always visible) */}
-        {product.variants.length === 1 && /^\d+(\.\d+)? (g|kg)$/.test(product.variants[0].name) && (
+        {product.variants.length === 1 && !product.isBundle && (
           <div className="mb-3">
             <span className="inline-block px-2.5 py-1 text-[11px] font-semibold rounded-lg border border-gray-200 text-gray-600 dark:border-neutral-600 dark:text-neutral-400">
               {product.variants[0].name}

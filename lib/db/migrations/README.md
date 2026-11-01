@@ -43,6 +43,7 @@ Run these in **Supabase SQL Editor** in this order:
 ## Recipes
 
 21. **027_recipe_ratings.sql** – `recipe_ratings` + `recipe_rating_totals` with an aggregate trigger. Powers ratings on `/recipes/[slug]`. Kept separate from `reviews` on purpose: a product rating is not a recipe rating.
+22. **028_product_variant_cleanup.sql** – Normalises variant names (`50 g`, `1 kg`), adds `display_order` / `is_default` (smallest pack default), `products.is_bundle`, and label facts (`shelf_life`, `no_preservatives`, `is_vegetarian`, `storage_instructions`, `country_of_origin`). Backs up `product_variants` to `product_variants_backup_028`. **Run before deploying the matching frontend.**
 
 ---
 

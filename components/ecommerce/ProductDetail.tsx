@@ -48,7 +48,9 @@ const PLACEHOLDER_IMAGE = '/images/logo-512.png';
 
 export const ProductDetail = ({ product, categoryUrl, categoryLabel }: ProductDetailProps) => {
   const router = useRouter();
-  const [selectedVariantIndex, setSelectedVariantIndex] = useState(0);
+  const [selectedVariantIndex, setSelectedVariantIndex] = useState(() =>
+    Math.max(0, product.variants.findIndex((v) => v.isDefault)),
+  );
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
   const { addToCart, addToCartSync, cart, updateQuantity, openCart } = useCart();
   const { isWishlisted: checkWishlisted, toggle: toggleWishlist } = useWishlist();
@@ -191,10 +193,12 @@ export const ProductDetail = ({ product, categoryUrl, categoryLabel }: ProductDe
       ? [['Ingredients', product.ingredients.join(', ')] as [string, string]]
       : []),
     ...(product.shelfLife ? [['Shelf life', product.shelfLife] as [string, string]] : []),
-    ['Preservatives', 'None added'],
-    ['Storage', 'Store in a cool, dry place away from direct sunlight. Keep the pack sealed.'],
-    ['Food type', 'Vegetarian'],
-    ['Country of origin', 'India'],
+    ...(product.noPreservatives ? [['Preservatives', 'None added'] as [string, string]] : []),
+    ...(product.storageInstructions
+      ? [['Storage', product.storageInstructions] as [string, string]]
+      : []),
+    ['Food type', product.isVegetarian === false ? 'Non-vegetarian' : 'Vegetarian'],
+    ['Country of origin', product.countryOfOrigin ?? 'India'],
     ['Manufactured by', `${COMPANY_INFO.legalName}, ${COMPANY_INFO.address}`],
     ['FSSAI licence no.', '12225026001713'],
   ];
@@ -513,7 +517,7 @@ export const ProductDetail = ({ product, categoryUrl, categoryLabel }: ProductDe
           </div>
 
           {/* Variant / Weight Selector */}
-          {product.variants.length === 1 && /^\d+(\.\d+)? (g|kg)$/.test(selectedVariant.name) && (
+          {product.variants.length === 1 && !product.isBundle && (
             <div className="mb-6">
               <p className="text-sm font-bold text-gray-900 uppercase tracking-wide mb-3">Weight</p>
               <span className="inline-block px-5 py-2 rounded-full text-sm font-semibold border-2 border-gray-900 bg-gray-900 text-white">
@@ -623,10 +627,12 @@ export const ProductDetail = ({ product, categoryUrl, categoryLabel }: ProductDe
               <ShieldCheck size={18} className="shrink-0 text-green-600" aria-hidden />
               FSSAI licensed
             </li>
-            <li className="col-span-2 flex items-center gap-2">
-              <Leaf size={18} className="shrink-0 text-green-600" aria-hidden />
-              No preservatives added
-            </li>
+            {product.noPreservatives && (
+              <li className="col-span-2 flex items-center gap-2">
+                <Leaf size={18} className="shrink-0 text-green-600" aria-hidden />
+                No preservatives added
+              </li>
+            )}
           </ul>
 
           {/* Pincode Check */}

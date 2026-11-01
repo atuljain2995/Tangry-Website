@@ -581,6 +581,13 @@ interface DbProduct {
   review_count?: number;
   min_order_quantity?: number;
   max_order_quantity?: number;
+  is_bundle?: boolean;
+  ingredients?: string[] | null;
+  shelf_life?: string | null;
+  no_preservatives?: boolean;
+  is_vegetarian?: boolean;
+  storage_instructions?: string | null;
+  country_of_origin?: string | null;
   created_at: string;
   updated_at: string;
   variants?: DbVariant[];
@@ -597,6 +604,8 @@ interface DbVariant {
   stock: number;
   weight: number;
   is_available: boolean;
+  display_order?: number;
+  is_default?: boolean;
 }
 
 interface DbImage {
@@ -654,23 +663,22 @@ export async function getProductByIdForAdmin(productId: string): Promise<Product
   };
 }
 
-/**
- * Transform database product to ProductExtended type
- */
-// Admin-entered names vary ("50 gram", "100g", "50", "Default"); show one consistent format
-function formatVariantName(name: string, weightGrams: number | null, isBundle: boolean): string {
+// Pre-migration-028 fallbacks: remove once 028_product_variant_cleanup.sql has run in production
+const BUNDLE_NAME = /\b(pack|hamper|combo|gift)\b/i;
+function legacyVariantName(name: string, weightGrams: number, isBundle: boolean): string {
   const fmt = (g: number) => (g >= 1000 ? `${g / 1000} kg` : `${g} g`);
   const m = name.match(/^\s*(\d+(?:\.\d+)?)\s*(g|gm|gms|gram|grams|kg|kgs)?\.?\s*$/i);
   if (m) return fmt(Number(m[1]) * (m[2] && /^kg/i.test(m[2]) ? 1000 : 1));
-  if (/^\s*default\s*$/i.test(name) && !isBundle && weightGrams && weightGrams > 0) {
-    return fmt(weightGrams);
-  }
+  if (/^\s*default\s*$/i.test(name) && !isBundle && weightGrams > 0) return fmt(weightGrams);
   return name;
 }
 
-const BUNDLE_NAME = /\b(pack|hamper|combo|gift)\b/i;
-
+/**
+ * Transform database product to ProductExtended type
+ */
 function transformProduct(dbProduct: DbProduct): ProductExtended {
+  const migrated = dbProduct.is_bundle !== undefined;
+  const isBundle = migrated ? !!dbProduct.is_bundle : BUNDLE_NAME.test(dbProduct.name);
   return {
     id: dbProduct.id,
     slug: dbProduct.slug,
@@ -680,17 +688,29 @@ function transformProduct(dbProduct: DbProduct): ProductExtended {
     category: dbProduct.category || '',
     variants:
       [...(dbProduct.variants ?? [])]
-        .sort((a, b) => (a.weight || 0) - (b.weight || 0))
-        .map((v) => ({
+        .sort((a, b) =>
+          migrated
+            ? (a.display_order ?? 0) - (b.display_order ?? 0)
+            : (a.weight || 0) - (b.weight || 0),
+        )
+        .map((v, i) => ({
           id: v.id,
-          name: formatVariantName(v.name, v.weight, BUNDLE_NAME.test(dbProduct.name)),
+          name: migrated ? v.name : legacyVariantName(v.name, v.weight, isBundle),
           sku: v.sku,
           price: v.price,
           compareAtPrice: v.compare_at_price,
           stock: v.stock,
           weight: v.weight,
           isAvailable: v.is_available,
+          isDefault: migrated ? (v.is_default ?? false) : i === 0,
         })),
+    isBundle,
+    ingredients: dbProduct.ingredients ?? undefined,
+    shelfLife: dbProduct.shelf_life ?? undefined,
+    noPreservatives: dbProduct.no_preservatives ?? true,
+    isVegetarian: dbProduct.is_vegetarian ?? true,
+    storageInstructions: dbProduct.storage_instructions ?? undefined,
+    countryOfOrigin: dbProduct.country_of_origin ?? 'India',
     images: (dbProduct.images || [])
       .sort((a, b) => (a.display_order ?? 0) - (b.display_order ?? 0))
       .map((img) => img.url)
