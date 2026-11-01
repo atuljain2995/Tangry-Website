@@ -466,7 +466,7 @@ export const ProductDetail = ({ product, categoryUrl, categoryLabel }: ProductDe
           {/* Compact delivery hint (key info near the price) */}
           <div className="flex items-center gap-1.5 text-sm text-gray-600 mb-6">
             <Truck size={16} className="text-gray-400" />
-            <span>Delivered in 3–7 business days across India</span>
+            <span>Delivered in 3–6 business days across India</span>
           </div>
 
           {/* Variant / Weight Selector */}

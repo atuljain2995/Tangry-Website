@@ -128,6 +128,7 @@ export const CheckoutForm = ({
   const [pinNotFound, setPinNotFound] = useState(false);
   const [submitAttempted, setSubmitAttempted] = useState(false);
   const autoFilled = useRef<{ city: string; state: string }>({ city: '', state: '' });
+  const userTouched = useRef(false);
   const fid = useId();
 
   const [shippingAddress, setShippingAddress] = useState<Partial<Address>>(initialShippingAddress);
@@ -172,7 +173,7 @@ export const CheckoutForm = ({
       .then((data: SavedAddress[]) => {
         setSavedAddresses(data);
         const defaultShipping = data.find((a) => a.type === 'shipping' && a.is_default);
-        if (defaultShipping) {
+        if (defaultShipping && !userTouched.current) {
           applyAddress(defaultShipping, 'shipping');
           setExpressMode(true);
         }
@@ -350,7 +351,10 @@ export const CheckoutForm = ({
         </div>
         <button
           type="button"
-          onClick={() => setExpressMode(false)}
+          onClick={() => {
+            userTouched.current = true;
+            setExpressMode(false);
+          }}
           className="inline-flex shrink-0 items-center gap-1 text-sm font-semibold text-[#D32F2F] hover:underline"
         >
           <Pencil className="h-3.5 w-3.5" aria-hidden />
@@ -362,7 +366,15 @@ export const CheckoutForm = ({
   );
 
   return (
-    <form id={formId} onSubmit={handleSubmit} noValidate className="space-y-6">
+    <form
+      id={formId}
+      onSubmit={handleSubmit}
+      onChange={() => {
+        userTouched.current = true;
+      }}
+      noValidate
+      className="space-y-6"
+    >
       {user && savedAddresses.filter((a) => a.type === 'shipping').length > 0 && !expressMode && (
         <div className="rounded-2xl border border-orange-100 bg-white p-5 shadow-sm">
           <h2 className="mb-3 text-sm font-bold uppercase tracking-wide text-gray-500">
@@ -668,6 +680,89 @@ export const CheckoutForm = ({
               </div>
               {errors.billing_phone && (
                 <p className="mt-1 text-xs text-red-600">{errors.billing_phone}</p>
+              )}
+            </div>
+            <div className="md:col-span-2">
+              <label htmlFor={`${fid}-bline1`} className="mb-1.5 block text-sm font-semibold text-gray-700">
+                Address <span className="text-red-600">*</span>
+              </label>
+              <input
+                id={`${fid}-bline1`}
+                type="text"
+                aria-invalid={!!errors.billing_addressLine1}
+                value={billingAddress.addressLine1}
+                onChange={(e) =>
+                  setBillingAddress({ ...billingAddress, addressLine1: e.target.value })
+                }
+                className={inputClass(!!errors.billing_addressLine1)}
+                autoComplete="billing address-line1"
+              />
+              {errors.billing_addressLine1 && (
+                <p className="mt-1 text-xs text-red-600">{errors.billing_addressLine1}</p>
+              )}
+            </div>
+            <div>
+              <label htmlFor={`${fid}-bpin`} className="mb-1.5 block text-sm font-semibold text-gray-700">
+                PIN code <span className="text-red-600">*</span>
+              </label>
+              <input
+                id={`${fid}-bpin`}
+                type="text"
+                inputMode="numeric"
+                aria-invalid={!!errors.billing_postalCode}
+                value={billingAddress.postalCode}
+                onChange={(e) =>
+                  setBillingAddress({
+                    ...billingAddress,
+                    postalCode: e.target.value.replace(/\D/g, '').slice(0, 6),
+                  })
+                }
+                className={inputClass(!!errors.billing_postalCode)}
+                autoComplete="billing postal-code"
+                maxLength={6}
+              />
+              {errors.billing_postalCode && (
+                <p className="mt-1 text-xs text-red-600">{errors.billing_postalCode}</p>
+              )}
+            </div>
+            <div>
+              <label htmlFor={`${fid}-bcity`} className="mb-1.5 block text-sm font-semibold text-gray-700">
+                City <span className="text-red-600">*</span>
+              </label>
+              <input
+                id={`${fid}-bcity`}
+                type="text"
+                aria-invalid={!!errors.billing_city}
+                value={billingAddress.city}
+                onChange={(e) => setBillingAddress({ ...billingAddress, city: e.target.value })}
+                className={inputClass(!!errors.billing_city)}
+                autoComplete="billing address-level2"
+              />
+              {errors.billing_city && (
+                <p className="mt-1 text-xs text-red-600">{errors.billing_city}</p>
+              )}
+            </div>
+            <div className="md:col-span-2">
+              <label htmlFor={`${fid}-bstate`} className="mb-1.5 block text-sm font-semibold text-gray-700">
+                State <span className="text-red-600">*</span>
+              </label>
+              <select
+                id={`${fid}-bstate`}
+                aria-invalid={!!errors.billing_state}
+                value={billingAddress.state}
+                onChange={(e) => setBillingAddress({ ...billingAddress, state: e.target.value })}
+                className={inputClass(!!errors.billing_state)}
+                autoComplete="billing address-level1"
+              >
+                <option value="">Select state</option>
+                {INDIAN_STATES.map((state) => (
+                  <option key={state} value={state}>
+                    {state}
+                  </option>
+                ))}
+              </select>
+              {errors.billing_state && (
+                <p className="mt-1 text-xs text-red-600">{errors.billing_state}</p>
               )}
             </div>
           </div>

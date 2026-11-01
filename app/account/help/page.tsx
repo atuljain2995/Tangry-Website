@@ -16,7 +16,7 @@ const FAQ_ITEMS = [
   },
   {
     q: 'How long does delivery take?',
-    a: 'Standard delivery takes 3–7 business days across India. Orders within Rajasthan are typically delivered in 2–4 days.',
+    a: 'Standard delivery takes 3–6 business days across India. Orders within Rajasthan are typically delivered in 2–4 days.',
   },
   {
     q: 'Do you ship internationally?',

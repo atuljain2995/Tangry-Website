@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect, Suspense } from 'react';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import { ChevronDown, Package, Zap } from 'lucide-react';
@@ -18,8 +18,18 @@ interface ProductsPageClientProps {
   categories: DbProductCategory[];
 }
 
-export function ProductsPageClient({ products, categories }: ProductsPageClientProps) {
+// Reading search params here (inside Suspense) keeps the rest of the page in the static HTML
+function CategoryParamSync({ onChange }: { onChange: (value: string | null) => void }) {
   const searchParams = useSearchParams();
+  const category = searchParams.get('category');
+  useEffect(() => {
+    onChange(category);
+  }, [category, onChange]);
+  return null;
+}
+
+export function ProductsPageClient({ products, categories }: ProductsPageClientProps) {
+  const [categoryParam, setCategoryParam] = useState<string | null>(null);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [sortBy, setSortBy] = useState<'newest' | 'price-low' | 'price-high' | 'popular'>(
     'popular',
@@ -27,7 +37,6 @@ export function ProductsPageClient({ products, categories }: ProductsPageClientP
 
   // Derive selected category from URL search params (single source of truth)
   const selectedCategoryId = useMemo<'all' | string>(() => {
-    const categoryParam = searchParams.get('category');
     if (!categoryParam) return 'all';
     const match = categories.find(
       (c) =>
@@ -36,7 +45,7 @@ export function ProductsPageClient({ products, categories }: ProductsPageClientP
         c.title.toLowerCase() === categoryParam.toLowerCase(),
     );
     return match ? match.id : 'all';
-  }, [searchParams, categories]);
+  }, [categoryParam, categories]);
 
   // Filter by DB category id, with title fallback for legacy rows without category_id
   let filteredProducts =
@@ -65,6 +74,9 @@ export function ProductsPageClient({ products, categories }: ProductsPageClientP
 
   return (
     <main className="page-shell-white">
+      <Suspense fallback={null}>
+        <CategoryParamSync onChange={setCategoryParam} />
+      </Suspense>
       <Header onMenuOpen={() => setIsMobileMenuOpen(true)} />
       <MobileMenu isOpen={isMobileMenuOpen} onClose={() => setIsMobileMenuOpen(false)} />
       <CartDrawer />

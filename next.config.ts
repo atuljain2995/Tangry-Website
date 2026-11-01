@@ -5,7 +5,8 @@ import type { NextConfig } from 'next';
 const cspScriptSources = [
   "'self'",
   "'unsafe-inline'",
-  "'unsafe-eval'",
+  // React dev tooling needs eval; production builds don't
+  ...(process.env.NODE_ENV === 'production' ? [] : ["'unsafe-eval'"]),
   'cdn.jsdelivr.net',
   // Razorpay checkout.js + risk-detection bundle (cdn.razorpay.com)
   'https://*.razorpay.com',
@@ -53,6 +54,9 @@ const nextConfig: NextConfig = {
         hostname: '*.r2.cloudflarestorage.com',
       },
     ],
+  },
+  async redirects() {
+    return [{ source: '/cart', destination: '/checkout', permanent: false }];
   },
   async headers() {
     return [

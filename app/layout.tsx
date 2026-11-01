@@ -55,9 +55,6 @@ export const metadata = {
     ],
     apple: [{ url: '/images/logo-192.png', sizes: '192x192' }],
   },
-  alternates: {
-    canonical: '/',
-  },
   openGraph: {
     title: 'Tangry Spices | Masalas & Pickles from Jaipur',
     description:

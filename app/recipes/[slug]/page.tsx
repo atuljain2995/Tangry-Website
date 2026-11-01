@@ -18,6 +18,7 @@ type PageProps = { params: Promise<{ slug: string }> };
 
 // Ratings change independently of the content, so refresh more often than daily.
 export const revalidate = 3600;
+export const dynamicParams = false;
 
 export function generateStaticParams() {
   return recipes.map((r) => ({ slug: r.slug }));
@@ -32,7 +33,7 @@ const DATE_FORMAT: Intl.DateTimeFormatOptions = {
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { slug } = await params;
   const recipe = getRecipe(slug);
-  if (!recipe) return { title: 'Recipe Not Found' };
+  if (!recipe) notFound();
 
   return {
     title: recipe.title,

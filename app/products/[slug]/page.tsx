@@ -46,9 +46,8 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const product = await getProductBySlug(resolvedParams.slug);
 
   if (!product) {
-    return {
-      title: 'Product Not Found',
-    };
+    // Throwing here (not just in the page) makes the response a real 404 instead of a streamed 200
+    notFound();
   }
 
   const pageTitle = buildProductTitle(product);

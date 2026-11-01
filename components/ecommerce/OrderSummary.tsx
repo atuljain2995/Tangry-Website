@@ -319,7 +319,8 @@ export const OrderSummary = ({
               className="mt-2 inline-flex items-center gap-1 text-xs text-gray-500 transition hover:text-[#D32F2F]"
             >
               <Sparkles className="h-3 w-3" aria-hidden />
-              First order? Try <span className="font-bold">TANGRY10</span> for 10% off
+              First order? Try <span className="font-bold">TANGRY10</span> for 10% off on
+              ₹299+
             </button>
           </div>
         )}

@@ -4,6 +4,10 @@ import { resolveMarketplaceLinks } from '@/lib/data/marketplaces';
 
 export const revalidate = false;
 
+export const metadata = {
+  alternates: { canonical: '/' },
+};
+
 export default async function Home() {
   const products = await getAllProducts();
   const marketplaceLinks = resolveMarketplaceLinks();
