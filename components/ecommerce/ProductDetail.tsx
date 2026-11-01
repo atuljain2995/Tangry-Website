@@ -4,8 +4,10 @@ import { useState, useCallback, useEffect } from 'react';
 import {
   Star,
   Truck,
-  Shield,
-  Package,
+  Banknote,
+  RotateCcw,
+  ShieldCheck,
+  Leaf,
   Plus,
   Minus,
   Heart,
@@ -13,6 +15,8 @@ import {
   ChevronLeft,
   ChevronRight,
 } from 'lucide-react';
+import { COMPANY_INFO } from '@/lib/data/constants';
+import { addBusinessDays } from '@/lib/utils/delivery-by-pincode';
 import { ProductExtended } from '@/lib/types/database';
 import {
   formatCurrency,
@@ -51,6 +55,19 @@ export const ProductDetail = ({ product, categoryUrl, categoryLabel }: ProductDe
   const { user } = useAuth();
 
   const isWishlisted = checkWishlisted(product.id);
+
+  // Computed after mount: the page is cached (ISR), so a server-rendered date could be stale
+  const [deliveryBy, setDeliveryBy] = useState<string | null>(null);
+  useEffect(() => {
+    /* eslint-disable-next-line react-hooks/set-state-in-effect -- client-only date */
+    setDeliveryBy(
+      addBusinessDays(new Date(), 6).toLocaleDateString('en-IN', {
+        weekday: 'short',
+        day: 'numeric',
+        month: 'short',
+      }),
+    );
+  }, []);
 
   // Fire view_item when product or selected variant changes
   useEffect(() => {
@@ -167,6 +184,20 @@ export const ProductDetail = ({ product, categoryUrl, categoryLabel }: ProductDe
   };
 
   const descriptionBlocks = parseTextBlocks(product.description);
+
+  const productSpecs: [string, string][] = [
+    ['Net quantity', selectedVariant.name],
+    ...(product.ingredients?.length
+      ? [['Ingredients', product.ingredients.join(', ')] as [string, string]]
+      : []),
+    ...(product.shelfLife ? [['Shelf life', product.shelfLife] as [string, string]] : []),
+    ['Preservatives', 'None added'],
+    ['Storage', 'Store in a cool, dry place away from direct sunlight. Keep the pack sealed.'],
+    ['Food type', 'Vegetarian'],
+    ['Country of origin', 'India'],
+    ['Manufactured by', `${COMPANY_INFO.legalName}, ${COMPANY_INFO.address}`],
+    ['FSSAI licence no.', '12225026001713'],
+  ];
   const usageBlocks = product.usageInstructions ? parseTextBlocks(product.usageInstructions) : [];
 
   const buildCartItem = (): CartItem => ({
@@ -411,7 +442,10 @@ export const ProductDetail = ({ product, categoryUrl, categoryLabel }: ProductDe
                   />
                 ))}
               </div>
-              <span className="text-sm text-gray-500">| &nbsp;{product.reviewCount} Ratings</span>
+              <a href="#reviews" className="text-sm text-gray-500 hover:text-gray-800 hover:underline">
+                {product.rating.toFixed(1)} &middot; {product.reviewCount}{' '}
+                {product.reviewCount === 1 ? 'rating' : 'ratings'}
+              </a>
             </div>
           )}
 
@@ -468,7 +502,14 @@ export const ProductDetail = ({ product, categoryUrl, categoryLabel }: ProductDe
           {/* Compact delivery hint (key info near the price) */}
           <div className="flex items-center gap-1.5 text-sm text-gray-600 mb-6">
             <Truck size={16} className="text-gray-400" />
-            <span>Delivered in 3–6 business days across India</span>
+            {deliveryBy ? (
+              <span>
+                Get it by <strong className="text-gray-900">{deliveryBy}</strong> &middot; free
+                delivery above ₹500
+              </span>
+            ) : (
+              <span>Delivered in 3–6 business days across India</span>
+            )}
           </div>
 
           {/* Variant / Weight Selector */}
@@ -554,21 +595,31 @@ export const ProductDetail = ({ product, categoryUrl, categoryLabel }: ProductDe
             </p>
           )}
 
-          {/* Trust Badges */}
-          <div className="flex items-center flex-wrap gap-4 sm:gap-6 py-4 border-t border-gray-200 mb-5 text-sm text-gray-600">
-            <div className="flex items-center gap-1.5">
-              <Truck size={18} className="text-gray-400" />
-              <span>Pan India Delivery</span>
-            </div>
-            <div className="flex items-center gap-1.5">
-              <Shield size={18} className="text-gray-400" />
-              <span>Quality Assured</span>
-            </div>
-            <div className="flex items-center gap-1.5">
-              <Package size={18} className="text-gray-400" />
-              <span>Secure Packaging</span>
-            </div>
-          </div>
+          {/* Buy-box trust row: the reassurances Indian shoppers look for before paying */}
+          <ul className="grid grid-cols-2 gap-x-4 gap-y-2.5 py-4 border-t border-gray-200 mb-5 text-sm text-gray-700">
+            <li className="flex items-center gap-2">
+              <Banknote size={18} className="shrink-0 text-green-600" aria-hidden />
+              Cash on Delivery available
+            </li>
+            <li className="flex items-center gap-2">
+              <RotateCcw size={18} className="shrink-0 text-green-600" aria-hidden />
+              <Link href="/returns" className="hover:underline">
+                Easy 7-day returns
+              </Link>
+            </li>
+            <li className="flex items-center gap-2">
+              <Truck size={18} className="shrink-0 text-green-600" aria-hidden />
+              Ships from Jaipur, pan-India
+            </li>
+            <li className="flex items-center gap-2">
+              <ShieldCheck size={18} className="shrink-0 text-green-600" aria-hidden />
+              FSSAI licensed
+            </li>
+            <li className="col-span-2 flex items-center gap-2">
+              <Leaf size={18} className="shrink-0 text-green-600" aria-hidden />
+              No preservatives added
+            </li>
+          </ul>
 
           {/* Pincode Check */}
           <div className="mb-5">
@@ -606,20 +657,23 @@ export const ProductDetail = ({ product, categoryUrl, categoryLabel }: ProductDe
             </section>
           )}
 
-          {product.ingredients && product.ingredients.length > 0 && (
-            <section className="space-y-4">
-              <h3 className="text-xl sm:text-2xl font-bold text-gray-900 tracking-tight">
-                Ingredients
-              </h3>
-              <ul className="list-disc list-inside space-y-2">
-                {product.ingredients.map((ingredient, index) => (
-                  <li key={index} className="text-gray-700 leading-8">
-                    {ingredient}
-                  </li>
+          <section className="space-y-4">
+            <h3 className="text-xl sm:text-2xl font-bold text-gray-900 tracking-tight">
+              Product details
+            </h3>
+            <table className="not-prose w-full text-sm">
+              <tbody className="divide-y divide-gray-100">
+                {productSpecs.map(([label, value]) => (
+                  <tr key={label}>
+                    <th scope="row" className="w-40 py-2.5 pr-4 text-left align-top font-semibold text-gray-900 sm:w-56">
+                      {label}
+                    </th>
+                    <td className="py-2.5 text-gray-700">{value}</td>
+                  </tr>
                 ))}
-              </ul>
-            </section>
-          )}
+              </tbody>
+            </table>
+          </section>
 
           {product.usageInstructions && (
             <section className="space-y-4">
@@ -647,15 +701,6 @@ export const ProductDetail = ({ product, categoryUrl, categoryLabel }: ProductDe
                 ))}
               </div>
               <p className="text-xs text-gray-500 mt-4">*Per 100g serving</p>
-            </section>
-          )}
-
-          {product.shelfLife && (
-            <section className="space-y-4">
-              <h3 className="text-xl sm:text-2xl font-bold text-gray-900 tracking-tight">
-                Shelf Life
-              </h3>
-              <p className="text-gray-700 leading-8">{product.shelfLife}</p>
             </section>
           )}
         </div>

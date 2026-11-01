@@ -19,18 +19,24 @@ export function PincodeDeliveryCheck() {
     state: string;
   } | null>(null);
 
-  // Remember the last PIN the user entered (across products/sessions)
+  // Remember the last PIN and show its estimate straight away
   useEffect(() => {
     if (typeof window === 'undefined') return;
     const saved = localStorage.getItem(PINCODE_STORAGE_KEY);
-    if (saved && /^\d{6}$/.test(saved)) setPincode(saved);
+    if (saved && /^\d{6}$/.test(saved)) {
+      setPincode(saved);
+      void runCheck(saved);
+    }
   }, []);
 
   async function check(e: React.FormEvent) {
     e.preventDefault();
+    await runCheck(pincode.trim());
+  }
+
+  async function runCheck(pc: string) {
     setError(null);
     setResult(null);
-    const pc = pincode.trim();
     if (!validatePinCode(pc)) {
       setError('Enter a valid 6-digit PIN code');
       return;
