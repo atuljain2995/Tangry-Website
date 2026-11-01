@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { X, ShoppingBag, ArrowRight, MessageCircle } from 'lucide-react';
 import { useCart } from '@/lib/contexts/CartContext';
 import { CartItemComponent } from './CartItem';
@@ -18,6 +18,11 @@ export const CartDrawer = () => {
   const { subtotal, discount, afterDiscount, shipping, grandTotal } = getCheckoutTotals(cart);
   const shippingLine = formatShippingLine(shipping, afterDiscount);
   const shippingStatus = getFreeShippingStatus(afterDiscount);
+  const closeButtonRef = useRef<HTMLButtonElement>(null);
+  const closeCartRef = useRef(closeCart);
+  useEffect(() => {
+    closeCartRef.current = closeCart;
+  });
 
   useEffect(() => {
     if (!isCartOpen) return;
@@ -26,12 +31,21 @@ export const CartDrawer = () => {
     const body = document.body;
     const prevHtmlOverflow = html.style.overflow;
     const prevBodyOverflow = body.style.overflow;
+    const prevFocus = document.activeElement as HTMLElement | null;
     html.style.overflow = 'hidden';
     body.style.overflow = 'hidden';
+    closeButtonRef.current?.focus();
+
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') closeCartRef.current();
+    };
+    document.addEventListener('keydown', onKeyDown);
 
     return () => {
       html.style.overflow = prevHtmlOverflow;
       body.style.overflow = prevBodyOverflow;
+      document.removeEventListener('keydown', onKeyDown);
+      prevFocus?.focus?.();
     };
   }, [isCartOpen]);
 
@@ -48,6 +62,11 @@ export const CartDrawer = () => {
 
       {/* Drawer */}
       <div
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="cart-drawer-title"
+        aria-hidden={!isCartOpen}
+        inert={!isCartOpen}
         className={`fixed right-0 top-0 z-50 flex h-full w-full transform flex-col bg-white shadow-2xl transition-transform duration-300 ease-in-out dark:bg-neutral-900 dark:shadow-black/50 md:w-96 ${
           isCartOpen ? 'translate-x-0' : 'translate-x-full'
         }`}
@@ -56,11 +75,12 @@ export const CartDrawer = () => {
         <div className="flex items-center justify-between border-b border-gray-200 p-4 dark:border-neutral-700">
           <div className="flex items-center space-x-2">
             <ShoppingBag className="text-[#D32F2F]" size={24} />
-            <h2 className="text-xl font-bold text-gray-900 dark:text-neutral-100">
+            <h2 id="cart-drawer-title" className="text-xl font-bold text-gray-900 dark:text-neutral-100">
               Shopping Cart ({cartItemCount})
             </h2>
           </div>
           <button
+            ref={closeButtonRef}
             type="button"
             onClick={closeCart}
             aria-label="Close cart"

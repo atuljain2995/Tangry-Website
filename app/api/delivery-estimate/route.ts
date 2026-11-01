@@ -16,7 +16,8 @@ export async function GET(request: NextRequest) {
   const result = await lookupPincodeDelivery(pincode);
 
   if (!result.ok) {
-    return NextResponse.json({ error: result.error }, { status: 400 });
+    const status = result.reason === 'not_found' ? 404 : result.reason === 'invalid' ? 400 : 503;
+    return NextResponse.json({ error: result.error }, { status });
   }
 
   const { minDays, maxDays, district, state, areaName, pincode: pc } = result.data;

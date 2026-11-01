@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useId, useRef } from 'react';
 import { Address } from '@/lib/types/database';
 import { validatePinCode } from '@/lib/utils/database';
 import { useAuth } from '@/lib/contexts/AuthContext';
@@ -39,6 +39,65 @@ function normalizePhone(value: string): string {
   return value.replace(/\D/g, '').replace(/^91/, '').slice(0, 10);
 }
 
+const INDIAN_STATES = [
+  'Andaman and Nicobar Islands',
+  'Andhra Pradesh',
+  'Arunachal Pradesh',
+  'Assam',
+  'Bihar',
+  'Chandigarh',
+  'Chhattisgarh',
+  'Dadra and Nagar Haveli and Daman and Diu',
+  'Delhi',
+  'Goa',
+  'Gujarat',
+  'Haryana',
+  'Himachal Pradesh',
+  'Jammu and Kashmir',
+  'Jharkhand',
+  'Karnataka',
+  'Kerala',
+  'Ladakh',
+  'Lakshadweep',
+  'Madhya Pradesh',
+  'Maharashtra',
+  'Manipur',
+  'Meghalaya',
+  'Mizoram',
+  'Nagaland',
+  'Odisha',
+  'Puducherry',
+  'Punjab',
+  'Rajasthan',
+  'Sikkim',
+  'Tamil Nadu',
+  'Telangana',
+  'Tripura',
+  'Uttar Pradesh',
+  'Uttarakhand',
+  'West Bengal',
+];
+
+// India Post spellings that differ from INDIAN_STATES
+const STATE_ALIASES: Record<string, string> = {
+  'andaman & nicobar': 'Andaman and Nicobar Islands',
+  'andaman & nicobar islands': 'Andaman and Nicobar Islands',
+  chattisgarh: 'Chhattisgarh',
+  'dadra & nagar haveli': 'Dadra and Nagar Haveli and Daman and Diu',
+  'daman & diu': 'Dadra and Nagar Haveli and Daman and Diu',
+  'jammu & kashmir': 'Jammu and Kashmir',
+  pondicherry: 'Puducherry',
+  orissa: 'Odisha',
+  'new delhi': 'Delhi',
+};
+
+function normalizeState(raw: string | undefined): string {
+  const s = (raw ?? '').trim();
+  if (!s) return '';
+  const exact = INDIAN_STATES.find((st) => st.toLowerCase() === s.toLowerCase());
+  return exact ?? STATE_ALIASES[s.toLowerCase()] ?? '';
+}
+
 function initialShippingAddress(): Partial<Address> {
   return {
     fullName: '',
@@ -62,11 +121,14 @@ export const CheckoutForm = ({
   const { user } = useAuth();
   const [sameAsShipping, setSameAsShipping] = useState(true);
   const [email, setEmail] = useState('');
-  const [errors, setErrors] = useState<Record<string, string>>({});
   const [savedAddresses, setSavedAddresses] = useState<SavedAddress[]>([]);
   const [loadingAddresses, setLoadingAddresses] = useState(false);
   const [expressMode, setExpressMode] = useState(false);
   const [pinLookupLoading, setPinLookupLoading] = useState(false);
+  const [pinNotFound, setPinNotFound] = useState(false);
+  const [submitAttempted, setSubmitAttempted] = useState(false);
+  const autoFilled = useRef<{ city: string; state: string }>({ city: '', state: '' });
+  const fid = useId();
 
   const [shippingAddress, setShippingAddress] = useState<Partial<Address>>(initialShippingAddress);
 
@@ -159,22 +221,41 @@ export const CheckoutForm = ({
   // PIN → city/state autofill
   useEffect(() => {
     const pc = shippingAddress.postalCode?.replace(/\D/g, '').slice(0, 6) ?? '';
+    /* eslint-disable react-hooks/set-state-in-effect -- PIN lookup side effect */
+    setPinNotFound(false);
     if (pc.length !== 6 || !validatePinCode(pc)) return;
 
     let cancelled = false;
-    /* eslint-disable react-hooks/set-state-in-effect -- PIN lookup side effect */
     setPinLookupLoading(true);
     /* eslint-enable react-hooks/set-state-in-effect */
 
     fetch(`/api/delivery-estimate?pincode=${encodeURIComponent(pc)}`)
-      .then((res) => (res.ok ? res.json() : Promise.reject()))
-      .then((data: { city?: string; district?: string; state?: string }) => {
+      .then(async (res) => {
+        if (res.status === 404) {
+          if (cancelled) return;
+          setPinNotFound(true);
+          // Drop values we auto-filled from a previous PIN; keep anything the user typed
+          const prevAuto = autoFilled.current;
+          setShippingAddress((prev) => ({
+            ...prev,
+            city: prev.city === prevAuto.city ? '' : prev.city,
+            state: prev.state === prevAuto.state ? '' : prev.state,
+          }));
+          autoFilled.current = { city: '', state: '' };
+          return;
+        }
+        if (!res.ok) return;
+        const data = (await res.json()) as { district?: string; state?: string };
         if (cancelled) return;
+        const city = data.district && data.district !== '—' ? data.district : '';
+        const state = normalizeState(data.state);
+        const prevAuto = autoFilled.current;
         setShippingAddress((prev) => ({
           ...prev,
-          city: prev.city?.trim() ? prev.city : (data.district ?? prev.city),
-          state: prev.state?.trim() ? prev.state : (data.state ?? prev.state),
+          city: city && (!prev.city?.trim() || prev.city === prevAuto.city) ? city : prev.city,
+          state: state || prev.state,
         }));
+        autoFilled.current = { city, state };
         if (typeof window !== 'undefined') localStorage.setItem(PINCODE_STORAGE_KEY, pc);
       })
       .catch(() => {})
@@ -187,7 +268,7 @@ export const CheckoutForm = ({
     };
   }, [shippingAddress.postalCode]);
 
-  const validateForm = () => {
+  const computeErrors = () => {
     const newErrors: Record<string, string> = {};
 
     if (!email?.trim()) newErrors.email = 'Email is required';
@@ -205,6 +286,8 @@ export const CheckoutForm = ({
     if (!shippingAddress.postalCode?.trim()) newErrors.shipping_postalCode = 'PIN code is required';
     else if (!validatePinCode(shippingAddress.postalCode))
       newErrors.shipping_postalCode = 'Invalid PIN code';
+    else if (pinNotFound)
+      newErrors.shipping_postalCode = "We couldn't find this PIN code. Please check it.";
 
     if (!sameAsShipping) {
       if (!billingAddress.fullName?.trim()) newErrors.billing_fullName = 'Full name is required';
@@ -220,13 +303,16 @@ export const CheckoutForm = ({
         newErrors.billing_postalCode = 'Invalid PIN code';
     }
 
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
+    return newErrors;
   };
+
+  // Errors are shown only after the first submit, then stay in sync with what the user types
+  const errors = submitAttempted ? computeErrors() : {};
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (validateForm()) {
+    setSubmitAttempted(true);
+    if (Object.keys(computeErrors()).length === 0) {
       const finalBillingAddress = sameAsShipping
         ? { ...shippingAddress, type: 'billing' as const }
         : billingAddress;
@@ -238,39 +324,6 @@ export const CheckoutForm = ({
       );
     }
   };
-
-  const indianStates = [
-    'Andhra Pradesh',
-    'Arunachal Pradesh',
-    'Assam',
-    'Bihar',
-    'Chhattisgarh',
-    'Goa',
-    'Gujarat',
-    'Haryana',
-    'Himachal Pradesh',
-    'Jharkhand',
-    'Karnataka',
-    'Kerala',
-    'Madhya Pradesh',
-    'Maharashtra',
-    'Manipur',
-    'Meghalaya',
-    'Mizoram',
-    'Nagaland',
-    'Odisha',
-    'Punjab',
-    'Rajasthan',
-    'Sikkim',
-    'Tamil Nadu',
-    'Telangana',
-    'Tripura',
-    'Uttar Pradesh',
-    'Uttarakhand',
-    'West Bengal',
-    'Delhi',
-    'Puducherry',
-  ];
 
   const inputClass = (hasError: boolean) =>
     `w-full rounded-xl border px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#D32F2F] ${
@@ -309,7 +362,7 @@ export const CheckoutForm = ({
   );
 
   return (
-    <form id={formId} onSubmit={handleSubmit} className="space-y-6">
+    <form id={formId} onSubmit={handleSubmit} noValidate className="space-y-6">
       {user && savedAddresses.filter((a) => a.type === 'shipping').length > 0 && !expressMode && (
         <div className="rounded-2xl border border-orange-100 bg-white p-5 shadow-sm">
           <h2 className="mb-3 text-sm font-bold uppercase tracking-wide text-gray-500">
@@ -367,11 +420,13 @@ export const CheckoutForm = ({
 
           <div className="grid gap-4 md:grid-cols-2">
             <div className="md:col-span-2">
-              <label className="mb-1.5 block text-sm font-semibold text-gray-700">
+              <label htmlFor={`${fid}-email`} className="mb-1.5 block text-sm font-semibold text-gray-700">
                 Email <span className="text-red-600">*</span>
               </label>
               <input
+                id={`${fid}-email`}
                 type="email"
+                aria-invalid={!!errors.email}
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 className={inputClass(!!errors.email)}
@@ -382,11 +437,13 @@ export const CheckoutForm = ({
             </div>
 
             <div>
-              <label className="mb-1.5 block text-sm font-semibold text-gray-700">
+              <label htmlFor={`${fid}-name`} className="mb-1.5 block text-sm font-semibold text-gray-700">
                 Full name <span className="text-red-600">*</span>
               </label>
               <input
+                id={`${fid}-name`}
                 type="text"
+                aria-invalid={!!errors.shipping_fullName}
                 value={shippingAddress.fullName}
                 onChange={(e) =>
                   setShippingAddress({ ...shippingAddress, fullName: e.target.value })
@@ -401,7 +458,7 @@ export const CheckoutForm = ({
             </div>
 
             <div>
-              <label className="mb-1.5 block text-sm font-semibold text-gray-700">
+              <label htmlFor={`${fid}-phone`} className="mb-1.5 block text-sm font-semibold text-gray-700">
                 Mobile <span className="text-red-600">*</span>
               </label>
               <div className="flex overflow-hidden rounded-xl border border-gray-200 focus-within:ring-2 focus-within:ring-[#D32F2F]">
@@ -409,7 +466,9 @@ export const CheckoutForm = ({
                   +91
                 </span>
                 <input
+                  id={`${fid}-phone`}
                   type="tel"
+                  aria-invalid={!!errors.shipping_phone}
                   inputMode="numeric"
                   value={shippingAddress.phone}
                   onChange={(e) =>
@@ -432,11 +491,13 @@ export const CheckoutForm = ({
             </div>
 
             <div className="md:col-span-2">
-              <label className="mb-1.5 block text-sm font-semibold text-gray-700">
+              <label htmlFor={`${fid}-line1`} className="mb-1.5 block text-sm font-semibold text-gray-700">
                 House / flat / building <span className="text-red-600">*</span>
               </label>
               <input
+                id={`${fid}-line1`}
                 type="text"
+                aria-invalid={!!errors.shipping_addressLine1}
                 value={shippingAddress.addressLine1}
                 onChange={(e) =>
                   setShippingAddress({ ...shippingAddress, addressLine1: e.target.value })
@@ -451,10 +512,11 @@ export const CheckoutForm = ({
             </div>
 
             <div className="md:col-span-2">
-              <label className="mb-1.5 block text-sm font-semibold text-gray-700">
+              <label htmlFor={`${fid}-line2`} className="mb-1.5 block text-sm font-semibold text-gray-700">
                 Road / area / landmark
               </label>
               <input
+                id={`${fid}-line2`}
                 type="text"
                 value={shippingAddress.addressLine2}
                 onChange={(e) =>
@@ -467,11 +529,13 @@ export const CheckoutForm = ({
             </div>
 
             <div>
-              <label className="mb-1.5 block text-sm font-semibold text-gray-700">
+              <label htmlFor={`${fid}-pin`} className="mb-1.5 block text-sm font-semibold text-gray-700">
                 PIN code <span className="text-red-600">*</span>
               </label>
               <input
+                id={`${fid}-pin`}
                 type="text"
+                aria-invalid={!!errors.shipping_postalCode || pinNotFound}
                 inputMode="numeric"
                 value={shippingAddress.postalCode}
                 onChange={(e) =>
@@ -488,18 +552,26 @@ export const CheckoutForm = ({
               {pinLookupLoading && (
                 <p className="mt-1 text-xs text-gray-500">Looking up your area…</p>
               )}
-              {errors.shipping_postalCode && (
+              {errors.shipping_postalCode ? (
                 <p className="mt-1 text-xs text-red-600">{errors.shipping_postalCode}</p>
+              ) : (
+                pinNotFound && (
+                  <p className="mt-1 text-xs text-red-600" role="alert">
+                    We couldn&apos;t find this PIN code. Please check it.
+                  </p>
+                )
               )}
               <CheckoutDeliveryHint pincode={shippingAddress.postalCode} />
             </div>
 
             <div>
-              <label className="mb-1.5 block text-sm font-semibold text-gray-700">
+              <label htmlFor={`${fid}-city`} className="mb-1.5 block text-sm font-semibold text-gray-700">
                 City <span className="text-red-600">*</span>
               </label>
               <input
+                id={`${fid}-city`}
                 type="text"
+                aria-invalid={!!errors.shipping_city}
                 value={shippingAddress.city}
                 onChange={(e) => setShippingAddress({ ...shippingAddress, city: e.target.value })}
                 className={inputClass(!!errors.shipping_city)}
@@ -512,17 +584,19 @@ export const CheckoutForm = ({
             </div>
 
             <div className="md:col-span-2">
-              <label className="mb-1.5 block text-sm font-semibold text-gray-700">
+              <label htmlFor={`${fid}-state`} className="mb-1.5 block text-sm font-semibold text-gray-700">
                 State <span className="text-red-600">*</span>
               </label>
               <select
+                id={`${fid}-state`}
+                aria-invalid={!!errors.shipping_state}
                 value={shippingAddress.state}
                 onChange={(e) => setShippingAddress({ ...shippingAddress, state: e.target.value })}
                 className={inputClass(!!errors.shipping_state)}
                 autoComplete="address-level1"
               >
                 <option value="">Select state</option>
-                {indianStates.map((state) => (
+                {INDIAN_STATES.map((state) => (
                   <option key={state} value={state}>
                     {state}
                   </option>
@@ -553,10 +627,11 @@ export const CheckoutForm = ({
           <h2 className="mb-4 text-lg font-bold text-gray-900">Billing address</h2>
           <div className="grid gap-4 md:grid-cols-2">
             <div>
-              <label className="mb-1.5 block text-sm font-semibold text-gray-700">
+              <label htmlFor={`${fid}-bname`} className="mb-1.5 block text-sm font-semibold text-gray-700">
                 Full name <span className="text-red-600">*</span>
               </label>
               <input
+                id={`${fid}-bname`}
                 type="text"
                 value={billingAddress.fullName}
                 onChange={(e) =>
@@ -569,7 +644,7 @@ export const CheckoutForm = ({
               )}
             </div>
             <div>
-              <label className="mb-1.5 block text-sm font-semibold text-gray-700">
+              <label htmlFor={`${fid}-bphone`} className="mb-1.5 block text-sm font-semibold text-gray-700">
                 Mobile <span className="text-red-600">*</span>
               </label>
               <div className="flex overflow-hidden rounded-xl border border-gray-200">
@@ -577,6 +652,7 @@ export const CheckoutForm = ({
                   +91
                 </span>
                 <input
+                  id={`${fid}-bphone`}
                   type="tel"
                   inputMode="numeric"
                   value={billingAddress.phone}

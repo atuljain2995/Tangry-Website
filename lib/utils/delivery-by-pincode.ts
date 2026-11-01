@@ -94,10 +94,13 @@ type PostalApiEntry = {
  */
 export async function lookupPincodeDelivery(
   pincode: string,
-): Promise<{ ok: true; data: PincodeLookupResult } | { ok: false; error: string }> {
+): Promise<
+  | { ok: true; data: PincodeLookupResult }
+  | { ok: false; error: string; reason: 'invalid' | 'not_found' | 'unavailable' }
+> {
   const pc = pincode.trim();
   if (!validatePinCode(pc)) {
-    return { ok: false, error: 'Enter a valid 6-digit PIN code' };
+    return { ok: false, error: 'Enter a valid 6-digit PIN code', reason: 'invalid' };
   }
 
   try {
@@ -108,13 +111,13 @@ export async function lookupPincodeDelivery(
     });
 
     if (!res.ok) {
-      return { ok: false, error: 'Could not verify PIN code. Try again.' };
+      return { ok: false, error: 'Could not verify PIN code. Try again.', reason: 'unavailable' };
     }
 
     const json = (await res.json()) as PostalApiEntry[] | unknown;
     const block = Array.isArray(json) ? json[0] : null;
     if (!block || block.Status !== 'Success' || !block.PostOffice?.length) {
-      return { ok: false, error: 'PIN code not found. Check and try again.' };
+      return { ok: false, error: 'PIN code not found. Check and try again.', reason: 'not_found' };
     }
 
     const office = block.PostOffice[0];
@@ -137,7 +140,7 @@ export async function lookupPincodeDelivery(
       },
     };
   } catch {
-    return { ok: false, error: 'Network error. Try again in a moment.' };
+    return { ok: false, error: 'Network error. Try again in a moment.', reason: 'unavailable' };
   }
 }
 
