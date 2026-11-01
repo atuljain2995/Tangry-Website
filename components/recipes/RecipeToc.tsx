@@ -37,7 +37,11 @@ export function RecipeShare({ url, title }: { url: string; title: string }) {
   const encodedTitle = encodeURIComponent(title);
 
   const targets = [
-    { label: 'WhatsApp', href: `https://wa.me/?text=${encodedTitle}%20${encodedUrl}` },
+    {
+      label: 'WhatsApp',
+      href: `https://wa.me/?text=${encodedTitle}%20${encodedUrl}`,
+      className: 'md:hidden',
+    },
     { label: 'Facebook', href: `https://www.facebook.com/sharer/sharer.php?u=${encodedUrl}` },
     { label: 'X', href: `https://x.com/intent/tweet?text=${encodedTitle}&url=${encodedUrl}` },
     {
@@ -56,7 +60,7 @@ export function RecipeShare({ url, title }: { url: string; title: string }) {
           href={t.href}
           target="_blank"
           rel="noopener noreferrer"
-          className="text-xs font-medium text-neutral-600 hover:text-red-700 border border-neutral-300 hover:border-red-300 rounded-full px-3 py-1 transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600"
+          className={`text-xs font-medium text-neutral-600 hover:text-red-700 border border-neutral-300 hover:border-red-300 rounded-full px-3 py-1 transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600 ${'className' in t ? t.className : ''}`}
         >
           {t.label}
         </a>

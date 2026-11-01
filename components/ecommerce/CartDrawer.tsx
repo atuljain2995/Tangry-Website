@@ -178,7 +178,7 @@ export const CartDrawer = () => {
                 target="_blank"
                 rel="noopener noreferrer"
                 onClick={closeCart}
-                className="mt-3 w-full border-2 border-[#25D366] text-[#128C7E] py-3 rounded-full font-bold hover:bg-[#25D366]/10 transition flex items-center justify-center gap-2"
+                className="mt-3 w-full border-2 border-[#25D366] text-[#128C7E] py-3 rounded-full font-bold hover:bg-[#25D366]/10 transition flex items-center justify-center gap-2 md:hidden"
               >
                 <MessageCircle size={20} className="shrink-0" />
                 <span>Order on WhatsApp</span>

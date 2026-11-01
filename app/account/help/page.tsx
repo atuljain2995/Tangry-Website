@@ -24,7 +24,7 @@ const FAQ_ITEMS = [
   },
   {
     q: 'How can I cancel my order?',
-    a: 'Contact us within 24 hours of placing the order via email or WhatsApp. Once shipped, cancellations are not possible.',
+    a: 'Contact us within 24 hours of placing the order by email or phone. Once shipped, cancellations are not possible.',
   },
 ];
 
@@ -36,7 +36,7 @@ export default function HelpPage() {
       </h1>
 
       {/* Contact options */}
-      <div className="grid gap-4 sm:grid-cols-3 mb-8">
+      <div className="grid gap-4 sm:grid-cols-3 md:grid-cols-2 mb-8">
         <a
           href="mailto:support@tangryspices.com"
           className="flex items-center gap-3 rounded-xl border border-gray-200 bg-white p-4 shadow-sm hover:border-orange-300 transition dark:border-neutral-700 dark:bg-neutral-900"
@@ -61,7 +61,7 @@ export default function HelpPage() {
           href="https://wa.me/918947051201"
           target="_blank"
           rel="noopener noreferrer"
-          className="flex items-center gap-3 rounded-xl border border-gray-200 bg-white p-4 shadow-sm hover:border-orange-300 transition dark:border-neutral-700 dark:bg-neutral-900"
+          className="flex items-center gap-3 rounded-xl border border-gray-200 bg-white p-4 shadow-sm hover:border-orange-300 transition md:hidden dark:border-neutral-700 dark:bg-neutral-900"
         >
           <MessageCircle className="h-5 w-5 text-green-600 shrink-0" />
           <div>

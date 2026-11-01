@@ -1,52 +1,68 @@
 'use client';
 
-import { MessageCircle } from 'lucide-react';
 import { usePathname } from 'next/navigation';
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { analytics } from '@/lib/analytics';
+import { WhatsAppIcon } from '@/components/icons/WhatsAppIcon';
+import { buildWhatsAppChatUrl } from '@/lib/utils/whatsapp-order';
+
+const NUDGE_DELAY_MS = 8000;
+const NUDGE_SEEN_KEY = 'tangry_wa_nudged';
 
 export const WhatsAppButton = () => {
   const pathname = usePathname();
-  const [isHovered, setIsHovered] = useState(false);
+  const [hiddenOnScroll, setHiddenOnScroll] = useState(false);
+  const [nudge, setNudge] = useState(false);
+  const lastY = useRef(0);
+
+  useEffect(() => {
+    let frame = 0;
+    const onScroll = () => {
+      cancelAnimationFrame(frame);
+      frame = requestAnimationFrame(() => {
+        const y = window.scrollY;
+        // Mobile only (CSS ignores this on md+): get out of the way while reading, return on scroll up
+        if (Math.abs(y - lastY.current) > 8) {
+          setHiddenOnScroll(y > lastY.current && y > 200);
+          lastY.current = y;
+        }
+      });
+    };
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => {
+      window.removeEventListener('scroll', onScroll);
+      cancelAnimationFrame(frame);
+    };
+  }, []);
+
+  // One gentle nudge per session on mobile (desktop stays static)
+  useEffect(() => {
+    if (sessionStorage.getItem(NUDGE_SEEN_KEY) || window.matchMedia('(min-width: 768px)').matches) return;
+    const t = window.setTimeout(() => {
+      setNudge(true);
+      sessionStorage.setItem(NUDGE_SEEN_KEY, '1');
+    }, NUDGE_DELAY_MS);
+    return () => window.clearTimeout(t);
+  }, []);
 
   if (pathname?.startsWith('/admin') || pathname?.startsWith('/checkout')) return null;
 
-  // Product detail pages render a mobile sticky buy bar at the bottom.
-  // Lift the chat button above it on mobile so it doesn't overlap "Buy Now".
-  const isProductDetail = !!pathname && pathname.startsWith('/products/') && pathname !== '/products';
-
-  const whatsappNumber = '917733009952'; // +91 7733009952
-  const message = encodeURIComponent('Hi! I have a question about Tangry Spices.');
-  const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${message}`;
+  // Mobile only; product pages offer WhatsApp inside the sticky buy bar instead
+  if (pathname.startsWith('/products/')) return null;
 
   return (
     <a
-      href={whatsappUrl}
+      href={buildWhatsAppChatUrl('Hi! I have a question about Tangry Spices.')}
       target="_blank"
       rel="noopener noreferrer"
       onClick={() => analytics.trackWhatsAppClick(pathname || '/')}
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
-      className={`fixed right-6 z-40 bg-[#25D366] text-white rounded-full p-4 shadow-2xl hover:shadow-3xl transition-all duration-300 hover:scale-110 group ${
-        isProductDetail ? 'bottom-24 md:bottom-6' : 'bottom-6'
-      }`}
-      aria-label="Chat on WhatsApp"
+      onAnimationEnd={() => setNudge(false)}
+      aria-label="Chat with us on WhatsApp"
+      className={`fixed bottom-4 right-4 z-40 flex items-center rounded-full bg-[#25D366] p-3 text-white shadow-lg transition-[transform,opacity] duration-300 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[#25D366]/40 md:hidden ${
+        hiddenOnScroll ? 'pointer-events-none translate-y-24 opacity-0' : ''
+      } ${nudge ? 'motion-safe:animate-wa-nudge' : ''}`}
     >
-      <MessageCircle
-        size={28}
-        className={`transition-transform duration-300 ${isHovered ? 'scale-110' : ''}`}
-      />
-
-      {/* Tooltip */}
-      <div className="absolute bottom-full right-0 mb-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
-        <div className="rounded-lg bg-gray-900 px-3 py-2 text-sm whitespace-nowrap text-white shadow-lg dark:bg-neutral-800">
-          Chat with us on WhatsApp
-          <div className="absolute top-full right-6 h-0 w-0 border-t-4 border-r-4 border-l-4 border-transparent border-t-gray-900 dark:border-t-neutral-800" />
-        </div>
-      </div>
-
-      {/* Pulse animation */}
-      <span className="absolute inset-0 rounded-full bg-[#25D366] animate-ping opacity-75"></span>
+      <WhatsAppIcon className="h-7 w-7 shrink-0" />
     </a>
   );
 };

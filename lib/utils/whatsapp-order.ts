@@ -4,6 +4,10 @@ import { formatCurrency } from '@/lib/utils/database';
 /** WhatsApp Business number (digits only, country code included). */
 const WA_DIGITS = '917733009952';
 
+export function buildWhatsAppChatUrl(message: string): string {
+  return `https://wa.me/${WA_DIGITS}?text=${encodeURIComponent(message)}`;
+}
+
 /**
  * Builds a wa.me URL with a pre-filled order message from the current cart.
  */

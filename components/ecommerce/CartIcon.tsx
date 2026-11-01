@@ -22,7 +22,7 @@ export const CartIcon = () => {
     >
       <ShoppingBag size={24} />
       {mounted && cartItemCount > 0 && (
-        <span className="absolute -top-1 -right-1 bg-[#D32F2F] text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center animate-pulse">
+        <span className="absolute -top-1 -right-1 bg-[#D32F2F] text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">
           {cartItemCount > 99 ? '99+' : cartItemCount}
         </span>
       )}

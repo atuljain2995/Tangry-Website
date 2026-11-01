@@ -29,6 +29,8 @@ import { ProductImage } from './ProductImage';
 import { PincodeDeliveryCheck } from './PincodeDeliveryCheck';
 import { productImageAlt } from '@/lib/utils/product-image-alt';
 import { analytics } from '@/lib/analytics';
+import { WhatsAppIcon } from '@/components/icons/WhatsAppIcon';
+import { buildWhatsAppChatUrl } from '@/lib/utils/whatsapp-order';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 
@@ -701,6 +703,18 @@ export const ProductDetail = ({ product, categoryUrl, categoryLabel }: ProductDe
           >
             Buy Now
           </button>
+          <a
+            href={buildWhatsAppChatUrl(
+              `Hi! I have a question about ${product.name} (${selectedVariant.name}).`,
+            )}
+            target="_blank"
+            rel="noopener noreferrer"
+            onClick={() => analytics.trackWhatsAppClick(`/products/${product.slug}`)}
+            aria-label="Ask about this product on WhatsApp"
+            className="flex w-11 shrink-0 items-center justify-center rounded-lg border border-[#25D366]/40 text-[#1DA851] transition hover:bg-[#25D366]/10"
+          >
+            <WhatsAppIcon className="h-6 w-6" />
+          </a>
         </div>
       </div>
     </div>
