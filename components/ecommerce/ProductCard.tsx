@@ -146,7 +146,14 @@ export const ProductCard = ({ product }: ProductCardProps) => {
           </h3>
         </Link>
 
-        {/* Variant Selector */}
+        {/* Variant Selector (single size shown as a static chip so the pack size is always visible) */}
+        {product.variants.length === 1 && (
+          <div className="mb-3">
+            <span className="inline-block px-2.5 py-1 text-[11px] font-semibold rounded-lg border border-gray-200 text-gray-600 dark:border-neutral-600 dark:text-neutral-400">
+              {product.variants[0].name}
+            </span>
+          </div>
+        )}
         {product.variants.length > 1 && (
           <div className="flex flex-wrap gap-1.5 mb-3">
             {product.variants.map((variant, index) => (
