@@ -48,17 +48,17 @@ export default function HelpPage() {
           </div>
         </a>
         <a
-          href="tel:+918947051201"
+          href="tel:+917733009952"
           className="flex items-center gap-3 rounded-xl border border-gray-200 bg-white p-4 shadow-sm hover:border-orange-300 transition dark:border-neutral-700 dark:bg-neutral-900"
         >
           <Phone className="h-5 w-5 text-orange-600 shrink-0" />
           <div>
             <p className="text-sm font-semibold text-gray-900 dark:text-neutral-100">Call Us</p>
-            <p className="text-xs text-gray-500 dark:text-neutral-400">+91 89470 51201</p>
+            <p className="text-xs text-gray-500 dark:text-neutral-400">+91 77330 09952</p>
           </div>
         </a>
         <a
-          href="https://wa.me/918947051201"
+          href="https://wa.me/917733009952"
           target="_blank"
           rel="noopener noreferrer"
           className="flex items-center gap-3 rounded-xl border border-gray-200 bg-white p-4 shadow-sm hover:border-orange-300 transition md:hidden dark:border-neutral-700 dark:bg-neutral-900"
