@@ -657,6 +657,14 @@ export async function getProductByIdForAdmin(productId: string): Promise<Product
 /**
  * Transform database product to ProductExtended type
  */
+// Admin-entered names vary ("50 gram", "100g", "1 Kg"); show one consistent format
+function formatVariantName(name: string): string {
+  const m = name.match(/^\s*(\d+(?:\.\d+)?)\s*(g|gm|gms|gram|grams|kg|kgs)\.?\s*$/i);
+  if (!m) return name;
+  const grams = Number(m[1]) * (/^kg/i.test(m[2]) ? 1000 : 1);
+  return grams >= 1000 ? `${grams / 1000} kg` : `${grams} g`;
+}
+
 function transformProduct(dbProduct: DbProduct): ProductExtended {
   return {
     id: dbProduct.id,
@@ -666,16 +674,18 @@ function transformProduct(dbProduct: DbProduct): ProductExtended {
     categoryId: dbProduct.category_id ?? null,
     category: dbProduct.category || '',
     variants:
-      dbProduct.variants?.map((v) => ({
-        id: v.id,
-        name: v.name,
-        sku: v.sku,
-        price: v.price,
-        compareAtPrice: v.compare_at_price,
-        stock: v.stock,
-        weight: v.weight,
-        isAvailable: v.is_available,
-      })) || [],
+      [...(dbProduct.variants ?? [])]
+        .sort((a, b) => (a.weight || 0) - (b.weight || 0))
+        .map((v) => ({
+          id: v.id,
+          name: formatVariantName(v.name),
+          sku: v.sku,
+          price: v.price,
+          compareAtPrice: v.compare_at_price,
+          stock: v.stock,
+          weight: v.weight,
+          isAvailable: v.is_available,
+        })),
     images: (dbProduct.images || [])
       .sort((a, b) => (a.display_order ?? 0) - (b.display_order ?? 0))
       .map((img) => img.url)

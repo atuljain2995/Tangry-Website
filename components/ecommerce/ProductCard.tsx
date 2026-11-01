@@ -165,9 +165,9 @@ export const ProductCard = ({ product }: ProductCardProps) => {
           </div>
         )}
 
-        {/* Rating */}
-        <div className="flex items-center mb-4">
-          {product.reviewCount > 0 ? (
+        {/* Rating (row kept even when empty so card prices stay aligned) */}
+        <div className="flex items-center mb-4 min-h-4">
+          {product.reviewCount > 0 && (
             <>
               <div className="flex items-center">
                 {[...Array(5)].map((_, i) => (
@@ -186,13 +186,6 @@ export const ProductCard = ({ product }: ProductCardProps) => {
                 {product.rating} ({product.reviewCount})
               </span>
             </>
-          ) : (
-            <Link
-              href={`/products/${product.slug}#reviews`}
-              className="text-xs font-medium text-gray-400 hover:text-orange-600 dark:text-neutral-500"
-            >
-              Be the first to review
-            </Link>
           )}
         </div>
 
