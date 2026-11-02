@@ -1,6 +1,8 @@
 'use server';
 
 import { revalidatePath } from 'next/cache';
+import { after } from 'next/server';
+import { sendTelegramOrderAlert } from '@/lib/notifications/telegram';
 import { supabaseAdmin } from '@/lib/db/supabase';
 import { incrementCouponUsage, decrementVariantStock } from '@/lib/db/queries';
 import {
@@ -182,6 +184,16 @@ export async function createOrder(payload: CreateOrderPayload): Promise<CreateOr
 
     const paymentCompleted = paymentMethod === 'cod' || (paymentMethod === 'razorpay' && paymentId);
     if (paymentCompleted) {
+      after(() =>
+        sendTelegramOrderAlert({
+          orderNumber,
+          total,
+          paymentMethod,
+          email: userEmail.trim(),
+          shippingAddress,
+          items: trustedItems,
+        }),
+      );
       void sendOrderConfirmationEmail({
         to: userEmail.trim(),
         orderNumber,

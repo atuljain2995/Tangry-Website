@@ -77,6 +77,17 @@ Without `ORDER_CONFIRMATION_FROM`, a default Resend sender is used (may only del
 
 ---
 
+## Order alerts (Telegram)
+
+```env
+TELEGRAM_BOT_TOKEN=123456789:AA...   # from @BotFather
+TELEGRAM_CHAT_ID=123456789           # your chat (or a group, negative number)
+```
+
+When both are set, every completed order (COD or verified Razorpay) posts an alert with items, total, payment method, customer and city, plus an "Open in admin" button. Unset = no alerts; checkout is unaffected if Telegram is down.
+
+---
+
 ## Scheduled jobs (Vercel Cron)
 
 ### Review request emails
