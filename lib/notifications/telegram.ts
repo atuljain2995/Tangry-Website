@@ -19,10 +19,15 @@ function escapeHtml(s: string): string {
  * Sends a new-order alert to the shop owner's Telegram chat.
  * No-op unless TELEGRAM_BOT_TOKEN and TELEGRAM_CHAT_ID are set. Never throws.
  */
-export async function sendTelegramOrderAlert(input: OrderAlertInput): Promise<void> {
+export async function sendTelegramOrderAlert(
+  input: OrderAlertInput,
+  { test = false }: { test?: boolean } = {},
+): Promise<{ ok: boolean; error?: string }> {
   const token = process.env.TELEGRAM_BOT_TOKEN;
   const chatId = process.env.TELEGRAM_CHAT_ID;
-  if (!token || !chatId) return;
+  if (!token || !chatId) {
+    return { ok: false, error: 'TELEGRAM_BOT_TOKEN or TELEGRAM_CHAT_ID is not set' };
+  }
 
   const inr = (n: number) => `₹${Math.round(n).toLocaleString('en-IN')}`;
   const a = input.shippingAddress;
@@ -35,6 +40,7 @@ export async function sendTelegramOrderAlert(input: OrderAlertInput): Promise<vo
   const payment = input.paymentMethod === 'cod' ? '💵 Cash on Delivery' : '✅ Paid online';
 
   const text = [
+    ...(test ? ['🧪 <i>Test alert from the admin panel. No real order was placed.</i>', ''] : []),
     `🛒 <b>New order ${escapeHtml(input.orderNumber)}</b>`,
     `<b>${inr(input.total)}</b> · ${payment}`,
     '',
@@ -60,8 +66,14 @@ export async function sendTelegramOrderAlert(input: OrderAlertInput): Promise<vo
       }),
       signal: AbortSignal.timeout(8000),
     });
-    if (!res.ok) console.error('Telegram order alert failed:', res.status, await res.text());
+    if (!res.ok) {
+      const body = (await res.json().catch(() => ({}))) as { description?: string };
+      console.error('Telegram order alert failed:', res.status, body.description);
+      return { ok: false, error: body.description || `Telegram returned ${res.status}` };
+    }
+    return { ok: true };
   } catch (err) {
     console.error('Telegram order alert error:', err);
+    return { ok: false, error: 'Could not reach Telegram (network blocked or timed out)' };
   }
 }

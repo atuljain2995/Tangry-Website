@@ -1,9 +1,11 @@
 import { COMPANY_INFO } from '@/lib/data/constants';
 import { RebuildRequestButton } from '@/components/admin/RebuildRequestButton';
+import { TelegramTestButton } from '@/components/admin/TelegramTestButton';
 
 export const dynamic = 'force-dynamic';
 
 export default function AdminSettingsPage() {
+  const telegramConfigured = !!process.env.TELEGRAM_BOT_TOKEN && !!process.env.TELEGRAM_CHAT_ID;
   return (
     <div className="space-y-6">
       <div>
@@ -49,6 +51,29 @@ export default function AdminSettingsPage() {
         <p className="pt-2 text-sm text-gray-500">
           To change these, edit the constants file and redeploy. Editable settings (e.g. shipping
           threshold, store name) can be added later with a database-backed settings table.
+        </p>
+      </div>
+
+      <div className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm space-y-3">
+        <div className="flex items-center justify-between gap-3">
+          <h2 className="text-lg font-semibold text-gray-900">Order alerts (Telegram)</h2>
+          <span
+            className={`rounded-full px-2.5 py-0.5 text-xs font-semibold ${
+              telegramConfigured ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-600'
+            }`}
+          >
+            {telegramConfigured ? 'Configured' : 'Not configured'}
+          </span>
+        </div>
+        <p className="text-sm text-gray-600">
+          Every completed order (COD or paid online) is sent to your Telegram chat. Send a sample
+          alert to check the setup. No order is created.
+        </p>
+        <TelegramTestButton />
+        <p className="text-xs text-gray-500">
+          Requires <code className="rounded bg-gray-100 px-1">TELEGRAM_BOT_TOKEN</code> and{' '}
+          <code className="rounded bg-gray-100 px-1">TELEGRAM_CHAT_ID</code> in environment
+          variables.
         </p>
       </div>
 
