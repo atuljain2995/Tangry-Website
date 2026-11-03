@@ -68,7 +68,7 @@ WHERE v.product_id = p.id
 -- Smallest pack first, and it is the default (business decision: 50 g default)
 UPDATE product_variants v
 SET display_order = ranked.rn,
-    is_default    = (ranked.rn = 1)
+    is_default    = (ranked.rn = 0)
 FROM (
   SELECT id, row_number() OVER (PARTITION BY product_id ORDER BY weight, price) - 1 AS rn
   FROM product_variants

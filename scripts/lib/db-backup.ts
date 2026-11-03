@@ -84,6 +84,27 @@ export async function fetchAllRows(
   }
 }
 
+/** Read a table through Supabase's REST API (HTTPS) when its Postgres port isn't reachable. */
+export async function fetchAllRowsSupabaseRest(
+  baseUrl: string,
+  serviceKey: string,
+  table: string,
+): Promise<Record<string, unknown>[]> {
+  const rows: Record<string, unknown>[] = [];
+  const pageSize = 1000;
+  for (let offset = 0; ; offset += pageSize) {
+    const res = await fetch(
+      `${baseUrl.replace(/\/$/, '')}/rest/v1/${table}?select=*&offset=${offset}&limit=${pageSize}`,
+      { headers: { apikey: serviceKey, Authorization: `Bearer ${serviceKey}` } },
+    );
+    if (res.status === 404) return [];
+    if (!res.ok) throw new Error(`${table}: HTTP ${res.status} ${await res.text()}`);
+    const batch = (await res.json()) as Record<string, unknown>[];
+    rows.push(...batch);
+    if (batch.length < pageSize) return rows;
+  }
+}
+
 export async function deleteAllRows(client: Queryable, table: string): Promise<void> {
   await client.query(`DELETE FROM public."${table}"`);
 }

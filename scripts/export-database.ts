@@ -1,8 +1,8 @@
 /**
  * Export all app data to backups/.
- * Run: npm run export-db
- * Reads from SOURCE_DATABASE_URL if set (e.g. the old Supabase Postgres connection string),
- * otherwise from DATABASE_URL (Neon).
+ * Run: npm run export-db [-- --from-supabase]
+ * Source: Supabase REST API (--from-supabase, uses NEXT_PUBLIC_SUPABASE_URL + SUPABASE_SERVICE_ROLE_KEY),
+ * else SOURCE_DATABASE_URL (any Postgres), else DATABASE_URL (Neon).
  */
 
 import { mkdirSync, writeFileSync } from 'fs';
@@ -13,6 +13,7 @@ import {
   describeUrl,
   EXPORT_TABLE_ORDER,
   fetchAllRows,
+  fetchAllRowsSupabaseRest,
   loadEnv,
   type DatabaseBackup,
 } from './lib/db-backup';
@@ -23,9 +24,17 @@ function timestamp(): string {
 
 async function main() {
   loadEnv();
+  const fromSupabase = process.argv.includes('--from-supabase');
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+  if (fromSupabase && (!supabaseUrl || !serviceKey)) {
+    throw new Error('Set NEXT_PUBLIC_SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY in .env.local');
+  }
   const sourceUrl = process.env.SOURCE_DATABASE_URL;
-  const client = sourceUrl ? connectPostgres(sourceUrl) : connectNeon();
-  const url = describeUrl(sourceUrl ?? process.env.DATABASE_URL!);
+  const client = fromSupabase ? null : sourceUrl ? connectPostgres(sourceUrl) : connectNeon();
+  const url = describeUrl(
+    fromSupabase ? supabaseUrl! : (sourceUrl ?? process.env.DATABASE_URL!),
+  );
   const backup: DatabaseBackup = {
     version: 1,
     exportedAt: new Date().toISOString(),
@@ -38,12 +47,14 @@ async function main() {
 
   for (const table of EXPORT_TABLE_ORDER) {
     process.stdout.write(`  ${table}... `);
-    const rows = await fetchAllRows(client, table);
+    const rows = client
+      ? await fetchAllRows(client, table)
+      : await fetchAllRowsSupabaseRest(supabaseUrl!, serviceKey!, table);
     backup.tables[table] = rows;
     backup.counts[table] = rows.length;
     console.log(rows.length, 'rows');
   }
-  await client.end();
+  await client?.end();
 
   const dir = resolve(process.cwd(), 'backups');
   mkdirSync(dir, { recursive: true });
