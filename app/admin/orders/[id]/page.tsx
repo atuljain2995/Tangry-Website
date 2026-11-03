@@ -1,6 +1,7 @@
 import { notFound } from 'next/navigation';
+import { eq } from 'drizzle-orm';
 import { AdminLink } from '@/components/admin/AdminLink';
-import { supabaseAdmin } from '@/lib/db/supabase';
+import { getDb, schema } from '@/lib/db';
 import { AdminStatusBadge } from '@/components/admin/AdminStatusBadge';
 import { AdminOrderActions } from './AdminOrderActions';
 
@@ -47,13 +48,17 @@ export default async function AdminOrderDetailPage({
 }) {
   const { id } = await params;
 
-  const { data: order, error } = await supabaseAdmin
-    .from('orders')
-    .select('*')
-    .eq('id', id)
-    .single();
+  const { orders } = schema;
+  const order = await getDb()
+    .select()
+    .from(orders)
+    .where(eq(orders.id, id))
+    .limit(1)
+    .then(([row]) => row)
+    // Non-UUID ids make Postgres throw; treat them as not found.
+    .catch(() => undefined);
 
-  if (error || !order) {
+  if (!order) {
     notFound();
   }
 

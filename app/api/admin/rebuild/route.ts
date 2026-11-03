@@ -1,6 +1,9 @@
 import { NextResponse } from 'next/server';
+import { desc, eq } from 'drizzle-orm';
 import { requireAdmin } from '@/lib/auth/user';
-import { supabaseAdmin } from '@/lib/db/supabase';
+import { getDb, schema } from '@/lib/db';
+
+const { adminRebuildRequests } = schema;
 
 function trimMessage(message: string, max = 220): string {
   return message.length > max ? `${message.slice(0, max)}...` : message;
@@ -21,11 +24,7 @@ async function logRebuildRequest(input: {
   ipAddress?: string | null;
 }) {
   try {
-    const db = supabaseAdmin as unknown as {
-      from: (table: string) => { insert: (row: Record<string, unknown>) => Promise<unknown> };
-    };
-
-    await db.from('admin_rebuild_requests').insert({
+    await getDb().insert(adminRebuildRequests).values({
       admin_user_id: input.adminUserId,
       admin_email: input.adminEmail,
       status: input.status,
@@ -58,23 +57,11 @@ export async function POST(request: Request) {
   const cooldownSeconds = getCooldownSeconds();
 
   try {
-    const db = supabaseAdmin as unknown as {
-      from: (table: string) => {
-        select: (columns: string) => {
-          eq: (column: string, value: string) => {
-            order: (column: string, opts: { ascending: boolean }) => {
-              limit: (count: number) => Promise<{ data: Array<{ requested_at: string }> | null }>;
-            };
-          };
-        };
-      };
-    };
-
-    const { data: recentRows } = await db
-      .from('admin_rebuild_requests')
-      .select('requested_at')
-      .eq('admin_email', profile.email)
-      .order('requested_at', { ascending: false })
+    const recentRows = await getDb()
+      .select({ requested_at: adminRebuildRequests.requested_at })
+      .from(adminRebuildRequests)
+      .where(eq(adminRebuildRequests.admin_email, profile.email))
+      .orderBy(desc(adminRebuildRequests.requested_at))
       .limit(1);
 
     const lastRequest = recentRows?.[0]?.requested_at;

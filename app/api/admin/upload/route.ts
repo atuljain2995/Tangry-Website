@@ -25,7 +25,7 @@ function getExtension(mime: string, filename: string): string {
  * POST /api/admin/upload
  * FormData field: "file" (image file)
  * Returns { url: "https://... or /images/xxx.jpg" } on success. Admin only.
- * Uses R2 (if configured) or Supabase Storage; otherwise falls back to public/images (local dev only).
+ * Uses R2 (if configured); otherwise falls back to public/images (local dev only).
  */
 export async function POST(request: NextRequest) {
   const profile = await requireAdmin();

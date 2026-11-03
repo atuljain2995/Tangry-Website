@@ -5,11 +5,11 @@ export const COD_EMAIL_COOKIE = 'tangry_cod_email';
 const COOKIE_MAX_AGE_SEC = 30 * 60; // 30 minutes
 
 function getSigningSecret(): string {
-  const secret =
-    process.env.COD_OTP_SECRET?.trim() ||
-    process.env.SUPABASE_SERVICE_ROLE_KEY?.trim() ||
-    'tangry-cod-otp-dev-only';
-  return secret;
+  const secret = process.env.COD_OTP_SECRET?.trim();
+  if (secret) return secret;
+  // A known fallback would let anyone forge OTP hashes and verified-email cookies.
+  if (process.env.NODE_ENV === 'production') throw new Error('COD_OTP_SECRET is not set');
+  return 'tangry-cod-otp-dev-only';
 }
 
 export function generateOtpCode(): string {

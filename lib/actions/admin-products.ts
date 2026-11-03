@@ -1,9 +1,11 @@
 'use server';
 
 import { revalidatePath } from 'next/cache';
-import { supabaseAdmin } from '@/lib/db/supabase';
+import { eq, inArray } from 'drizzle-orm';
+import { getDb, schema } from '@/lib/db';
 import { requireAdmin } from '@/lib/auth/user';
-import type { Database } from '@/lib/db/database.types';
+
+const { products, productCategories, productImages, productVariants } = schema;
 
 function slugify(name: string): string {
   return name
@@ -49,19 +51,15 @@ async function revalidateProductRelatedPaths(
   let resolvedCategoryId = categoryId;
 
   if (productId && (!resolvedSlug || resolvedCategoryId === undefined)) {
-    const { data: productRow } = await supabaseAdmin
-      .from('products')
-      .select('slug, category_id')
-      .eq('id', productId)
-      .single();
+    const [productRow] = await getDb()
+      .select({ slug: products.slug, category_id: products.category_id })
+      .from(products)
+      .where(eq(products.id, productId))
+      .limit(1);
 
-    if (productRow && typeof productRow === 'object') {
-      if (!resolvedSlug && 'slug' in productRow) {
-        resolvedSlug = (productRow as { slug: string }).slug;
-      }
-      if (resolvedCategoryId === undefined && 'category_id' in productRow) {
-        resolvedCategoryId = (productRow as { category_id: string | null }).category_id;
-      }
+    if (productRow) {
+      resolvedSlug ||= productRow.slug;
+      if (resolvedCategoryId === undefined) resolvedCategoryId = productRow.category_id;
     }
   }
 
@@ -70,14 +68,14 @@ async function revalidateProductRelatedPaths(
   }
 
   if (resolvedCategoryId) {
-    const { data: categoryRow } = await supabaseAdmin
-      .from('product_categories')
-      .select('slug')
-      .eq('id', resolvedCategoryId)
-      .maybeSingle();
+    const [categoryRow] = await getDb()
+      .select({ slug: productCategories.slug })
+      .from(productCategories)
+      .where(eq(productCategories.id, resolvedCategoryId))
+      .limit(1);
 
-    if (categoryRow && typeof categoryRow === 'object' && 'slug' in categoryRow) {
-      revalidatePath(`/categories/${(categoryRow as { slug: string }).slug}`);
+    if (categoryRow) {
+      revalidatePath(`/categories/${categoryRow.slug}`);
     }
   }
 }
@@ -89,7 +87,7 @@ export async function updateProduct(
   // Server actions are public endpoints; the admin layout guard does not cover them.
   if (!(await requireAdmin())) return { success: false, error: 'Not authorised' };
   try {
-    const payload: Database['public']['Tables']['products']['Update'] = {
+    const payload: Partial<typeof products.$inferInsert> = {
       updated_at: new Date().toISOString(),
     };
     if (data.name !== undefined) payload.name = data.name;
@@ -103,14 +101,11 @@ export async function updateProduct(
     if (data.is_best_seller !== undefined) payload.is_best_seller = data.is_best_seller;
     if (data.is_hero_product !== undefined) payload.is_hero_product = data.is_hero_product;
     if (data.discount_enabled !== undefined) payload.discount_enabled = data.discount_enabled;
-    const { error } = await supabaseAdmin
-      .from('products')
-      .update(payload as never)
-      .eq('id', productId);
-
-    if (error) {
+    try {
+      await getDb().update(products).set(payload).where(eq(products.id, productId));
+    } catch (error) {
       console.error('Admin updateProduct error:', error);
-      return { success: false, error: (error as { message?: string })?.message ?? 'Update failed' };
+      return { success: false, error: 'Update failed' };
     }
 
     await revalidateProductRelatedPaths(productId, undefined, data.category_id);
@@ -130,37 +125,28 @@ export async function updateProductImages(
     const existingIds = images.filter((img) => img.id).map((img) => img.id as string);
     const toInsert = images.filter((img) => !img.id && img.url.trim() !== '');
 
-    // product_images is not in Database type; use typed client for table access
-    const db = supabaseAdmin as unknown as {
-      from: (t: string) => {
-        select: (c: string) => { eq: (k: string, v: string) => Promise<{ data: unknown }> };
-        delete: () => { in: (k: string, v: string[]) => Promise<unknown> };
-        update: (u: object) => { eq: (k: string, v: string) => Promise<{ error: unknown }> };
-        insert: (u: object | object[]) => Promise<{ error: unknown }>;
-      };
-    };
-
-    const { data: currentRows } = await db
-      .from('product_images')
-      .select('id')
-      .eq('product_id', productId);
-    const currentIds = (currentRows as { id: string }[] | null)?.map((r) => r.id) ?? [];
+    const db = getDb();
+    const currentRows = await db
+      .select({ id: productImages.id })
+      .from(productImages)
+      .where(eq(productImages.product_id, productId));
+    const currentIds = currentRows.map((r) => r.id);
     const toDelete = currentIds.filter((id) => !existingIds.includes(id));
     if (toDelete.length > 0) {
-      await db.from('product_images').delete().in('id', toDelete);
+      await db.delete(productImages).where(inArray(productImages.id, toDelete));
     }
 
     for (let i = 0; i < images.length; i++) {
       const img = images[i];
       if (img.id && img.url.trim() !== '') {
         await db
-          .from('product_images')
-          .update({
+          .update(productImages)
+          .set({
             url: img.url.trim(),
             alt_text: img.alt_text ?? null,
             display_order: img.display_order ?? i,
           })
-          .eq('id', img.id);
+          .where(eq(productImages.id, img.id));
       }
     }
 
@@ -178,7 +164,7 @@ export async function updateProductImages(
           };
         })
         .filter((p): p is NonNullable<typeof p> => p !== null);
-      await db.from('product_images').insert(insertPayloads);
+      await db.insert(productImages).values(insertPayloads);
     }
 
     await revalidateProductRelatedPaths(productId);
@@ -219,12 +205,13 @@ export async function createProduct(
     const slug = (input.slug?.trim() || slugify(input.name)).toLowerCase();
     if (!slug) return { success: false, error: 'Slug is required' };
 
-    const { data: existing } = await supabaseAdmin
-      .from('products')
-      .select('id')
-      .eq('slug', slug)
-      .maybeSingle();
-    if (existing) return { success: false, error: 'A product with this slug already exists' };
+    const db = getDb();
+    const existing = await db
+      .select({ id: products.id })
+      .from(products)
+      .where(eq(products.slug, slug))
+      .limit(1);
+    if (existing.length > 0) return { success: false, error: 'A product with this slug already exists' };
 
     const metaTitle = input.meta_title?.trim() || input.name;
     const metaDesc = input.meta_description?.trim() || input.description?.trim() || '';
@@ -252,39 +239,20 @@ export async function createProduct(
       min_order_quantity: 1,
       max_order_quantity: null,
     };
-    const { data: product, error: productError } = await (
-      supabaseAdmin as unknown as {
-        from: (t: string) => {
-          insert: (v: unknown) => {
-            select: (c: string) => { single: () => Promise<{ data: unknown; error: unknown }> };
-          };
-        };
-      }
-    )
-      .from('products')
-      .insert(productPayload)
-      .select('id, slug')
-      .single();
-
-    if (productError || !product) {
+    let productId: string;
+    let productSlug: string;
+    try {
+      [{ id: productId, slug: productSlug }] = await db
+        .insert(products)
+        .values(productPayload)
+        .returning({ id: products.id, slug: products.slug });
+    } catch (productError) {
       console.error('createProduct error:', productError);
-      return {
-        success: false,
-        error: (productError as { message?: string })?.message ?? 'Failed to create product',
-      };
+      return { success: false, error: 'Failed to create product' };
     }
 
-    const productId = (product as { id: string }).id;
-    const productSlug = (product as { slug: string }).slug;
-
-    const db = supabaseAdmin as unknown as {
-      from: (t: string) => {
-        insert: (u: object | object[]) => Promise<{ error: unknown }>;
-      };
-    };
-
     const imageUrl = input.image_url?.trim() || '/products/placeholder.png';
-    await db.from('product_images').insert({
+    await db.insert(productImages).values({
       product_id: productId,
       url: imageUrl,
       alt_text: input.name.trim(),
@@ -307,15 +275,9 @@ export async function createProduct(
       weight: vWeight,
       is_available: true,
     };
-    const { error: variantError } = await (
-      supabaseAdmin as unknown as {
-        from: (t: string) => { insert: (v: unknown) => Promise<{ error: unknown }> };
-      }
-    )
-      .from('product_variants')
-      .insert(variantPayload);
-
-    if (variantError) {
+    try {
+      await db.insert(productVariants).values(variantPayload);
+    } catch (variantError) {
       console.error('createProduct variant error:', variantError);
       // Product and image already created; admin can add variant from edit page
     }
@@ -345,15 +307,18 @@ export async function upsertProductVariants(
 ): Promise<{ success: true } | { success: false; error: string }> {
   if (!(await requireAdmin())) return { success: false, error: 'Not authorised' };
   try {
-    const vTable = supabaseAdmin.from('product_variants');
+    const db = getDb();
 
-    const { data: existingRows } = await vTable.select('id').eq('product_id', productId);
-    const existingIds = (existingRows as { id: string }[] | null)?.map((r) => r.id) ?? [];
+    const existingRows = await db
+      .select({ id: productVariants.id })
+      .from(productVariants)
+      .where(eq(productVariants.product_id, productId));
+    const existingIds = existingRows.map((r) => r.id);
     const inputIds = variants.filter((v) => v.id).map((v) => v.id as string);
     const toDelete = existingIds.filter((id) => !inputIds.includes(id));
 
-    for (const id of toDelete) {
-      await vTable.delete().eq('id', id);
+    if (toDelete.length > 0) {
+      await db.delete(productVariants).where(inArray(productVariants.id, toDelete));
     }
 
     for (const v of variants) {
@@ -367,11 +332,9 @@ export async function upsertProductVariants(
         is_available: !!v.is_available,
       };
       if (v.id) {
-        const { error } = await vTable.update(payload as never).eq('id', v.id);
-        if (error) throw error;
+        await db.update(productVariants).set(payload).where(eq(productVariants.id, v.id));
       } else {
-        const { error } = await vTable.insert({ product_id: productId, ...payload } as never);
-        if (error) throw error;
+        await db.insert(productVariants).values({ product_id: productId, ...payload });
       }
     }
 

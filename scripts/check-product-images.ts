@@ -1,23 +1,10 @@
 // Check products with missing images (would fallback to logo-512.png)
 // Run: npx tsx scripts/check-product-images.ts
 
-import { config } from 'dotenv';
-import { resolve } from 'path';
+import { connectNeon, loadEnv } from './lib/db-backup';
 
-// Load .env.local before importing anything else
-config({ path: resolve(process.cwd(), '.env.local') });
-
-import { createClient } from '@supabase/supabase-js';
-
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
-
-if (!supabaseUrl || !supabaseAnonKey) {
-  console.error('❌ Missing Supabase environment variables!');
-  process.exit(1);
-}
-
-const supabase = createClient(supabaseUrl, supabaseAnonKey);
+loadEnv();
+const db = connectNeon();
 
 type ProductRow = {
   id: string;
@@ -46,30 +33,16 @@ async function checkProductImages() {
   console.log('Products without real images will fallback to logo-512.png\n');
 
   try {
-    // Get all products
-    const { data: products, error: productsError } = await supabase
-      .from('products')
-      .select('id, name, slug, images')
-      .order('name');
-
-    if (productsError) {
-      console.error('❌ Failed to fetch products:', productsError.message);
-      process.exit(1);
-    }
-
-    // Get all product images from product_images table
-    const { data: productImages, error: imagesError } = await supabase
-      .from('product_images')
-      .select('product_id, url, alt_text');
-
-    if (imagesError) {
-      console.error('❌ Failed to fetch product_images:', imagesError.message);
-      process.exit(1);
-    }
+    const { rows: products } = await db.query(
+      'SELECT id, name, slug, images FROM products ORDER BY name',
+    );
+    const { rows: productImages } = await db.query(
+      'SELECT product_id, url, alt_text FROM product_images',
+    );
 
     // Group images by product_id
     const imagesByProductId = new Map<string, ProductImageRow[]>();
-    (productImages as ProductImageRow[] | null)?.forEach((img) => {
+    (productImages as unknown as ProductImageRow[]).forEach((img) => {
       const existing = imagesByProductId.get(img.product_id) || [];
       existing.push(img);
       imagesByProductId.set(img.product_id, existing);
@@ -83,7 +56,7 @@ async function checkProductImages() {
     const productsWithImages: ProductSummary[] = [];
     const productsWithLogoFallback: ProductSummary[] = [];
 
-    (products as ProductRow[] | null)?.forEach((product) => {
+    (products as unknown as ProductRow[]).forEach((product) => {
       const productImagesCount = imagesByProductId.get(product.id)?.length || 0;
       const legacyImages = product.images;
       const legacyImagesCount = legacyImages?.length || 0;
@@ -179,6 +152,8 @@ async function checkProductImages() {
   } catch (err) {
     console.error('❌ Error:', err);
     process.exit(1);
+  } finally {
+    await db.end();
   }
 }
 

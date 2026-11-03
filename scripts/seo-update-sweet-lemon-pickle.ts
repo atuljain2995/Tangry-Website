@@ -4,21 +4,9 @@
  * more on-page keyword depth, not a net-new page).
  * Run: npx tsx scripts/seo-update-sweet-lemon-pickle.ts
  */
-import { config } from 'dotenv';
-import { resolve } from 'path';
-import { createClient } from '@supabase/supabase-js';
+import { connectNeon, loadEnv } from './lib/db-backup';
 
-config({ path: resolve(process.cwd(), '.env.local') });
-
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
-
-if (!supabaseUrl || !serviceKey) {
-  console.error('Missing NEXT_PUBLIC_SUPABASE_URL or SUPABASE_SERVICE_ROLE_KEY in .env.local');
-  process.exit(1);
-}
-
-const supabase = createClient(supabaseUrl, serviceKey);
+loadEnv();
 
 const description = `Tangry Sweet Lemon Pickle offers the perfect sweet-tangy balance that pairs beautifully with everyday Indian meals. This Jaipur-made Rajasthani-style sweet lemon pickle adds gentle citrus brightness and depth to simple food, making each bite more enjoyable.
 
@@ -31,13 +19,14 @@ Why Tangry: produced in Jaipur with quality-led batch preparation, FSSAI license
 Serving suggestion: pair with methi thepla, plain yogurt, and roasted papad, or enjoy with soft phulka and dal for a comforting homestyle plate. It also travels well with curd rice and other travel meals.`;
 
 async function main() {
-  const { data, error } = await supabase
-    .from('products')
-    .update({
-      meta_title: 'Sweet Lemon Pickle Online — Homestyle Rajasthani Achar | Tangry Spices',
-      meta_description:
-        'Buy sweet lemon pickle online from Tangry Spices, Jaipur. Homestyle Rajasthani sweet-tangy lemon achar. FSSAI licensed. Free shipping on orders ₹500+.',
-      keywords: [
+  const db = connectNeon();
+  const { rows } = await db.query(
+    `UPDATE products SET meta_title = $1, meta_description = $2, keywords = $3, description = $4
+     WHERE slug = 'sweet-lemon-pickle' RETURNING slug, meta_title, meta_description, keywords`,
+    [
+      'Sweet Lemon Pickle Online — Homestyle Rajasthani Achar | Tangry Spices',
+      'Buy sweet lemon pickle online from Tangry Spices, Jaipur. Homestyle Rajasthani sweet-tangy lemon achar. FSSAI licensed. Free shipping on orders ₹500+.',
+      [
         'sweet lemon pickle',
         'sweet lemon pickle online',
         'rajasthani lemon pickle',
@@ -45,16 +34,10 @@ async function main() {
         'homemade lemon pickle jaipur',
       ],
       description,
-    })
-    .eq('slug', 'sweet-lemon-pickle')
-    .select('slug, meta_title, meta_description, keywords');
-
-  if (error) {
-    console.error(error);
-    process.exit(1);
-  }
-
-  console.log(JSON.stringify(data, null, 2));
+    ],
+  );
+  await db.end();
+  console.log(JSON.stringify(rows, null, 2));
 }
 
 main();

@@ -52,7 +52,7 @@ export function ProductCategorySelect({
         <code className="rounded bg-gray-100 px-1 font-mono text-[11px] text-gray-800">
           product_categories
         </code>{' '}
-        table. Add or edit rows in Supabase (or run SQL migrations) to update the list.
+        table. Add or edit rows in the database (or run SQL migrations) to update the list.
       </p>
     </div>
   );

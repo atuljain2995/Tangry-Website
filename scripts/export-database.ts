@@ -1,12 +1,16 @@
 /**
- * Export all app data from the current Supabase project to backups/.
+ * Export all app data to backups/.
  * Run: npm run export-db
+ * Reads from SOURCE_DATABASE_URL if set (e.g. the old Supabase Postgres connection string),
+ * otherwise from DATABASE_URL (Neon).
  */
 
 import { mkdirSync, writeFileSync } from 'fs';
 import { resolve } from 'path';
 import {
-  createServiceClient,
+  connectNeon,
+  connectPostgres,
+  describeUrl,
   EXPORT_TABLE_ORDER,
   fetchAllRows,
   loadEnv,
@@ -18,8 +22,10 @@ function timestamp(): string {
 }
 
 async function main() {
-  const { url } = loadEnv();
-  const client = createServiceClient();
+  loadEnv();
+  const sourceUrl = process.env.SOURCE_DATABASE_URL;
+  const client = sourceUrl ? connectPostgres(sourceUrl) : connectNeon();
+  const url = describeUrl(sourceUrl ?? process.env.DATABASE_URL!);
   const backup: DatabaseBackup = {
     version: 1,
     exportedAt: new Date().toISOString(),
@@ -37,6 +43,7 @@ async function main() {
     backup.counts[table] = rows.length;
     console.log(rows.length, 'rows');
   }
+  await client.end();
 
   const dir = resolve(process.cwd(), 'backups');
   mkdirSync(dir, { recursive: true });

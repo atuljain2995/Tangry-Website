@@ -1,6 +1,7 @@
 import crypto from 'crypto';
 import { cookies } from 'next/headers';
-import { supabaseAdmin } from '@/lib/db/supabase';
+import { eq } from 'drizzle-orm';
+import { getDb, schema } from '@/lib/db';
 import type { UserProfile } from './user';
 
 export const COOKIE_NAME = 'tangry_sid';
@@ -26,7 +27,7 @@ export async function createSessionToken(userId: string): Promise<string> {
   const expiresAt = new Date();
   expiresAt.setDate(expiresAt.getDate() + SESSION_DAYS);
 
-  await db.from('sessions').insert({
+  await getDb().insert(schema.sessions).values({
     user_id: userId,
     token,
     expires_at: expiresAt.toISOString(),
@@ -34,16 +35,6 @@ export async function createSessionToken(userId: string): Promise<string> {
 
   return token;
 }
-
-type SessionsTable = {
-  from: (t: string) => {
-    insert: (r: object) => Promise<{ error: unknown }>;
-    select: (c: string) => { eq: (k: string, v: string) => Promise<{ data: unknown }> };
-    delete: () => { eq: (k: string, v: string) => Promise<unknown> };
-  };
-};
-
-const db = supabaseAdmin as unknown as SessionsTable;
 
 /**
  * Create a session for the user and set the session cookie (for server actions).
@@ -71,35 +62,23 @@ export async function getSessionUser(): Promise<UserProfile | null> {
   const token = await getSessionToken();
   if (!token) return null;
 
-  const { data: sessionData } = await db
-    .from('sessions')
-    .select('user_id, expires_at')
-    .eq('token', token);
-  const session = Array.isArray(sessionData) ? sessionData[0] : sessionData;
-  if (!session) return null;
+  const { sessions, users } = schema;
+  const [row] = await getDb()
+    .select({
+      expires_at: sessions.expires_at,
+      id: users.id,
+      email: users.email,
+      name: users.name,
+      phone: users.phone,
+      avatar_url: users.avatar_url,
+      role: users.role,
+    })
+    .from(sessions)
+    .innerJoin(users, eq(users.id, sessions.user_id))
+    .where(eq(sessions.token, token))
+    .limit(1);
 
-  const expiresAt = (session as { expires_at: string }).expires_at;
-  if (new Date(expiresAt) <= new Date()) return null;
-
-  const userId = (session as { user_id: string }).user_id;
-
-  const { data: userRow } = await supabaseAdmin
-    .from('users')
-    .select('id, email, name, phone, avatar_url, role')
-    .eq('id', userId)
-    .single();
-
-  if (!userRow) return null;
-
-  const row = userRow as {
-    id: string;
-    email: string;
-    name: string | null;
-    phone: string | null;
-    avatar_url: string | null;
-    role: string;
-  };
-
+  if (!row || new Date(row.expires_at) <= new Date()) return null;
   return {
     id: row.id,
     email: row.email,
@@ -115,7 +94,7 @@ export async function getSessionUser(): Promise<UserProfile | null> {
  */
 export async function destroySession(token: string | null): Promise<void> {
   if (token) {
-    await db.from('sessions').delete().eq('token', token);
+    await getDb().delete(schema.sessions).where(eq(schema.sessions.token, token));
   }
   const cookieStore = await cookies();
   cookieStore.delete(COOKIE_NAME);

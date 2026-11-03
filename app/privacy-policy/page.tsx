@@ -164,7 +164,7 @@ export default function PrivacyPolicyPage() {
             <p>We share personal data only with service providers necessary to run the business:</p>
             <ul className="list-disc pl-5 space-y-2 mt-2">
               <li>
-                <strong>Supabase</strong> — database hosting for orders, accounts, and product
+                <strong>Neon</strong> — database hosting for orders, accounts, and product
                 data.
               </li>
               <li>

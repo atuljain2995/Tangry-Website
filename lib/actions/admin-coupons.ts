@@ -1,8 +1,16 @@
 'use server';
 
 import { revalidatePath } from 'next/cache';
-import { supabaseAdmin } from '@/lib/db/supabase';
+import { eq } from 'drizzle-orm';
+import { getDb, schema } from '@/lib/db';
 import { requireAdmin } from '@/lib/auth/user';
+
+const { coupons } = schema;
+
+function isUniqueViolation(error: unknown): boolean {
+  const e = error as { code?: string; cause?: { code?: string } };
+  return e?.code === '23505' || e?.cause?.code === '23505';
+}
 
 export type CouponInput = {
   code: string;
@@ -38,30 +46,17 @@ export async function createCoupon(
       valid_until: input.valid_until,
       is_active: input.is_active ?? true,
     };
-    const { data, error } = await (
-      supabaseAdmin as unknown as {
-        from: (t: string) => {
-          insert: (v: unknown) => {
-            select: (c: string) => { single: () => Promise<{ data: unknown; error: unknown }> };
-          };
-        };
-      }
-    )
-      .from('coupons')
-      .insert(payload)
-      .select('id')
-      .single();
-
-    if (error) {
-      if ((error as { code?: string }).code === '23505')
+    let id: string;
+    try {
+      [{ id }] = await getDb().insert(coupons).values(payload).returning({ id: coupons.id });
+    } catch (error) {
+      if (isUniqueViolation(error))
         return { success: false, error: 'A coupon with this code already exists' };
-      return {
-        success: false,
-        error: (error as { message?: string }).message ?? 'Failed to create coupon',
-      };
+      console.error('createCoupon error:', error);
+      return { success: false, error: 'Failed to create coupon' };
     }
     revalidatePath('/admin/discounts');
-    return { success: true, id: (data as { id: string }).id };
+    return { success: true, id };
   } catch (e) {
     return { success: false, error: e instanceof Error ? e.message : 'Unknown error' };
   }
@@ -73,7 +68,7 @@ export async function updateCoupon(
 ): Promise<{ success: true } | { success: false; error: string }> {
   if (!(await requireAdmin())) return { success: false, error: 'Not authorised' };
   try {
-    const payload: Record<string, unknown> = {};
+    const payload: Partial<typeof coupons.$inferInsert> = {};
     if (input.code !== undefined) payload.code = input.code.trim().toUpperCase();
     if (input.description !== undefined) payload.description = input.description.trim();
     if (input.discount_type !== undefined) payload.discount_type = input.discount_type;
@@ -85,18 +80,14 @@ export async function updateCoupon(
     if (input.valid_until !== undefined) payload.valid_until = input.valid_until;
     if (input.is_active !== undefined) payload.is_active = input.is_active;
 
-    const { error } = await (
-      supabaseAdmin as unknown as {
-        from: (t: string) => {
-          update: (v: unknown) => { eq: (k: string, v: string) => Promise<{ error: unknown }> };
-        };
-      }
-    )
-      .from('coupons')
-      .update(payload)
-      .eq('id', id);
-    if (error)
-      return { success: false, error: (error as { message?: string }).message ?? 'Update failed' };
+    try {
+      await getDb().update(coupons).set(payload).where(eq(coupons.id, id));
+    } catch (error) {
+      if (isUniqueViolation(error))
+        return { success: false, error: 'A coupon with this code already exists' };
+      console.error('updateCoupon error:', error);
+      return { success: false, error: 'Update failed' };
+    }
     revalidatePath('/admin/discounts');
     return { success: true };
   } catch (e) {

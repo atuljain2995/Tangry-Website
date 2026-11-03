@@ -1,6 +1,19 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { and, desc, eq, inArray, sql } from 'drizzle-orm';
 import { getSessionUser } from '@/lib/auth/session';
-import { supabaseAdmin } from '@/lib/db/supabase';
+import { getDb, schema } from '@/lib/db';
+
+const { reviews, products, orders } = schema;
+
+const publicReviewColumns = {
+  id: reviews.id,
+  user_name: reviews.user_name,
+  rating: reviews.rating,
+  title: reviews.title,
+  comment: reviews.comment,
+  is_verified_purchase: reviews.is_verified_purchase,
+  created_at: reviews.created_at,
+};
 
 // ─── GET /api/reviews?productId=xxx ──────────────────────────────────────────
 // Public — fetches all reviews for a product, newest first.
@@ -10,18 +23,17 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ error: 'productId is required' }, { status: 400 });
   }
 
-  const { data, error } = await supabaseAdmin
-    .from('reviews')
-    .select('id, user_name, rating, title, comment, is_verified_purchase, created_at')
-    .eq('product_id', productId)
-    .order('created_at', { ascending: false });
-
-  if (error) {
+  try {
+    const rows = await getDb()
+      .select(publicReviewColumns)
+      .from(reviews)
+      .where(eq(reviews.product_id, productId))
+      .orderBy(desc(reviews.created_at));
+    return NextResponse.json(rows);
+  } catch (error) {
     console.error('GET /api/reviews:', error);
     return NextResponse.json({ error: 'Failed to fetch reviews' }, { status: 500 });
   }
-
-  return NextResponse.json(data ?? []);
 }
 
 // ─── POST /api/reviews ────────────────────────────────────────────────────────
@@ -70,25 +82,28 @@ export async function POST(req: NextRequest) {
   }
 
   // ── Verify product exists ─────────────────────────────────────────────────
-  const { data: product, error: productError } = await supabaseAdmin
-    .from('products')
-    .select('id')
-    .eq('id', productId.trim())
-    .single();
+  const db = getDb();
+  const pid = productId.trim();
+  const product = await db
+    .select({ id: products.id })
+    .from(products)
+    .where(eq(products.id, pid))
+    .limit(1)
+    .then(([row]) => row)
+    .catch(() => undefined);
 
-  if (productError || !product) {
+  if (!product) {
     return NextResponse.json({ error: 'Product not found' }, { status: 404 });
   }
 
   // ── Prevent duplicate reviews from the same user ──────────────────────────
-  const { data: existing } = await supabaseAdmin
-    .from('reviews')
-    .select('id')
-    .eq('product_id', productId.trim())
-    .eq('user_id', user.id)
-    .maybeSingle();
+  const existing = await db
+    .select({ id: reviews.id })
+    .from(reviews)
+    .where(and(eq(reviews.product_id, pid), eq(reviews.user_id, user.id)))
+    .limit(1);
 
-  if (existing) {
+  if (existing.length > 0) {
     return NextResponse.json({ error: 'You have already reviewed this product' }, { status: 409 });
   }
 
@@ -97,36 +112,40 @@ export async function POST(req: NextRequest) {
   // order for this user contains this productId.
   let isVerifiedPurchase = false;
   try {
-    const { data: orders } = await supabaseAdmin
-      .from('orders')
-      .select('id')
-      .eq('user_id', user.id)
-      .in('order_status', ['delivered', 'completed'])
-      .filter('items', 'cs', JSON.stringify([{ productId: productId.trim() }]))
+    const matching = await db
+      .select({ id: orders.id })
+      .from(orders)
+      .where(
+        and(
+          eq(orders.user_id, user.id),
+          inArray(orders.order_status, ['delivered', 'completed']),
+          sql`${orders.items} @> ${JSON.stringify([{ productId: pid }])}::jsonb`,
+        ),
+      )
       .limit(1);
 
-    isVerifiedPurchase = Array.isArray(orders) && orders.length > 0;
+    isVerifiedPurchase = matching.length > 0;
   } catch {
     // Non-fatal — proceed without verified flag
     isVerifiedPurchase = false;
   }
 
   // ── Insert review ─────────────────────────────────────────────────────────
-  const { data: inserted, error: insertError } = await supabaseAdmin
-    .from('reviews')
-    .insert({
-      product_id: productId.trim(),
-      user_id: user.id,
-      user_name: user.name || 'Anonymous',
-      rating: ratingNum,
-      title: title.trim(),
-      comment: comment.trim(),
-      is_verified_purchase: isVerifiedPurchase,
-    } as never)
-    .select('id, user_name, rating, title, comment, is_verified_purchase, created_at')
-    .single();
-
-  if (insertError) {
+  let inserted;
+  try {
+    [inserted] = await db
+      .insert(reviews)
+      .values({
+        product_id: pid,
+        user_id: user.id,
+        user_name: user.name || 'Anonymous',
+        rating: ratingNum,
+        title: title.trim(),
+        comment: comment.trim(),
+        is_verified_purchase: isVerifiedPurchase,
+      })
+      .returning(publicReviewColumns);
+  } catch (insertError) {
     console.error('POST /api/reviews insert:', insertError);
     return NextResponse.json({ error: 'Failed to save review' }, { status: 500 });
   }

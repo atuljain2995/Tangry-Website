@@ -1,6 +1,6 @@
 'use server';
 
-import { supabaseAdmin } from '@/lib/db/supabase';
+import { getDb, schema } from '@/lib/db';
 
 export type SubmitContactPayload = {
   name: string;
@@ -21,17 +21,15 @@ export async function submitContact(payload: SubmitContactPayload): Promise<Subm
     return { success: false, error: 'Enter a valid email address' };
   if (!message?.trim()) return { success: false, error: 'Message is required' };
 
-  // contact_inquiries table not in generated Database types
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const { error } = await (supabaseAdmin as any).from('contact_inquiries').insert({
-    name: name.trim(),
-    email: email.trim(),
-    phone: payload.phone?.trim() || null,
-    subject: payload.subject?.trim() || null,
-    message: message.trim(),
-  });
-
-  if (error) {
+  try {
+    await getDb().insert(schema.contactInquiries).values({
+      name: name.trim(),
+      email: email.trim(),
+      phone: payload.phone?.trim() || null,
+      subject: payload.subject?.trim() || null,
+      message: message.trim(),
+    });
+  } catch (error) {
     console.error('Contact insert error:', error);
     return { success: false, error: 'Failed to send message. Please try again.' };
   }

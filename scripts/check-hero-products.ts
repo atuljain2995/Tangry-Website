@@ -1,22 +1,13 @@
-import { createClient } from '@supabase/supabase-js';
-import * as dotenv from 'dotenv';
-dotenv.config({ path: '.env.local' });
+import { connectNeon, loadEnv } from './lib/db-backup';
 
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-);
+loadEnv();
 
 async function main() {
-  const { data, error } = await supabase
-    .from('products')
-    .select('id, name, slug, category, is_hero_product, is_featured, is_best_seller')
-    .order('name');
-
-  if (error) {
-    console.error('Error:', error.message);
-    process.exit(1);
-  }
+  const db = connectNeon();
+  const { rows: data } = await db.query(
+    'SELECT id, name, slug, category, is_hero_product, is_featured, is_best_seller FROM products ORDER BY name',
+  );
+  await db.end();
 
   console.log('\nAll products (is_hero_product status):');
   console.log('-'.repeat(80));
@@ -25,12 +16,11 @@ async function main() {
     const feat = p.is_featured ? 'Featured' : '';
     const best = p.is_best_seller ? 'BestSeller' : '';
     console.log(
-      `${hero}  |  ${(p.name || '').padEnd(30)}  |  ${(p.category || '').padEnd(12)}  |  ${feat} ${best}`,
+      `${hero}  |  ${String(p.name || '').padEnd(30)}  |  ${String(p.category || '').padEnd(12)}  |  ${feat} ${best}`,
     );
   }
   console.log('-'.repeat(80));
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const heroCount = data.filter((p: any) => p.is_hero_product).length;
+  const heroCount = data.filter((p) => p.is_hero_product).length;
   console.log(`\nTotal: ${data.length} products, ${heroCount} marked as hero`);
 }
 

@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { supabaseAdmin } from '@/lib/db/supabase';
+import { getDb, schema } from '@/lib/db';
 
 const ALLOWED_METRICS = new Set(['LCP', 'INP', 'CLS', 'FCP', 'TTFB']);
 const ALLOWED_RATINGS = new Set(['good', 'needs-improvement', 'poor']);
@@ -65,18 +65,18 @@ export async function POST(req: NextRequest) {
       : null;
 
   // ── Insert ──────────────────────────────────────────────────────────────────
-  const { error } = await supabaseAdmin.from('cwv_readings').insert({
-    url: cleanUrl,
-    metric_name: name,
-    value: numValue,
-    rating,
-    metric_id: metricId,
-    delta: numDelta,
-    navigation_type: navType,
-  } as never);
-
-  if (error) {
-    // Log but return 200 — a beacon failure should never surface as an error to the browser.
+  try {
+    await getDb().insert(schema.cwvReadings).values({
+      url: cleanUrl,
+      metric_name: name,
+      value: numValue,
+      rating,
+      metric_id: metricId,
+      delta: numDelta,
+      navigation_type: navType,
+    });
+  } catch (error) {
+    // Log but return 204 — a beacon failure should never surface as an error to the browser.
     console.error('cwv_readings insert:', error);
   }
 
