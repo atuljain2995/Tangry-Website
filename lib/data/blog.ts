@@ -7,6 +7,8 @@ export type BlogSection = {
 export type BlogPost = {
   slug: string;
   title: string;
+  /** Overrides title in the <title> tag only; the on-page H1 keeps `title`. Keep under ~60 chars. */
+  seoTitle?: string;
   excerpt: string;
   /** Overrides excerpt in meta description when set (150–160 chars ideal). */
   seoDescription?: string;
@@ -112,10 +114,11 @@ export const blogPosts: BlogPost[] = [
   {
     slug: 'difference-kashmiri-chilli',
     title: 'Kashmiri Chilli vs Red Chilli — Colour, Heat & When to Use Which',
+    seoTitle: 'Kashmiri Chilli vs Red Chilli Powder: Heat, Colour & Swaps',
     excerpt:
       'Kashmiri vs regular red chilli — color, heat, and when to use each in gravies, tandoori, pav bhaji, and pickles.',
     seoDescription:
-      'Kashmiri chilli = deep red colour, mild heat. Regular red chilli = sharp spice. Compare both for gravies, tandoori, pav bhaji & pickles. Tangry guide.',
+      'Kashmiri chilli adds deep red colour with mild heat; regular red chilli is much hotter. When to use each in gravies, tandoori & pickles, and how to swap them.',
 
     author: 'Tangry Team',
     authorRole: 'Spice sourcing team',
@@ -490,10 +493,11 @@ export const blogPosts: BlogPost[] = [
   {
     slug: 'what-is-jeeravan-masala',
     title: 'What Is Jeeravan Masala (Jiraban)? The Marwari Spice Explained',
+    seoTitle: 'Jeeravan Masala (Jiraban): What It Is & How to Use It',
     excerpt:
       'Jeeravan masala explained: where it comes from, what it tastes like, and how to use this Marwari spice blend on poha, chaat, and everyday snacks.',
     seoDescription:
-      'Jeeravan (also called jiraban) is a Marwari finishing spice from Jodhpur — sprinkled over poha, chaat & snacks, not cooked in. Origins, flavour & uses.',
+      'Jeeravan (jiraban) is a Marwari finishing spice sprinkled over poha, chaat & snacks, not cooked in. What it tastes like, everyday uses & how to store it.',
 
     author: 'Tangry Team',
     authorRole: 'Spice sourcing team',

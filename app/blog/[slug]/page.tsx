@@ -28,12 +28,15 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     return { title: 'Article Not Found' };
   }
 
+  const metaTitle = post.seoTitle ?? post.title;
+
   return {
-    title: post.title,
+    // seoTitle is written to fit ~60 chars, so skip the layout's brand suffix
+    title: post.seoTitle ? { absolute: post.seoTitle } : post.title,
     description: post.seoDescription || post.excerpt,
     alternates: { canonical: `/blog/${post.slug}` },
     openGraph: {
-      title: post.title,
+      title: metaTitle,
       description: post.seoDescription || post.excerpt,
       url: `${SITE_URL}/blog/${post.slug}`,
       type: 'article',
@@ -44,7 +47,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     },
     twitter: {
       card: 'summary_large_image',
-      title: post.title,
+      title: metaTitle,
       description: post.seoDescription || post.excerpt,
       images: [`${SITE_URL}${post.image}`],
     },

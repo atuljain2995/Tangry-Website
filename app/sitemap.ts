@@ -94,15 +94,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.6,
   }));
 
-  const recipePages = [
-    { url: `${baseUrl}/recipes`, lastModified: buildTime, changeFrequency: 'weekly' as const, priority: 0.7 },
-    ...recipes.map((recipe) => ({
-      url: `${baseUrl}/recipes/${recipe.slug}`,
-      lastModified: new Date(recipe.updated),
-      changeFrequency: 'monthly' as const,
-      priority: 0.7,
-    })),
-  ];
+  const recipePages = recipes.map((recipe) => ({
+    url: `${baseUrl}/recipes/${recipe.slug}`,
+    lastModified: new Date(recipe.updated),
+    changeFrequency: 'monthly' as const,
+    priority: 0.7,
+  }));
 
   const [allProducts, categories] = await Promise.all([getAllProducts(), getProductCategories()]);
 

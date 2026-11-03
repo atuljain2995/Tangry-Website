@@ -35,13 +35,16 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const recipe = getRecipe(slug);
   if (!recipe) notFound();
 
+  const metaTitle = recipe.seoTitle ?? recipe.title;
+
   return {
-    title: recipe.title,
+    // seoTitle is written to fit ~60 chars, so skip the layout's brand suffix
+    title: recipe.seoTitle ? { absolute: recipe.seoTitle } : recipe.title,
     description: recipe.seoDescription,
     keywords: recipe.keywords,
     alternates: { canonical: `/recipes/${recipe.slug}` },
     openGraph: {
-      title: recipe.title,
+      title: metaTitle,
       description: recipe.seoDescription,
       url: `${SITE_URL}/recipes/${recipe.slug}`,
       type: 'article',
@@ -53,7 +56,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     },
     twitter: {
       card: 'summary_large_image',
-      title: recipe.title,
+      title: metaTitle,
       description: recipe.seoDescription,
       images: [`${SITE_URL}${recipe.image}`],
     },

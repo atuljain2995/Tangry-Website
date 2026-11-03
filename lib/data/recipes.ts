@@ -29,6 +29,8 @@ export interface Recipe {
   id: number;
   slug: string;
   title: string;
+  /** Overrides title in the <title> tag only; the on-page H1 keeps `title`. Keep under ~60 chars. */
+  seoTitle?: string;
   /** Short one-liner for cards and previews. Keep under ~120 chars. */
   excerpt: string;
   description: string;
@@ -62,12 +64,13 @@ export const recipes: Recipe[] = [
     id: 1,
     slug: 'peri-peri-masala-fries',
     title: 'How to Make Crispy Peri Peri Fries (Best Fried & Air-Fryer Recipe)',
+    seoTitle: 'Peri Peri Fries Recipe – Crispy, Fried or Air Fryer',
     excerpt:
       'Crispy double-fried or air-fried potatoes tossed in bold chilli-garlic peri peri masala.',
     description:
       'Looking for the ultimate street-style Peri Peri fries recipe? This step-by-step guide teaches you how to get crispy, golden french fries tossed in an aromatic, bold chilli-garlic seasoning at home.\n\nWhether you start with freshly cut potatoes or frozen fries, the seasoning is what separates a flat, salty fry from a genuinely craveable one. Tangry Peri Peri Masala is a chilli-garlic blend made in Jhotwara, Jaipur, built to hit the tangy-hot balance that works just as well on roasted corn and grilled paneer as it does on fries.\n\nWe cover both the traditional double-fry method for maximum crunch and an easy air-fryer alternative for a lighter under-30-minute snack. Serve hot alongside your favourite wraps, burgers, or a bowl of Tangry Fresh Tomato Ketchup!',
     seoDescription:
-      'Learn how to make crispy peri peri masala fries at home (deep-fried or air-fryer). Tossed in Tangry chilli-garlic peri peri seasoning for ultimate flavor.',
+      'Crispy peri peri fries at home from fresh or frozen potatoes: double-fried, or air-fried in about 20 minutes. Tossed in Tangry chilli-garlic peri peri masala.',
     keywords: [
       'peri peri fries recipe',
       'peri peri fries at home',
