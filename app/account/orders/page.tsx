@@ -1,7 +1,8 @@
 import Link from 'next/link';
 import { redirect } from 'next/navigation';
+import { desc, eq, or } from 'drizzle-orm';
 import { getCurrentUserProfile } from '@/lib/auth/user';
-import { supabaseAdmin } from '@/lib/db/supabase';
+import { getDb, schema } from '@/lib/db';
 
 type OrderRow = {
   id: string;
@@ -22,21 +23,28 @@ type OrderRow = {
 };
 
 async function getUserOrders(userId: string, email: string): Promise<OrderRow[]> {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const { data, error } = await (supabaseAdmin as any)
-    .from('orders')
-    .select(
-      'id, order_number, order_status, payment_status, payment_method, total, currency, items, created_at',
-    )
-    .or(`user_id.eq.${userId},user_email.eq.${email}`)
-    .order('created_at', { ascending: false })
-    .limit(50);
-
-  if (error) {
+  const { orders } = schema;
+  try {
+    return (await getDb()
+      .select({
+        id: orders.id,
+        order_number: orders.order_number,
+        order_status: orders.order_status,
+        payment_status: orders.payment_status,
+        payment_method: orders.payment_method,
+        total: orders.total,
+        currency: orders.currency,
+        items: orders.items,
+        created_at: orders.created_at,
+      })
+      .from(orders)
+      .where(or(eq(orders.user_id, userId), eq(orders.user_email, email)))
+      .orderBy(desc(orders.created_at))
+      .limit(50)) as OrderRow[];
+  } catch (error) {
     console.error('Fetch user orders error:', error);
     return [];
   }
-  return (data ?? []) as OrderRow[];
 }
 
 const STATUS_COLORS: Record<string, string> = {

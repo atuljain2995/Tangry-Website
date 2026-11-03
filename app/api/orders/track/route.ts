@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { supabaseAdmin } from '@/lib/db/supabase';
+import { eq } from 'drizzle-orm';
+import { getDb, schema } from '@/lib/db';
 
 // ── POST /api/orders/track ────────────────────────────────────────────────────
 // Public guest order-status lookup. Requires BOTH the order number and the email
@@ -29,16 +30,27 @@ export async function POST(req: NextRequest) {
     error: "We couldn't find an order with that number and email. Double-check both and try again.",
   };
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const { data: order, error } = await (supabaseAdmin as any)
-    .from('orders')
-    .select(
-      'order_number, order_status, payment_status, payment_method, total, currency, items, tracking_number, created_at, user_email, shipping_address',
-    )
-    .eq('order_number', number)
-    .maybeSingle();
-
-  if (error) {
+  const { orders } = schema;
+  let order: unknown;
+  try {
+    [order] = await getDb()
+      .select({
+        order_number: orders.order_number,
+        order_status: orders.order_status,
+        payment_status: orders.payment_status,
+        payment_method: orders.payment_method,
+        total: orders.total,
+        currency: orders.currency,
+        items: orders.items,
+        tracking_number: orders.tracking_number,
+        created_at: orders.created_at,
+        user_email: orders.user_email,
+        shipping_address: orders.shipping_address,
+      })
+      .from(orders)
+      .where(eq(orders.order_number, number))
+      .limit(1);
+  } catch (error) {
     console.error('order track lookup error:', error);
     return NextResponse.json({ error: 'Something went wrong. Please try again.' }, { status: 500 });
   }

@@ -1,15 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 import bcrypt from 'bcrypt';
+import { eq } from 'drizzle-orm';
 import { createSessionToken, COOKIE_NAME, SESSION_COOKIE_OPTIONS } from '@/lib/auth/session';
-import { supabaseAdmin } from '@/lib/db/supabase';
+import { getDb, schema } from '@/lib/db';
 import { safeRedirectPath } from '@/lib/utils/safe-redirect';
-
-type UsersTable = {
-  from: (t: string) => {
-    select: (c: string) => { eq: (k: string, v: string) => Promise<{ data: unknown }> };
-  };
-};
-const db = supabaseAdmin as unknown as UsersTable;
 
 /**
  * POST /api/auth/login
@@ -27,24 +21,22 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Email and password required' }, { status: 400 });
     }
 
-    const { data: rows } = await db.from('users').select('id, password_hash').eq('email', email);
-    const user = Array.isArray(rows) ? rows[0] : rows;
-    if (!user) {
+    const { users } = schema;
+    const [user] = await getDb()
+      .select({ id: users.id, password_hash: users.password_hash })
+      .from(users)
+      .where(eq(users.email, email))
+      .limit(1);
+    if (!user?.password_hash) {
       return NextResponse.json({ error: 'Invalid email or password' }, { status: 401 });
     }
 
-    const passwordHash = (user as { password_hash: string | null }).password_hash;
-    if (!passwordHash) {
-      return NextResponse.json({ error: 'Invalid email or password' }, { status: 401 });
-    }
-
-    const match = await bcrypt.compare(password, passwordHash);
+    const match = await bcrypt.compare(password, user.password_hash);
     if (!match) {
       return NextResponse.json({ error: 'Invalid email or password' }, { status: 401 });
     }
 
-    const userId = (user as { id: string }).id;
-    const token = await createSessionToken(userId);
+    const token = await createSessionToken(user.id);
 
     const redirectUrl = new URL(redirectTo, request.url);
     const response = NextResponse.redirect(redirectUrl, { status: 302 });

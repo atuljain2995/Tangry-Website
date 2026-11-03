@@ -121,7 +121,7 @@ ${items.join('\n')}
 </rss>
 `;
 
-  // getAllProducts() returns [] when Supabase is unreachable. Serving an empty but
+  // getAllProducts() returns [] when the database is unreachable. Serving an empty but
   // valid feed would make Merchant Center delist every product, so fail loudly
   // instead and let Google keep the last good fetch.
   if (items.length === 0) {

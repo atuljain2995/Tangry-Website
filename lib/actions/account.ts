@@ -1,9 +1,12 @@
 'use server';
 
 import { revalidatePath } from 'next/cache';
+import { and, eq, ne } from 'drizzle-orm';
 import { getCurrentUserProfile } from '@/lib/auth/user';
-import { supabaseAdmin } from '@/lib/db/supabase';
+import { getDb, schema } from '@/lib/db';
 import { validatePinCode } from '@/lib/utils/database';
+
+const { users, addresses } = schema;
 
 export async function updateAccountProfile(form: {
   name: string;
@@ -19,7 +22,7 @@ export async function updateAccountProfile(form: {
     return { success: false, error: 'Enter a valid 10-digit mobile number' };
   }
 
-  const update: Record<string, string | null> = {
+  const update: Partial<typeof users.$inferInsert> = {
     name,
     phone,
     updated_at: new Date().toISOString(),
@@ -28,12 +31,9 @@ export async function updateAccountProfile(form: {
     update.avatar_url = form.avatarUrl?.trim() || null;
   }
 
-  const { error } = await supabaseAdmin
-    .from('users')
-    .update(update as never)
-    .eq('id', profile.id);
-
-  if (error) {
+  try {
+    await getDb().update(users).set(update).where(eq(users.id, profile.id));
+  } catch (error) {
     console.error('updateAccountProfile', error);
     return { success: false, error: 'Could not update profile' };
   }
@@ -60,17 +60,16 @@ async function enforceSingleDefault(
   type: 'shipping' | 'billing',
   keepId: string,
 ): Promise<void> {
-  await supabaseAdmin
-    .from('addresses')
-    .update({ is_default: false, updated_at: new Date().toISOString() } as never)
-    .eq('user_id', userId)
-    .eq('type', type)
-    .neq('id', keepId);
-  await supabaseAdmin
-    .from('addresses')
-    .update({ is_default: true, updated_at: new Date().toISOString() } as never)
-    .eq('id', keepId)
-    .eq('user_id', userId);
+  const db = getDb();
+  const now = new Date().toISOString();
+  await db
+    .update(addresses)
+    .set({ is_default: false, updated_at: now })
+    .where(and(eq(addresses.user_id, userId), eq(addresses.type, type), ne(addresses.id, keepId)));
+  await db
+    .update(addresses)
+    .set({ is_default: true, updated_at: now })
+    .where(and(eq(addresses.id, keepId), eq(addresses.user_id, userId)));
 }
 
 export async function saveAccountAddress(
@@ -107,40 +106,34 @@ export async function saveAccountAddress(
   };
 
   let addressId: string;
+  const db = getDb();
 
   if (input.id) {
-    const { data: existing } = await supabaseAdmin
-      .from('addresses')
-      .select('id, user_id')
-      .eq('id', input.id)
-      .single();
-    const row = existing as { user_id: string } | null;
+    const [row] = await db
+      .select({ user_id: addresses.user_id })
+      .from(addresses)
+      .where(eq(addresses.id, input.id))
+      .limit(1);
     if (!row || row.user_id !== profile.id) {
       return { success: false, error: 'Address not found' };
     }
-    const { error } = await supabaseAdmin
-      .from('addresses')
-      .update(base as never)
-      .eq('id', input.id);
-    if (error) {
+    try {
+      await db.update(addresses).set(base).where(eq(addresses.id, input.id));
+    } catch (error) {
       console.error('saveAccountAddress update', error);
       return { success: false, error: 'Could not update address' };
     }
     addressId = input.id;
   } else {
-    const { data: ins, error } = await supabaseAdmin
-      .from('addresses')
-      .insert({
-        ...base,
-        created_at: new Date().toISOString(),
-      } as never)
-      .select('id')
-      .single();
-    if (error || !ins) {
+    try {
+      [{ id: addressId }] = await db
+        .insert(addresses)
+        .values({ ...base, created_at: new Date().toISOString() })
+        .returning({ id: addresses.id });
+    } catch (error) {
       console.error('saveAccountAddress insert', error);
       return { success: false, error: 'Could not save address' };
     }
-    addressId = (ins as { id: string }).id;
   }
 
   if (input.isDefault) {
@@ -157,13 +150,11 @@ export async function deleteAccountAddress(
   const profile = await getCurrentUserProfile();
   if (!profile) return { success: false, error: 'Not signed in' };
 
-  const { error } = await supabaseAdmin
-    .from('addresses')
-    .delete()
-    .eq('id', id)
-    .eq('user_id', profile.id);
-
-  if (error) {
+  try {
+    await getDb()
+      .delete(addresses)
+      .where(and(eq(addresses.id, id), eq(addresses.user_id, profile.id)));
+  } catch (error) {
     console.error('deleteAccountAddress', error);
     return { success: false, error: 'Could not remove address' };
   }

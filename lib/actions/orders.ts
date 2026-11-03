@@ -2,8 +2,9 @@
 
 import { revalidatePath } from 'next/cache';
 import { after } from 'next/server';
+import { and, eq, inArray, isNull } from 'drizzle-orm';
 import { sendTelegramOrderAlert } from '@/lib/notifications/telegram';
-import { supabaseAdmin } from '@/lib/db/supabase';
+import { getDb, schema } from '@/lib/db';
 import { incrementCouponUsage, decrementVariantStock } from '@/lib/db/queries';
 import {
   computeTrustedOrderDraft,
@@ -22,6 +23,8 @@ import {
 } from '@/lib/otp/trusted-checkout-email';
 import { normalizeEmail } from '@/lib/email/normalize';
 import type { Address, CartItem, PaymentMethod } from '@/lib/types/database';
+
+const { orders, productVariants } = schema;
 
 export type CreateOrderPayload = {
   /** Client may send display fields; only productId, variantId, quantity are trusted. */
@@ -110,12 +113,11 @@ export async function createOrder(payload: CreateOrderPayload): Promise<CreateOr
 
     // Validate stock availability BEFORE creating the order to prevent overselling
     for (const item of trustedItems) {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const { data: variant } = await (supabaseAdmin as any)
-        .from('product_variants')
-        .select('stock, sku')
-        .eq('id', item.variantId)
-        .single();
+      const [variant] = await getDb()
+        .select({ stock: productVariants.stock })
+        .from(productVariants)
+        .where(eq(productVariants.id, item.variantId))
+        .limit(1);
 
       if (!variant) {
         return { success: false, error: `Product "${item.productName}" is no longer available.` };
@@ -146,30 +148,31 @@ export async function createOrder(payload: CreateOrderPayload): Promise<CreateOr
     }
 
     // Link order to logged-in user if available
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const { error: orderError } = await (supabaseAdmin as any).from('orders').insert({
-      order_number: orderNumber,
-      user_id: sessionUser?.id ?? null,
-      user_email: userEmail.trim(),
-      items: orderItems,
-      subtotal,
-      discount,
-      tax,
-      shipping,
-      total,
-      currency: 'INR',
-      order_status: 'pending',
-      payment_status:
-        paymentMethod === 'cod' || (paymentMethod === 'razorpay' && paymentId)
-          ? 'completed'
-          : 'pending',
-      payment_method: paymentMethod,
-      payment_id: paymentId ?? null,
-      shipping_address: shippingAddress,
-      billing_address: billingAddress,
-    });
-
-    if (orderError) {
+    try {
+      await getDb()
+        .insert(orders)
+        .values({
+          order_number: orderNumber,
+          user_id: sessionUser?.id ?? null,
+          user_email: userEmail.trim(),
+          items: orderItems,
+          subtotal,
+          discount,
+          tax,
+          shipping,
+          total,
+          currency: 'INR',
+          order_status: 'pending',
+          payment_status:
+            paymentMethod === 'cod' || (paymentMethod === 'razorpay' && paymentId)
+              ? 'completed'
+              : 'pending',
+          payment_method: paymentMethod,
+          payment_id: paymentId ?? null,
+          shipping_address: shippingAddress,
+          billing_address: billingAddress,
+        });
+    } catch (orderError) {
       console.error('Order insert error:', orderError);
       return { success: false, error: 'Failed to create order. Please try again.' };
     }
@@ -210,13 +213,12 @@ export async function createOrder(payload: CreateOrderPayload): Promise<CreateOr
           if (result.ok) return;
           // Flag on the order itself so admins reviewing the order see the delivery failure
           // even though the checkout flow already completed successfully for the customer.
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          await (supabaseAdmin as any)
-            .from('orders')
-            .update({
+          await getDb()
+            .update(orders)
+            .set({
               notes: `[auto] Confirmation email failed to send: ${result.error ?? 'unknown error'}`,
             })
-            .eq('order_number', orderNumber);
+            .where(eq(orders.order_number, orderNumber));
         })
         .catch((err) => console.error('Order confirmation email:', err));
     }
@@ -258,20 +260,19 @@ export async function claimGuestOrders(
     return { success: true, claimed: [] };
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const { data: candidates, error: fetchError } = await (supabaseAdmin as any)
-    .from('orders')
-    .select('id, order_number, user_email')
-    .in('order_number', numbers)
-    .is('user_id', null);
-
-  if (fetchError) {
+  let candidates: { id: string; order_number: string; user_email: string }[];
+  try {
+    candidates = await getDb()
+      .select({ id: orders.id, order_number: orders.order_number, user_email: orders.user_email })
+      .from(orders)
+      .where(and(inArray(orders.order_number, numbers), isNull(orders.user_id)));
+  } catch (fetchError) {
     console.error('claimGuestOrders fetch error:', fetchError);
     return { success: false, error: 'Could not link previous orders' };
   }
 
   const targetEmail = sessionUser.email.trim().toLowerCase();
-  const matches = ((candidates ?? []) as { id: string; order_number: string; user_email: string }[]).filter(
+  const matches = candidates.filter(
     (o) => o.user_email?.trim().toLowerCase() === targetEmail,
   );
 
@@ -279,16 +280,17 @@ export async function claimGuestOrders(
     return { success: true, claimed: [] };
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const { error: updateError } = await (supabaseAdmin as any)
-    .from('orders')
-    .update({ user_id: sessionUser.id })
-    .in(
-      'id',
-      matches.map((m) => m.id),
-    );
-
-  if (updateError) {
+  try {
+    await getDb()
+      .update(orders)
+      .set({ user_id: sessionUser.id })
+      .where(
+        inArray(
+          orders.id,
+          matches.map((m) => m.id),
+        ),
+      );
+  } catch (updateError) {
     console.error('claimGuestOrders update error:', updateError);
     return { success: false, error: 'Could not link previous orders' };
   }
@@ -317,19 +319,19 @@ export async function updateOrderStatus(
   if (!VALID_ORDER_STATUSES.includes(orderStatus as (typeof VALID_ORDER_STATUSES)[number])) {
     return { success: false, error: 'Invalid status' };
   }
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const { error } = await (supabaseAdmin as any)
-    .from('orders')
-    .update({
-      order_status: orderStatus,
-      updated_at: new Date().toISOString(),
-      // Stamp delivery time once so the review-request cron can fire 3–5 days later.
-      ...(orderStatus === 'delivered' ? { delivered_at: new Date().toISOString() } : {}),
-    })
-    .eq('id', orderId);
-  if (error) {
+  try {
+    await getDb()
+      .update(orders)
+      .set({
+        order_status: orderStatus,
+        updated_at: new Date().toISOString(),
+        // Stamp delivery time once so the review-request cron can fire 3–5 days later.
+        ...(orderStatus === 'delivered' ? { delivered_at: new Date().toISOString() } : {}),
+      })
+      .where(eq(orders.id, orderId));
+  } catch (error) {
     console.error('updateOrderStatus error:', error);
-    return { success: false, error: (error as { message?: string })?.message ?? 'Update failed' };
+    return { success: false, error: 'Update failed' };
   }
   revalidatePath('/admin');
   revalidatePath('/admin/orders');
@@ -344,18 +346,18 @@ export async function setOrderTrackingNumber(
   if (!(await requireAdmin())) {
     return { success: false, error: 'Not authorised' };
   }
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const { error } = await (supabaseAdmin as any)
-    .from('orders')
-    .update({
-      tracking_number: trackingNumber?.trim() || null,
-      updated_at: new Date().toISOString(),
-      ...(trackingNumber?.trim() ? { order_status: 'shipped' } : {}),
-    })
-    .eq('id', orderId);
-  if (error) {
+  try {
+    await getDb()
+      .update(orders)
+      .set({
+        tracking_number: trackingNumber?.trim() || null,
+        updated_at: new Date().toISOString(),
+        ...(trackingNumber?.trim() ? { order_status: 'shipped' } : {}),
+      })
+      .where(eq(orders.id, orderId));
+  } catch (error) {
     console.error('setOrderTrackingNumber error:', error);
-    return { success: false, error: (error as { message?: string })?.message ?? 'Update failed' };
+    return { success: false, error: 'Update failed' };
   }
   revalidatePath('/admin');
   revalidatePath('/admin/orders');
@@ -377,19 +379,18 @@ export async function bulkUpdateOrderStatus(
   if (ids.length === 0) return { success: false, error: 'No orders selected' };
   if (ids.length > 100) return { success: false, error: 'Select 100 orders or fewer' };
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const { error } = await (supabaseAdmin as any)
-    .from('orders')
-    .update({
-      order_status: orderStatus,
-      updated_at: new Date().toISOString(),
-      ...(orderStatus === 'delivered' ? { delivered_at: new Date().toISOString() } : {}),
-    })
-    .in('id', ids);
-
-  if (error) {
+  try {
+    await getDb()
+      .update(orders)
+      .set({
+        order_status: orderStatus,
+        updated_at: new Date().toISOString(),
+        ...(orderStatus === 'delivered' ? { delivered_at: new Date().toISOString() } : {}),
+      })
+      .where(inArray(orders.id, ids));
+  } catch (error) {
     console.error('bulkUpdateOrderStatus error:', error);
-    return { success: false, error: (error as { message?: string })?.message ?? 'Update failed' };
+    return { success: false, error: 'Update failed' };
   }
   revalidatePath('/admin');
   revalidatePath('/admin/orders');
@@ -404,11 +405,11 @@ export async function deleteOrder(
   }
   if (!orderId?.trim()) return { success: false, error: 'Order id is required' };
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const { error } = await (supabaseAdmin as any).from('orders').delete().eq('id', orderId);
-  if (error) {
+  try {
+    await getDb().delete(orders).where(eq(orders.id, orderId));
+  } catch (error) {
     console.error('deleteOrder error:', error);
-    return { success: false, error: (error as { message?: string })?.message ?? 'Delete failed' };
+    return { success: false, error: 'Delete failed' };
   }
   revalidatePath('/admin');
   revalidatePath('/admin/orders');
@@ -425,17 +426,18 @@ export async function bulkDeleteOrders(
   if (ids.length === 0) return { success: false, error: 'No orders selected' };
   if (ids.length > 100) return { success: false, error: 'Select 100 orders or fewer' };
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const { error, count } = await (supabaseAdmin as any)
-    .from('orders')
-    .delete({ count: 'exact' })
-    .in('id', ids);
-
-  if (error) {
+  let deleted: number;
+  try {
+    const rows = await getDb()
+      .delete(orders)
+      .where(inArray(orders.id, ids))
+      .returning({ id: orders.id });
+    deleted = rows.length;
+  } catch (error) {
     console.error('bulkDeleteOrders error:', error);
-    return { success: false, error: (error as { message?: string })?.message ?? 'Delete failed' };
+    return { success: false, error: 'Delete failed' };
   }
   revalidatePath('/admin');
   revalidatePath('/admin/orders');
-  return { success: true, deleted: count ?? ids.length };
+  return { success: true, deleted };
 }

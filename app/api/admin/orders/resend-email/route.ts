@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { eq } from 'drizzle-orm';
 import { getSessionUser } from '@/lib/auth/session';
-import { supabaseAdmin } from '@/lib/db/supabase';
+import { getDb, schema } from '@/lib/db';
 import { sendOrderConfirmationEmail } from '@/lib/email/order-confirmation';
 
 type OrderEmailRow = {
@@ -23,13 +24,22 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'Missing orderId' }, { status: 400 });
   }
 
-  const { data, error } = await supabaseAdmin
-    .from('orders')
-    .select('order_number, user_email, total, currency, items')
-    .eq('id', orderId)
-    .single();
+  const { orders } = schema;
+  const data = await getDb()
+    .select({
+      order_number: orders.order_number,
+      user_email: orders.user_email,
+      total: orders.total,
+      currency: orders.currency,
+      items: orders.items,
+    })
+    .from(orders)
+    .where(eq(orders.id, orderId))
+    .limit(1)
+    .then(([row]) => row)
+    .catch(() => undefined);
 
-  if (error || !data) {
+  if (!data) {
     return NextResponse.json({ error: 'Order not found' }, { status: 404 });
   }
 

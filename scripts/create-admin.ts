@@ -6,27 +6,14 @@
  * role is set to 'admin'. If not, a new user is created with role 'admin'.
  */
 
-import { config } from 'dotenv';
-import { resolve } from 'path';
-import { createClient } from '@supabase/supabase-js';
 import bcrypt from 'bcrypt';
 import * as readline from 'readline';
+import { connectNeon, loadEnv } from './lib/db-backup';
 
-config({ path: resolve(process.cwd(), '.env.local') });
+loadEnv();
 
 const SALT_ROUNDS = 10;
-
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
-
-if (!supabaseUrl || !serviceKey) {
-  console.error(
-    '❌ Missing env. In .env.local set: NEXT_PUBLIC_SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY',
-  );
-  process.exit(1);
-}
-
-const supabase = createClient(supabaseUrl, serviceKey);
+const db = connectNeon();
 
 function prompt(question: string): Promise<string> {
   const rl = readline.createInterface({ input: process.stdin, output: process.stdout });
@@ -55,46 +42,27 @@ async function main() {
     process.exit(1);
   }
 
-  const { data: existing } = await supabase
-    .from('users')
-    .select('id, email, role')
-    .eq('email', normalizedEmail)
-    .maybeSingle();
+  const { rows: existing } = await db.query('SELECT id FROM users WHERE email = $1', [
+    normalizedEmail,
+  ]);
 
-  if (existing) {
-    const { error } = await supabase
-      .from('users')
-      .update({ role: 'admin' })
-      .eq('id', (existing as { id: string }).id);
-
-    if (error) {
-      console.error('❌ Failed to promote user:', error.message);
-      process.exit(1);
-    }
+  if (existing.length > 0) {
+    await db.query(`UPDATE users SET role = 'admin' WHERE id = $1`, [existing[0].id]);
     console.log('✅ User promoted to admin:', normalizedEmail);
     return;
   }
 
   const passwordHash = await bcrypt.hash(password, SALT_ROUNDS);
-  const { error } = await supabase
-    .from('users')
-    .insert({
-      email: normalizedEmail,
-      name: 'Admin',
-      role: 'admin',
-      password_hash: passwordHash,
-    })
-    .select('id')
-    .single();
-
-  if (error) {
-    console.error('❌ Failed to create admin:', error.message);
-    process.exit(1);
-  }
+  await db.query(
+    `INSERT INTO users (email, name, role, password_hash) VALUES ($1, 'Admin', 'admin', $2)`,
+    [normalizedEmail, passwordHash],
+  );
   console.log('✅ Admin account created:', normalizedEmail);
 }
 
-main().catch((err) => {
-  console.error(err);
-  process.exit(1);
-});
+main()
+  .catch((err) => {
+    console.error('❌', err instanceof Error ? err.message : err);
+    process.exitCode = 1;
+  })
+  .finally(() => db.end());

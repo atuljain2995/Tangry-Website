@@ -1,20 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
 import bcrypt from 'bcrypt';
+import { eq } from 'drizzle-orm';
 import { createSessionToken, COOKIE_NAME, SESSION_COOKIE_OPTIONS } from '@/lib/auth/session';
-import { supabaseAdmin } from '@/lib/db/supabase';
+import { getDb, schema } from '@/lib/db';
 import { safeRedirectPath } from '@/lib/utils/safe-redirect';
 
 const SALT_ROUNDS = 10;
-
-type UsersTable = {
-  from: (t: string) => {
-    select: (c: string) => { eq: (k: string, v: string) => Promise<{ data: unknown }> };
-    insert: (r: object) => {
-      select: (c: string) => { single: () => Promise<{ data: unknown; error: unknown }> };
-    };
-  };
-};
-const db = supabaseAdmin as unknown as UsersTable;
 
 /**
  * POST /api/auth/signup
@@ -39,8 +30,14 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const { data: existing } = await db.from('users').select('id').eq('email', email);
-    if (Array.isArray(existing) && existing.length > 0) {
+    const { users } = schema;
+    const db = getDb();
+    const existing = await db
+      .select({ id: users.id })
+      .from(users)
+      .where(eq(users.email, email))
+      .limit(1);
+    if (existing.length > 0) {
       return NextResponse.json(
         { error: 'An account with this email already exists' },
         { status: 409 },
@@ -49,26 +46,16 @@ export async function POST(request: NextRequest) {
 
     const passwordHash = await bcrypt.hash(password, SALT_ROUNDS);
 
-    const { data: newUser, error } = await db
-      .from('users')
-      .insert({
-        email,
-        name,
-        password_hash: passwordHash,
-        role: 'customer',
-      })
-      .select('id')
-      .single();
-
-    if (error) {
+    let userId: string | undefined;
+    try {
+      [{ id: userId }] = await db
+        .insert(users)
+        .values({ email, name, password_hash: passwordHash, role: 'customer' })
+        .returning({ id: users.id });
+    } catch (error) {
       console.error('Signup insert error:', error);
       return NextResponse.json({ error: 'Could not create account. Try again.' }, { status: 500 });
     }
-
-    const userId =
-      newUser && typeof newUser === 'object' && 'id' in newUser
-        ? (newUser as { id: string }).id
-        : null;
     if (!userId) {
       return NextResponse.json({ error: 'Could not create account. Try again.' }, { status: 500 });
     }

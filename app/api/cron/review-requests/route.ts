@@ -1,6 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { supabaseAdmin } from '@/lib/db/supabase';
+import { and, eq, gte, inArray, isNotNull, isNull, lte } from 'drizzle-orm';
+import { getDb, schema } from '@/lib/db';
 import { sendReviewRequestEmail } from '@/lib/email/review-request';
+
+const { orders, products: productsT } = schema;
 
 export const dynamic = 'force-dynamic';
 
@@ -59,22 +62,32 @@ export async function GET(req: NextRequest) {
   const windowStart = new Date(now - MAX_DAYS_AFTER_DELIVERY * 86_400_000).toISOString();
   const windowEnd = new Date(now - MIN_DAYS_AFTER_DELIVERY * 86_400_000).toISOString();
 
-  const { data: orders, error } = await supabaseAdmin
-    .from('orders')
-    .select('id, order_number, user_email, items')
-    .eq('order_status', 'delivered')
-    .is('review_request_sent_at', null)
-    .not('delivered_at', 'is', null)
-    .gte('delivered_at', windowStart)
-    .lte('delivered_at', windowEnd)
-    .limit(MAX_ORDERS_PER_RUN);
-
-  if (error) {
+  const db = getDb();
+  let eligible: EligibleOrder[];
+  try {
+    eligible = (await db
+      .select({
+        id: orders.id,
+        order_number: orders.order_number,
+        user_email: orders.user_email,
+        items: orders.items,
+      })
+      .from(orders)
+      .where(
+        and(
+          eq(orders.order_status, 'delivered'),
+          isNull(orders.review_request_sent_at),
+          isNotNull(orders.delivered_at),
+          gte(orders.delivered_at, windowStart),
+          lte(orders.delivered_at, windowEnd),
+        ),
+      )
+      .limit(MAX_ORDERS_PER_RUN)) as unknown as EligibleOrder[];
+  } catch (error) {
     console.error('review-requests cron: fetch failed', error);
     return NextResponse.json({ error: 'Failed to load orders' }, { status: 500 });
   }
 
-  const eligible = (orders ?? []) as unknown as EligibleOrder[];
   if (eligible.length === 0) {
     return NextResponse.json({ processed: 0, sent: 0 });
   }
@@ -83,11 +96,11 @@ export async function GET(req: NextRequest) {
   const allProductIds = Array.from(new Set(eligible.flatMap((o) => extractProductIds(o.items))));
   const slugById = new Map<string, { slug: string; name: string }>();
   if (allProductIds.length > 0) {
-    const { data: products } = await supabaseAdmin
-      .from('products')
-      .select('id, slug, name')
-      .in('id', allProductIds);
-    for (const p of (products ?? []) as { id: string; slug: string; name: string }[]) {
+    const rows = await db
+      .select({ id: productsT.id, slug: productsT.slug, name: productsT.name })
+      .from(productsT)
+      .where(inArray(productsT.id, allProductIds));
+    for (const p of rows) {
       slugById.set(p.id, { slug: p.slug, name: p.name });
     }
   }
@@ -114,13 +127,12 @@ export async function GET(req: NextRequest) {
 
     // Stamp the order regardless of email success (missing address/products, or
     // Resend not configured) so we don't retry indefinitely on the next run.
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const { error: stampError } = await (supabaseAdmin as any)
-      .from('orders')
-      .update({ review_request_sent_at: new Date().toISOString() })
-      .eq('id', order.id);
-
-    if (stampError) {
+    try {
+      await db
+        .update(orders)
+        .set({ review_request_sent_at: new Date().toISOString() })
+        .where(eq(orders.id, order.id));
+    } catch (stampError) {
       console.error('review-requests cron: stamp failed for', order.order_number, stampError);
       continue;
     }

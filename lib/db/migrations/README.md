@@ -1,6 +1,11 @@
 # Database migrations
 
-Run these in **Supabase SQL Editor** in this order:
+The app runs on Neon Postgres. A fresh database is built with
+`npx tsx scripts/neon/bootstrap-schema.ts`, which replays the schema migrations below
+and strips the Supabase-era RLS policies. New migrations: run them in the Neon SQL editor
+(or `psql "$DATABASE_URL" -f file.sql`) and mirror any column changes in `lib/db/schema.ts`.
+
+Historical order (originally run in the Supabase SQL Editor):
 
 ## Core setup (fresh install)
 
@@ -44,9 +49,8 @@ Run these in **Supabase SQL Editor** in this order:
 
 21. **027_recipe_ratings.sql** – `recipe_ratings` + `recipe_rating_totals` with an aggregate trigger. Powers ratings on `/recipes/[slug]`. Kept separate from `reviews` on purpose: a product rating is not a recipe rating.
 22. **028_product_variant_cleanup.sql** – Normalises variant names (`50 g`, `1 kg`), adds `display_order` / `is_default` (smallest pack default), `products.is_bundle`, and label facts (`shelf_life`, `no_preservatives`, `is_vegetarian`, `storage_instructions`, `country_of_origin`). Backs up `product_variants` to `product_variants_backup_028`. **Run before deploying the matching frontend.**
+23. **029_seo_ctr_titles.sql** – CTR-focused meta titles/descriptions for two product pages (data only).
 
 ---
 
 Then run `npm run test-db` to verify.
-
-**Already on production?** Compare your Supabase schema against the list above. At minimum, ensure **016** and **017** are applied if you use first-order coupons or the review-request cron (`/api/cron/review-requests`).

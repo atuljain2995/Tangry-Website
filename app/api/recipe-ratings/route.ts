@@ -1,7 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { desc, eq } from 'drizzle-orm';
 import { getSessionUser } from '@/lib/auth/session';
-import { supabaseAdmin } from '@/lib/db/supabase';
+import { getDb, schema } from '@/lib/db';
 import { getRecipe } from '@/lib/data/recipes';
+
+const { recipeRatings, recipeRatingTotals } = schema;
 
 // ─── GET /api/recipe-ratings?slug=xxx ────────────────────────────────────────
 // Public — returns the aggregate plus recent comments for a recipe.
@@ -11,34 +14,41 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ error: 'slug is required' }, { status: 400 });
   }
 
-  const [{ data: totals }, { data: ratings, error }] = await Promise.all([
-    supabaseAdmin
-      .from('recipe_rating_totals')
-      .select('rating_avg, rating_count')
-      .eq('recipe_slug', slug)
-      .maybeSingle(),
-    supabaseAdmin
-      .from('recipe_ratings')
-      .select('id, user_name, rating, comment, created_at')
-      .eq('recipe_slug', slug)
-      .order('created_at', { ascending: false })
-      .limit(20),
-  ]);
+  const db = getDb();
+  try {
+    const [[totalsRow], ratings] = await Promise.all([
+      db
+        .select({
+          rating_avg: recipeRatingTotals.rating_avg,
+          rating_count: recipeRatingTotals.rating_count,
+        })
+        .from(recipeRatingTotals)
+        .where(eq(recipeRatingTotals.recipe_slug, slug))
+        .limit(1),
+      db
+        .select({
+          id: recipeRatings.id,
+          user_name: recipeRatings.user_name,
+          rating: recipeRatings.rating,
+          comment: recipeRatings.comment,
+          created_at: recipeRatings.created_at,
+        })
+        .from(recipeRatings)
+        .where(eq(recipeRatings.recipe_slug, slug))
+        .orderBy(desc(recipeRatings.created_at))
+        .limit(20),
+    ]);
 
-  // Before migration 027 runs the tables are absent; treat that as "no ratings"
-  // rather than a 500 so recipe pages still render.
-  if (error) {
+    return NextResponse.json({
+      average: Number(totalsRow?.rating_avg ?? 0),
+      count: totalsRow?.rating_count ?? 0,
+      ratings,
+    });
+  } catch (error) {
+    // Treat a DB failure as "no ratings" rather than a 500 so recipe pages still render.
     console.error('GET /api/recipe-ratings:', error);
     return NextResponse.json({ average: 0, count: 0, ratings: [] });
   }
-
-  const totalsRow = totals as unknown as { rating_avg: number; rating_count: number } | null;
-
-  return NextResponse.json({
-    average: Number(totalsRow?.rating_avg ?? 0),
-    count: totalsRow?.rating_count ?? 0,
-    ratings: ratings ?? [],
-  });
 }
 
 // ─── POST /api/recipe-ratings ────────────────────────────────────────────────
@@ -82,20 +92,22 @@ export async function POST(req: NextRequest) {
     cleanComment = comment.trim() || null;
   }
 
-  const { error } = await supabaseAdmin.from('recipe_ratings').upsert(
-    {
-      recipe_slug: slug.trim(),
-      user_id: user.id,
-      user_name: user.name || 'Anonymous',
-      rating: ratingNum,
-      comment: cleanComment,
-      updated_at: new Date().toISOString(),
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    } as any,
-    { onConflict: 'recipe_slug,user_id' },
-  );
-
-  if (error) {
+  const now = new Date().toISOString();
+  const values = {
+    user_name: user.name || 'Anonymous',
+    rating: ratingNum,
+    comment: cleanComment,
+    updated_at: now,
+  };
+  try {
+    await getDb()
+      .insert(recipeRatings)
+      .values({ recipe_slug: slug.trim(), user_id: user.id, ...values })
+      .onConflictDoUpdate({
+        target: [recipeRatings.recipe_slug, recipeRatings.user_id],
+        set: values,
+      });
+  } catch (error) {
     console.error('POST /api/recipe-ratings:', error);
     return NextResponse.json({ error: 'Failed to save rating' }, { status: 500 });
   }

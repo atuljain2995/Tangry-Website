@@ -1,18 +1,19 @@
 import { redirect } from 'next/navigation';
+import { eq } from 'drizzle-orm';
 import { getCurrentUserProfile } from '@/lib/auth/user';
-import { supabaseAdmin } from '@/lib/db/supabase';
+import { getDb, schema } from '@/lib/db';
 import { getProductsByIds } from '@/lib/db/queries';
 import { WishlistClient } from './WishlistClient';
 
 async function getWishlistProductIds(userId: string): Promise<string[]> {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const { data } = await (supabaseAdmin as any)
-    .from('wishlists')
-    .select('product_ids')
-    .eq('user_id', userId)
-    .single();
+  const { wishlists } = schema;
+  const [row] = await getDb()
+    .select({ product_ids: wishlists.product_ids })
+    .from(wishlists)
+    .where(eq(wishlists.user_id, userId))
+    .limit(1);
 
-  return data?.product_ids ?? [];
+  return row?.product_ids ?? [];
 }
 
 export default async function WishlistPage() {

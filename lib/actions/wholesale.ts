@@ -1,6 +1,6 @@
 'use server';
 
-import { supabaseAdmin } from '@/lib/db/supabase';
+import { getDb, schema } from '@/lib/db';
 
 export type SubmitWholesalePayload = {
   companyName: string;
@@ -52,21 +52,19 @@ export async function submitWholesaleQuote(
     messageParts.unshift(`Estimated monthly volume: ${estimatedMonthlyVolume.trim()}.`);
   const fullMessage = messageParts.reverse().join(' ').trim() || null;
 
-  // b2b_quotes may not be in generated Database types
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const { error } = await (supabaseAdmin as any).from('b2b_quotes').insert({
-    user_id: null,
-    company_name: companyName.trim(),
-    gst_number: gstNumber?.trim().toUpperCase() || null,
-    contact_person: contactPerson.trim(),
-    email: email.trim(),
-    phone: phone.trim(),
-    items: [],
-    message: fullMessage,
-    status: 'pending',
-  });
-
-  if (error) {
+  try {
+    await getDb().insert(schema.b2bQuotes).values({
+      user_id: null,
+      company_name: companyName.trim(),
+      gst_number: gstNumber?.trim().toUpperCase() || null,
+      contact_person: contactPerson.trim(),
+      email: email.trim(),
+      phone: phone.trim(),
+      items: [],
+      message: fullMessage,
+      status: 'pending',
+    });
+  } catch (error) {
     console.error('B2B quote insert error:', error);
     return { success: false, error: 'Failed to submit inquiry. Please try again.' };
   }
