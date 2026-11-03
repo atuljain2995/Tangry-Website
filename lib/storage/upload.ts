@@ -1,10 +1,12 @@
 /**
  * Product image storage abstraction.
- * Uploads to Cloudflare R2 when configured, otherwise returns null
+ * Tries R2 first (when configured), then Supabase Storage, then returns null
  * so the caller can fall back to local filesystem (local dev only).
  */
 
 import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3';
+
+const SUPABASE_BUCKET = 'product-images';
 
 function isR2Configured(): boolean {
   const accountId = process.env.R2_ACCOUNT_ID;
@@ -63,14 +65,53 @@ async function uploadToR2(
 }
 
 /**
- * Upload a product image to R2.
- * Returns the public URL on success, or null if R2 is not configured or upload fails.
+ * Upload to the public "product-images" bucket via the Supabase Storage HTTP API.
+ * Requires SUPABASE_STORAGE_URL (https://<ref>.supabase.co) and SUPABASE_STORAGE_KEY (secret key).
+ */
+async function uploadToSupabaseStorage(
+  buffer: Buffer,
+  fileName: string,
+  contentType: string,
+): Promise<string | null> {
+  const baseUrl = process.env.SUPABASE_STORAGE_URL?.replace(/\/$/, '');
+  const key = process.env.SUPABASE_STORAGE_KEY;
+  if (!baseUrl || !key) return null;
+
+  const path = fileName.split('/').map(encodeURIComponent).join('/');
+  try {
+    const res = await fetch(`${baseUrl}/storage/v1/object/${SUPABASE_BUCKET}/${path}`, {
+      method: 'POST',
+      headers: {
+        apikey: key,
+        Authorization: `Bearer ${key}`,
+        'Content-Type': contentType,
+        'x-upsert': 'true',
+      },
+      body: new Uint8Array(buffer),
+    });
+    if (!res.ok) {
+      console.error('Supabase Storage upload error:', res.status, await res.text());
+      return null;
+    }
+    return `${baseUrl}/storage/v1/object/public/${SUPABASE_BUCKET}/${path}`;
+  } catch (err) {
+    console.error('Supabase Storage upload error:', err);
+    return null;
+  }
+}
+
+/**
+ * Upload a product image. Priority: R2 (if configured) → Supabase Storage → null.
+ * Returns the public URL on success, or null if no backend is configured or upload fails.
  */
 export async function uploadProductImage(
   buffer: Buffer,
   fileName: string,
   contentType: string,
 ): Promise<string | null> {
-  if (!isR2Configured()) return null;
-  return uploadToR2(buffer, fileName, contentType);
+  if (isR2Configured()) {
+    const url = await uploadToR2(buffer, fileName, contentType);
+    if (url) return url;
+  }
+  return uploadToSupabaseStorage(buffer, fileName, contentType);
 }
