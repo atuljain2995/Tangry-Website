@@ -1,0 +1,118 @@
+{
+ "peri peri masala": {
+  "top": [
+   {
+    "query": "peri peri fries",
+    "value": 100
+   },
+   {
+    "query": "peri peri masala recipe",
+    "value": 100
+   },
+   {
+    "query": "peri peri masala price",
+    "value": 90
+   },
+   {
+    "query": "how to make peri peri masala",
+    "value": 78
+   },
+   {
+    "query": "catch peri peri masala",
+    "value": 76
+   },
+   {
+    "query": "peri peri masala ingredients",
+    "value": 71
+   },
+   {
+    "query": "peri peri chicken",
+    "value": 69
+   },
+   {
+    "query": "what is peri peri masala",
+    "value": 49
+   },
+   {
+    "query": "how to make peri peri masala at home",
+    "value": 33
+   },
+   {
+    "query": "keya peri peri masala",
+    "value": 28
+   }
+  ],
+  "rising": [
+   {
+    "query": "catch peri peri masala",
+    "value": 70
+   },
+   {
+    "query": "how to make peri peri masala at home",
+    "value": 60
+   }
+  ]
+ },
+ "kashmiri chilli": {
+  "top": [
+   {
+    "query": "chilli powder",
+    "value": 100
+   },
+   {
+    "query": "kashmiri chilli powder",
+    "value": 99
+   },
+   {
+    "query": "red chilli",
+    "value": 62
+   },
+   {
+    "query": "kashmiri chilli price",
+    "value": 32
+   },
+   {
+    "query": "red chilli powder",
+    "value": 31
+   },
+   {
+    "query": "kashmiri chilli powder price",
+    "value": 21
+   },
+   {
+    "query": "kashmiri chilli whole",
+    "value": 15
+   },
+   {
+    "query": "everest kashmiri chilli powder",
+    "value": 10
+   },
+   {
+    "query": "kashmiri chilli powder 1kg",
+    "value": 8
+   },
+   {
+    "query": "kashmiri chilli 1kg price",
+    "value": 8
+   },
+   {
+    "query": "kashmiri chilli powder 1kg price",
+    "value": 5
+   },
+   {
+    "query": "eastern kashmiri chilli powder",
+    "value": 3
+   },
+   {
+    "query": "hathi kashmiri chilli powder",
+    "value": 2
+   }
+  ],
+  "rising": [
+   {
+    "query": "hathi kashmiri chilli powder",
+    "value": 70
+   }
+  ]
+ }
+}

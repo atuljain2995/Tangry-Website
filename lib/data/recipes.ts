@@ -682,6 +682,74 @@ export const recipes: Recipe[] = [
       'Parathas stay soft for 6–8 hours wrapped in foil or a cloth-lined box, which is what makes them a classic travel meal. Dough refrigerates for 2 days. Reheat on a hot tawa, never the microwave.',
     productLink: { label: 'Buy Tangry Sweet Lemon Pickle', href: '/products/sweet-lemon-pickle' },
   },
+  {
+    id: 9,
+    slug: 'masala-chai-recipe',
+    title: 'Masala Chai Recipe — Kadak Indian Spiced Tea at Home',
+    seoTitle: 'Masala Chai Recipe – Kadak Spiced Tea in 10 Minutes',
+    excerpt:
+      'Strong, milky Indian chai simmered with ginger and a spoon of warm chai masala.',
+    description:
+      'A proper cup of masala chai is strong, milky, and warming, with the spice coming through without turning bitter. This recipe gives you the stovetop method most Indian homes use: water, tea and spices first, milk after, then a short rolling boil.\n\nTangry Chai Masala is a blend of cardamom, cinnamon, clove, black pepper, and dry ginger, ground in Jaipur. A quarter teaspoon is enough for a two-cup pot, so you get the same balanced flavour every time without crushing whole spices each morning.\n\nWe also cover how to make it kadak (extra strong), how to adjust sweetness, and why the order you add milk in matters.',
+    seoDescription:
+      'Make kadak masala chai at home in 10 minutes: tea, milk, fresh ginger and Tangry Chai Masala (cardamom, cinnamon, clove, pepper). Stovetop method.',
+    keywords: [
+      'masala chai recipe',
+      'how to make masala chai',
+      'kadak chai recipe',
+      'indian spiced tea',
+      'chai masala powder use',
+      'tangry chai masala',
+    ],
+    prepTime: 2,
+    cookTime: 8,
+    servings: 2,
+    difficulty: 'Easy',
+    category: 'Drinks',
+    cuisine: 'Indian',
+    image: '/images/categories/spices.png',
+    imageAlt: 'Tangry spice blends used for making masala chai at home',
+    author: 'Tangry Spices',
+    date: '2026-11-05',
+    updated: '2026-11-05',
+    featured: true,
+    ingredients: [
+      '1 cup water',
+      '1 cup full-fat milk',
+      '2 tsp loose CTC black tea (or 2 tea bags)',
+      '¼ tsp Tangry Chai Masala',
+      '1 inch fresh ginger, crushed (optional, for extra heat)',
+      '2–3 tsp sugar, to taste',
+    ],
+    instructions: [
+      {
+        step: 1,
+        text: 'Pour the water into a saucepan and bring it to a boil. Add the crushed ginger, if using, and let it boil for 1 minute so the ginger releases its juice.',
+      },
+      {
+        step: 2,
+        text: 'Add the tea leaves and Tangry Chai Masala. Simmer on medium heat for 1–2 minutes until the water turns deep brown. Adding the masala to water first lets the spices open up before the milk goes in.',
+      },
+      {
+        step: 3,
+        text: 'Pour in the milk and add sugar. Bring the chai to a rolling boil, then lower the heat and let it simmer for 2–3 minutes. For kadak chai, let it rise and fall two or three times.',
+      },
+      {
+        step: 4,
+        text: 'Strain into cups and serve hot.',
+      },
+    ],
+    tips: [
+      'Kadak chai: Use 3 tsp tea instead of 2 and simmer for the full 3 minutes after the milk goes in. Do not boil much longer, or the tea turns bitter.',
+      'Go easy on the masala: ¼ tsp is enough for two cups. Too much clove and black pepper can make the cup taste harsh rather than warm.',
+      'The same blend works in masala milk, oats, kheer, and chai-flavoured cakes.',
+    ],
+    servingSuggestions:
+      'Serve hot with rusk, mathri, Parle-G, or pakoras on a cold or rainy day. Also good alongside vada pav or poha for breakfast.',
+    storage:
+      'Chai is best fresh. Keep Tangry Chai Masala in an airtight jar away from the stove, and always use a dry spoon so the aroma lasts.',
+    productLink: { label: 'Buy Tangry Chai Masala', href: '/products/chai-masala' },
+  },
 ];
 
 export function getRecipe(slug: string): Recipe | undefined {
